@@ -1,165 +1,104 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Star, ShieldCheck, MapPin, Play, ArrowRight, CalendarCheck, Crown } from 'lucide-react';
+import { Play, ArrowRight } from 'lucide-react';
 import LuxuryImage from '@/components/ui/LuxuryImage';
 
 export default function LuxuryHero() {
   return (
-    <section className="relative w-full h-[100vh] min-h-[820px] max-h-[980px] flex items-center bg-background overflow-hidden pt-[110px] pb-[50px]">
+    <section className="relative w-full h-[100vh] min-h-[820px] max-h-[1080px] flex items-center overflow-hidden pt-[110px] pb-[50px] bg-white">
+      
+      {/* Seamless Premium Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#ffffff] via-[#fdfdfd] to-[#f7f7f8] z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-transparent to-[#D4AF37]/5 z-0 pointer-events-none" />
 
-      {/* Background Subtle Elements */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-surface/50 rounded-bl-[100px] z-0" />
-      <div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] z-0" />
-
-      <div className="container-luxe relative z-10 grid lg:grid-cols-2 gap-[60px] items-center h-full">
-
-        {/* Left: Editorial Content */}
-        <motion.div
-          className="flex flex-col justify-center max-w-xl xl:max-w-2xl relative z-20"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      {/* FULL HERO BACKGROUND VEHICLE (Right Side) */}
+      <div className="absolute top-0 right-0 w-full lg:w-[65%] h-full z-0 overflow-hidden pointer-events-none flex items-center justify-end">
+        
+        {/* Soft Champagne Ambient Lighting */}
+        <div className="absolute top-1/2 right-[10%] -translate-y-1/2 w-[55vw] h-[55vw] max-w-[850px] max-h-[850px] bg-[#D4AF37]/8 rounded-full blur-[140px] z-0 mix-blend-overlay" />
+        <div className="absolute top-[35%] right-[20%] w-[35vw] h-[35vw] max-w-[550px] max-h-[550px] bg-white rounded-full blur-[100px] z-0 opacity-95" />
+        
+        {/* Elegant Shadow beneath vehicle */}
+        <div className="absolute bottom-[18%] right-[10%] w-[45vw] h-[12vw] bg-black/20 rounded-[100%] blur-[35px] z-0" />
+        
+        {/* Vehicle Image - Increased Clarity */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 1.01 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 2.2, ease: "easeOut" }}
+          className="relative w-full h-[110%] -right-[2%] lg:-right-[3%] flex items-center"
         >
-          {/* Badge */}
-          <motion.div
-            className="flex items-center gap-3 mb-8"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            <span className="w-12 h-px bg-accent" />
-            <span className="text-overline tracking-[0.2em] text-primary">Unrivaled Automotive Excellence</span>
-          </motion.div>
+          <LuxuryImage
+            src="https://images.unsplash.com/photo-1632245889029-e406faaa34cd?q=80&w=2070&auto=format&fit=crop" 
+            alt="Rolls-Royce"
+            className="w-full h-full object-cover object-center scale-[1.02] brightness-[1.05] contrast-[1.12]"
+            priority={true}
+          />
+        </motion.div>
+        
+        {/* Cinematic Blend & Overlays - Removed hard lines & center divider */}
+        <div className="absolute top-[35%] right-[25%] w-[200px] h-[200px] bg-[#ffffff] rounded-full blur-[80px] mix-blend-overlay opacity-50" />
+        
+        {/* Seamless gradient transition - completely invisible boundary */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#ffffff] via-[#ffffff]/90 to-transparent w-[100%] lg:w-[50%] left-0 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#ffffff] to-transparent w-[30%] left-0 z-10" />
+        
+        {/* Soft reflection without hard lines */}
+        <div className="absolute top-0 right-[15%] w-[150px] h-full bg-white/5 backdrop-blur-[1px] transform rotate-[15deg] opacity-30 z-20 pointer-events-none mix-blend-overlay" />
+      </div>
 
-          {/* Headline */}
-          <h1 className="text-[clamp(72px,7vw,92px)] leading-[0.9] font-bold text-primary tracking-[-0.04em] mb-6 uppercase">
-            Drive <br />
-            <span className="text-secondary italic font-light lowercase">the</span> <br />
-            Exceptional
+      <div className="container-luxe relative z-20 grid lg:grid-cols-12 gap-8 items-center h-full">
+        
+        {/* LEFT CONTENT AREA */}
+        <motion.div
+          className="col-span-12 lg:col-span-7 xl:col-span-6 flex flex-col justify-center relative z-20 pt-16 lg:pt-0 lg:pr-12"
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Eyebrow - Fixed spacing and alignment */}
+          <div className="flex items-center gap-4 mb-5 opacity-95">
+             <div className="w-10 h-[1px] bg-gradient-to-r from-[#D4AF37] to-transparent"></div>
+             <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#C9A227] antialiased">
+                Exclusive Automotive Collection
+             </span>
+          </div>
+
+          {/* Headline - Refined typography */}
+          <h1 className="text-[clamp(55px,6vw,85px)] leading-[1.1] font-bold text-[#0A0A0A] tracking-[-0.01em] mb-9 uppercase flex flex-col antialiased drop-shadow-[0_10px_30px_rgba(255,255,255,0.9)]">
+            <span className="relative z-10">DRIVE</span>
+            <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#E5C76B] to-[#C9A227] italic font-normal lowercase text-[clamp(50px,5.5vw,75px)] my-1 translate-x-5 font-serif drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)] tracking-normal">the</span>
+            <span className="relative z-10">EXCEPTIONAL</span>
           </h1>
 
-          <p className="text-body text-secondary leading-relaxed mb-8 max-w-[480px]">
-            Curated collection of the world's most prestigious vehicles.
-            Experience unparalleled luxury, performance, and white-glove service.
+          {/* Subheadline - Luxury brochure quality */}
+          <p className="text-[16px] text-[#6B6B6B] leading-[2.2] mb-12 max-w-[500px] font-normal tracking-[0.02em] antialiased">
+            Curated access to the world's most prestigious automotive experiences, reserved for discerning members.
           </p>
 
-          {/* CTAs */}
-          <div className="flex flex-wrap items-center gap-4 mb-10">
+          {/* CTA SECTION */}
+          <div className="flex flex-wrap items-center gap-10 mb-8">
+            {/* Primary Button */}
             <Link
               to="/vehicles"
-              className="btn bg-primary text-white hover:bg-[#222] px-8 py-4 rounded-full flex items-center gap-3 group transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+              className="group relative px-10 py-[18px] bg-[#050505] text-white rounded-[2px] overflow-hidden transition-all duration-700 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.6)] hover:-translate-y-[2px] flex items-center gap-6 border border-[#050505] hover:border-[#D4AF37]/50"
             >
-              <span className="font-semibold tracking-wide uppercase text-sm">Browse Collection</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#111] via-[#1a1a1a] to-[#050505] opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out" />
+              <span className="relative z-10 font-bold tracking-[0.25em] uppercase text-[11px] group-hover:text-[#E5C76B] transition-colors duration-700 antialiased">Browse Collection</span>
+              <ArrowRight className="relative z-10 w-4 h-4 text-white/80 group-hover:text-[#E5C76B] group-hover:translate-x-2 transition-all duration-700" />
             </Link>
-            <button className="flex items-center gap-4 text-primary font-medium hover:text-accent transition-colors group">
-              <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:border-accent transition-colors">
-                <Play className="w-4 h-4 translate-x-0.5" />
+
+            {/* Secondary Button */}
+            <button className="flex items-center gap-6 text-[#050505] font-semibold hover:text-[#C9A227] transition-all duration-700 group hover:-translate-y-[2px]">
+              <div className="w-[52px] h-[52px] rounded-full border border-white/40 flex items-center justify-center group-hover:border-[#C9A227]/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] transition-all duration-700 relative bg-white/40 backdrop-blur-xl">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#D4AF37]/0 to-[#D4AF37]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                <Play className="w-3.5 h-3.5 translate-x-0.5 relative z-10 fill-[#050505]/80 group-hover:fill-[#C9A227] opacity-90 group-hover:opacity-100 transition-all duration-700" />
               </div>
-              <span className="text-sm tracking-wide uppercase">Watch Experience</span>
+              <span className="text-[11px] tracking-[0.25em] uppercase relative z-10 font-bold text-[#050505]/80 group-hover:text-[#C9A227] transition-colors duration-700 antialiased">Watch Experience</span>
             </button>
           </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 border-t border-border mt-[40px] pt-6">
-            <div>
-              <p className="text-2xl font-bold text-primary mb-1">12k+</p>
-              <p className="text-caption text-secondary uppercase tracking-widest">Members</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-primary mb-1">500+</p>
-              <p className="text-caption text-secondary uppercase tracking-widest">Vehicles</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-primary mb-1">45</p>
-              <p className="text-caption text-secondary uppercase tracking-widest">Cities</p>
-            </div>
-          </div>
         </motion.div>
-
-        {/* Right: Vehicle Image (16:10 Ratio) & Floating Cards */}
-        <motion.div
-          className="relative w-full h-full flex items-center justify-center lg:justify-end"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {/* Image Container 16:10 */}
-          <div
-            className="relative w-[90%] max-w-[620px] aspect-[16/10] rounded-[40px] overflow-hidden z-10 mx-auto lg:mr-0"
-            style={{ boxShadow: '0 40px 120px rgba(0,0,0,0.12)' }}
-          >
-            <LuxuryImage
-              src="https://images.unsplash.com/photo-1631262562208-8e6f1f51cb32?q=80&w=2070&auto=format&fit=crop"
-              alt="Rolls Royce Spectre"
-              className="w-full h-full object-cover object-center"
-              priority={true}
-            />
-            {/* Premium Reflection Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/10 mix-blend-overlay pointer-events-none" />
-          </div>
-
-          {/* Floating Card: Top Left */}
-          <motion.div
-            className="absolute top-[5%] -left-4 lg:-left-12 bg-white/90 backdrop-blur-xl p-4 scale-[0.85] rounded-[24px] shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-white/40 z-20 flex flex-col gap-1 origin-top-left"
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="flex text-accent mb-1">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
-            </div>
-            <p className="text-body-sm font-bold text-primary">4.9/5 Rating</p>
-            <p className="text-[10px] text-secondary uppercase tracking-wider">12,000+ Members</p>
-          </motion.div>
-
-          {/* Floating Card: Top Right */}
-          <motion.div
-            className="absolute top-[15%] -right-2 lg:-right-8 bg-white/90 backdrop-blur-xl p-4 scale-[0.85] rounded-[24px] shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-white/40 z-20 flex items-center gap-4 origin-top-right"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-          >
-            <div className="w-10 h-10 bg-surface rounded-full flex items-center justify-center text-primary">
-              <CalendarCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-body-sm font-bold text-primary">Available Today</p>
-              <p className="text-[10px] text-secondary uppercase tracking-wider">500+ Vehicles</p>
-            </div>
-          </motion.div>
-
-          {/* Floating Card: Bottom Left */}
-          <motion.div
-            className="absolute -bottom-6 left-[10%] bg-white/90 backdrop-blur-xl p-4 scale-[0.85] rounded-[24px] shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-white/40 z-20 flex items-center gap-4 origin-bottom-left"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          >
-            <div className="w-10 h-10 bg-surface rounded-full flex items-center justify-center text-primary">
-              <MapPin className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-body-sm font-bold text-primary">Global Delivery</p>
-              <p className="text-[10px] text-secondary uppercase tracking-wider">45 Cities</p>
-            </div>
-          </motion.div>
-
-          {/* Floating Card: Bottom Right */}
-          <motion.div
-            className="absolute bottom-[5%] -right-4 lg:-right-4 bg-white/90 backdrop-blur-xl p-4 scale-[0.85] rounded-[24px] shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-white/40 z-20 flex items-center gap-4 origin-bottom-right"
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-          >
-            <div className="w-10 h-10 bg-surface rounded-full flex items-center justify-center text-primary">
-              <Crown className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-body-sm font-bold text-primary">White Glove</p>
-              <p className="text-[10px] text-secondary uppercase tracking-wider">24/7 Concierge</p>
-            </div>
-          </motion.div>
-
-        </motion.div>
-
       </div>
     </section>
   );

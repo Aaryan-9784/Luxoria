@@ -87,8 +87,14 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
+        
+        // Only show toast if user was actually logged in previously
+        const state = store.getState();
+        if (state.auth.user) {
+          toast.error('Session expired. Please log in again.');
+        }
+        
         store.dispatch(logout());
-        toast.error('Session expired. Please log in again.');
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

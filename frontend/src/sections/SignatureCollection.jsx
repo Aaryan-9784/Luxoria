@@ -39,7 +39,7 @@ const COLLECTION = [
     price: '$2,200',
     specs: '819 HP • 330 km/h • 2.9 sec',
     badge: 'Limited Edition',
-    image: 'https://images.unsplash.com/photo-1592198084033-aade902d1aae?q=80&w=2070&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=2070&auto=format&fit=crop'
   },
   {
     id: '5',
