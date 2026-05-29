@@ -2,9 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const BRANDS = [
-  'BMW', 'Mercedes-Benz', 'Audi', 'Porsche', 
-  'Bentley', 'Rolls Royce', 'Ferrari', 'Lamborghini', 
-  'McLaren', 'Maserati', 'Aston Martin', 'Bugatti'
+  'Rolls Royce', 'Bugatti', 'Porsche', 
+  'McLaren', 'Ferrari', 'Lamborghini'
 ];
 
 export default function BrandShowcase() {

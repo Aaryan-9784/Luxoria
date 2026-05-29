@@ -17,8 +17,8 @@ export default function LuxuryStorytelling() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
             <LuxuryImage
-              src="https://images.unsplash.com/photo-1616422285623-14ff0160d5b4?q=80&w=2070&auto=format&fit=crop"
-              alt="Bentley Flying Spur at Luxury Estate"
+              src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070&auto=format&fit=crop"
+              alt="Red Ferrari"
               className="w-full h-full object-cover object-center"
             />
             <div className="absolute inset-0 bg-black/10 mix-blend-overlay" />

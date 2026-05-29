@@ -31,7 +31,7 @@ export default function Footer() {
           {/* Column 2: Collection */}
           <div className="flex flex-col gap-5">
             <h4 className="text-overline text-primary tracking-widest mb-2">Collection</h4>
-            {['Rolls Royce', 'Bentley', 'Porsche', 'Aston Martin', 'Ferrari'].map((item) => (
+            {['Rolls Royce', 'Bugatti', 'Porsche', 'McLaren', 'Ferrari', 'Lamborghini'].map((item) => (
               <Link key={item} to={`/vehicles?brand=${item.toLowerCase()}`} className="text-body-sm text-secondary hover:text-accent transition-colors w-fit">
                 {item}
               </Link>

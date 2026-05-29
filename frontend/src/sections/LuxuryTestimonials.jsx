@@ -7,21 +7,21 @@ const TESTIMONIALS = [
   {
     id: 1,
     name: 'Alexander Pierce',
-    vehicle: 'Rolls-Royce Phantom',
+    vehicle: 'Rolls Royce Ghost',
     image: 'https://i.pravatar.cc/150?img=11',
     quote: 'The level of service provided was absolutely impeccable. The vehicle arrived in pristine condition, and the concierge was remarkably attentive to every detail of our itinerary.'
   },
   {
     id: 2,
     name: 'Eleanor Sterling',
-    vehicle: 'Bentley Continental GT',
+    vehicle: 'Bugatti Chiron',
     image: 'https://i.pravatar.cc/150?img=5',
     quote: 'An unforgettable experience. The seamless booking process and the sheer elegance of the vehicle made our anniversary weekend truly exceptional. Highly recommended.'
   },
   {
     id: 3,
     name: 'Julian Vance',
-    vehicle: 'Porsche 911 GT3',
+    vehicle: 'Porsche 911 Turbo S',
     image: 'https://i.pravatar.cc/150?img=12',
     quote: 'Luxoria understands true luxury. From the moment the keys were handed over, it was clear that their commitment to excellence is not just a promise, but a standard.'
   }
