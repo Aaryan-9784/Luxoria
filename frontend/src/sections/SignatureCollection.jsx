@@ -34,6 +34,15 @@ const COLLECTION = [
   },
   {
     id: '4',
+    name: 'McLaren 720S',
+    brand: 'McLaren',
+    price: '$1,900',
+    specs: '710 HP • 341 km/h • 2.8 sec',
+    badge: 'Track Focused',
+    image: 'https://images.unsplash.com/photo-1621135802920-133df287f89c?q=80&w=2070&auto=format&fit=crop'
+  },
+  {
+    id: '5',
     name: 'Ferrari 296 GTB',
     brand: 'Ferrari',
     price: '$2,200',
@@ -42,22 +51,13 @@ const COLLECTION = [
     image: 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=2070&auto=format&fit=crop'
   },
   {
-    id: '5',
+    id: '6',
     name: 'Lamborghini Huracan EVO',
     brand: 'Lamborghini',
     price: '$2,800',
     specs: '630 HP • 325 km/h • 2.9 sec',
     badge: 'Exotic Pick',
     image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2070&auto=format&fit=crop'
-  },
-  {
-    id: '6',
-    name: 'McLaren 720S',
-    brand: 'McLaren',
-    price: '$1,900',
-    specs: '710 HP • 341 km/h • 2.8 sec',
-    badge: 'Track Focused',
-    image: 'https://images.unsplash.com/photo-1621135802920-133df287f89c?q=80&w=2070&auto=format&fit=crop'
   }
 ];
 
