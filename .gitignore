@@ -128,4 +128,19 @@ dist
 
 # Project specific
 frontend/dist/
+frontend/build/
 backend/uploads/
+
+# Vite specific
+*.local
+.vite/
+
+# Monorepo specific (just in case)
+*/node_modules/
+*/.env
+*/.env.*
+!*/.env.example
+
+# Windows
+Thumbs.db
+Desktop.ini
