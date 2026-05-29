@@ -12,16 +12,16 @@ const COLLECTION = [
     price: '$2,500',
     specs: '563 HP • 250 km/h • 4.8 sec',
     badge: 'New Arrival',
-    image: 'https://images.unsplash.com/photo-1631521754026-6b225793e2b2?q=80&w=2070&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?q=80&w=2070&auto=format&fit=crop'
   },
   {
     id: '2',
-    name: 'Bentley Flying Spur',
-    brand: 'Bentley',
-    price: '$1,800',
-    specs: '542 HP • 318 km/h • 4.1 sec',
+    name: 'Bugatti Chiron',
+    brand: 'Bugatti',
+    price: '$15,000',
+    specs: '1500 HP • 420 km/h • 2.4 sec',
     badge: 'Most Popular',
-    image: 'https://images.unsplash.com/photo-1616422285623-14ff0160d5b4?q=80&w=2070&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1600712242805-5f78671b24da?q=80&w=2070&auto=format&fit=crop'
   },
   {
     id: '3',
@@ -57,7 +57,7 @@ const COLLECTION = [
     price: '$1,900',
     specs: '710 HP • 341 km/h • 2.8 sec',
     badge: 'Track Focused',
-    image: 'https://images.unsplash.com/photo-1620882814836-98eb822de3ab?q=80&w=2070&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1621135802920-133df287f89c?q=80&w=2070&auto=format&fit=crop'
   }
 ];
 
