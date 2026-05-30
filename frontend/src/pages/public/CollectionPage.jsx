@@ -1,18 +1,92 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { pageTransition } from '@/lib/motion';
 
+import CollectionHero from './components/collection/CollectionHero';
+import CollectionFilter from './components/collection/CollectionFilter';
+import VehicleGrid from './components/collection/VehicleGrid';
+import FeaturedVehicle from './components/collection/FeaturedVehicle';
+import MembershipCTA from './components/collection/MembershipCTA';
+import { vehicles as allVehicles } from './components/collection/data';
+
 export default function CollectionPage() {
+  const [activeCategory, setActiveCategory] = useState('All Vehicles');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('Most Popular');
+
+  const filteredAndSortedVehicles = useMemo(() => {
+    let result = [...allVehicles];
+
+    // Filter by Category
+    if (activeCategory !== 'All Vehicles') {
+      result = result.filter(v => v.category === activeCategory);
+    }
+
+    // Filter by Search Query
+    if (searchQuery.trim()) {
+      let lowerQuery = searchQuery.toLowerCase();
+      // Handle common typos or variations for luxury
+      if (lowerQuery.includes('laxurious') || lowerQuery.includes('luxurious')) {
+        lowerQuery = lowerQuery.replace(/laxurious|luxurious/g, 'luxury');
+      }
+
+      result = result.filter(v => 
+        v.name.toLowerCase().includes(lowerQuery) || 
+        v.category.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    // Sort
+    switch (sortBy) {
+      case 'Price High-Low':
+        result.sort((a, b) => {
+          const priceA = parseInt(a.startingPrice.replace(/[^0-9]/g, ''));
+          const priceB = parseInt(b.startingPrice.replace(/[^0-9]/g, ''));
+          return priceB - priceA;
+        });
+        break;
+      case 'Price Low-High':
+        result.sort((a, b) => {
+          const priceA = parseInt(a.startingPrice.replace(/[^0-9]/g, ''));
+          const priceB = parseInt(b.startingPrice.replace(/[^0-9]/g, ''));
+          return priceA - priceB;
+        });
+        break;
+      case 'Name A-Z':
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'Name Z-A':
+        result.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'Newest':
+        // Mock random order for newest
+        break;
+      default:
+        // Most Popular (default)
+        break;
+    }
+
+    return result;
+  }, [activeCategory, searchQuery, sortBy]);
+
   return (
-    <motion.div {...pageTransition} className="pt-28 pb-16 min-h-screen bg-background flex items-center justify-center">
-      <div className="container-luxe text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">Our Collection</h1>
-        <p className="text-secondary text-lg max-w-2xl mx-auto">
-          Explore our curated selection of the world's most prestigious vehicles. From high-performance supercars to elegant luxury sedans.
-          <br /><br />
-          <span className="text-muted text-sm">(Collection Page Content Coming Soon)</span>
-        </p>
-      </div>
+    <motion.div {...pageTransition} className="min-h-screen bg-background">
+      <CollectionHero />
+      
+      <CollectionFilter 
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+      />
+      
+      <VehicleGrid vehicles={filteredAndSortedVehicles} />
+      
+      <FeaturedVehicle />
+      
+      <MembershipCTA />
     </motion.div>
   );
 }
