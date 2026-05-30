@@ -3,11 +3,9 @@ import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Car, Mail, ArrowLeft, Send } from 'lucide-react';
-import { pageTransition } from '@/lib/motion';
+import { pageTransition, EASE_LUXE } from '@/lib/motion';
 import { useDispatch } from 'react-redux';
 import { forgotPassword } from '@/redux/slices/authSlice';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
 
 export default function ForgotPasswordPage() {
@@ -30,56 +28,166 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <motion.div {...pageTransition} className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-accent rounded-full blur-[200px] opacity-[0.05]" />
+    <motion.div {...pageTransition} className="auth-page">
 
-      <Link to="/" className="flex items-center gap-2 mb-10 group relative z-10">
-        <Car className="w-6 h-6 text-primary group-hover:text-accent transition-colors" />
-        <span className="text-xl font-bold tracking-[0.2em] uppercase text-primary">Luxoria</span>
-      </Link>
+      {/* ════════════════════════════════════════════════════════════════════
+          LEFT PANEL — Cinematic Luxury Showcase
+          ════════════════════════════════════════════════════════════════════ */}
+      <div className="auth-left-panel hidden md:flex">
+        {/* Background Image */}
+        <motion.img
+          initial={{ scale: 1.05, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.65 }}
+          transition={{ duration: 2, ease: 'easeOut' }}
+          src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&q=100&w=2400"
+          alt="Luxurious sports car"
+          className="auth-bg-image loaded"
+          loading="eager"
+        />
 
-      <div className="glass-card p-8 md:p-10 w-full max-w-[420px] relative z-10">
-        {!success ? (
-          <>
-            <h1 className="text-h3 text-primary mb-2 text-center">Reset Password</h1>
-            <p className="text-body-sm text-secondary text-center mb-8">
-              Enter your email address and we'll send you a link to reset your password.
+        {/* Overlays */}
+        <div className="auth-overlay-dark" />
+        <div className="auth-overlay-gold" />
+        <div className="auth-overlay-vignette" />
+        <div className="auth-ambient-light" />
+
+        {/* Floating Particles */}
+        <div className="auth-particles">
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+        </div>
+
+        {/* Content */}
+        <div className="auth-left-content">
+          {/* Logo */}
+          <Link to="/" className="auth-logo">
+            <Car className="auth-logo-icon" />
+            <span className="auth-logo-text">Luxoria</span>
+          </Link>
+
+          {/* Headline */}
+          <motion.div
+            className="auth-headline-section"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.9, ease: EASE_LUXE }}
+          >
+            <h1 className="auth-headline" style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4rem)', lineHeight: '1.1', marginBottom: '24px' }}>
+              Recover Your<br />
+              <span className="auth-headline-gold">Access</span>
+            </h1>
+            <p className="auth-subheadline" style={{ fontSize: '1.15rem', maxWidth: '480px', lineHeight: '1.7', color: 'rgba(255, 255, 255, 0.8)' }}>
+              Enter your email to receive secure instructions on resetting your password. Rejoin the world of automotive elegance.
             </p>
+          </motion.div>
+          
+          {/* Empty spacer for flex layout balance */}
+          <div />
+        </div>
+      </div>
 
-            {errorMsg && <Alert type="error" className="mb-6">{errorMsg}</Alert>}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <Input
-                label="Email Address"
-                type="email"
-                icon={Mail}
-                placeholder="name@example.com"
-                error={errors.email?.message}
-                {...register('email', { required: 'Email is required' })}
-              />
+      {/* ════════════════════════════════════════════════════════════════════
+          RIGHT PANEL — Forgot Password Form
+          ════════════════════════════════════════════════════════════════════ */}
+      <div className="auth-right-panel">
+        <motion.div
+          className="auth-card"
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.6, ease: EASE_LUXE }}
+        >
+          {/* Mobile Logo */}
+          <Link to="/" className="auth-mobile-logo">
+            <Car className="auth-logo-icon" />
+            <span className="auth-logo-text">Luxoria</span>
+          </Link>
 
-              <Button type="submit" loading={loading} className="w-full" size="lg" iconRight={Send}>
-                Send Reset Link
-              </Button>
-            </form>
-          </>
-        ) : (
-          <div className="text-center py-4">
-            <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Mail className="w-8 h-8 text-success" />
-            </div>
-            <h2 className="text-h4 text-primary mb-3">Check your email</h2>
-            <p className="text-body-sm text-secondary mb-8">
-              We've sent a password reset link to your email address. Please check your inbox and spam folder.
+          {/* Header */}
+          <div className="auth-card-header">
+            <h2 className="auth-card-title">Reset Password</h2>
+            <p className="auth-card-subtitle">
+              We'll send you a secure link to reset your password.
             </p>
           </div>
-        )}
 
-        <div className="mt-8 text-center border-t border-border pt-6">
-          <Link to="/login" className="inline-flex items-center gap-2 text-body-sm font-semibold text-primary hover:text-accent transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back to Sign In
-          </Link>
-        </div>
+          {/* Error Alert */}
+          {errorMsg && (
+            <Alert type="error" className="mb-6">{errorMsg}</Alert>
+          )}
+
+          {!success ? (
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {/* Email */}
+              <div className="auth-input-group">
+                <div className="auth-input-wrapper">
+                  <input
+                    type="email"
+                    id="reset-email"
+                    placeholder="Email Address"
+                    className={`auth-input ${errors.email ? 'has-error' : ''}`}
+                    {...register('email', {
+                      required: 'Email is required',
+                      pattern: { value: /^\S+@\S+\.\S+$/, message: 'Please enter a valid email' },
+                    })}
+                  />
+                  <label htmlFor="reset-email" className="auth-floating-label">Email Address</label>
+                  <Mail className="auth-input-icon" />
+                </div>
+                {errors.email && (
+                  <div className="auth-input-error">
+                    <span>{errors.email.message}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                className="auth-submit-btn"
+                disabled={loading}
+                style={{ marginTop: '24px' }}
+              >
+                {loading ? (
+                  <span className="spinner" />
+                ) : (
+                  <>
+                    Send Reset Link
+                    <Send className="w-5 h-5" style={{ marginLeft: '8px' }} />
+                  </>
+                )}
+              </button>
+            </form>
+          ) : (
+            <div className="text-center py-4">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: 'rgba(132, 204, 22, 0.1)' }}>
+                <Mail className="w-8 h-8" style={{ color: '#84cc16' }} />
+              </div>
+              <h2 className="auth-card-title" style={{ fontSize: '1.25rem', marginBottom: '12px' }}>Check your email</h2>
+              <p className="auth-card-subtitle" style={{ marginBottom: '32px' }}>
+                We've sent a password reset link to your email address. Please check your inbox and spam folder.
+              </p>
+            </div>
+          )}
+
+          {/* Switch to Login */}
+          <div className="auth-divider" style={{ marginTop: '32px', marginBottom: '24px' }}>
+            <div className="auth-divider-line" />
+          </div>
+          
+          <p className="auth-switch">
+            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <ArrowLeft className="w-4 h-4" />
+              Back to Sign In
+            </Link>
+          </p>
+        </motion.div>
       </div>
     </motion.div>
   );
