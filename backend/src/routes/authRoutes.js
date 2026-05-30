@@ -17,7 +17,7 @@ router.post('/login', authLimiter, validate(loginSchema), login);
 router.get('/google', googleAuth);
 router.get('/google/callback', googleAuthCallback);
 router.post('/refresh', refreshAccessToken);
-router.post('/logout', protect, logout);
+router.post('/logout', logout);
 router.post('/forgot-password', authLimiter, validate(forgotPasswordSchema), forgotPassword);
 router.put('/reset-password/:token', validate(resetPasswordSchema), resetPassword);
 router.get('/me', protect, getMe);

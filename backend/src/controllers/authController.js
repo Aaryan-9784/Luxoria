@@ -193,7 +193,7 @@ export const logout = asyncHandler(async (req, res) => {
   const { refreshToken } = req.cookies;
 
   if (refreshToken) {
-    const user = await User.findById(req.user._id);
+    const user = await User.findOne({ 'refreshTokens.token': refreshToken });
     if (user) {
       user.refreshTokens = user.refreshTokens.filter(
         (t) => t.token !== refreshToken
