@@ -1,13 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, clearError } from '@/redux/slices/authSlice';
-import { Car, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Car, Mail, Lock, ArrowRight, Eye, EyeOff, ShieldCheck, CheckCircle, Fingerprint, Globe, Crown, Sparkles, Star, Zap, Gift, Clock, Bookmark } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { pageTransition, EASE_LUXE } from '@/lib/motion';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
 
 const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`;
@@ -18,6 +16,8 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const authError = searchParams.get('error') === 'auth_failed' ? 'Google Authentication failed. Please try again.' : null;
 
@@ -36,73 +36,125 @@ export default function LoginPage() {
   };
 
   return (
-    <motion.div {...pageTransition} className="min-h-screen flex bg-background">
-      
-      {/* ── Left Side: Cinematic Visual ── */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden bg-primary">
+    <motion.div {...pageTransition} className="auth-page">
+
+      {/* ════════════════════════════════════════════════════════════════════
+          LEFT PANEL — Cinematic Luxury Showcase
+          ════════════════════════════════════════════════════════════════════ */}
+      <div className="auth-left-panel hidden md:flex">
+        {/* Background Image */}
         <motion.img
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 10, ease: 'linear' }}
-          src="https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&q=80&w=1600"
-          alt="Luxury car interior"
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
+          initial={{ scale: 1.05, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.65 }}
+          transition={{ duration: 2, ease: 'easeOut' }}
+          src="https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&q=100&w=2400"
+          alt="Luxurious sports car"
+          className="auth-bg-image loaded"
+          loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-        
-        <div className="relative z-10 flex flex-col justify-between p-16 h-full">
-          <Link to="/" className="flex items-center gap-3 text-white group w-fit">
-            <Car className="w-8 h-8 text-accent group-hover:scale-110 transition-transform" />
-            <span className="text-2xl font-bold tracking-[0.2em] uppercase">Luxoria</span>
+
+        {/* Overlays */}
+        <div className="auth-overlay-dark" />
+        <div className="auth-overlay-gold" />
+        <div className="auth-overlay-vignette" />
+        <div className="auth-ambient-light" />
+
+        {/* Floating Particles */}
+        <div className="auth-particles">
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+          <div className="auth-particle" />
+        </div>
+
+        {/* Content */}
+        <div className="auth-left-content">
+          {/* Logo */}
+          <Link to="/" className="auth-logo">
+            <Car className="auth-logo-icon" />
+            <span className="auth-logo-text">Luxoria</span>
           </Link>
 
-          <div className="max-w-xl">
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8, ease: EASE_LUXE }}
-              className="text-display text-white leading-[1.1] mb-6"
-            >
-              Enter the <br />
-              <span className="text-gradient-gold">Extraordinary</span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8, ease: EASE_LUXE }}
-              className="text-lg text-white/70 font-light"
-            >
-              Sign in to access your bookings, manage your wishlist, and unlock exclusive luxury vehicle experiences.
-            </motion.p>
-          </div>
+          {/* Headline */}
+          <motion.div
+            className="auth-headline-section"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.9, ease: EASE_LUXE }}
+          >
+            <h1 className="auth-headline" style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4rem)', lineHeight: '1.1', marginBottom: '24px' }}>
+              The Epitome of<br />
+              <span className="auth-headline-gold">Automotive Elegance</span>
+            </h1>
+            <p className="auth-subheadline" style={{ fontSize: '1.15rem', maxWidth: '480px', lineHeight: '1.7', color: 'rgba(255, 255, 255, 0.8)' }}>
+              Your exclusive gateway to the world's most distinguished fleet. Sign in to curate your luxury experience, command bespoke reservations, and embrace the extraordinary.
+            </p>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            className="auth-stats-row"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.8, ease: EASE_LUXE }}
+          >
+            {[
+              { value: '10,000+', label: 'Premium Members' },
+              { value: '500+', label: 'Luxury Vehicles' },
+              { value: '50+', label: 'Global Locations' },
+              { value: '24/7', label: 'Concierge Support' },
+            ].map((stat) => (
+              <div key={stat.label} className="auth-stat-card">
+                <div className="auth-stat-value">{stat.value}</div>
+                <div className="auth-stat-label">{stat.label}</div>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </div>
 
-      {/* ── Right Side: Form ── */}
-      <div className="flex-1 flex items-center justify-center p-8 relative">
-        {/* Subtle mobile background blur */}
-        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent rounded-full blur-[150px] opacity-[0.03] lg:hidden" />
 
-        <div className="w-full max-w-[420px] z-10">
-          <Link to="/" className="flex lg:hidden items-center justify-center gap-2 mb-12">
-            <Car className="w-7 h-7 text-accent" />
-            <span className="text-xl font-bold tracking-[0.2em] uppercase text-primary">Luxoria</span>
+      {/* ════════════════════════════════════════════════════════════════════
+          RIGHT PANEL — Authentication Form
+          ════════════════════════════════════════════════════════════════════ */}
+      <div className="auth-right-panel">
+        <motion.div
+          className="auth-card"
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.6, ease: EASE_LUXE }}
+        >
+          {/* Mobile Logo */}
+          <Link to="/" className="auth-mobile-logo">
+            <Car className="auth-logo-icon" />
+            <span className="auth-logo-text">Luxoria</span>
           </Link>
 
-          <div className="text-center lg:text-left mb-8">
-            <h2 className="text-h3 text-primary mb-2">Welcome Back</h2>
-            <p className="text-body-sm text-secondary">Sign in to continue your journey.</p>
+          {/* Header */}
+          <div className="auth-card-header">
+            <h2 className="auth-card-title">Welcome Back</h2>
+            <p className="auth-card-subtitle">
+              Sign in to continue your luxury journey
+            </p>
           </div>
 
-          {(error || authError) && <Alert type="error" className="mb-6">{error || authError}</Alert>}
+          {/* Error Alert */}
+          {(error || authError) && (
+            <Alert type="error" className="mb-6">{error || authError}</Alert>
+          )}
 
-          {/* Google OAuth Button */}
+          {/* Google OAuth */}
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3.5 bg-surface border border-border rounded-xl hover:bg-surface/60 hover:border-accent/40 transition-all shadow-sm font-medium text-primary mb-6 group"
+            className="auth-google-btn"
+            id="login-google-btn"
           >
-            <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -111,53 +163,108 @@ export default function LoginPage() {
             Continue with Google
           </button>
 
-          <div className="flex items-center gap-4 mb-6">
-            <div className="h-px bg-border flex-1" />
-            <span className="text-caption text-muted">OR CONTINUE WITH EMAIL</span>
-            <div className="h-px bg-border flex-1" />
+          {/* Divider */}
+          <div className="auth-divider">
+            <div className="auth-divider-line" />
+            <span className="auth-divider-text">Or continue with email</span>
+            <div className="auth-divider-line" />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <Input
-              label="Email Address"
-              type="email"
-              icon={Mail}
-              placeholder="name@example.com"
-              error={errors.email?.message}
-              {...register('email', {
-                required: 'Email is required',
-                pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email' },
-              })}
-            />
-
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="label mb-0">Password</span>
-                <Link to="/forgot-password" className="text-caption font-medium text-accent hover:text-primary transition-colors">
-                  Forgot password?
-                </Link>
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Email */}
+            <div className="auth-input-group">
+              <div className="auth-input-wrapper">
+                <input
+                  type="email"
+                  id="login-email"
+                  placeholder="Email Address"
+                  className={`auth-input ${errors.email ? 'has-error' : ''}`}
+                  {...register('email', {
+                    required: 'Email is required',
+                    pattern: { value: /^\S+@\S+\.\S+$/, message: 'Please enter a valid email' },
+                  })}
+                />
+                <label htmlFor="login-email" className="auth-floating-label">Email Address</label>
+                <Mail className="auth-input-icon" />
               </div>
-              <Input
-                type="password"
-                icon={Lock}
-                placeholder="••••••••"
-                error={errors.password?.message}
-                {...register('password', { required: 'Password is required' })}
-              />
+              {errors.email && (
+                <div className="auth-input-error">
+                  <span>{errors.email.message}</span>
+                </div>
+              )}
             </div>
 
-            <Button type="submit" loading={loading} className="w-full" size="lg" iconRight={ArrowRight}>
-              Sign In
-            </Button>
+            {/* Password */}
+            <div className="auth-input-group">
+              <div className="auth-input-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="login-password"
+                  placeholder="Password"
+                  className={`auth-input ${errors.password ? 'has-error' : ''}`}
+                  style={{ paddingRight: '56px' }}
+                  {...register('password', { required: 'Password is required' })}
+                />
+                <label htmlFor="login-password" className="auth-floating-label">Password</label>
+                <Lock className="auth-input-icon" />
+                <button
+                  type="button"
+                  className="auth-password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
+                </button>
+              </div>
+              {errors.password && (
+                <div className="auth-input-error">
+                  <span>{errors.password.message}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Remember Me & Forgot Password */}
+            <div className="auth-options-row">
+              <label className="auth-remember">
+                <input
+                  type="checkbox"
+                  className="auth-checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  id="remember-me"
+                />
+                <span className="auth-remember-text">Remember me</span>
+              </label>
+              <Link to="/forgot-password" className="auth-forgot-link">
+                Forgot password?
+              </Link>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="auth-submit-btn"
+              disabled={loading}
+              id="login-submit-btn"
+            >
+              {loading ? (
+                <span className="spinner" />
+              ) : (
+                <>
+                  Sign In
+                  <ArrowRight className="w-5 h-5 btn-arrow" />
+                </>
+              )}
+            </button>
           </form>
 
-          <p className="text-center text-body-sm text-secondary mt-8">
+          {/* Switch to Register */}
+          <p className="auth-switch">
             Don't have an account?{' '}
-            <Link to="/register" className="font-semibold text-primary hover:text-accent transition-colors">
-              Create one
-            </Link>
+            <Link to="/register">Create one</Link>
           </p>
-        </div>
+        </motion.div>
       </div>
     </motion.div>
   );
