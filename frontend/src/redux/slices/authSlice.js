@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 import api from '../../services/api';
 
 const initialState = {
@@ -71,8 +72,8 @@ export const authSlice = createSlice({
       state.user = null;
       state.accessToken = null;
       state.isAuthenticated = false;
-      // Also notify backend
-      api.post('/auth/logout').catch(() => {});
+      // Use raw axios to prevent interceptor from triggering a refresh token flow if access token is already expired during logout
+      axios.post('/api/auth/logout', {}, { withCredentials: true }).catch(() => {});
     },
     setLoading: (state, action) => {
       state.loading = action.payload;

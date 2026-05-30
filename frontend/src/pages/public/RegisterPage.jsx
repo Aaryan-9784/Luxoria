@@ -262,7 +262,10 @@ export default function RegisterPage() {
                   style={{ paddingRight: '48px' }}
                   {...register('password', {
                     required: 'Password is required',
-                    minLength: { value: 8, message: 'Min 8 characters' },
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message: 'Must contain uppercase, lowercase, number and special char',
+                    },
                   })}
                 />
                 <label htmlFor="register-password" className="auth-floating-label">Password</label>

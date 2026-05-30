@@ -124,8 +124,8 @@ export const googleAuthCallback = asyncHandler(async (req, res, next) => {
 
       setRefreshTokenCookie(res, refreshToken);
 
-      // Redirect to frontend with access token
-      res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${accessToken}`);
+      // Redirect to frontend without token (relies on refresh token cookie)
+      res.redirect(`${process.env.CLIENT_URL}/auth/callback`);
     } catch (error) {
       next(error);
     }

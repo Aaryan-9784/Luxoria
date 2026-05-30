@@ -117,7 +117,7 @@ export default function VendorSignupPage() {
                 >
                   <h3 className="text-h4 text-primary mb-4">Business Details</h3>
                   <Input label="Business Name" icon={Building2} placeholder="Luxury Motors LLC" error={errors.businessName?.message} {...register('businessName', { required: 'Business Name is required' })} />
-                  <Input label="Secure Password" type="password" icon={Lock} placeholder="••••••••" error={errors.password?.message} {...register('password', { required: 'Password is required', minLength: { value: 8, message: 'Minimum 8 characters' } })} />
+                  <Input label="Secure Password" type="password" icon={Lock} placeholder="••••••••" error={errors.password?.message} {...register('password', { required: 'Password is required', pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, message: 'Must contain uppercase, lowercase, number and special char' } })} />
                   
                   <div className="flex gap-3 mt-6">
                     <Button type="button" onClick={prevStep} variant="outline" className="flex-1">Back</Button>

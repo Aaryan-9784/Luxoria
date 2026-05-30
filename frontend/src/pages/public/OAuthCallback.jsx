@@ -13,7 +13,6 @@ export default function OAuthCallback() {
 
   useEffect(() => {
     const handleAuth = async () => {
-      const token = searchParams.get('token');
       const error = searchParams.get('error');
 
       if (error) {
@@ -21,26 +20,19 @@ export default function OAuthCallback() {
         return;
       }
 
-      if (token) {
-        // Temporarily set the token in api instance to fetch profile
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      // We no longer rely on a token in the URL.
+      // The backend has set an HTTP-only refresh token cookie.
+      // fetchProfile will trigger a 401, which will be caught by the api interceptor.
+      // The interceptor will then call /auth/refresh, get a new access token,
+      // store it in Redux, and retry the profile fetch seamlessly.
+      try {
+        const result = await dispatch(fetchProfile()).unwrap();
         
-        try {
-          const result = await dispatch(fetchProfile()).unwrap();
-          
-          dispatch(setCredentials({
-            user: result.user,
-            accessToken: token
-          }));
-
-          // Redirect based on role
-          const role = result.user.role;
-          navigate(role === 'admin' ? '/admin/dashboard' : role === 'vendor' ? '/vendor/dashboard' : '/dashboard');
-        } catch (err) {
-          navigate('/login?error=fetch_failed');
-        }
-      } else {
-        navigate('/login');
+        // Redirect based on role
+        const role = result.user.role;
+        navigate(role === 'admin' ? '/admin/dashboard' : role === 'vendor' ? '/vendor/dashboard' : '/dashboard');
+      } catch (err) {
+        navigate('/login?error=auth_failed');
       }
     };
 

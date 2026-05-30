@@ -57,7 +57,10 @@ export default function ResetPasswordPage() {
                 error={errors.password?.message}
                 {...register('password', { 
                   required: 'Password is required',
-                  minLength: { value: 8, message: 'Minimum 8 characters' }
+                  pattern: {
+                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message: 'Must contain uppercase, lowercase, number and special char',
+                  }
                 })}
               />
 
