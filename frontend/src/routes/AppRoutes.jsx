@@ -23,12 +23,17 @@ import VehicleListPage from '@/pages/vehicles/VehicleListPage';
 import VehicleDetailsPage from '@/pages/vehicles/VehicleDetailsPage';
 import BookingSuccessPage from '@/pages/vehicles/BookingSuccessPage';
 import OAuthCallback from '@/pages/public/OAuthCallback';
+import ExperiencePage from '@/pages/public/ExperiencePage';
+import AboutPage from '@/pages/public/AboutPage';
+import ContactPage from '@/pages/public/ContactPage';
+import CollectionPage from '@/pages/public/CollectionPage';
 
 import DashboardOverview from '@/pages/user/DashboardOverview';
 import MyBookings from '@/pages/user/MyBookings';
 import WishlistPage from '@/pages/user/WishlistPage';
 import PaymentsDashboard from '@/pages/user/PaymentsDashboard';
 import UserProfile from '@/pages/user/UserProfile';
+import NotificationsPage from '@/pages/user/NotificationsPage';
 
 import VendorDashboardLayout from '@/layouts/VendorDashboardLayout';
 import VendorOverview from '@/pages/vendor/VendorOverview';
@@ -60,10 +65,12 @@ export default function AppRoutes() {
       {/* Public Routes with Navbar/Footer */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/collection" element={<CollectionPage />} />
         <Route path="/vehicles" element={<VehicleListPage />} />
         <Route path="/vehicles/:id" element={<VehicleDetailsPage />} />
-        <Route path="/about" element={<div className="pt-28 container-luxe section-spacing">About Page</div>} />
-        <Route path="/contact" element={<div className="pt-28 container-luxe section-spacing">Contact Page</div>} />
+        <Route path="/experience" element={<ExperiencePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         
         {/* Vendor Onboarding */}
         <Route path="/vendor/signup" element={<VendorSignupPage />} />
@@ -89,6 +96,7 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<DashboardOverview />} />
           <Route path="/bookings" element={<MyBookings />} />
           <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/payments" element={<PaymentsDashboard />} />
           <Route path="/profile" element={<UserProfile />} />
         </Route>

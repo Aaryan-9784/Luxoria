@@ -13,7 +13,7 @@ import Dropdown, { DropdownItem, DropdownDivider } from '@/components/ui/Dropdow
 
 const NAV_LINKS = [
   { name: 'Home', path: '/' },
-  { name: 'Collection', path: '/vehicles' },
+  { name: 'Collection', path: '/collection' },
   { name: 'Experience', path: '/experience' },
   { name: 'About', path: '/about' },
   { name: 'Contact', path: '/contact' },
@@ -97,11 +97,114 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-6">
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
-                {/* Notification Bell */}
-                <button className="btn-icon relative text-secondary hover:text-primary hover:bg-surface/50">
-                  <Bell className="w-5 h-5" />
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full" />
-                </button>
+                {/* Wishlist Dropdown */}
+                <Dropdown
+                  align="right"
+                  className="w-[320px] p-0"
+                  trigger={
+                    <button className="btn-icon relative text-secondary hover:text-error transition-colors hover:bg-surface/50 group">
+                      <Heart className="w-5 h-5 group-hover:fill-error/20" />
+                      <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-white shadow-sm" />
+                    </button>
+                  }
+                >
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-border" onClick={(e) => e.stopPropagation()}>
+                    <h3 className="font-semibold text-primary">My Wishlist</h3>
+                    <span className="text-caption bg-surface px-2 py-0.5 rounded-full font-medium text-secondary">2 Items</span>
+                  </div>
+                  <div className="max-h-[340px] overflow-y-auto">
+                    {/* Wishlist Item 1 */}
+                    <div className="px-4 py-3 hover:bg-surface/50 cursor-pointer border-b border-border/50 transition-colors flex items-center gap-4">
+                      <div className="w-12 h-10 rounded-lg bg-surface flex-shrink-0 overflow-hidden relative flex items-center justify-center">
+                        <Car className="w-5 h-5 text-muted" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-body-sm font-semibold text-primary truncate">Rolls-Royce Ghost</p>
+                        <p className="text-caption text-muted">$1,500 / day</p>
+                      </div>
+                      <button className="text-secondary hover:text-error transition-colors p-1" onClick={(e) => e.stopPropagation()}>
+                         <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    {/* Wishlist Item 2 */}
+                    <div className="px-4 py-3 hover:bg-surface/50 cursor-pointer transition-colors flex items-center gap-4">
+                      <div className="w-12 h-10 rounded-lg bg-surface flex-shrink-0 overflow-hidden relative flex items-center justify-center">
+                        <Car className="w-5 h-5 text-muted" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-body-sm font-semibold text-primary truncate">Ferrari F8 Tributo</p>
+                        <p className="text-caption text-muted">$1,200 / day</p>
+                      </div>
+                      <button className="text-secondary hover:text-error transition-colors p-1" onClick={(e) => e.stopPropagation()}>
+                         <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-2 border-t border-border bg-surface/30">
+                    <button 
+                      onClick={() => navigate('/wishlist')}
+                      className="w-full text-center text-body-sm font-medium text-primary hover:text-accent py-1.5 transition-colors"
+                    >
+                      View full wishlist
+                    </button>
+                  </div>
+                </Dropdown>
+
+                {/* Notification Bell Dropdown */}
+                <Dropdown
+                  align="right"
+                  className="w-[320px] p-0"
+                  trigger={
+                    <button className="btn-icon relative text-secondary hover:text-primary hover:bg-surface/50">
+                      <Bell className="w-5 h-5" />
+                      <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-white shadow-sm" />
+                    </button>
+                  }
+                >
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-border" onClick={(e) => e.stopPropagation()}>
+                    <h3 className="font-semibold text-primary">Notifications</h3>
+                    <button className="text-caption text-primary hover:underline font-medium">Mark all as read</button>
+                  </div>
+                  <div className="max-h-[340px] overflow-y-auto">
+                    {/* Unread Notification */}
+                    <div className="px-4 py-3 hover:bg-surface/50 cursor-pointer border-b border-border/50 transition-colors bg-accent/5">
+                      <div className="flex gap-3">
+                        <div className="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center shrink-0">
+                          <Car className="w-4 h-4 text-accent" />
+                        </div>
+                        <div>
+                          <p className="text-body-sm text-primary leading-snug mb-1">
+                            <span className="font-semibold">Booking Confirmed</span> for Lamborghini Aventador SVJ.
+                          </p>
+                          <span className="text-caption text-muted">2 hours ago</span>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Read Notification */}
+                    <div className="px-4 py-3 hover:bg-surface/50 cursor-pointer transition-colors opacity-75">
+                      <div className="flex gap-3">
+                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <Bell className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-body-sm text-primary leading-snug mb-1">
+                            Welcome to Luxoria! Complete your profile to unlock exclusive member benefits.
+                          </p>
+                          <span className="text-caption text-muted">1 day ago</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-2 border-t border-border bg-surface/30">
+                    <button 
+                      onClick={() => navigate('/notifications')}
+                      className="w-full text-center text-body-sm font-medium text-primary hover:text-accent py-1.5 transition-colors"
+                    >
+                      View all notifications
+                    </button>
+                  </div>
+
+                </Dropdown>
 
                 {/* User Dropdown */}
                 <Dropdown
