@@ -2,17 +2,49 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { pageTransition } from '@/lib/motion';
 
+import ExperienceHero from '@/sections/ExperienceHero';
+import ExperienceHighlights from '@/sections/ExperienceHighlights';
+import ExperienceTimeline from '@/sections/ExperienceTimeline';
+import ExperienceCollections from '@/sections/ExperienceCollections';
+import ExperienceFeatures from '@/sections/ExperienceFeatures';
+import ExperienceBenefits from '@/sections/ExperienceBenefits';
+import ExperienceTestimonials from '@/sections/ExperienceTestimonials';
+import ExperienceDestinations from '@/sections/ExperienceDestinations';
+import ExperienceGallery from '@/sections/ExperienceGallery';
+import ExperienceCTA from '@/sections/ExperienceCTA';
+
 export default function ExperiencePage() {
   return (
-    <motion.div {...pageTransition} className="pt-28 pb-16 min-h-screen bg-background flex items-center justify-center">
-      <div className="container-luxe text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">The Luxoria Experience</h1>
-        <p className="text-secondary text-lg max-w-2xl mx-auto">
-          Immerse yourself in unparalleled luxury. Discover what makes a journey with Luxoria truly unforgettable.
-          <br /><br />
-          <span className="text-muted text-sm">(Experience Page Content Coming Soon)</span>
-        </p>
-      </div>
+    <motion.div {...pageTransition} className="bg-background">
+      {/* 1. Hero */}
+      <ExperienceHero />
+
+      {/* 2. Highlights */}
+      <ExperienceHighlights />
+
+      {/* 3. Timeline */}
+      <ExperienceTimeline />
+
+      {/* 4. Collections */}
+      <ExperienceCollections />
+
+      {/* 5. Features */}
+      <ExperienceFeatures />
+
+      {/* 6. Benefits */}
+      <ExperienceBenefits />
+
+      {/* 7. Testimonials */}
+      <ExperienceTestimonials />
+
+      {/* 8. Destinations */}
+      <ExperienceDestinations />
+
+      {/* 9. Gallery */}
+      <ExperienceGallery />
+
+      {/* 10. CTA */}
+      <ExperienceCTA />
     </motion.div>
   );
 }
