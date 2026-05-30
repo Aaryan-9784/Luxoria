@@ -1,22 +1,50 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { pageTransition } from '@/lib/motion';
 
+import ContactHero from '@/sections/ContactHero';
+import ContactInfo from '@/sections/ContactInfo';
+import ContactFormSection from '@/sections/ContactFormSection';
+import ContactBookingProcess from '@/sections/ContactBookingProcess';
+import ContactGlobalLocations from '@/sections/ContactGlobalLocations';
+import ContactFAQ from '@/sections/ContactFAQ';
+import ContactSupportFeatures from '@/sections/ContactSupportFeatures';
+import ContactMap from '@/sections/ContactMap';
+import PageCTA from '@/sections/PageCTA';
+import { PhoneCall } from 'lucide-react';
+
 export default function ContactPage() {
+  // Ensure the page starts at the top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <motion.div {...pageTransition} className="pt-28 pb-16 min-h-screen bg-background flex items-center justify-center">
-      <div className="container-luxe text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">Contact Us</h1>
-        <p className="text-secondary text-lg max-w-2xl mx-auto mb-8">
-          Our concierge team is available around the clock to assist you with your booking or any inquiries.
-          <br /><br />
-          <span className="text-muted text-sm">(Contact Page Content Coming Soon)</span>
-        </p>
-        <div className="text-primary font-medium">
-          <p>Email: concierge@luxoria.com</p>
-          <p>Phone: +1 (800) 555-LUXE</p>
-        </div>
-      </div>
+    <motion.div {...pageTransition} className="bg-background">
+      <ContactHero />
+      <ContactInfo />
+      <ContactFormSection />
+      <ContactBookingProcess />
+      <ContactGlobalLocations />
+      <ContactFAQ />
+      <ContactSupportFeatures />
+      <ContactMap />
+      
+      <PageCTA 
+        bgImage="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop"
+        headline={
+          <>
+            Your Luxury Journey <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#E5C76B] to-[#C9A227] italic font-normal lowercase font-serif pr-2 drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)]">Starts Here</span>
+          </>
+        }
+        subheadline="Our concierge team is ready to assist you."
+        primaryBtnText="Book Experience"
+        primaryBtnLink="/experience"
+        secondaryBtnText="Speak With Concierge"
+        secondaryBtnLink="#contact-form"
+        secondaryBtnIcon={PhoneCall}
+      />
     </motion.div>
   );
 }
+
