@@ -61,7 +61,7 @@ export default function ExperienceHighlights() {
             return (
               <motion.div
                 key={highlight.title}
-                className="flex flex-col items-center text-center p-8 rounded-3xl bg-white border border-border/50 group relative overflow-hidden transition-all duration-500 ease-out shadow-sm hover:shadow-2xl hover:-translate-y-2"
+                className="flex flex-col items-center text-center p-8 rounded-3xl bg-surface border border-border/50 group relative overflow-hidden transition-all duration-500 ease-out shadow-sm hover:shadow-float hover:-translate-y-2"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

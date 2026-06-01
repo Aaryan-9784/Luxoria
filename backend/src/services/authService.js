@@ -59,10 +59,11 @@ export const hashResetToken = (token) => {
  * Set refresh token cookie on response
  */
 export const setRefreshTokenCookie = (res, token) => {
+  const isProd = process.env.NODE_ENV === 'production';
   res.cookie('refreshToken', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax', // Use 'none' in prod for cross-origin if frontend/backend differ
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/api/auth',
   });
@@ -72,10 +73,11 @@ export const setRefreshTokenCookie = (res, token) => {
  * Clear refresh token cookie
  */
 export const clearRefreshTokenCookie = (res) => {
+  const isProd = process.env.NODE_ENV === 'production';
   res.cookie('refreshToken', '', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
     maxAge: 0,
     path: '/api/auth',
   });

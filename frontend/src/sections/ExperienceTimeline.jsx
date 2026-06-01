@@ -58,7 +58,7 @@ export default function ExperienceTimeline() {
                 >
                   {/* Content Box */}
                   <div className="w-full md:w-[45%] flex flex-col group relative">
-                    <div className="p-8 bg-white border border-border/50 rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 relative z-10">
+                    <div className="p-8 bg-background border border-border/50 rounded-2xl shadow-sm hover:shadow-float transition-all duration-500 hover:-translate-y-1 relative z-10">
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent/0 via-accent to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-t-2xl" />
                       <div className="text-accent text-lg font-bold tracking-[0.2em] mb-2">STEP {step.id}</div>
                       <h3 className="text-2xl font-bold text-primary">{step.title}</h3>
@@ -67,7 +67,7 @@ export default function ExperienceTimeline() {
 
                   {/* Center Marker */}
                   <div className="relative hidden md:flex w-10 h-10 items-center justify-center z-10">
-                    <div className="w-4 h-4 rounded-full bg-primary z-10" />
+                    <div className="w-4 h-4 rounded-full bg-accent z-10" />
                     <motion.div 
                       className="absolute inset-0 rounded-full border-2 border-accent"
                       initial={{ scale: 0.5, opacity: 0 }}

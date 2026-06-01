@@ -11,6 +11,22 @@ import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { pageTransition, EASE_LUXE } from '@/lib/motion';
 import Alert from '@/components/ui/Alert';
+import { toast } from '@/lib/toast';
+
+// Password strength calculator
+const calculateStrength = (pass) => {
+  if (!pass) return { score: 0, label: 'None', color: 'bg-gray-600' };
+  let score = 0;
+  if (pass.length >= 8) score += 1;
+  if (/[A-Z]/.test(pass)) score += 1;
+  if (/[a-z]/.test(pass)) score += 1;
+  if (/[0-9]/.test(pass)) score += 1;
+  if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+  
+  if (score < 3) return { score, label: 'Weak', color: 'bg-red-500' };
+  if (score < 5) return { score, label: 'Fair', color: 'bg-yellow-500' };
+  return { score, label: 'Strong', color: 'bg-green-500' };
+};
 
 const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`;
 
@@ -25,13 +41,18 @@ export default function RegisterPage() {
 
   const password = watch('password');
   const confirmPassword = watch('confirmPassword');
+  
+  const strength = calculateStrength(password);
 
   useEffect(() => { dispatch(clearError()); }, [dispatch]);
 
   const onSubmit = async (data) => {
     const { confirmPassword: _, ...submitData } = data;
     const result = await dispatch(registerUser({ ...submitData, role: 'user' }));
-    if (registerUser.fulfilled.match(result)) navigate('/dashboard');
+    if (registerUser.fulfilled.match(result)) {
+      toast.success('Account created successfully');
+      navigate('/dashboard');
+    }
   };
 
   const handleGoogleSignup = () => {
@@ -220,6 +241,7 @@ export default function RegisterPage() {
                 />
                 <label htmlFor="register-name" className="auth-floating-label">Full Name</label>
                 <UserIcon className="auth-input-icon" />
+                {!errors.name && watch('name') && <CheckCircle className="auth-input-check w-4 h-4 text-green-500 absolute right-4 top-1/2 -translate-y-1/2" />}
               </div>
               {errors.name && (
                 <div className="auth-input-error">
@@ -243,6 +265,7 @@ export default function RegisterPage() {
                 />
                 <label htmlFor="register-email" className="auth-floating-label">Email Address</label>
                 <Mail className="auth-input-icon" />
+                {!errors.email && watch('email') && !errors.email && <CheckCircle className="auth-input-check w-4 h-4 text-green-500 absolute right-4 top-1/2 -translate-y-1/2" />}
               </div>
               {errors.email && (
                 <div className="auth-input-error">
@@ -252,7 +275,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Password */}
-            <div className="auth-input-group">
+            <div className="auth-input-group" style={{ marginBottom: '8px' }}>
               <div className="auth-input-wrapper">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -285,6 +308,19 @@ export default function RegisterPage() {
                 </div>
               )}
             </div>
+            
+            {/* Password Strength Meter */}
+            {password && (
+              <div className="w-full flex flex-col gap-1 mb-6 mt-1 px-1">
+                <div className="flex gap-1 h-1">
+                  <div className={`h-full flex-1 rounded-full transition-colors duration-300 ${strength.score >= 1 ? strength.color : 'bg-gray-700'}`}></div>
+                  <div className={`h-full flex-1 rounded-full transition-colors duration-300 ${strength.score >= 3 ? strength.color : 'bg-gray-700'}`}></div>
+                  <div className={`h-full flex-1 rounded-full transition-colors duration-300 ${strength.score >= 4 ? strength.color : 'bg-gray-700'}`}></div>
+                  <div className={`h-full flex-1 rounded-full transition-colors duration-300 ${strength.score >= 5 ? strength.color : 'bg-gray-700'}`}></div>
+                </div>
+                <div className="text-xs text-gray-400 text-right">{strength.label}</div>
+              </div>
+            )}
 
             {/* Confirm Password */}
             <div className="auth-input-group">
@@ -305,11 +341,13 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   className="auth-password-toggle"
+                  style={{ right: !errors.confirmPassword && confirmPassword === password && confirmPassword ? '40px' : '16px' }}
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                 >
                   {showConfirmPassword ? <EyeOff className="w-[16px] h-[16px]" /> : <Eye className="w-[16px] h-[16px]" />}
                 </button>
+                {!errors.confirmPassword && confirmPassword === password && confirmPassword && <CheckCircle className="auth-input-check w-4 h-4 text-green-500 absolute right-3 top-1/2 -translate-y-1/2" />}
               </div>
               {errors.confirmPassword && (
                 <div className="auth-input-error">
@@ -342,7 +380,10 @@ export default function RegisterPage() {
               id="register-submit-btn"
             >
               {loading ? (
-                <span className="spinner" />
+                <>
+                  <span className="spinner" style={{ marginRight: '8px' }} />
+                  Creating Account...
+                </>
               ) : (
                 <>
                   Create Account

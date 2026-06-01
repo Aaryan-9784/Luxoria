@@ -47,7 +47,7 @@ export default function ExperienceFeatures() {
           {FEATURES.map((feature, index) => (
             <motion.div
               key={feature}
-              className="flex items-center p-6 bg-white border border-border/50 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"
+              className="flex items-center p-6 bg-background border border-border/50 rounded-2xl shadow-sm hover:shadow-float transition-all duration-300 hover:-translate-y-1 group"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

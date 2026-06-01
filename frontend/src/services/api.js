@@ -50,7 +50,7 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // Avoid infinite loops if refresh fails
-    if (originalRequest.url === '/auth/refresh' && error.response.status === 401) {
+    if (originalRequest.url?.includes('/auth/refresh') && error.response?.status === 401) {
       store.dispatch(logout());
       return Promise.reject(error);
     }

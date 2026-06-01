@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { pageTransition, EASE_LUXE } from '@/lib/motion';
 import Alert from '@/components/ui/Alert';
+import { toast } from '@/lib/toast';
 
 const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`;
 
@@ -26,6 +27,7 @@ export default function LoginPage() {
   const onSubmit = async (data) => {
     const result = await dispatch(login(data));
     if (login.fulfilled.match(result)) {
+      toast.success('Welcome back to Luxoria');
       const role = result.payload.user.role;
       navigate(role === 'admin' ? '/admin/dashboard' : role === 'vendor' ? '/vendor/dashboard' : '/dashboard');
     }
@@ -249,7 +251,10 @@ export default function LoginPage() {
               id="login-submit-btn"
             >
               {loading ? (
-                <span className="spinner" />
+                <>
+                  <span className="spinner" style={{ marginRight: '8px' }} />
+                  Signing In...
+                </>
               ) : (
                 <>
                   Sign In
