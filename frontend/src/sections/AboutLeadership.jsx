@@ -5,24 +5,24 @@ import { Linkedin, Twitter, Mail } from 'lucide-react';
 
 const TEAM = [
   {
-    name: 'Alexander Sterling',
+    name: 'Aryan Patel',
     role: 'Founder & CEO',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2074&auto=format&fit=crop'
+    image: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
   },
   {
-    name: 'Victoria Vance',
-    role: 'Operations Director',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076&auto=format&fit=crop'
+    name: 'Kevin Patel',
+    role: 'Co-founder',
+    image: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
   },
   {
-    name: 'Marcus Chen',
+    name: 'Jay Patel',
     role: 'Luxury Experience Manager',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=2074&auto=format&fit=crop'
+    image: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
   },
   {
-    name: 'Eleanor Wright',
-    role: 'Head of Concierge',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=2061&auto=format&fit=crop'
+    name: 'Krish Patel',
+    role: 'Operational Director',
+    image: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
   }
 ];
 

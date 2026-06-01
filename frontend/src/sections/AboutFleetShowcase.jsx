@@ -7,7 +7,7 @@ import LuxuryImage from '@/components/ui/LuxuryImage';
 const FLEET_CATEGORIES = [
   {
     title: 'Luxury Sedans',
-    image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.pexels.com/photos/3729464/pexels-photo-3729464.jpeg?auto=compress&cs=tinysrgb&w=2070',
     link: '/collection?category=sedans'
   },
   {
@@ -17,22 +17,22 @@ const FLEET_CATEGORIES = [
   },
   {
     title: 'Luxury SUVs',
-    image: 'https://images.unsplash.com/photo-1606822292023-e4d06a9d701e?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2070&auto=format&fit=crop',
     link: '/collection?category=suvs'
   },
   {
     title: 'Executive Vehicles',
-    image: 'https://images.unsplash.com/photo-1549419131-7e829352eef0?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?q=80&w=2070&auto=format&fit=crop',
     link: '/collection?category=executive'
   },
   {
     title: 'Wedding Collection',
-    image: 'https://images.unsplash.com/photo-1520849495147-3f309cbdf2e6?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=2070&auto=format&fit=crop',
     link: '/collection?category=wedding'
   },
   {
     title: 'Chauffeur Collection',
-    image: 'https://images.unsplash.com/photo-1536690786523-28c0b2f56193?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?q=80&w=2070&auto=format&fit=crop',
     link: '/collection?category=chauffeur'
   }
 ];
