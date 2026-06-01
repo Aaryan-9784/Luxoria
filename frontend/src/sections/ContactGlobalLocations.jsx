@@ -7,9 +7,9 @@ const LOCATIONS = [
   { city: 'Dubai', image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070&auto=format&fit=crop' },
   { city: 'London', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop' },
   { city: 'Mumbai', image: 'https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?q=80&w=2065&auto=format&fit=crop' },
-  { city: 'Monaco', image: 'https://images.unsplash.com/photo-1577717903273-094770b284e3?q=80&w=2070&auto=format&fit=crop' },
-  { city: 'Paris', image: 'https://images.unsplash.com/photo-1502602898657-3e90760020c2?q=80&w=2073&auto=format&fit=crop' },
-  { city: 'New York', image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e2815cb?q=80&w=2070&auto=format&fit=crop' }
+  { city: 'Toronto', image: 'https://images.pexels.com/photos/1519088/pexels-photo-1519088.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
+  { city: 'Paris', image: 'https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
+  { city: 'New York', image: 'https://images.pexels.com/photos/2190283/pexels-photo-2190283.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }
 ];
 
 export default function ContactGlobalLocations() {

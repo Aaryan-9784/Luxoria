@@ -6,7 +6,7 @@ const CONTACT_METHODS = [
   {
     icon: Phone,
     title: 'Phone Support',
-    value: '+1 (800) 555-LUXE',
+    value: '+91 82380 12515',
     subtitle: '24/7 Availability'
   },
   {
@@ -18,7 +18,7 @@ const CONTACT_METHODS = [
   {
     icon: MapPin,
     title: 'Head Office',
-    value: 'Luxury Business District',
+    value: 'Ahmedabad, Gujarat',
     subtitle: 'Premium Location'
   },
   {

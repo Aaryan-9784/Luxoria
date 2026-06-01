@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   ChevronDown, LogOut, User as UserIcon,
-  LayoutDashboard, Heart, CalendarDays, Car, Bell
+  LayoutDashboard, Heart, CalendarDays, Car, Bell, X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/redux/slices/authSlice';
