@@ -79,7 +79,7 @@ export default function Footer() {
             <div className="flex flex-col gap-4 text-sm text-white/80">
               <Link to="/contact" className="hover:text-[#D4AF37] transition-colors w-fit">Contact Us</Link>
               <Link to="/contact" className="hover:text-[#D4AF37] transition-colors w-fit">FAQ</Link>
-              <a href="tel:+18001234567" className="hover:text-[#D4AF37] transition-colors w-fit">+1 (800) 123-4567</a>
+              <a href="tel:+918238012515" className="hover:text-[#D4AF37] transition-colors w-fit">+91 82380 12515</a>
               <a href="mailto:concierge@luxoria.com" className="hover:text-[#D4AF37] transition-colors w-fit">concierge@luxoria.com</a>
             </div>
 
