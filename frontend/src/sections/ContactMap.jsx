@@ -27,22 +27,25 @@ export default function ContactMap() {
       {/* Luxury Map Markers - Example positions simulating cities */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[1000px] h-full z-20 pointer-events-none">
         
-        {/* Example Marker 1 (New York) */}
-        <div className="absolute top-[35%] left-[25%] group/marker">
-          <div className="w-4 h-4 bg-accent rounded-full shadow-[0_0_20px_rgba(212,175,55,1)] relative animate-pulse" />
-          <div className="absolute top-6 -left-4 bg-white px-3 py-1 rounded-[2px] text-xs font-bold text-primary uppercase tracking-widest opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap">New York</div>
-        </div>
+        {/* Standard Markers */}
+        {[
+          { city: 'Toronto', top: '32%', left: '23%' },
+          { city: 'New York', top: '35%', left: '25%' },
+          { city: 'London', top: '28%', left: '48%' },
+          { city: 'Paris', top: '30%', left: '49%' },
+          { city: 'Dubai', top: '45%', left: '62%' },
+          { city: 'Mumbai', top: '49%', left: '68%' }
+        ].map((marker) => (
+          <div key={marker.city} className="absolute group/marker" style={{ top: marker.top, left: marker.left }}>
+            <div className="w-4 h-4 bg-accent rounded-full shadow-[0_0_20px_rgba(212,175,55,1)] relative animate-pulse" />
+            <div className="absolute top-6 -left-4 bg-white px-3 py-1 rounded-[2px] text-xs font-bold text-primary uppercase tracking-widest opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap z-30">{marker.city}</div>
+          </div>
+        ))}
 
-        {/* Example Marker 2 (London) */}
-        <div className="absolute top-[28%] left-[48%] group/marker">
-          <div className="w-4 h-4 bg-accent rounded-full shadow-[0_0_20px_rgba(212,175,55,1)] relative animate-pulse" />
-          <div className="absolute top-6 -left-4 bg-white px-3 py-1 rounded-[2px] text-xs font-bold text-primary uppercase tracking-widest opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap">London</div>
-        </div>
-
-        {/* Example Marker 3 (Dubai - HQ) */}
-        <div className="absolute top-[45%] left-[62%] group/marker">
+        {/* Ahmedabad HQ Marker */}
+        <div className="absolute top-[46%] left-[66%] group/marker z-20">
           <div className="w-6 h-6 bg-white border-4 border-accent rounded-full shadow-[0_0_30px_rgba(212,175,55,1)] relative animate-bounce" />
-          <div className="absolute top-8 -left-8 bg-white px-4 py-2 rounded-[2px] text-sm font-bold text-primary uppercase tracking-widest shadow-xl whitespace-nowrap">Dubai HQ</div>
+          <div className="absolute top-8 -left-10 bg-white px-4 py-2 rounded-[2px] text-sm font-bold text-primary uppercase tracking-widest shadow-xl whitespace-nowrap">Ahmedabad HQ</div>
         </div>
         
       </div>
