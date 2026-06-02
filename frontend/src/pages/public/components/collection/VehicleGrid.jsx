@@ -44,7 +44,7 @@ function VehicleCard({ vehicle }) {
             "px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md border",
             vehicle.availability === 'Available' 
               ? "bg-black/40 text-white border-white/20" 
-              : "bg-accent/20 text-accent border-accent/20"
+              : "bg-black/60 text-accent border-accent/40"
           )}>
             {vehicle.availability}
           </div>
@@ -67,11 +67,11 @@ function VehicleCard({ vehicle }) {
 
       {/* Content */}
       <div className="p-6">
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start mb-4 gap-4">
           <h3 className="text-xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
             {vehicle.name}
           </h3>
-          <span className="text-sm font-semibold text-secondary flex items-center gap-1">
+          <span className="text-sm font-semibold text-secondary flex items-center gap-1 shrink-0">
             {vehicle.startingPrice} <span className="text-xs font-normal text-muted">/day</span>
           </span>
         </div>
