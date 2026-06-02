@@ -29,7 +29,7 @@ export default function CollectionFilter({
               return (
                 <button
                   key={category}
-                  onClick={() => setActiveCategory(category)}
+                  onClick={() => setActiveCategory(isActive && category !== 'All Vehicles' ? 'All Vehicles' : category)}
                   className={cn(
                     'relative px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-300',
                     isActive ? 'text-primary' : 'text-secondary hover:text-primary hover:bg-surface/50'
@@ -39,7 +39,7 @@ export default function CollectionFilter({
                   {isActive && (
                     <motion.div
                       layoutId="activeCategory"
-                      className="absolute inset-0 bg-accent/10 border border-accent/20 rounded-full -z-0"
+                      className="absolute inset-0 bg-accent/10 border border-accent/20 rounded-full -z-10"
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}

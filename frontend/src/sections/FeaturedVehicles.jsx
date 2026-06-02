@@ -57,19 +57,19 @@ const FEATURED_VEHICLES = [
   },
   {
     id: '4',
-    name: 'Tesla Model S Plaid',
+    name: 'Tesla Model X Plaid',
     brand: 'Tesla',
     pricePerDay: 1200,
-    image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=1200',
+    image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=1200',
     category: 'Electric',
-    seats: 5,
+    seats: 7,
     transmission: 'Auto',
     fuelType: 'Electric',
     rating: 4.7,
     badge: 'Most Popular',
     horsepower: '1020 HP',
-    topSpeed: '322 km/h',
-    zeroToHundred: '2.1 sec'
+    topSpeed: '262 km/h',
+    zeroToHundred: '2.5 sec'
   },
 ];
 

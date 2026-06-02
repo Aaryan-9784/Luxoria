@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Zap, Gauge, DollarSign, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -23,7 +23,11 @@ const itemVariants = {
 function VehicleCard({ vehicle }) {
   return (
     <motion.div 
+      layout
       variants={itemVariants}
+      initial="hidden"
+      animate="show"
+      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
       className="group relative bg-background rounded-[30px] border border-border overflow-hidden transition-all duration-500 hover:shadow-float hover:border-accent/40"
     >
       {/* Image Container with Hover Zoom and Glass Overlay */}
@@ -121,9 +125,11 @@ export default function VehicleGrid({ vehicles }) {
         viewport={{ once: true, margin: "-100px" }}
         className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8"
       >
-        {vehicles.map((vehicle) => (
-          <VehicleCard key={vehicle.id} vehicle={vehicle} />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {vehicles.map((vehicle) => (
+            <VehicleCard key={vehicle.id} vehicle={vehicle} />
+          ))}
+        </AnimatePresence>
       </motion.div>
     </div>
   );
