@@ -8,6 +8,8 @@ const TIMELINE = [
   { year: '2022', title: 'VIP Membership', desc: 'Launched our exclusive membership program offering unparalleled benefits.' },
   { year: '2023', title: 'Global Growth', desc: 'Expanded operations to major international luxury hubs including Dubai & Monaco.' },
   { year: '2024', title: 'Premium Platform', desc: 'Unveiled our next-generation digital booking and concierge platform.' },
+  { year: '2025', title: 'Sustainable Luxury', desc: 'Integrated high-performance electric supercars, committing to eco-friendly premium mobility.' },
+  { year: '2026', title: 'AI-Powered Concierge', desc: 'Launched an intelligent, hyper-personalized AI assistant for seamless, intuitive bookings and exclusive experiences.' },
 ];
 
 export default function AboutStory() {
@@ -43,13 +45,12 @@ export default function AboutStory() {
             transition={{ duration: 1, ease: "easeOut" }}
             className="flex flex-col"
           >
-            <div className="flex items-center gap-4 mb-6">
-               <div className="w-10 h-[1px] bg-gradient-to-r from-[#D4AF37] to-transparent"></div>
+            <div className="mb-6">
                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#C9A227]">Our Journey</span>
             </div>
             
             <h2 className="text-[40px] lg:text-[56px] font-bold text-primary leading-[1.1] tracking-tight uppercase mb-8">
-              A Legacy of <span className="text-secondary italic font-light lowercase">Excellence</span>
+              A Legacy of <span className="text-[#6B6B6B] italic font-light lowercase">Excellence</span>
             </h2>
 
             <p className="text-[#6B6B6B] text-lg leading-relaxed mb-12">
@@ -57,7 +58,7 @@ export default function AboutStory() {
             </p>
 
             {/* Timeline */}
-            <div className="relative pl-6 border-l border-black/10 space-y-10">
+            <div className="relative pl-6 space-y-10">
               {TIMELINE.map((item, index) => (
                 <motion.div 
                   key={item.year}
@@ -68,7 +69,12 @@ export default function AboutStory() {
                   className="relative"
                 >
                   {/* Timeline Dot */}
-                  <div className="absolute -left-[30px] top-1.5 w-3 h-3 rounded-full bg-white border-2 border-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+                  <div className="absolute -left-[30px] top-1.5 w-3 h-3 rounded-full bg-white border-2 border-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.3)] z-10" />
+                  
+                  {/* Connecting Line */}
+                  {index !== TIMELINE.length - 1 && (
+                    <div className="absolute -left-[24.5px] top-[14px] w-[1px] h-[calc(100%+40px-10px)] bg-black/10 z-0" />
+                  )}
                   
                   <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-6 mb-2">
                     <span className="text-[#C9A227] font-bold tracking-widest text-lg">{item.year}</span>

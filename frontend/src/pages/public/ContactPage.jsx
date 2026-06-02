@@ -7,7 +7,7 @@ import ContactInfo from '@/sections/ContactInfo';
 import ContactFormSection from '@/sections/ContactFormSection';
 import ContactBookingProcess from '@/sections/ContactBookingProcess';
 import ContactGlobalLocations from '@/sections/ContactGlobalLocations';
-import ContactFAQ from '@/sections/ContactFAQ';
+
 import ContactSupportFeatures from '@/sections/ContactSupportFeatures';
 import ContactMap from '@/sections/ContactMap';
 import PageCTA from '@/sections/PageCTA';
@@ -26,7 +26,7 @@ export default function ContactPage() {
       <ContactFormSection />
       <ContactBookingProcess />
       <ContactGlobalLocations />
-      <ContactFAQ />
+
       <ContactSupportFeatures />
       <ContactMap />
       

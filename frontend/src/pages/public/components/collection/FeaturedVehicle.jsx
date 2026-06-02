@@ -24,24 +24,24 @@ export default function FeaturedVehicle() {
           >
             <span className="text-accent text-sm font-bold tracking-[0.2em] uppercase mb-4 block">Featured Masterpiece</span>
             <h2 className="text-4xl md:text-6xl font-bold font-serif mb-6 leading-tight">
-              Rolls-Royce <br />Phantom VIII
+              BMW <br />M4 Competition
             </h2>
             <p className="text-white/70 text-lg mb-8 leading-relaxed max-w-xl">
-              Experience the pinnacle of automotive luxury. A sanctuary of peace and tranquility, crafted to the most exacting standards of perfection.
+              Experience the pinnacle of M performance. A thrilling blend of aggressive design and track-ready dynamics, engineered for driving enthusiasts.
             </p>
 
             <div className="grid grid-cols-3 gap-6 mb-10 border-t border-white/10 pt-8">
               <div>
                 <p className="text-white/50 text-xs uppercase tracking-wider mb-1">0-60 mph</p>
-                <p className="text-2xl font-light">5.1s</p>
+                <p className="text-2xl font-light">3.8s</p>
               </div>
               <div>
                 <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Engine</p>
-                <p className="text-2xl font-light">6.75L V12</p>
+                <p className="text-2xl font-light">3.0L I6</p>
               </div>
               <div>
                 <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Power</p>
-                <p className="text-2xl font-light">563 HP</p>
+                <p className="text-2xl font-light">503 HP</p>
               </div>
             </div>
 

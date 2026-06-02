@@ -9,6 +9,7 @@ import AboutWhyChooseUs from '@/sections/AboutWhyChooseUs';
 import AboutFleetShowcase from '@/sections/AboutFleetShowcase';
 import AboutLeadership from '@/sections/AboutLeadership';
 import AboutAchievements from '@/sections/AboutAchievements';
+import ContactFAQ from '@/sections/ContactFAQ';
 import PageCTA from '@/sections/PageCTA';
 
 export default function AboutPage() {
@@ -26,6 +27,7 @@ export default function AboutPage() {
       <AboutFleetShowcase />
       <AboutLeadership />
       <AboutAchievements />
+      <ContactFAQ />
       
       <PageCTA 
         bgImage="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?q=80&w=2070&auto=format&fit=crop"
