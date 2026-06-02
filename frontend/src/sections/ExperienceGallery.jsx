@@ -7,37 +7,37 @@ const GALLERY_IMAGES = [
   {
     id: 1,
     category: 'Exotic Supercars',
-    image: 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070&auto=format&fit=crop',
     span: 'md:col-span-2 md:row-span-2'
   },
   {
     id: 2,
     category: 'Luxury Sedans',
-    image: 'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1600712242805-5f78671b24da?q=80&w=2070&auto=format&fit=crop',
     span: 'md:col-span-1 md:row-span-1'
   },
   {
     id: 3,
     category: 'VIP Events',
-    image: 'https://images.unsplash.com/photo-1549314421-4f36611593c6?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1621135802920-133df287f89c?q=80&w=2070&auto=format&fit=crop',
     span: 'md:col-span-1 md:row-span-1'
   },
   {
     id: 4,
     category: 'Premium SUVs',
-    image: 'https://images.unsplash.com/photo-1606016159991-d5225c93c180?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?q=80&w=2070&auto=format&fit=crop',
     span: 'md:col-span-2 md:row-span-1'
   },
   {
     id: 5,
     category: 'Chauffeur Services',
-    image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop',
     span: 'md:col-span-1 md:row-span-2'
   },
   {
     id: 6,
     category: 'Luxury Deliveries',
-    image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=2070&auto=format&fit=crop',
     span: 'md:col-span-1 md:row-span-1'
   }
 ];
