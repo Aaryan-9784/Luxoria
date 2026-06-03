@@ -1,4 +1,4 @@
-import { vehicles } from './frontend/src/pages/public/components/collection/data.js';
+import { vehicles } from '../frontend/src/pages/public/components/collection/data.js';
 
 let result = [...vehicles];
 
