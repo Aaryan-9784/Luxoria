@@ -8,6 +8,8 @@ import { useDispatch } from 'react-redux';
 import { forgotPassword } from '@/redux/slices/authSlice';
 import Alert from '@/components/ui/Alert';
 
+const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`;
+
 export default function ForgotPasswordPage() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const dispatch = useDispatch();
@@ -28,7 +30,15 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <motion.div {...pageTransition} className="auth-page">
+    <motion.div 
+      {...pageTransition} 
+      className="auth-page"
+      style={{
+        '--auth-theme-hex': '#EF4444',
+        '--auth-theme-hex-light': '#F87171',
+        '--auth-theme-rgb': '239, 68, 68'
+      }}
+    >
 
       {/* ════════════════════════════════════════════════════════════════════
           LEFT PANEL — Cinematic Luxury Showcase
@@ -37,16 +47,15 @@ export default function ForgotPasswordPage() {
         {/* Background Image */}
         <motion.img
           initial={{ scale: 1.05, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.65 }}
+          animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2, ease: 'easeOut' }}
-          src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&q=100&w=2400"
+          src="https://wallpaperaccess.com/full/1125043.jpg"
           alt="Luxurious sports car"
           className="auth-bg-image loaded"
           loading="eager"
         />
 
         {/* Overlays */}
-        <div className="auth-overlay-dark" />
         <div className="auth-overlay-gold" />
         <div className="auth-overlay-vignette" />
         <div className="auth-ambient-light" />
@@ -68,7 +77,7 @@ export default function ForgotPasswordPage() {
           {/* Logo */}
           <Link to="/" className="auth-logo">
             <Car className="auth-logo-icon" />
-            <span className="auth-logo-text">Luxoria</span>
+            <span className="auth-logo-text" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.7)' }}>Luxoria</span>
           </Link>
 
           {/* Headline */}
@@ -78,11 +87,11 @@ export default function ForgotPasswordPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.9, ease: EASE_LUXE }}
           >
-            <h1 className="auth-headline" style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4rem)', lineHeight: '1.1', marginBottom: '24px' }}>
+            <h1 className="auth-headline" style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4rem)', lineHeight: '1.1', marginBottom: '24px', textShadow: '0 2px 15px rgba(0,0,0,0.8), 0 4px 30px rgba(0,0,0,0.5)' }}>
               Recover Your<br />
               <span className="auth-headline-gold">Access</span>
             </h1>
-            <p className="auth-subheadline" style={{ fontSize: '1.15rem', maxWidth: '480px', lineHeight: '1.7', color: 'rgba(255, 255, 255, 0.8)' }}>
+            <p className="auth-subheadline" style={{ fontSize: '1.15rem', maxWidth: '480px', lineHeight: '1.7', color: 'rgba(255, 255, 255, 0.9)', textShadow: '0 2px 10px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.4)' }}>
               Enter your email to receive secure instructions on resetting your password. Rejoin the world of automotive elegance.
             </p>
           </motion.div>

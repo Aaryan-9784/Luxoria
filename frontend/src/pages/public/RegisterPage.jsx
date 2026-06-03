@@ -2,21 +2,21 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { Car, Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
+import { Car, Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { pageTransition, EASE_LUXE } from '@/lib/motion';
 import { useDispatch } from 'react-redux';
 import { register as registerAction } from '@/redux/slices/authSlice';
 import Alert from '@/components/ui/Alert';
 
+const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`;
+
 export default function RegisterPage() {
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-
-  const password = watch('password');
-
+  const [showPassword, setShowPassword] = useState(false);
   const onSubmit = async (data) => {
     setLoading(true);
     setErrorMsg('');
@@ -32,18 +32,26 @@ export default function RegisterPage() {
   };
 
   return (
-    <motion.div {...pageTransition} className="auth-page">
+    <motion.div 
+      {...pageTransition} 
+      className="auth-page"
+      style={{
+        '--auth-theme-hex': '#D4AF37',
+        '--auth-theme-hex-light': '#E8D090',
+        '--auth-theme-rgb': '212, 175, 55'
+      }}
+    >
       <div className="auth-left-panel hidden md:flex">
         <motion.img
           initial={{ scale: 1.05, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.65 }}
+          animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2, ease: 'easeOut' }}
-          src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&q=100&w=2400"
+          src="https://www.hdcarwallpapers.com/walls/2021_rolls_royce_phantom_extended_5k_2-HD.jpg"
           alt="Luxurious sports car"
           className="auth-bg-image loaded"
           loading="eager"
         />
-        <div className="auth-overlay-dark" />
+
         <div className="auth-overlay-gold" />
         <div className="auth-overlay-vignette" />
         <div className="auth-ambient-light" />
@@ -53,7 +61,7 @@ export default function RegisterPage() {
         <div className="auth-left-content">
           <Link to="/" className="auth-logo">
             <Car className="auth-logo-icon" />
-            <span className="auth-logo-text">Luxoria</span>
+            <span className="auth-logo-text" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.7)' }}>Luxoria</span>
           </Link>
           <motion.div
             className="auth-headline-section"
@@ -61,11 +69,11 @@ export default function RegisterPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.9, ease: EASE_LUXE }}
           >
-            <h1 className="auth-headline" style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4rem)', lineHeight: '1.1', marginBottom: '24px' }}>
+            <h1 className="auth-headline" style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4rem)', lineHeight: '1.1', marginBottom: '24px', textShadow: '0 2px 15px rgba(0,0,0,0.8), 0 4px 30px rgba(0,0,0,0.5)' }}>
               Begin Your<br />
               <span className="auth-headline-gold">Journey</span>
             </h1>
-            <p className="auth-subheadline" style={{ fontSize: '1.15rem', maxWidth: '480px', lineHeight: '1.7', color: 'rgba(255, 255, 255, 0.8)' }}>
+            <p className="auth-subheadline" style={{ fontSize: '1.15rem', maxWidth: '480px', lineHeight: '1.7', color: 'rgba(255, 255, 255, 0.9)', textShadow: '0 2px 10px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.4)' }}>
               Join an exclusive community of luxury enthusiasts. Experience unparalleled service and extraordinary vehicles.
             </p>
           </motion.div>
@@ -151,7 +159,7 @@ export default function RegisterPage() {
             <div className="auth-input-group" style={{ marginBottom: '16px' }}>
               <div className="auth-input-wrapper">
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   placeholder="Password"
                   className={`auth-input ${errors.password ? 'has-error' : ''}`}
@@ -162,33 +170,38 @@ export default function RegisterPage() {
                 />
                 <label htmlFor="password" className="auth-floating-label">Password</label>
                 <Lock className="auth-input-icon" />
+                <button type="button" className="auth-password-toggle" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
               {errors.password && <div className="auth-input-error"><span>{errors.password.message}</span></div>}
             </div>
 
-            {/* Confirm Password */}
-            <div className="auth-input-group" style={{ marginBottom: '24px' }}>
-              <div className="auth-input-wrapper">
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  placeholder="Confirm Password"
-                  className={`auth-input ${errors.confirmPassword ? 'has-error' : ''}`}
-                  {...register('confirmPassword', {
-                    required: 'Please confirm password',
-                    validate: value => value === password || 'Passwords do not match'
-                  })}
-                />
-                <label htmlFor="confirmPassword" className="auth-floating-label">Confirm Password</label>
-                <Lock className="auth-input-icon" />
-              </div>
-              {errors.confirmPassword && <div className="auth-input-error"><span>{errors.confirmPassword.message}</span></div>}
-            </div>
 
             <button type="submit" className="auth-submit-btn" disabled={loading}>
               {loading ? <span className="spinner" /> : <>Create Account <ArrowRight className="w-5 h-5 ml-2" /></>}
             </button>
           </form>
+
+          <div className="auth-divider" style={{ marginTop: '24px', marginBottom: '24px' }}>
+            <div className="auth-divider-line" />
+            <span className="auth-divider-text">OR</span>
+            <div className="auth-divider-line" />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => window.location.href = GOOGLE_AUTH_URL}
+            className="auth-google-btn"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Continue with Google
+          </button>
 
           <p className="auth-switch" style={{ marginTop: '24px' }}>
             Already have an account? <Link to="/login">Sign In</Link>

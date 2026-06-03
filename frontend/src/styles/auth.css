@@ -14,6 +14,7 @@
   max-height: 100dvh;
   background: #000;
   overflow: hidden;
+  --accent: var(--auth-theme-hex, #D4AF37);
 }
 
 .auth-left-panel {
@@ -221,7 +222,7 @@
 }
 
 .auth-headline-gold {
-  background: linear-gradient(135deg, #D4AF37 0%, #E8D090 50%, #D4AF37 100%);
+  background: linear-gradient(135deg, var(--auth-theme-hex, #D4AF37) 0%, var(--auth-theme-hex-light, #E8D090) 50%, var(--auth-theme-hex, #D4AF37) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -738,7 +739,7 @@
   height: 52px;
   background: #000000;
   color: white;
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid rgba(var(--auth-theme-rgb, 212, 175, 55), 0.3);
   border-radius: 0;
   font-size: 0.875rem;
   font-weight: 700;
@@ -759,9 +760,9 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(212, 175, 55, 0.12) 40%,
-    rgba(212, 175, 55, 0.2) 50%,
-    rgba(212, 175, 55, 0.12) 60%,
+    rgba(var(--auth-theme-rgb, 212, 175, 55), 0.12) 40%,
+    rgba(var(--auth-theme-rgb, 212, 175, 55), 0.2) 50%,
+    rgba(var(--auth-theme-rgb, 212, 175, 55), 0.12) 60%,
     transparent 100%
   );
   transition: left 0.7s ease;
@@ -775,9 +776,9 @@
   background: linear-gradient(135deg, #1a1a1a 0%, #252525 50%, #1a1a1a 100%);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.2),
-    0 0 20px rgba(212, 175, 55, 0.08);
+    0 0 20px rgba(var(--auth-theme-rgb, 212, 175, 55), 0.08);
   transform: translateY(-2px);
-  border-color: rgba(212, 175, 55, 0.3);
+  border-color: rgba(var(--auth-theme-rgb, 212, 175, 55), 0.3);
 }
 
 .auth-submit-btn:active {
