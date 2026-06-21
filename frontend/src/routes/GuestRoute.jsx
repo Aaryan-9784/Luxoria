@@ -1,9 +1,10 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 export default function GuestRoute() {
-  const { isAuthenticated, loading } = useSelector((state) => state.auth);
+  const { isAuthenticated, loading, user } = useSelector((state) => state.auth);
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -13,8 +14,11 @@ export default function GuestRoute() {
     );
   }
 
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+  if (isAuthenticated && user) {
+    const role = user.role;
+    const defaultPath = role === 'admin' ? '/admin/dashboard' : role === 'vendor' ? '/vendor/dashboard' : '/dashboard';
+    const targetPath = location.state?.from?.pathname !== '/' && location.state?.from?.pathname ? location.state.from.pathname : defaultPath;
+    return <Navigate to={targetPath} replace />;
   }
 
   return <Outlet />;

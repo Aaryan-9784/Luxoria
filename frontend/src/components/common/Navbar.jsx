@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { logout } from '@/redux/slices/authSlice';
 import Avatar from '@/components/ui/Avatar';
 import Dropdown, { DropdownItem, DropdownDivider } from '@/components/ui/Dropdown';
+import { preloadAuthImages } from '@/lib/preloadAuthImages';
 
 const NAV_LINKS = [
   { name: 'Home', path: '/' },
@@ -168,12 +169,14 @@ export default function Navbar() {
                 <Link
                   to="/login"
                   className="text-[15px] font-medium text-secondary hover:text-primary transition-colors tracking-wide hover:-translate-y-0.5 duration-300"
+                  onMouseEnter={preloadAuthImages}
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
                   className="text-[15px] font-medium text-secondary hover:text-primary transition-colors tracking-wide hover:-translate-y-0.5 duration-300"
+                  onMouseEnter={preloadAuthImages}
                 >
                   Become Member
                 </Link>

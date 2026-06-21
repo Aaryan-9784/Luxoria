@@ -6,11 +6,11 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Car, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { pageTransition, EASE_LUXE } from '@/lib/motion';
 import { useDispatch } from 'react-redux';
-import { login } from '@/redux/slices/authSlice';
+import { vendorLogin } from '@/redux/slices/authSlice';
 import Alert from '@/components/ui/Alert';
 
 
-export default function LoginPage() {
+export default function VendorLoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,20 +19,13 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const from = location.state?.from?.pathname || '/dashboard';
-
   const onSubmit = async (data) => {
     setLoading(true);
     setErrorMsg('');
-    const result = await dispatch(login(data));
+    const result = await dispatch(vendorLogin(data));
     
-    if (login.fulfilled.match(result)) {
-      const userRole = result.payload?.user?.role;
-      const defaultPath = userRole === 'admin' ? '/admin/dashboard'
-        : userRole === 'vendor' ? '/vendor/dashboard'
-        : '/dashboard';
-      const targetPath = location.state?.from?.pathname !== '/' && location.state?.from?.pathname ? location.state.from.pathname : defaultPath;
-      navigate(targetPath, { replace: true });
+    if (vendorLogin.fulfilled.match(result)) {
+      navigate('/vendor/dashboard', { replace: true });
     } else {
       setErrorMsg(result.payload || 'Invalid credentials');
     }
@@ -44,23 +37,23 @@ export default function LoginPage() {
       {...pageTransition} 
       className="auth-page"
       style={{
-        '--auth-theme-hex': '#CBD5E1',
-        '--auth-theme-hex-light': '#FFFFFF',
-        '--auth-theme-rgb': '203, 213, 225'
+        '--auth-theme-hex': '#2C3E50',
+        '--auth-theme-hex-light': '#34495E',
+        '--auth-theme-rgb': '44, 62, 80'
       }}
     >
 
       {/* LEFT PANEL */}
       <div className="auth-left-panel hidden md:flex">
         <AuthImage
-          src="https://images.alphacoders.com/127/1271987.jpg"
-          alt="Luxurious sports car"
+          src="https://images.alphacoders.com/112/1123013.jpg"
+          alt="Luxurious fleet"
+          style={{ filter: 'brightness(0.8)' }}
         />
 
-
-        <div className="auth-overlay-gold" />
+        <div className="auth-overlay-gold" style={{ background: 'linear-gradient(135deg, rgba(44,62,80,0.8) 0%, rgba(0,0,0,0.9) 100%)' }} />
         <div className="auth-overlay-vignette" />
-        <div className="auth-ambient-light" />
+        <div className="auth-ambient-light" style={{ background: 'radial-gradient(circle at center, rgba(52,73,94,0.15) 0%, transparent 70%)' }} />
 
         <div className="auth-particles">
           {[...Array(8)].map((_, i) => <div key={i} className="auth-particle" />)}
@@ -79,11 +72,11 @@ export default function LoginPage() {
             transition={{ delay: 0.4, duration: 0.9, ease: EASE_LUXE }}
           >
             <h1 className="auth-headline" style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4rem)', lineHeight: '1.1', marginBottom: '24px', textShadow: '0 2px 15px rgba(0,0,0,0.8), 0 4px 30px rgba(0,0,0,0.5)' }}>
-              Welcome<br />
-              <span className="auth-headline-gold">Back</span>
+              Luxoria<br />
+              <span className="auth-headline-gold" style={{ color: '#3498db', backgroundImage: 'none', WebkitTextFillColor: 'initial' }}>Partners</span>
             </h1>
             <p className="auth-subheadline" style={{ fontSize: '1.15rem', maxWidth: '480px', lineHeight: '1.7', color: 'rgba(255, 255, 255, 0.9)', textShadow: '0 2px 10px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.4)' }}>
-              Sign in to access your exclusive garage, manage reservations, and discover unparalleled luxury.
+              Manage your fleet, track revenue, and grow your luxury rental business.
             </p>
           </motion.div>
           
@@ -101,13 +94,13 @@ export default function LoginPage() {
         >
           <Link to="/" className="auth-mobile-logo">
             <Car className="auth-logo-icon" />
-            <span className="auth-logo-text">Luxoria</span>
+            <span className="auth-logo-text">Luxoria Partners</span>
           </Link>
 
           <div className="auth-card-header">
-            <h2 className="auth-card-title">Sign In</h2>
+            <h2 className="auth-card-title">Partner Portal</h2>
             <p className="auth-card-subtitle">
-              Enter your credentials to continue.
+              Enter your vendor credentials to continue.
             </p>
           </div>
 
@@ -157,7 +150,7 @@ export default function LoginPage() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px' }}>
-              <Link to="/forgot-password" style={{ fontSize: '0.875rem', color: '#D4AF37', fontWeight: 500 }}>
+              <Link to="/forgot-password" style={{ fontSize: '0.875rem', color: '#3498db', fontWeight: 500 }}>
                 Forgot Password?
               </Link>
             </div>
@@ -166,23 +159,22 @@ export default function LoginPage() {
               type="submit"
               className="auth-submit-btn"
               disabled={loading}
+              style={{ background: '#2C3E50', color: 'white' }}
             >
               {loading ? (
                 <span className="spinner" />
               ) : (
                 <>
-                  Sign In
+                  Vendor Login
                   <ArrowRight className="w-5 h-5" style={{ marginLeft: '8px' }} />
                 </>
               )}
             </button>
           </form>
 
-
-
           <p className="auth-switch">
-            Don't have an account?{' '}
-            <Link to="/register">Create Account</Link>
+            Not a vendor?{' '}
+            <Link to="/login" style={{ color: '#3498db' }}>User Login</Link>
           </p>
         </motion.div>
       </div>

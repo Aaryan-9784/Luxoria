@@ -5,11 +5,9 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
-import passport from 'passport';
 
 import { generalLimiter } from './middleware/rateLimiter.js';
 import errorHandler from './middleware/errorHandler.js';
-import configurePassport from './config/passport.js';
 
 // Route imports
 import authRoutes from './routes/authRoutes.js';
@@ -51,9 +49,6 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// ─── Passport ────────────────────────────────────────────────────
-configurePassport();
-app.use(passport.initialize());
 
 // ─── Health Check ────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {

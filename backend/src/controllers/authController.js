@@ -12,7 +12,6 @@ import {
   clearRefreshTokenCookie,
 } from '../services/authService.js';
 import emailService from '../services/emailService.js';
-import passport from 'passport';
 
 /**
  * @desc    Register a new user
@@ -67,6 +66,10 @@ export const login = asyncHandler(async (req, res) => {
     throw ApiError.unauthorized('Invalid email or password');
   }
 
+  if (user.role !== 'user') {
+    throw ApiError.forbidden('Please use the correct login portal for your account type.');
+  }
+
   if (!user.isActive) {
     throw ApiError.forbidden('Your account has been deactivated. Contact support.');
   }
@@ -91,46 +94,85 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc    Google OAuth redirect
- * @route   GET /api/auth/google
+ * @desc    Vendor Login
+ * @route   POST /api/auth/vendor/login
  * @access  Public
  */
-export const googleAuth = passport.authenticate('google', {
-  scope: ['profile', 'email'],
-  session: false,
+export const vendorLogin = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email }).select('+password');
+
+  if (!user || !(await user.comparePassword(password))) {
+    throw ApiError.unauthorized('Invalid email or password');
+  }
+
+  if (user.role !== 'vendor' && user.role !== 'admin') {
+    throw ApiError.forbidden('Unauthorized access. This portal is for vendors only.');
+  }
+
+  if (!user.isActive) {
+    throw ApiError.forbidden('Your account has been deactivated. Contact support.');
+  }
+
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
+
+  user.cleanExpiredTokens();
+  user.refreshTokens.push({
+    token: refreshToken,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  });
+  await user.save({ validateBeforeSave: false });
+
+  setRefreshTokenCookie(res, refreshToken);
+
+  ApiResponse.success(res, {
+    user: user.toJSON(),
+    accessToken,
+  }, 'Logged in successfully');
 });
 
 /**
- * @desc    Google OAuth callback
- * @route   GET /api/auth/google/callback
+ * @desc    Admin Login
+ * @route   POST /api/auth/admin/login
  * @access  Public
  */
-export const googleAuthCallback = asyncHandler(async (req, res, next) => {
-  passport.authenticate('google', { session: false }, async (err, user) => {
-    try {
-      if (err || !user) {
-        return res.redirect(`${process.env.CLIENT_URL}/login?error=auth_failed`);
-      }
+export const adminLogin = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-      const accessToken = generateAccessToken(user._id);
-      const refreshToken = generateRefreshToken(user._id);
+  const user = await User.findOne({ email }).select('+password');
 
-      user.cleanExpiredTokens();
-      user.refreshTokens.push({
-        token: refreshToken,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      });
-      await user.save({ validateBeforeSave: false });
+  if (!user || !(await user.comparePassword(password))) {
+    throw ApiError.unauthorized('Invalid email or password');
+  }
 
-      setRefreshTokenCookie(res, refreshToken);
+  if (user.role !== 'admin') {
+    throw ApiError.forbidden('Unauthorized access. This portal is for administrators only.');
+  }
 
-      // Redirect to frontend without token (relies on refresh token cookie)
-      res.redirect(`${process.env.CLIENT_URL}/auth/callback`);
-    } catch (error) {
-      next(error);
-    }
-  })(req, res, next);
+  if (!user.isActive) {
+    throw ApiError.forbidden('Your account has been deactivated. Contact support.');
+  }
+
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
+
+  user.cleanExpiredTokens();
+  user.refreshTokens.push({
+    token: refreshToken,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  });
+  await user.save({ validateBeforeSave: false });
+
+  setRefreshTokenCookie(res, refreshToken);
+
+  ApiResponse.success(res, {
+    user: user.toJSON(),
+    accessToken,
+  }, 'Logged in successfully');
 });
+
 
 /**
  * @desc    Refresh access token

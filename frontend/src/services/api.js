@@ -12,19 +12,35 @@ export const injectStore = (_store) => {
   store = _store;
 };
 
-// Request interceptor: attach token if we use bearer (though here we might just rely on cookies, or add bearer if we store it in memory)
-// Since authSlice stores accessToken in redux state, we should ideally inject it, but Redux toolkit handles state.
-// To avoid circular dependency, we can intercept requests and get token from store if needed.
-// However, the standard setup might just rely on HTTP-only cookies or dispatching via store.
-// Let's implement a generic interceptor that checks localStorage if they used that, or we just leave it minimal.
+// Request interceptor: attach access token from Redux state
 api.interceptors.request.use(
   (config) => {
-    // Note: If you store the access token in memory/redux, you might need to inject it here.
-    // Assuming backend also accepts cookie for auth or we don't strictly need this interceptor for now.
+    if (store) {
+      const state = store.getState();
+      const token = state.auth?.accessToken;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
     return config;
   },
   (error) => Promise.reject(error)
 );
+
+// Track if a token refresh is already in progress to avoid multiple simultaneous refresh calls
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
 
 // Response interceptor for refresh token handling
 api.interceptors.response.use(
@@ -32,22 +48,62 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     
-    // Check if error is 401 Unauthorized, we haven't retried yet, and it's not a login request
-    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/login') {
+    // Check if error is 401, we haven't retried yet, and it's not the refresh/login endpoint itself
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/auth/login') &&
+      !originalRequest.url?.includes('/auth/register') &&
+      !originalRequest.url?.includes('/auth/refresh')
+    ) {
+      if (isRefreshing) {
+        // Queue the request while refresh is in progress
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then((token) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api(originalRequest);
+        }).catch((err) => Promise.reject(err));
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
+
       try {
         // Attempt to refresh token using the backend endpoint
-        await axios.post(`${baseURL}/auth/refresh`, {}, { withCredentials: true });
+        const response = await axios.post(
+          `${baseURL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
         
-        // Retry the original request
+        const newAccessToken = response.data.data.accessToken;
+        
+        // Update the store with the new access token
+        if (store) {
+          store.dispatch({
+            type: 'auth/setCredentials',
+            payload: {
+              user: store.getState().auth.user,
+              accessToken: newAccessToken,
+            },
+          });
+        }
+
+        processQueue(null, newAccessToken);
+        
+        // Retry the original request with the new token
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, meaning session is truly expired
-        // Dispatch logout if store is available
+        processQueue(refreshError, null);
+        // Refresh failed, session is truly expired
         if (store) {
           store.dispatch({ type: 'auth/logout' });
         }
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
     return Promise.reject(error);

@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Outlet as RouterOutlet } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { fetchProfile, setLoading } from '@/redux/slices/authSlice';
+import { setCredentials, setLoading } from '@/redux/slices/authSlice';
+import axios from 'axios';
+import api from '@/services/api';
 
 // Route Guards
 import ProtectedRoute from './ProtectedRoute';
@@ -15,6 +17,8 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 // Public Pages
 import HomePage from '@/pages/public/HomePage';
 import LoginPage from '@/pages/public/LoginPage';
+import VendorLoginPage from '@/pages/vendor/VendorLoginPage';
+import AdminLoginPage from '@/pages/admin/AdminLoginPage';
 import RegisterPage from '@/pages/public/RegisterPage';
 import VendorSignupPage from '@/pages/public/VendorSignupPage';
 import ForgotPasswordPage from '@/pages/public/ForgotPasswordPage';
@@ -22,7 +26,7 @@ import ResetPasswordPage from '@/pages/public/ResetPasswordPage';
 import VehicleListPage from '@/pages/vehicles/VehicleListPage';
 import VehicleDetailsPage from '@/pages/vehicles/VehicleDetailsPage';
 import BookingSuccessPage from '@/pages/vehicles/BookingSuccessPage';
-import OAuthCallback from '@/pages/public/OAuthCallback';
+
 import ExperiencePage from '@/pages/public/ExperiencePage';
 import AboutPage from '@/pages/public/AboutPage';
 import ContactPage from '@/pages/public/ContactPage';
@@ -40,6 +44,7 @@ import VendorOverview from '@/pages/vendor/VendorOverview';
 import ManageFleet from '@/pages/vendor/ManageFleet';
 import AddVehicleWizard from '@/pages/vendor/AddVehicleWizard';
 import VendorBookings from '@/pages/vendor/VendorBookings';
+import VendorRevenue from '@/pages/vendor/VendorRevenue';
 
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout';
 import AdminOverview from '@/pages/admin/AdminOverview';
@@ -54,11 +59,41 @@ import AdminBookings from '@/pages/admin/AdminBookings';
 export default function AppRoutes() {
   const dispatch = useDispatch();
 
+  const hasRestored = React.useRef(false);
+
   useEffect(() => {
-    dispatch(fetchProfile()).unwrap().catch(() => {
-      dispatch(setLoading(false));
-    });
+    if (hasRestored.current) return;
+    hasRestored.current = true;
+
+    const restoreSession = async () => {
+      try {
+        // Try to refresh the access token from the refresh cookie
+        const refreshRes = await axios.post(
+          `${import.meta.env.VITE_API_URL || '/api'}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+        
+        const accessToken = refreshRes.data.data.accessToken;
+
+        // Now fetch the profile with the new access token
+        const profileRes = await api.get('/auth/me', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        
+        dispatch(setCredentials({
+          user: profileRes.data.data.user,
+          accessToken,
+        }));
+      } catch {
+        // No valid session — user needs to log in
+        dispatch(setLoading(false));
+      }
+    };
+
+    restoreSession();
   }, [dispatch]);
+
 
   return (
     <Routes>
@@ -81,13 +116,14 @@ export default function AppRoutes() {
       {/* Guest Only Routes (Auth UI) */}
       <Route element={<GuestRoute />}>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/vendor/login" element={<VendorLoginPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
       </Route>
 
-      {/* Hidden Auth Callback */}
-      <Route path="/auth/callback" element={<OAuthCallback />} />
+
 
       {/* Protected User Routes */}
       <Route element={<ProtectedRoute />}>
@@ -109,7 +145,7 @@ export default function AppRoutes() {
           <Route path="/vendor/vehicles" element={<ManageFleet />} />
           <Route path="/vendor/add-vehicle" element={<AddVehicleWizard />} />
           <Route path="/vendor/bookings" element={<VendorBookings />} />
-          <Route path="/vendor/revenue" element={<div className="p-10">Revenue Analytics Coming Soon</div>} />
+          <Route path="/vendor/revenue" element={<VendorRevenue />} />
           <Route path="/vendor/profile" element={<UserProfile />} />
         </Route>
       </Route>

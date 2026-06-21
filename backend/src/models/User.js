@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
       minlength: [8, 'Password must be at least 8 characters'],
       validate: {
         validator: function(v) {
+          if (!v) return true;
           return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(v);
         },
         message: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
@@ -40,10 +41,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['user', 'vendor', 'admin'],
       default: 'user',
-    },
-    googleId: {
-      type: String,
-      sparse: true,
     },
     isVerified: {
       type: Boolean,
@@ -86,12 +83,11 @@ const userSchema = new mongoose.Schema(
 );
 
 // Indexes
-userSchema.index({ googleId: 1 });
 userSchema.index({ role: 1 });
 
 // Hash password before save
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || !this.password) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });

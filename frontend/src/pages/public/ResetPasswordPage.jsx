@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import AuthImage from '@/components/ui/AuthImage';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Car, Lock, ArrowRight } from 'lucide-react';
@@ -34,14 +35,10 @@ export default function ResetPasswordPage() {
   return (
     <motion.div {...pageTransition} className="auth-page">
       <div className="auth-left-panel hidden md:flex">
-        <motion.img
-          initial={{ scale: 1.05, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.65 }}
-          transition={{ duration: 2, ease: 'easeOut' }}
-          src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&q=100&w=2400"
+        <AuthImage
+          src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&q=80&w=1920"
           alt="Luxurious sports car"
-          className="auth-bg-image loaded"
-          loading="eager"
+          style={{ opacity: 0.65 }}
         />
         <div className="auth-overlay-dark" />
         <div className="auth-overlay-gold" />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import AuthImage from '@/components/ui/AuthImage';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Car, Mail, ArrowLeft, Send } from 'lucide-react';
@@ -45,14 +46,9 @@ export default function ForgotPasswordPage() {
           ════════════════════════════════════════════════════════════════════ */}
       <div className="auth-left-panel hidden md:flex">
         {/* Background Image */}
-        <motion.img
-          initial={{ scale: 1.05, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 2, ease: 'easeOut' }}
+        <AuthImage
           src="https://wallpaperaccess.com/full/1125043.jpg"
           alt="Luxurious sports car"
-          className="auth-bg-image loaded"
-          loading="eager"
         />
 
         {/* Overlays */}

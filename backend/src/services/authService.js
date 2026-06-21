@@ -7,8 +7,8 @@ import crypto from 'crypto';
  * @returns {string} JWT Token
  */
 export const generateAccessToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+  return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, {
+    expiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
   });
 };
 
@@ -62,11 +62,13 @@ export const hashResetToken = (token) => {
 export const setRefreshTokenCookie = (res, token) => {
   // 7 days in milliseconds
   const maxAge = 7 * 24 * 60 * 60 * 1000;
-  
+  const isProduction = process.env.NODE_ENV === 'production';
+
   res.cookie('refreshToken', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+    path: '/',
     maxAge,
   });
 };
@@ -76,10 +78,13 @@ export const setRefreshTokenCookie = (res, token) => {
  * @param {object} res - Express response object
  */
 export const clearRefreshTokenCookie = (res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+
   res.cookie('refreshToken', '', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+    path: '/',
     expires: new Date(0),
   });
 };

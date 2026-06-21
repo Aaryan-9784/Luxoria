@@ -28,6 +28,24 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
   }
 });
 
+export const vendorLogin = createAsyncThunk('auth/vendorLogin', async (credentials, { rejectWithValue }) => {
+  try {
+    const response = await api.post('/auth/vendor/login', credentials);
+    return response.data.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error?.message || 'Vendor login failed');
+  }
+});
+
+export const adminLogin = createAsyncThunk('auth/adminLogin', async (credentials, { rejectWithValue }) => {
+  try {
+    const response = await api.post('/auth/admin/login', credentials);
+    return response.data.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error?.message || 'Admin login failed');
+  }
+});
+
 export const fetchProfile = createAsyncThunk('auth/fetchProfile', async (_, { rejectWithValue }) => {
   try {
     const response = await api.get('/auth/me');
@@ -64,6 +82,7 @@ export const authSlice = createSlice({
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
       state.isAuthenticated = true;
+      state.loading = false;
     },
     updateUser: (state, action) => {
       state.user = action.payload.user;
@@ -97,6 +116,36 @@ export const authSlice = createSlice({
         state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Vendor Login
+      .addCase(vendorLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(vendorLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.isAuthenticated = true;
+      })
+      .addCase(vendorLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Admin Login
+      .addCase(adminLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(adminLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.isAuthenticated = true;
+      })
+      .addCase(adminLogin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

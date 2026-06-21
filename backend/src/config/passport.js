@@ -8,9 +8,8 @@ const configurePassport = () => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: '/api/auth/google/callback',
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback',
         proxy: true,
-        scope: ['profile', 'email'],
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -51,16 +50,6 @@ const configurePassport = () => {
       }
     )
   );
-
-  passport.serializeUser((user, done) => done(null, user.id));
-  passport.deserializeUser(async (id, done) => {
-    try {
-      const user = await User.findById(id);
-      done(null, user);
-    } catch (error) {
-      done(error, null);
-    }
-  });
 };
 
 export default configurePassport;

@@ -1,17 +1,24 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setCredentials, fetchProfile } from '@/redux/slices/authSlice';
+import { setCredentials } from '@/redux/slices/authSlice';
 import { motion } from 'framer-motion';
 import { Car } from 'lucide-react';
-import api from '@/services/api';
+import axios from 'axios';
+
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function OAuthCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const hasFetched = React.useRef(false);
+
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
     const handleAuth = async () => {
       const error = searchParams.get('error');
 
@@ -20,18 +27,40 @@ export default function OAuthCallback() {
         return;
       }
 
-      // We no longer rely on a token in the URL.
-      // The backend has set an HTTP-only refresh token cookie.
-      // fetchProfile will trigger a 401, which will be caught by the api interceptor.
-      // The interceptor will then call /auth/refresh, get a new access token,
-      // store it in Redux, and retry the profile fetch seamlessly.
       try {
-        const result = await dispatch(fetchProfile()).unwrap();
-        
-        // Redirect based on role
-        const role = result.user.role;
-        navigate(role === 'admin' ? '/admin/dashboard' : role === 'vendor' ? '/vendor/dashboard' : '/dashboard');
+        // Step 1: The backend set an HTTP-only refresh token cookie after Google OAuth.
+        // Call /auth/refresh to exchange the refresh cookie for an access token.
+        const refreshRes = await axios.post(
+          `${baseURL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+
+        const accessToken = refreshRes.data.data.accessToken;
+
+        // Step 2: Use the access token to fetch the user profile
+        const profileRes = await axios.get(`${baseURL}/auth/me`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          withCredentials: true,
+        });
+
+        const user = profileRes.data.data.user;
+
+        // Step 3: Set credentials in Redux
+        dispatch(setCredentials({ user, accessToken }));
+
+        // Step 4: Redirect based on role
+        const role = user.role;
+        navigate(
+          role === 'admin'
+            ? '/admin/dashboard'
+            : role === 'vendor'
+              ? '/vendor/dashboard'
+              : '/dashboard',
+          { replace: true }
+        );
       } catch (err) {
+        console.error('OAuth callback error:', err);
         navigate('/login?error=auth_failed');
       }
     };
