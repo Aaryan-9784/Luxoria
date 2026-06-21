@@ -9,7 +9,9 @@ import {
   forgotPassword,
   resetPassword,
   getMe,
+  googleOAuthCallback,
 } from '../controllers/authController.js';
+import passport from 'passport';
 import { protect } from '../middleware/auth.js';
 import validate from '../middleware/validate.js';
 import {
@@ -29,6 +31,14 @@ router.post('/admin/login', validate(loginSchema), adminLogin);
 router.post('/refresh', refreshAccessToken);
 router.post('/forgot-password', validate(forgotPasswordSchema), forgotPassword);
 router.put('/reset-password/:token', validate(resetPasswordSchema), resetPassword);
+
+// Google OAuth routes
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { session: false, failureRedirect: '/login?error=auth_failed' }),
+  googleOAuthCallback
+);
 
 
 // Protected routes

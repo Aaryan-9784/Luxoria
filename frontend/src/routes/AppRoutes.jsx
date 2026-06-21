@@ -23,6 +23,7 @@ import RegisterPage from '@/pages/public/RegisterPage';
 import VendorSignupPage from '@/pages/public/VendorSignupPage';
 import ForgotPasswordPage from '@/pages/public/ForgotPasswordPage';
 import ResetPasswordPage from '@/pages/public/ResetPasswordPage';
+import OAuthCallback from '@/pages/public/OAuthCallback';
 import VehicleListPage from '@/pages/vehicles/VehicleListPage';
 import VehicleDetailsPage from '@/pages/vehicles/VehicleDetailsPage';
 import BookingSuccessPage from '@/pages/vehicles/BookingSuccessPage';
@@ -111,6 +112,7 @@ export default function AppRoutes() {
         <Route path="/vendor/signup" element={<VendorSignupPage />} />
         
         <Route path="/unauthorized" element={<div className="pt-28 container-luxe section-spacing text-center text-error">Unauthorized Access</div>} />
+        <Route path="/oauth-callback" element={<OAuthCallback />} />
       </Route>
 
       {/* Guest Only Routes (Auth UI) */}

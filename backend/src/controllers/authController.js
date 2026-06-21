@@ -314,3 +314,34 @@ export const resetPassword = asyncHandler(async (req, res) => {
 export const getMe = asyncHandler(async (req, res) => {
   ApiResponse.success(res, { user: req.user });
 });
+
+/**
+ * @desc    Google OAuth Callback handling
+ * @route   GET /api/auth/google/callback
+ * @access  Public
+ */
+export const googleOAuthCallback = asyncHandler(async (req, res) => {
+  // User is injected by passport middleware
+  const user = req.user;
+
+  if (!user) {
+    return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/login?error=auth_failed`);
+  }
+
+  // Generate tokens
+  const refreshToken = generateRefreshToken(user._id);
+
+  // Manage tokens in DB
+  user.cleanExpiredTokens();
+  user.refreshTokens.push({
+    token: refreshToken,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  });
+  await user.save({ validateBeforeSave: false });
+
+  // Set the HTTP-only cookie
+  setRefreshTokenCookie(res, refreshToken);
+
+  // Redirect to frontend OAuth callback page to initiate token exchange
+  res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/oauth-callback`);
+});

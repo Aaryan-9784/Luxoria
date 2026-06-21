@@ -5,7 +5,8 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
-
+import passport from 'passport';
+import configurePassport from './config/passport.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import errorHandler from './middleware/errorHandler.js';
 
@@ -22,6 +23,10 @@ import adminRoutes from './routes/adminRoutes.js';
 import masterDataRoutes from './routes/masterDataRoutes.js';
 
 const app = express();
+
+// ─── Passport Configuration ──────────────────────────────────────
+configurePassport();
+app.use(passport.initialize());
 
 // ─── Security Middleware ─────────────────────────────────────────
 app.use(helmet());

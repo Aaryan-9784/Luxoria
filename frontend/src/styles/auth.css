@@ -350,13 +350,15 @@
   letter-spacing: -0.02em;
   line-height: 1.2;
   margin-bottom: 4px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 4px 16px rgba(0, 0, 0, 0.8);
 }
 
 .auth-card-subtitle {
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
   line-height: 1.4;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 2px 8px rgba(0, 0, 0, 0.7);
 }
 
 
@@ -463,6 +465,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: #FFFFFF;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
   background: transparent;
   border: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
@@ -512,8 +515,9 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 0.875rem;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95);
   pointer-events: none;
   transition: all 0.25s var(--ease-luxe);
   transform-origin: left center;
@@ -710,7 +714,8 @@
 .auth-forgot-link {
   font-size: 0.8125rem;
   color: #FFFFFF;
-  font-weight: 500;
+  font-weight: 600;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95);
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -953,12 +958,15 @@
   text-align: center;
   margin-top: 24px;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95);
 }
 
 .auth-switch a {
   color: #FFFFFF;
-  font-weight: 600;
+  font-weight: 700;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95);
   text-decoration: none;
   transition: all 0.3s var(--ease-luxe);
 }
