@@ -72,12 +72,16 @@ export default function HeroSection() {
                 Browse Fleet <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
-            <button className="btn btn-ghost btn-lg rounded-full px-8 text-white hover:bg-white/10 flex items-center gap-2 group">
+            <Link 
+              to="/watch"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="btn btn-ghost btn-lg rounded-full px-8 text-white hover:bg-white/10 flex items-center gap-2 group"
+            >
               <span className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-colors">
                 <Play className="w-4 h-4 ml-1" />
               </span>
               Watch Experience
-            </button>
+            </Link>
           </motion.div>
 
           {/* Trust Indicators */}

@@ -40,7 +40,7 @@ export default function AboutPage() {
         primaryBtnText="Explore Collection"
         primaryBtnLink="/collection"
         secondaryBtnText="Book Experience"
-        secondaryBtnLink="/experience"
+        secondaryBtnLink="/vehicles"
       />
     </motion.div>
   );

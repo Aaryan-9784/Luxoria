@@ -90,13 +90,17 @@ export default function LuxuryHero() {
             </Link>
 
             {/* Secondary Button */}
-            <button className="flex items-center gap-6 text-[#050505] font-semibold hover:text-[#C9A227] transition-all duration-700 group hover:-translate-y-[2px]">
+            <Link 
+              to="/watch" 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="flex items-center gap-6 text-[#050505] font-semibold hover:text-[#C9A227] transition-all duration-700 group hover:-translate-y-[2px]"
+            >
               <div className="w-[52px] h-[52px] rounded-full border border-white/40 flex items-center justify-center group-hover:border-[#C9A227]/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] transition-all duration-700 relative bg-white/40 backdrop-blur-xl">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#D4AF37]/0 to-[#D4AF37]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 <Play className="w-3.5 h-3.5 translate-x-0.5 relative z-10 fill-[#050505]/80 group-hover:fill-[#C9A227] opacity-90 group-hover:opacity-100 transition-all duration-700" />
               </div>
               <span className="text-[11px] tracking-[0.25em] uppercase relative z-10 font-bold text-[#050505]/80 group-hover:text-[#C9A227] transition-colors duration-700 antialiased">Watch Experience</span>
-            </button>
+            </Link>
           </div>
         </motion.div>
       </div>

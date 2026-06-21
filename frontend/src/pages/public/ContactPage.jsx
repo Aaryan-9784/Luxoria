@@ -39,7 +39,7 @@ export default function ContactPage() {
         }
         subheadline="Our concierge team is ready to assist you."
         primaryBtnText="Book Experience"
-        primaryBtnLink="/experience"
+        primaryBtnLink="/vehicles"
         secondaryBtnText="Speak With Concierge"
         secondaryBtnLink="#contact-form"
         secondaryBtnIcon={PhoneCall}
