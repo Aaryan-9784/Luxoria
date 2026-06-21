@@ -19,6 +19,19 @@
 
 ---
 
+## 📑 Table of Contents
+- [Ecosystem Overview](#-ecosystem-overview)
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Installation & Local Setup](#️-installation--local-setup)
+- [Architecture Highlights](#-architecture-highlights)
+- [Deployment Strategy](#-deployment-strategy)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
 ## 🚀 Ecosystem Overview
 
 The platform is divided into three comprehensive interfaces designed to handle the entire luxury rental lifecycle:
@@ -58,14 +71,41 @@ The platform is divided into three comprehensive interfaces designed to handle t
 
 ---
 
+## 📁 Project Structure
+
+```text
+luxoria/
+├── backend/                  # Express.js Server
+│   ├── src/
+│   │   ├── controllers/      # Route handlers (Auth, Cars, Bookings)
+│   │   ├── models/           # Mongoose schemas
+│   │   ├── routes/           # API route definitions
+│   │   ├── middleware/       # JWT, Role checks, Error handling
+│   │   └── utils/            # Helpers (Cloudinary, Email, Razorpay)
+│   ├── uploads/              # Local temp storage for uploads
+│   └── .env.example          # Backend environment template
+│
+└── frontend/                 # React + Vite Client
+    ├── src/
+    │   ├── components/       # Reusable UI elements (Shadcn inspired)
+    │   ├── pages/            # Application views (Home, Dashboard)
+    │   ├── redux/            # Redux store and slices
+    │   ├── hooks/            # Custom React hooks
+    │   └── assets/           # Static files and global CSS
+    ├── public/               # Publicly accessible assets
+    └── vite.config.js        # Vite configuration
+```
+
+---
+
 ## 🛠️ Installation & Local Setup
 
 ### Prerequisites
 Ensure you have the following installed and set up on your machine:
-- Node.js (v18+ recommended)
-- MongoDB Atlas account (or local MongoDB server)
-- Cloudinary account
-- Razorpay account
+- **Node.js** (v18+ recommended)
+- **MongoDB Atlas** account (or local MongoDB server)
+- **Cloudinary** account for image hosting
+- **Razorpay** account for payment processing
 
 ### 1. Clone the repository
 ```bash
@@ -121,6 +161,24 @@ npm run dev
 
 - **Frontend**: Designed to be deployed on **Vercel** or **Netlify**. It includes a `vercel.json` configured to handle React SPA routing fallbacks natively.
 - **Backend**: Ready for **Render**, **Railway**, or **Heroku**. Includes a `render.yaml` Blueprint for zero-downtime Infrastructure-as-Code deployment.
+
+---
+
+## 🤝 Contributing
+
+Contributions make the open-source community an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
