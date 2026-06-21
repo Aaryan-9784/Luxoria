@@ -19,59 +19,86 @@ function AnimatedCounter({ target, suffix = '', prefix = '' }) {
       }}
       viewport={{ once: true, margin: '-100px' }}
     >
-      {prefix}{display.toLocaleString()}{suffix}
+      {prefix}{display.toLocaleString()}
     </motion.span>
   );
 }
 
 const STATS = [
   { value: 500, suffix: '+', label: 'Premium Vehicles', description: 'Curated luxury fleet' },
-  { value: 12000, suffix: '+', label: 'Happy Clients', description: 'Across the globe' },
+  { value: 12, suffix: 'K+', label: 'Happy Clients', description: 'Across the globe' },
   { value: 45, suffix: '+', label: 'Cities Covered', description: 'Nationwide presence' },
-  { value: 200, suffix: '+', label: 'Verified Vendors', description: 'Certified partners' },
+  { value: 200, suffix: '+', label: 'Verified Partners', description: 'Certified excellence' },
 ];
 
 export default function StatsSection() {
   return (
-    <section className="py-24 bg-primary relative overflow-hidden border-y border-white/10">
-      {/* Subtle gold accent and background glow */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-accent rounded-full blur-[250px] opacity-[0.08] pointer-events-none" />
-
-      <div className="container-luxe relative z-10">
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, margin: '-60px' }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 rounded-3xl overflow-hidden glass-dark border border-white/10 shadow-2xl relative"
-        >
-          {/* Glass highlight overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-          
-          {STATS.map((stat, i) => (
+    <section className="py-24 bg-surface relative overflow-hidden">
+      <div className="container-luxe">
+        
+        {/* Animated Premium Header - Left Aligned to match Collection pages */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+          <div className="max-w-2xl">
             <motion.div
-              key={i}
+              className="flex items-center gap-3 mb-6"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="w-12 h-px bg-accent" />
+              <span className="text-overline tracking-[0.2em] text-primary">By The Numbers</span>
+            </motion.div>
+            <motion.h2
+              className="text-[48px] lg:text-[64px] font-bold text-primary leading-[1.1] tracking-tight uppercase mb-6"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1, ease: EASE_LUXE }}
-              className={`p-10 md:p-14 text-center relative ${
-                i !== STATS.length - 1 ? 'lg:border-r border-white/10' : ''
-              } ${
-                i % 2 === 0 ? 'md:border-r border-white/10 lg:border-r' : ''
-              } ${
-                i < 2 ? 'border-b border-white/10 lg:border-b-0' : ''
-              }`}
+              transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <div className="text-4xl md:text-5xl lg:text-[4rem] font-bold text-white mb-4 tracking-tight drop-shadow-md flex items-center justify-center">
-                <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+              The Scale of <br />
+              <span className="text-secondary italic font-light lowercase">excellence</span>
+            </motion.h2>
+            <motion.p
+              className="text-secondary text-lg leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              Discover the impressive scale of our curated luxury fleet and the thousands of clients who trust Luxoria worldwide.
+            </motion.p>
+          </div>
+        </div>
+
+        {/* Distinct Floating Cards Grid - Light/Dark Theme Compatible */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {STATS.map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.15, ease: EASE_LUXE }}
+              className="group relative bg-background border border-border/60 shadow-sm rounded-3xl p-12 text-center overflow-hidden hover:-translate-y-2 transition-all duration-500 hover:shadow-lg hover:border-accent/40"
+            >
+              {/* Card Hover Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/0 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              
+              <div className="relative z-10">
+                <div className="text-[56px] lg:text-[64px] font-bold tracking-tight mb-4 flex justify-center items-baseline font-serif text-primary">
+                  <AnimatedCounter target={stat.value} prefix={stat.prefix} />
+                  <span className="text-accent italic font-light text-[40px] lg:text-[48px] ml-1">{stat.suffix}</span>
+                </div>
+                
+                <div className="w-12 h-px bg-border mx-auto mb-6 group-hover:bg-accent/50 transition-colors duration-500" />
+                
+                <p className="text-[13px] font-bold text-primary mb-2 tracking-[0.2em] uppercase">{stat.label}</p>
+                <p className="text-sm text-secondary font-medium">{stat.description}</p>
               </div>
-              <p className="text-body font-bold text-accent mb-2 tracking-widest uppercase">{stat.label}</p>
-              <p className="text-caption text-white/50">{stat.description}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

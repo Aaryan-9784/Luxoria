@@ -3,27 +3,53 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Car, Zap, Mountain, Crown, Wind, Truck } from 'lucide-react';
 import { staggerContainer, staggerItem } from '@/lib/motion';
-import { SectionHeader } from '@/components/ui/Typography';
+import LuxuryImage from '@/components/ui/LuxuryImage';
 
 const CATEGORIES = [
-  { name: 'Sports Cars', icon: Car, count: 86, slug: 'sports', image: 'https://images.unsplash.com/photo-1583121280346-081cb5f6f4c1?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Luxury SUVs', icon: Mountain, count: 124, slug: 'suv', image: 'https://images.unsplash.com/photo-1609520778173-e5e5424dfd0f?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Electric', icon: Zap, count: 52, slug: 'electric', image: 'https://images.unsplash.com/photo-1617704548623-a1789c02ffec?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Sedans', icon: Crown, count: 98, slug: 'sedan', image: 'https://images.unsplash.com/photo-1580274453535-4dbb2c34d3d7?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Convertibles', icon: Wind, count: 41, slug: 'convertible', image: 'https://images.unsplash.com/photo-1603584173870-7d4323c91e4f?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Luxury Vans', icon: Truck, count: 28, slug: 'limousine', image: 'https://images.unsplash.com/photo-1623880404395-515c0e181467?auto=format&fit=crop&q=80&w=600' },
+  { name: 'Sports Cars', icon: Car, count: 86, slug: 'sports', image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=600&auto=format&fit=crop' },
+  { name: 'Luxury SUVs', icon: Mountain, count: 124, slug: 'suv', image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=600&auto=format&fit=crop' },
+  { name: 'Electric', icon: Zap, count: 52, slug: 'electric', image: 'https://images.unsplash.com/photo-1619682817481-e994891cd1f5?q=80&w=600&auto=format&fit=crop' },
+  { name: 'Sedans', icon: Crown, count: 98, slug: 'sedan', image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?q=80&w=600&auto=format&fit=crop' },
+  { name: 'Convertibles', icon: Wind, count: 41, slug: 'convertible', image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=600&auto=format&fit=crop' },
+  { name: 'Luxury Vans', icon: Truck, count: 28, slug: 'limousine', image: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?q=80&w=600&auto=format&fit=crop' },
 ];
 
 export default function CategoriesSection() {
   return (
     <section className="section-spacing bg-background">
       <div className="container-luxe">
-        <SectionHeader
-          overline="Categories"
-          title="Find Your Perfect Match"
-          description="From exhilarating sports cars to ultra-comfortable luxury SUVs — explore vehicles tailored to every desire."
-          align="center"
-        />
+        {/* Header */}
+        <div className="flex flex-col items-center text-center mb-16">
+          <motion.div 
+            className="flex items-center gap-3 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="w-8 h-px bg-accent" />
+            <span className="text-overline tracking-[0.2em] text-primary">Categories</span>
+            <span className="w-8 h-px bg-accent" />
+          </motion.div>
+          <motion.h2 
+            className="text-[40px] lg:text-[56px] font-bold text-primary leading-[1.1] tracking-tight uppercase max-w-3xl"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            Find Your <span className="text-secondary italic font-light lowercase">Perfect Match</span>
+          </motion.h2>
+          <motion.p 
+            className="text-secondary text-lg leading-relaxed max-w-2xl mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            From exhilarating sports cars to ultra-comfortable luxury SUVs — explore vehicles tailored to every desire.
+          </motion.p>
+        </div>
 
         <motion.div
           initial="initial"
@@ -40,7 +66,7 @@ export default function CategoriesSection() {
               >
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0 overflow-hidden">
-                  <img 
+                  <LuxuryImage 
                     src={cat.image} 
                     alt={cat.name}
                     className="w-full h-full object-cover object-center opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700 ease-out"

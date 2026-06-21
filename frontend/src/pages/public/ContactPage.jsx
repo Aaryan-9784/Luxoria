@@ -31,7 +31,7 @@ export default function ContactPage() {
       <ContactMap />
       
       <PageCTA 
-        bgImage="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop"
+        bgImage="https://www.mansory.com/cdn-cgi/image/format=avif,quality=90/https://cdn.prod.website-files.com/661d6e0d2e84ef511db18f17/681b304b9da7339525a0907c_revuelto-black-lime-th.webp"
         headline={
           <>
             Your Luxury Journey <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#E5C76B] to-[#C9A227] italic font-normal lowercase font-serif pr-2 drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)]">Starts Here</span>

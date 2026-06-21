@@ -30,7 +30,7 @@ export default function AboutPage() {
       <ContactFAQ />
       
       <PageCTA 
-        bgImage="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?q=80&w=2070&auto=format&fit=crop"
+        bgImage="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40Y3SGLhTW4kmidwPkFKsvNT3Myc2vafbCVoCM7j1Mbokm1MAJiRyinbL&s=10"
         headline={
           <>
             Experience Luxury <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#E5C76B] to-[#C9A227] italic font-normal lowercase font-serif pr-2 drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)]">Without Limits</span>

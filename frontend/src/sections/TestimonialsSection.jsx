@@ -59,12 +59,38 @@ export default function TestimonialsSection() {
   return (
     <section className="py-24 bg-surface relative overflow-hidden">
       <div className="container-luxe">
-        <SectionHeader
-          overline="Client Stories"
-          title="Echoes of Excellence"
-          description="Hear from the world's most discerning individuals who have experienced the unparalleled Luxoria standard."
-          align="left"
-        />
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+          <div className="max-w-2xl">
+            <motion.div
+              className="flex items-center gap-3 mb-6"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="w-12 h-px bg-accent" />
+              <span className="text-overline tracking-[0.2em] text-primary">Client Stories</span>
+            </motion.div>
+            <motion.h2
+              className="text-[48px] lg:text-[64px] font-bold text-primary leading-[1.1] tracking-tight uppercase mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              Echoes of <br /> <span className="text-secondary italic font-light lowercase">excellence</span>
+            </motion.h2>
+            <motion.p
+              className="text-secondary text-lg leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              Hear from the world's most discerning individuals who have experienced the unparalleled Luxoria standard.
+            </motion.p>
+          </div>
+        </div>
 
         <div className="relative mt-12 cursor-grab active:cursor-grabbing">
           {/* Fade edges */}
