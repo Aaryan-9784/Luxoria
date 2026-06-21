@@ -189,9 +189,9 @@ export default function FeaturedVehicles() {
           whileInView="animate"
           viewport={{ once: true, margin: '-100px' }}
           variants={staggerContainer}
-          className="vehicle-grid"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8"
         >
-          {FEATURED_VEHICLES.map((vehicle) => (
+          {FEATURED_VEHICLES.slice(0, 6).map((vehicle) => (
             <motion.div key={vehicle.id} variants={staggerItem}>
               <VehicleCard {...vehicle} />
             </motion.div>

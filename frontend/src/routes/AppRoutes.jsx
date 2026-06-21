@@ -32,6 +32,7 @@ import ExperiencePage from '@/pages/public/ExperiencePage';
 import AboutPage from '@/pages/public/AboutPage';
 import ContactPage from '@/pages/public/ContactPage';
 import CollectionPage from '@/pages/public/CollectionPage';
+import WatchExperiencePage from '@/pages/public/WatchExperiencePage';
 
 import DashboardOverview from '@/pages/user/DashboardOverview';
 import MyBookings from '@/pages/user/MyBookings';
@@ -105,6 +106,7 @@ export default function AppRoutes() {
         <Route path="/vehicles" element={<VehicleListPage />} />
         <Route path="/vehicles/:id" element={<VehicleDetailsPage />} />
         <Route path="/experience" element={<ExperiencePage />} />
+        <Route path="/watch" element={<WatchExperiencePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         

@@ -41,6 +41,16 @@ export const fadeRight = {
   animate: { opacity: 1, x: 0, transition: { duration: 0.5, ease: EASE_LUXE } },
 };
 
+export const slideInLeft = {
+  initial: { opacity: 0, x: -100 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.6, ease: EASE_LUXE } },
+};
+
+export const slideInRight = {
+  initial: { opacity: 0, x: 100 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.6, ease: EASE_LUXE } },
+};
+
 // ─── Scale Variants ─────────────────────────────────────────────────────────
 export const scaleIn = {
   initial: { opacity: 0, scale: 0.92 },
