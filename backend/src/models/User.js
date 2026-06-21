@@ -42,6 +42,11 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'vendor', 'admin'],
       default: 'user',
     },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     isVerified: {
       type: Boolean,
       default: false,
