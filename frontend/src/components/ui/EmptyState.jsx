@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import Button from './Button';
 
 /**
  * Empty state with icon, title, description, and optional CTA.
@@ -22,7 +23,15 @@ export default function EmptyState({
       {description && (
         <p className="text-body-sm text-secondary max-w-sm">{description}</p>
       )}
-      {action && <div className="mt-6">{action}</div>}
+      {action && (
+        <div className="mt-6">
+          {React.isValidElement(action) ? (
+            action
+          ) : action.label && action.onClick ? (
+            <Button onClick={action.onClick}>{action.label}</Button>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }

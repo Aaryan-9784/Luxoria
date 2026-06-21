@@ -1,136 +1,117 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Zap, Gauge, DollarSign, Search } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { Star, MapPin, Heart, Plus } from 'lucide-react';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  show: { 
-    opacity: 1, 
-    y: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 24 }
-  }
-};
-
-function VehicleCard({ vehicle }) {
+function VehicleCard({ vehicle, isCompared, toggleCompare }) {
   return (
     <motion.div 
-      layout
-      variants={itemVariants}
-      initial="hidden"
-      animate="show"
-      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-      className="group relative bg-background rounded-[30px] border border-border overflow-hidden transition-all duration-500 hover:shadow-float hover:border-accent/40"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "50px" }}
+      className="group bg-white/70 backdrop-blur-xl border border-white/40 rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 flex flex-col"
     >
-      {/* Image Container with Hover Zoom and Glass Overlay */}
-      <div className="relative h-[280px] w-full overflow-hidden">
+      {/* Image Container */}
+      <div className="relative h-64 overflow-hidden bg-slate-100">
         <img 
           src={vehicle.image} 
-          alt={vehicle.name}
+          alt={vehicle.name} 
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
         
-        {/* Luxury Dark Overlay on Hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
-        {/* Availability Badge */}
-        <div className="absolute top-4 right-4 z-10">
-          <div className={cn(
-            "px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md border",
-            vehicle.availability === 'Available' 
-              ? "bg-black/40 text-white border-white/20" 
-              : "bg-black/60 text-accent border-accent/40"
-          )}>
+        {/* Top Badges */}
+        <div className="absolute top-4 left-4 flex gap-2">
+          <span className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-md ${vehicle.availability === 'Available' ? 'bg-white/80 text-emerald-700' : 'bg-black/80 text-white'}`}>
             {vehicle.availability}
-          </div>
-        </div>
-
-        {/* Floating Category Badge */}
-        <div className="absolute top-4 left-4 z-10">
-          <div className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/90 text-primary shadow-sm backdrop-blur-md">
-            {vehicle.category}
-          </div>
-        </div>
-        
-        {/* Hover Action Button */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-20">
-          <button className="btn btn-accent rounded-full px-6 py-2 shadow-glow-gold flex items-center gap-2">
-            View Details <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-4 gap-4">
-          <h3 className="text-xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
-            {vehicle.name}
-          </h3>
-          <span className="text-sm font-semibold text-secondary flex items-center gap-1 shrink-0">
-            {vehicle.startingPrice} <span className="text-xs font-normal text-muted">/day</span>
           </span>
         </div>
 
-        {/* Specs Grid */}
-        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
-          <div className="flex flex-col gap-1">
-            <span className="text-xs text-muted flex items-center gap-1.5 uppercase tracking-wider font-semibold">
-              <Zap className="w-3.5 h-3.5 text-accent" /> Power
-            </span>
-            <span className="text-sm font-medium text-primary">{vehicle.horsepower}</span>
+        {/* Wishlist Button */}
+        <button className="absolute top-4 right-4 p-2.5 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-red-500 transition-colors">
+          <Heart size={18} />
+        </button>
+
+        {/* Compare Checkbox Alternative (Plus Button) */}
+        <button 
+          onClick={() => toggleCompare(vehicle)}
+          className={`absolute bottom-4 right-4 px-4 py-2 rounded-full backdrop-blur-md text-xs font-medium flex items-center gap-1.5 transition-colors ${isCompared ? 'bg-black text-white' : 'bg-white/80 text-black hover:bg-white'}`}
+        >
+          <Plus size={14} className={isCompared ? "rotate-45 transition-transform" : "transition-transform"} />
+          {isCompared ? 'Added' : 'Compare'}
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="p-6 flex flex-col flex-1">
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <span className="text-xs font-medium uppercase tracking-wider text-slate-500">{vehicle.brand}</span>
+            <h3 className="text-xl font-light text-slate-900 mt-1">{vehicle.name}</h3>
           </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-xs text-muted flex items-center gap-1.5 uppercase tracking-wider font-semibold">
-              <Gauge className="w-3.5 h-3.5 text-accent" /> Top Speed
-            </span>
-            <span className="text-sm font-medium text-primary">{vehicle.topSpeed}</span>
+          <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md">
+            <Star size={14} className="fill-yellow-400 text-yellow-400" />
+            <span className="text-sm font-medium">{vehicle.rating}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center text-slate-500 text-sm mb-6 mt-1">
+          <MapPin size={14} className="mr-1" />
+          {vehicle.location}
+        </div>
+
+        {/* Specs Grid */}
+        <div className="grid grid-cols-2 gap-y-3 mb-6 flex-1 text-sm text-slate-600 font-light border-y border-slate-100 py-4">
+          <div><span className="font-medium text-slate-900">HP:</span> {vehicle.horsepower}</div>
+          <div><span className="font-medium text-slate-900">Top Speed:</span> {vehicle.topSpeed}</div>
+          <div><span className="font-medium text-slate-900">Seats:</span> {vehicle.seats}</div>
+          <div><span className="font-medium text-slate-900">Trans:</span> {vehicle.transmission.slice(0,4)}</div>
+        </div>
+
+        <div className="flex items-center justify-between mt-auto">
+          <div>
+            <span className="text-sm text-slate-500">From</span>
+            <div className="text-2xl font-light text-slate-900">${vehicle.dailyPrice.toLocaleString()}<span className="text-sm text-slate-500">/day</span></div>
+          </div>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors">
+              Quick View
+            </button>
+            <button className="px-6 py-2 text-sm font-medium text-white bg-black hover:bg-slate-800 rounded-full transition-colors">
+              Book
+            </button>
           </div>
         </div>
       </div>
-      
-      {/* Subtle Gold Border Glow Effect on Hover */}
-      <div className="absolute inset-0 border-2 border-transparent group-hover:border-accent/20 rounded-[30px] pointer-events-none transition-colors duration-500" />
     </motion.div>
   );
 }
 
-export default function VehicleGrid({ vehicles }) {
+export default function VehicleGrid({ vehicles, compareVehicles, toggleCompare }) {
   if (vehicles.length === 0) {
     return (
-      <div className="w-full py-20 flex flex-col items-center justify-center text-center">
-        <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mb-4">
-          <Search className="w-8 h-8 text-muted" />
+      <section className="py-24 bg-[#fafafa]">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h3 className="text-2xl font-light text-slate-900">No vehicles found.</h3>
+          <p className="text-slate-500 mt-2 font-light">Try adjusting your filters to find your perfect luxury experience.</p>
         </div>
-        <h3 className="text-xl font-bold text-primary mb-2">No vehicles found</h3>
-        <p className="text-secondary">Try adjusting your filters or search query.</p>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-4 lg:px-8 pb-24">
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-100px" }}
-        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8"
-      >
-        <AnimatePresence mode="popLayout">
+    <section className="py-12 bg-[#fafafa]">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {vehicles.map((vehicle) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} />
+            <VehicleCard 
+              key={vehicle.id} 
+              vehicle={vehicle} 
+              isCompared={compareVehicles.some(v => v.id === vehicle.id)}
+              toggleCompare={toggleCompare}
+            />
           ))}
-        </AnimatePresence>
-      </motion.div>
-    </div>
+        </div>
+      </div>
+    </section>
   );
 }

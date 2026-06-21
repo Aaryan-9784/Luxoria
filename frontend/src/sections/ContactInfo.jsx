@@ -12,7 +12,7 @@ const CONTACT_METHODS = [
   {
     icon: Mail,
     title: 'Email Support',
-    value: 'concierge@luxoria.com',
+    value: 'aaryanpatel9784@gmail.com',
     subtitle: 'Fast Response'
   },
   {

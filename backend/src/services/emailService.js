@@ -82,6 +82,35 @@ class EmailService {
     `;
     await this.sendEmail({ email: user.email, subject: 'Luxoria Password Reset', html });
   }
+
+  async sendContactInquiryToAdmin(data) {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@luxoria.com';
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <h2 style="color: #0F172A; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #D4AF37; padding-bottom: 10px;">New Experience Inquiry</h2>
+        
+        <p style="color: #334155; font-size: 16px;">A new inquiry has been submitted via the Luxoria platform.</p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+          <tbody>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Name:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.firstName} ${data.lastName}</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Email:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><a href="mailto:${data.email}">${data.email}</a></td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Phone:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.phone}</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>City:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.city}</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Service Type:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.serviceType}</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Event Date:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.eventDate}</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Preferred Vehicle:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.preferredVehicle || 'N/A'}</td></tr>
+          </tbody>
+        </table>
+        
+        <div style="background-color: #F8FAFC; padding: 15px; border-left: 4px solid #0F172A; margin: 20px 0;">
+          <p style="margin: 0; color: #475569;"><strong>Additional Details:</strong></p>
+          <p style="margin-top: 5px; color: #1e293b; white-space: pre-wrap;">${data.message || 'No additional details provided.'}</p>
+        </div>
+      </div>
+    `;
+    await this.sendEmail({ email: adminEmail, subject: 'New Luxoria Experience Inquiry', html, message: `New inquiry from ${data.firstName} ${data.lastName}. Email: ${data.email}` });
+  }
 }
 
 export default new EmailService();

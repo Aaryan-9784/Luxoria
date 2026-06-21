@@ -21,6 +21,7 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import masterDataRoutes from './routes/masterDataRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
 
 const app = express();
 
@@ -76,6 +77,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/master-data', masterDataRoutes);
+app.use('/api/contact', contactRoutes);
 
 // ─── 404 Handler ─────────────────────────────────────────────────
 app.all('*', (req, res) => {

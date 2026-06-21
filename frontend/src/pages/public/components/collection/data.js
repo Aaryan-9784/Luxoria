@@ -2,124 +2,205 @@ export const vehicles = [
   {
     id: 'bugatti-chiron',
     name: 'Bugatti Chiron',
+    brand: 'Bugatti',
     category: 'Hypercars',
     startingPrice: '$3,300,000',
+    dailyPrice: 15000,
     horsepower: '1,500 hp',
     topSpeed: '261 mph',
     availability: 'Available',
+    location: 'Dubai',
+    transmission: 'Automatic',
+    fuelType: 'Petrol',
+    seats: 2,
+    rating: 4.9,
     image: 'https://acko-cms.ackoassets.com/Bugatti_Brouillard_8dd2c426bc.webp'
   },
-
   {
     id: 'ferrari-sf90-stradale',
     name: 'Ferrari SF90 Stradale',
+    brand: 'Ferrari',
     category: 'Supercars',
     startingPrice: '$429,000',
+    dailyPrice: 3500,
     horsepower: '789 hp',
     topSpeed: '211 mph',
     availability: 'Available',
+    location: 'Miami',
+    transmission: 'Automatic',
+    fuelType: 'Hybrid',
+    seats: 2,
+    rating: 4.8,
     image: 'https://ferrari.scene7.com/is/image/ferrari/6673fe6511a59b0011ec0465-laferrari_20240627_cover_1920x108020centered_v2'
   },
-
   {
     id: 'lamborghini-revuelto',
     name: 'Lamborghini Revuelto',
+    brand: 'Lamborghini',
     category: 'Supercars',
     startingPrice: '$608,000',
+    dailyPrice: 4200,
     horsepower: '1,001 hp',
     topSpeed: '217 mph',
     availability: 'Reserve',
+    location: 'Los Angeles',
+    transmission: 'Automatic',
+    fuelType: 'Hybrid',
+    seats: 2,
+    rating: 5.0,
     image: 'https://www.mansory.com/cdn-cgi/image/format=avif,quality=90/https://cdn.prod.website-files.com/661d6e0d2e84ef511db18f17/681b304b9da7339525a0907c_revuelto-black-lime-th.webp'
   },
   {
     id: 'maserati-mc20',
     name: 'Maserati MC20',
+    brand: 'Maserati',
     category: 'Supercars',
     startingPrice: '$524,000',
+    dailyPrice: 2800,
     horsepower: '986 hp',
     topSpeed: '211 mph',
     availability: 'Available',
+    location: 'New York',
+    transmission: 'Automatic',
+    fuelType: 'Petrol',
+    seats: 2,
+    rating: 4.7,
     image: 'https://di-uploads-pod40.dealerinspire.com/maseratitampa/uploads/2021/09/2021-Maserati-MC20-1.jpeg'
   },
   {
     id: 'rolls-royce-cullinan',
     name: 'Rolls-Royce Cullinan',
+    brand: 'Rolls Royce',
     category: 'SUVs',
     startingPrice: '$353,850',
+    dailyPrice: 2500,
     horsepower: '563 hp',
     topSpeed: '155 mph',
     availability: 'Available',
+    location: 'London',
+    transmission: 'Automatic',
+    fuelType: 'Petrol',
+    seats: 5,
+    rating: 5.0,
     image: 'https://www.mansory.com/cdn-cgi/image/format=avif,quality=90/https://cdn.prod.website-files.com/661d6e0d2e84ef511db18f17/6818c0fd2e6c6f89d6bb3bff_MANSORY%2520Phantom%2520VIII-Thumbnail-001.webp'
   },
   {
     id: 'porsche-911-gt3',
     name: 'Porsche 911 GT3',
+    brand: 'Porsche',
     category: 'Supercars',
     startingPrice: '$214,000',
+    dailyPrice: 1800,
     horsepower: '542 hp',
     topSpeed: '198 mph',
     availability: 'Available',
+    location: 'Monaco',
+    transmission: 'Automatic',
+    fuelType: 'Petrol',
+    seats: 2,
+    rating: 4.9,
     image: 'https://cdn.elferspot.com/wp-content/uploads/2026/03/04/gt4-rs-pts-for-sale-38.jpeg?class=xl'
   },
   {
     id: 'ford-mustang-shelby-gt500',
     name: 'Ford Mustang Shelby GT500',
+    brand: 'Ford',
     category: 'Supercars',
     startingPrice: '$193,400',
+    dailyPrice: 1200,
     horsepower: '496 hp',
     topSpeed: '130 mph',
     availability: 'Available',
+    location: 'Las Vegas',
+    transmission: 'Automatic',
+    fuelType: 'Petrol',
+    seats: 4,
+    rating: 4.6,
     image: 'https://hips.hearstapps.com/hmg-prod/images/2020-ford-mustang-shelby-gt500-drive-230-1572321999.jpg?crop=0.366xw:0.550xh;0.578xw,0.318xh&resize=1200:*'
   },
   {
     id: 'tesla-model-x-plaid',
     name: 'Tesla Model X Plaid',
+    brand: 'Tesla',
     category: 'Electric Luxury',
     startingPrice: '$94,990',
+    dailyPrice: 900,
     horsepower: '1,020 hp',
     topSpeed: '149 mph',
     availability: 'Available',
+    location: 'San Francisco',
+    transmission: 'Automatic',
+    fuelType: 'Electric',
+    seats: 6,
+    rating: 4.7,
     image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=1000'
   },
-
   {
     id: 'mercedes-amg-gt',
     name: 'Mercedes-AMG GT',
+    brand: 'Mercedes',
     category: 'Supercars',
     startingPrice: '$170,000',
+    dailyPrice: 1600,
     horsepower: '577 hp',
     topSpeed: '198 mph',
     availability: 'Available',
+    location: 'Paris',
+    transmission: 'Automatic',
+    fuelType: 'Petrol',
+    seats: 2,
+    rating: 4.8,
     image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=1000&auto=format&fit=crop'
   },
   {
-    id: 'range-rover-black-edition',
+    id: 'range-rover-sv',
     name: 'Range Rover SV',
+    brand: 'Land Rover',
     category: 'SUVs',
     startingPrice: '$285,000',
+    dailyPrice: 2200,
     horsepower: '523 hp',
     topSpeed: '155 mph',
     availability: 'Available',
+    location: 'London',
+    transmission: 'Automatic',
+    fuelType: 'Petrol',
+    seats: 5,
+    rating: 4.9,
     image: 'https://hips.hearstapps.com/hmg-prod/images/2023-land-rover-range-rover-sport-first-edition-101-1663595727.jpg'
   },
   {
     id: 'audi-rs-q8',
     name: 'Audi RS Q8',
+    brand: 'Audi',
     category: 'SUVs',
     startingPrice: '$234,000',
+    dailyPrice: 1500,
     horsepower: '606 hp',
     topSpeed: '162 mph',
     availability: 'Reserve',
+    location: 'Berlin',
+    transmission: 'Automatic',
+    fuelType: 'Petrol',
+    seats: 5,
+    rating: 4.8,
     image: 'https://www.kbb.com/wp-content/uploads/2023/04/2023-audi-rs-e-tron-gt.jpg'
   },
   {
     id: 'bmw-z4-m40i',
     name: 'BMW Z4 M40i',
+    brand: 'BMW',
     category: 'Supercars',
     startingPrice: '$159,000',
+    dailyPrice: 1100,
     horsepower: '644 hp',
     topSpeed: '168 mph',
     availability: 'Available',
+    location: 'Munich',
+    transmission: 'Automatic',
+    fuelType: 'Petrol',
+    seats: 2,
+    rating: 4.6,
     image: 'https://blogs.gomechanic.com/wp-content/uploads/2025/09/Insider-BMW-Z4-M40i-%E2%80%93-The-Roadster-Experience.jpg'
   }
 ];
@@ -134,11 +215,57 @@ export const categories = [
   'Limited Editions'
 ];
 
+export const locations = [
+  'All Locations',
+  'Dubai',
+  'London',
+  'Los Angeles',
+  'Miami',
+  'Monaco',
+  'New York',
+  'Paris',
+  'San Francisco'
+];
+
+export const brands = [
+  'All Brands',
+  'Aston Martin',
+  'Audi',
+  'Bentley',
+  'BMW',
+  'Bugatti',
+  'Ferrari',
+  'Ford',
+  'Lamborghini',
+  'Land Rover',
+  'Maserati',
+  'McLaren',
+  'Mercedes',
+  'Mercedes Maybach',
+  'Porsche',
+  'Rolls Royce',
+  'Tesla'
+];
+
+export const transmissions = [
+  'All',
+  'Automatic',
+  'Manual'
+];
+
+export const fuelTypes = [
+  'All',
+  'Petrol',
+  'Diesel',
+  'Hybrid',
+  'Electric'
+];
+
 export const sortOptions = [
+  'Recommended',
   'Price High-Low',
   'Price Low-High',
   'Name A-Z',
   'Name Z-A',
-  'Newest',
-  'Most Popular'
+  'Top Rated'
 ];

@@ -1,19 +1,66 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Send, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import api from '@/services/api';
 
 export default function ContactFormSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [error, setError] = useState('');
+  
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    city: '',
+    serviceType: '',
+    preferredVehicle: '',
+    eventDate: '',
+    message: ''
+  });
 
-  const handleSubmit = (e) => {
+  const services = [
+    { value: 'rental', label: 'Luxury Rental' },
+    { value: 'chauffeur', label: 'Chauffeur Service' },
+    { value: 'wedding', label: 'Wedding Package' },
+    { value: 'corporate', label: 'Corporate Event' }
+  ];
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleServiceSelect = (val) => {
+    setFormData(prev => ({ ...prev, serviceType: val }));
+    setIsDropdownOpen(false);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.serviceType) {
+      setError('Please select a service type.');
+      return;
+    }
+    
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setError('');
+    
+    try {
+      await api.post('/contact', formData);
       setIsSubmitted(true);
-    }, 1500);
+      setFormData({
+        firstName: '', lastName: '', email: '', phone: '', city: '', 
+        serviceType: '', preferredVehicle: '', eventDate: '', message: ''
+      });
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const inputClasses = "w-full bg-transparent border-b border-border py-4 focus:outline-none focus:border-accent text-primary transition-colors duration-300 peer placeholder-transparent";
@@ -57,48 +104,80 @@ export default function ContactFormSection() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-8">
+                {error && (
+                  <div className="bg-error/10 border border-error/20 text-error px-4 py-3 rounded flex items-center gap-3">
+                    <AlertCircle className="w-5 h-5" />
+                    <p className="text-sm">{error}</p>
+                  </div>
+                )}
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="relative">
-                    <input type="text" id="firstName" className={inputClasses} placeholder="First Name" required />
+                    <input type="text" id="firstName" className={inputClasses} placeholder="First Name" value={formData.firstName} onChange={handleChange} required />
                     <label htmlFor="firstName" className={labelClasses}>First Name</label>
                   </div>
                   <div className="relative">
-                    <input type="text" id="lastName" className={inputClasses} placeholder="Last Name" required />
+                    <input type="text" id="lastName" className={inputClasses} placeholder="Last Name" value={formData.lastName} onChange={handleChange} required />
                     <label htmlFor="lastName" className={labelClasses}>Last Name</label>
                   </div>
                   <div className="relative">
-                    <input type="email" id="email" className={inputClasses} placeholder="Email Address" required />
+                    <input type="email" id="email" className={inputClasses} placeholder="Email Address" value={formData.email} onChange={handleChange} required />
                     <label htmlFor="email" className={labelClasses}>Email Address</label>
                   </div>
                   <div className="relative">
-                    <input type="tel" id="phone" className={inputClasses} placeholder="Phone Number" required />
+                    <input type="tel" id="phone" className={inputClasses} placeholder="Phone Number" value={formData.phone} onChange={handleChange} required />
                     <label htmlFor="phone" className={labelClasses}>Phone Number</label>
                   </div>
                   <div className="relative">
-                    <input type="text" id="city" className={inputClasses} placeholder="City" required />
+                    <input type="text" id="city" className={inputClasses} placeholder="City" value={formData.city} onChange={handleChange} required />
                     <label htmlFor="city" className={labelClasses}>City</label>
                   </div>
                   <div className="relative">
-                    <select id="serviceType" className="w-full bg-transparent border-b border-border py-4 focus:outline-none focus:border-accent text-primary transition-colors duration-300 appearance-none required:invalid:text-secondary">
-                      <option value="" disabled selected hidden>Select Service Type</option>
-                      <option value="rental">Luxury Rental</option>
-                      <option value="chauffeur">Chauffeur Service</option>
-                      <option value="wedding">Wedding Package</option>
-                      <option value="corporate">Corporate Event</option>
-                    </select>
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none border-t-[5px] border-l-[5px] border-r-[5px] border-t-primary border-l-transparent border-r-transparent"></div>
+                    <div 
+                      className={`w-full bg-transparent border-b ${isDropdownOpen ? 'border-accent' : 'border-border'} py-4 cursor-pointer transition-colors duration-300 flex justify-between items-center`}
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    >
+                      <span className={formData.serviceType ? 'text-primary' : 'text-secondary'}>
+                        {formData.serviceType ? services.find(s => s.value === formData.serviceType)?.label : 'Select Service Type'}
+                      </span>
+                      <motion.div animate={{ rotate: isDropdownOpen ? 180 : 0 }} className="flex items-center justify-center w-6 h-6">
+                        <div className="border-t-[5px] border-l-[5px] border-r-[5px] border-t-primary border-l-transparent border-r-transparent"></div>
+                      </motion.div>
+                    </div>
+                    
+                    <AnimatePresence>
+                      {isDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute top-full left-0 w-full mt-2 bg-white/80 backdrop-blur-xl border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-xl overflow-hidden z-50"
+                        >
+                          {services.map((service) => (
+                            <div 
+                              key={service.value}
+                              className={`px-4 py-3 cursor-pointer transition-colors ${formData.serviceType === service.value ? 'bg-black/5 text-primary font-medium' : 'hover:bg-black/5 text-secondary hover:text-primary'}`}
+                              onClick={() => handleServiceSelect(service.value)}
+                            >
+                              {service.label}
+                            </div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <div className="relative">
-                    <input type="text" id="preferredVehicle" className={inputClasses} placeholder="Preferred Vehicle (Optional)" />
+                    <input type="text" id="preferredVehicle" className={inputClasses} placeholder="Preferred Vehicle (Optional)" value={formData.preferredVehicle} onChange={handleChange} />
                     <label htmlFor="preferredVehicle" className={labelClasses}>Preferred Vehicle (Optional)</label>
                   </div>
                   <div className="relative">
-                    <input type="date" id="eventDate" className="w-full bg-transparent border-b border-border py-4 focus:outline-none focus:border-accent text-primary transition-colors duration-300 required:invalid:text-secondary" required />
+                    <input type="date" id="eventDate" className="w-full bg-transparent border-b border-border py-4 focus:outline-none focus:border-accent text-primary transition-colors duration-300 required:invalid:text-secondary" value={formData.eventDate} onChange={handleChange} required />
                   </div>
                 </div>
 
                 <div className="relative">
-                  <textarea id="message" rows="4" className={`${inputClasses} resize-none`} placeholder="Additional Details or Special Requests"></textarea>
+                  <textarea id="message" rows="4" className={`${inputClasses} resize-none`} placeholder="Additional Details or Special Requests" value={formData.message} onChange={handleChange}></textarea>
                   <label htmlFor="message" className={labelClasses}>Additional Details or Special Requests</label>
                 </div>
 
