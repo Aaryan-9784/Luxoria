@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, Outlet as RouterOutlet } from 'react-router-dom';
+import { Routes, Route, Outlet as RouterOutlet, Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setCredentials, setLoading } from '@/redux/slices/authSlice';
 import axios from 'axios';
@@ -54,6 +54,9 @@ import UserManagement from '@/pages/admin/UserManagement';
 import VendorManagement from '@/pages/admin/VendorManagement';
 import VehicleApprovals from '@/pages/admin/VehicleApprovals';
 import AdminBookings from '@/pages/admin/AdminBookings';
+import AdminAnalytics from '@/pages/admin/AdminAnalytics';
+import AdminCollections from '@/pages/admin/AdminCollections';
+import AdminFleetApprovals from '@/pages/admin/AdminFleetApprovals';
 
 
 
@@ -157,12 +160,17 @@ export default function AppRoutes() {
       {/* Admin Routes */}
       <Route element={<RoleRoute allowedRoles={['admin']} />}>
         <Route element={<AdminDashboardLayout />}>
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/dashboard" element={<AdminOverview />} />
           <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/admin/vendors" element={<VendorManagement />} />
+          <Route path="/admin/fleet-approvals" element={<AdminFleetApprovals />} />
           <Route path="/admin/vehicles" element={<VehicleApprovals />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
+          <Route path="/admin/collections" element={<AdminCollections />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
           <Route path="/admin/settings" element={<UserProfile />} />
+          <Route path="/admin/profile" element={<UserProfile />} />
         </Route>
       </Route>
     </Routes>
