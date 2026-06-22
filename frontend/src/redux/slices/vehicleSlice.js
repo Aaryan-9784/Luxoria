@@ -26,6 +26,13 @@ const initialState = {
   },
   sortBy: '-createdAt', // Default sorting
   viewMode: 'grid', // 'grid' | 'list'
+
+  // ── New: Vehicles Page Enhanced State ──
+  wishlist: JSON.parse(localStorage.getItem('luxoria_wishlist') || '[]'),
+  compareList: [], // max 3 vehicles
+  recentlyViewed: JSON.parse(localStorage.getItem('luxoria_recently_viewed') || '[]'),
+  quickViewVehicle: null,
+  savedFilters: JSON.parse(localStorage.getItem('luxoria_saved_filters') || 'null'),
 };
 
 // Fetch paginated and filtered vehicles
@@ -103,6 +110,62 @@ export const vehicleSlice = createSlice({
     setViewMode: (state, action) => {
       state.viewMode = action.payload;
     },
+
+    // ── New: Wishlist ──
+    toggleWishlist: (state, action) => {
+      const vehicleId = action.payload;
+      const idx = state.wishlist.indexOf(vehicleId);
+      if (idx > -1) {
+        state.wishlist.splice(idx, 1);
+      } else {
+        state.wishlist.push(vehicleId);
+      }
+      localStorage.setItem('luxoria_wishlist', JSON.stringify(state.wishlist));
+    },
+
+    // ── New: Compare (max 3) ──
+    addToCompare: (state, action) => {
+      const vehicle = action.payload;
+      if (state.compareList.length < 3 && !state.compareList.find(v => v.id === vehicle.id)) {
+        state.compareList.push(vehicle);
+      }
+    },
+    removeFromCompare: (state, action) => {
+      state.compareList = state.compareList.filter(v => v.id !== action.payload);
+    },
+    clearCompare: (state) => {
+      state.compareList = [];
+    },
+
+    // ── New: Quick View ──
+    setQuickView: (state, action) => {
+      state.quickViewVehicle = action.payload;
+    },
+    clearQuickView: (state) => {
+      state.quickViewVehicle = null;
+    },
+
+    // ── New: Recently Viewed ──
+    addToRecentlyViewed: (state, action) => {
+      const vehicle = action.payload;
+      state.recentlyViewed = [
+        vehicle,
+        ...state.recentlyViewed.filter(v => v.id !== vehicle.id),
+      ].slice(0, 10);
+      localStorage.setItem('luxoria_recently_viewed', JSON.stringify(state.recentlyViewed));
+    },
+
+    // ── New: Save/Load Filters ──
+    saveCurrentFilters: (state) => {
+      state.savedFilters = { ...state.filters };
+      localStorage.setItem('luxoria_saved_filters', JSON.stringify(state.filters));
+    },
+    loadSavedFilters: (state) => {
+      if (state.savedFilters) {
+        state.filters = { ...state.savedFilters };
+        state.pagination.page = 1;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -137,5 +200,21 @@ export const vehicleSlice = createSlice({
   },
 });
 
-export const { setFilter, clearFilters, setPage, setSortBy, setViewMode } = vehicleSlice.actions;
+export const {
+  setFilter,
+  clearFilters,
+  setPage,
+  setSortBy,
+  setViewMode,
+  toggleWishlist,
+  addToCompare,
+  removeFromCompare,
+  clearCompare,
+  setQuickView,
+  clearQuickView,
+  addToRecentlyViewed,
+  saveCurrentFilters,
+  loadSavedFilters,
+} = vehicleSlice.actions;
+
 export default vehicleSlice.reducer;

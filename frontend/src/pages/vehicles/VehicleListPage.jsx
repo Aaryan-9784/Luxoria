@@ -1,56 +1,122 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchVehicles, clearFilters } from '@/redux/slices/vehicleSlice';
-import { motion } from 'framer-motion';
-import { SlidersHorizontal } from 'lucide-react';
+import { fetchVehicles, fetchFeaturedVehicles, clearFilters } from '@/redux/slices/vehicleSlice';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { pageTransition } from '@/lib/motion';
 
-import SearchHeroBanner from './components/SearchHeroBanner';
-import FilterSidebar from './components/FilterSidebar';
-import VehicleGrid from './components/VehicleGrid';
-import VehiclePagination from './components/VehiclePagination';
+// Sections
+import CinematicHero from './sections/CinematicHero';
+import SmartSearch from './sections/SmartSearch';
+import EliteBrandShowcase from './sections/EliteBrandShowcase';
+import AdvancedFilterPanel from './sections/AdvancedFilterPanel';
+import FeaturedShowcase from './sections/FeaturedShowcase';
+import PremiumVehicleGrid from './sections/PremiumVehicleGrid';
+import VehiclePaginationNew from './sections/VehiclePaginationNew';
+import CollectionsShowcase from './sections/CollectionsShowcase';
+import LuxuryBenefits from './sections/LuxuryBenefits';
+import ClientTestimonials from './sections/ClientTestimonials';
+import TrustCredibility from './sections/TrustCredibility';
+import BookingProcess from './sections/BookingProcess';
+import LuxuryCTA from './sections/LuxuryCTA';
+
+// Overlays
+import QuickViewModal from './sections/QuickViewModal';
+import CompareVehicles from './sections/CompareVehicles';
+import { SlidersHorizontal } from 'lucide-react';
 
 export default function VehicleListPage() {
   const dispatch = useDispatch();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
+  // Scroll Progress
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
   useEffect(() => {
-    // Initial fetch on mount
     dispatch(fetchVehicles());
+    dispatch(fetchFeaturedVehicles());
     
-    // Cleanup filters on unmount
+    // Attempt to scroll to top on mount
+    window.scrollTo(0, 0);
+
     return () => {
-      dispatch(clearFilters());
+      // Don't auto clear filters on unmount so they persist when returning from details page
+      // dispatch(clearFilters()); 
     };
   }, [dispatch]);
 
   return (
-    <motion.div {...pageTransition} className="min-h-screen bg-background">
-      {/* 1. Hero Search Section */}
-      <SearchHeroBanner />
+    <motion.div {...pageTransition} className="min-h-screen bg-background pb-0 relative">
+      {/* Top scroll progress bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-accent origin-left z-[100]"
+        style={{ scaleX }}
+      />
 
-      {/* Mobile Filter Toggle */}
-      <div className="lg:hidden sticky top-[72px] z-40 bg-background/80 backdrop-blur-md border-b border-border py-3 px-6 flex justify-between items-center shadow-sm">
-        <span className="text-body-sm font-semibold text-primary uppercase tracking-widest">Filter & Sort</span>
-        <button 
-          onClick={() => setMobileFilterOpen(true)}
-          className="btn btn-outline btn-sm rounded-lg"
-        >
-          <SlidersHorizontal className="w-4 h-4" /> Filters
-        </button>
-      </div>
+      {/* 1. Hero Area */}
+      <CinematicHero />
 
-      {/* Main Content Area */}
-      <div className="container-luxe py-12 flex gap-8 lg:gap-12 relative items-start">
-        {/* 2. Sidebar Filters */}
-        <FilterSidebar mobileOpen={mobileFilterOpen} setMobileOpen={setMobileFilterOpen} />
+      {/* 2. Smart Search (Floats over hero) */}
+      <SmartSearch />
 
-        {/* 3. Grid & Pagination */}
-        <div className="flex-1 min-w-0">
-          <VehicleGrid />
-          <VehiclePagination />
+      {/* 3. Brands Showcase */}
+      <EliteBrandShowcase />
+
+      {/* Main Content Area Container */}
+      <div className="bg-surface/30 border-t border-border/50 pb-20">
+        
+        {/* Mobile Filter Toggle Button (Sticky) */}
+        <div className="lg:hidden sticky top-[72px] z-40 bg-background/90 backdrop-blur-md border-b border-border/50 py-3 px-6 shadow-sm">
+          <button 
+            onClick={() => setMobileFilterOpen(true)}
+            className="w-full flex items-center justify-center gap-2 btn btn-outline rounded-xl py-3 border-border/80 bg-background shadow-sm hover:shadow-md hover:border-primary transition-all"
+          >
+            <SlidersHorizontal className="w-4 h-4" /> 
+            <span className="text-sm font-bold">Filters & Sort</span>
+          </button>
+        </div>
+
+        <div className="container-luxe py-12 lg:py-16">
+          <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 relative items-start">
+            {/* 4. Filter Panel */}
+            <AdvancedFilterPanel mobileOpen={mobileFilterOpen} setMobileOpen={setMobileFilterOpen} />
+
+            {/* Main Grid Area */}
+            <div className="flex-1 min-w-0 flex flex-col">
+              {/* 5. Grid */}
+              <PremiumVehicleGrid />
+              
+              {/* 6. Pagination */}
+              <VehiclePaginationNew />
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* 7. Featured Vehicles */}
+      <FeaturedShowcase />
+
+      {/* 8. Collections */}
+      <CollectionsShowcase />
+
+      {/* 9. Benefits */}
+      <LuxuryBenefits />
+
+      {/* 10. Testimonials */}
+      <ClientTestimonials />
+
+      {/* 11. Trust & Credibility */}
+      <TrustCredibility />
+
+      {/* 12. Booking Process */}
+      <BookingProcess />
+
+      {/* 13. Call to Action Banner */}
+      <LuxuryCTA />
+
+      {/* Overlays / Modals */}
+      <QuickViewModal />
+      <CompareVehicles />
     </motion.div>
   );
 }

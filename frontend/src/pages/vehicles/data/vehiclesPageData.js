@@ -1,0 +1,325 @@
+/**
+ * LUXORIA — Vehicles Page Data
+ * Premium mock dataset for all sections of the luxury vehicle marketplace.
+ */
+
+// ─── Luxury Brands ──────────────────────────────────────────────────────────
+export const LUXURY_BRANDS = [
+  { id: 'rolls-royce', name: 'Rolls-Royce', initial: 'RR', vehicleCount: 24, color: '#1B1B3A', description: 'The pinnacle of luxury motoring' },
+  { id: 'bentley', name: 'Bentley', initial: 'B', vehicleCount: 18, color: '#2C5F2D', description: 'Extraordinary journeys since 1919' },
+  { id: 'ferrari', name: 'Ferrari', initial: 'F', vehicleCount: 32, color: '#DC0000', description: 'The prancing horse legend' },
+  { id: 'lamborghini', name: 'Lamborghini', initial: 'L', vehicleCount: 28, color: '#DDB321', description: 'Unleash the extraordinary' },
+  { id: 'porsche', name: 'Porsche', initial: 'P', vehicleCount: 45, color: '#B12B28', description: 'There is no substitute' },
+  { id: 'mclaren', name: 'McLaren', initial: 'M', vehicleCount: 15, color: '#FF8000', description: 'Fearlessly forward' },
+  { id: 'aston-martin', name: 'Aston Martin', initial: 'AM', vehicleCount: 20, color: '#006847', description: 'Power, beauty and soul' },
+  { id: 'mercedes-maybach', name: 'Mercedes-Maybach', initial: 'MM', vehicleCount: 22, color: '#231F20', description: 'The ultimate in luxury' },
+  { id: 'bmw-m', name: 'BMW M', initial: 'M', vehicleCount: 35, color: '#0066B1', description: 'The most powerful letter in the world' },
+  { id: 'audi-rs', name: 'Audi RS', initial: 'RS', vehicleCount: 30, color: '#BB0A30', description: 'Vorsprung durch Technik' },
+];
+
+// ─── Collections ─────────────────────────────────────────────────────────────
+export const COLLECTIONS = [
+  {
+    id: 'luxury-sedans',
+    title: 'Luxury Sedans',
+    description: 'Refined elegance meets supreme comfort',
+    image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=800',
+    vehicleCount: 48,
+    category: 'sedan',
+  },
+  {
+    id: 'executive-suvs',
+    title: 'Executive SUVs',
+    description: 'Commanding presence, unmatched versatility',
+    image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&q=80&w=800',
+    vehicleCount: 36,
+    category: 'suv',
+  },
+  {
+    id: 'sports-cars',
+    title: 'Sports Cars',
+    description: 'Pure driving exhilaration',
+    image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=800',
+    vehicleCount: 52,
+    category: 'sports',
+  },
+  {
+    id: 'supercars',
+    title: 'Supercars',
+    description: 'Beyond extraordinary performance',
+    image: 'https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80&w=800',
+    vehicleCount: 28,
+    category: 'sports',
+  },
+  {
+    id: 'hypercars',
+    title: 'Hypercars',
+    description: 'The absolute pinnacle of automotive engineering',
+    image: 'https://images.unsplash.com/photo-1600712242805-5f78671b24da?auto=format&fit=crop&q=80&w=800',
+    vehicleCount: 12,
+    category: 'sports',
+  },
+  {
+    id: 'electric-luxury',
+    title: 'Electric Luxury',
+    description: 'Sustainable sophistication',
+    image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800',
+    vehicleCount: 24,
+    category: 'electric',
+  },
+  {
+    id: 'wedding-collection',
+    title: 'Wedding Collection',
+    description: 'Make your special day unforgettable',
+    image: 'https://images.unsplash.com/photo-1549275301-c9b60d0b4ced?auto=format&fit=crop&q=80&w=800',
+    vehicleCount: 18,
+    category: 'luxury',
+  },
+  {
+    id: 'chauffeur-collection',
+    title: 'Chauffeur Collection',
+    description: 'Premium chauffeur-driven experiences',
+    image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&q=80&w=800',
+    vehicleCount: 30,
+    category: 'limousine',
+  },
+];
+
+// ─── Client Testimonials ─────────────────────────────────────────────────────
+export const TESTIMONIALS = [
+  {
+    id: 1,
+    name: 'Alexander Sterling',
+    role: 'CEO, Sterling Capital',
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+    vehicle: 'Rolls-Royce Ghost',
+    review: 'An absolutely extraordinary experience. The vehicle was immaculate, delivered on time, and the concierge service was beyond any five-star hotel I\'ve visited. Luxoria has redefined luxury vehicle rental.',
+    location: 'Dubai, UAE',
+    rating: 5,
+  },
+  {
+    id: 2,
+    name: 'Victoria Chen',
+    role: 'Fashion Director',
+    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+    vehicle: 'Ferrari 296 GTB',
+    review: 'From the moment I placed my booking to the doorstep delivery, everything was flawless. The Ferrari was a dream to drive along the coast. Will definitely be using Luxoria for all my future events.',
+    location: 'Mumbai, India',
+    rating: 5,
+  },
+  {
+    id: 3,
+    name: 'James Worthington III',
+    role: 'Private Investor',
+    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200',
+    vehicle: 'Bentley Continental GT',
+    review: 'The attention to detail is remarkable. Every vehicle in their fleet is maintained to the highest standards. The Bentley was absolutely pristine. Luxoria understands what true luxury means.',
+    location: 'London, UK',
+    rating: 5,
+  },
+  {
+    id: 4,
+    name: 'Sophia Rodriguez',
+    role: 'Celebrity Stylist',
+    photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200',
+    vehicle: 'Lamborghini Huracán',
+    review: 'I\'ve rented luxury vehicles from services worldwide, and Luxoria stands in a class of its own. The booking process was seamless, and the Huracán was delivered in showroom condition.',
+    location: 'Los Angeles, USA',
+    rating: 5,
+  },
+  {
+    id: 5,
+    name: 'Raj Malhotra',
+    role: 'Tech Entrepreneur',
+    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200',
+    vehicle: 'Porsche 911 Turbo S',
+    review: 'Used Luxoria for my wedding weekend and it was spectacular. Three vehicles, all delivered on time, all impeccable. The team went above and beyond to make everything perfect.',
+    location: 'Bangalore, India',
+    rating: 5,
+  },
+  {
+    id: 6,
+    name: 'Elena Vasquez',
+    role: 'Luxury Travel Blogger',
+    photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+    vehicle: 'Mercedes-Maybach S-Class',
+    review: 'As someone who reviews luxury experiences for a living, I can confidently say Luxoria delivers an unparalleled service. The Maybach was pure opulence on wheels.',
+    location: 'Paris, France',
+    rating: 5,
+  },
+];
+
+// ─── Luxury Benefits ─────────────────────────────────────────────────────────
+export const BENEFITS = [
+  { id: 1, icon: 'ShieldCheck', title: 'Verified Vehicles', description: 'Every vehicle undergoes a rigorous 150-point inspection before joining our fleet.' },
+  { id: 2, icon: 'Crown', title: 'VIP Concierge', description: 'Dedicated luxury concierge for personalized vehicle recommendations and bespoke experiences.' },
+  { id: 3, icon: 'Headphones', title: '24/7 Support', description: 'Round-the-clock premium support by automotive experts, available whenever you need.' },
+  { id: 4, icon: 'MapPin', title: 'Doorstep Delivery', description: 'Complimentary doorstep delivery and pickup at your preferred location, anywhere.' },
+  { id: 5, icon: 'Shield', title: 'Fully Insured', description: 'Comprehensive premium insurance coverage for complete peace of mind on every journey.' },
+  { id: 6, icon: 'Lock', title: 'Secure Payments', description: 'Bank-grade encryption with multiple payment options including cryptocurrency.' },
+  { id: 7, icon: 'UserCheck', title: 'Professional Chauffeurs', description: 'Trained, vetted, and multilingual professional chauffeurs for the ultimate experience.' },
+  { id: 8, icon: 'Star', title: 'Premium Customer Care', description: 'Dedicated account manager ensuring every detail of your experience is perfected.' },
+];
+
+// ─── Trust & Credibility Stats ───────────────────────────────────────────────
+export const TRUST_STATS = [
+  { id: 1, value: 500, suffix: '+', label: 'Verified Vendors', icon: 'Building2' },
+  { id: 2, value: 50, suffix: '+', label: 'Luxury Brands', icon: 'Award' },
+  { id: 3, value: 15000, suffix: '+', label: 'Successful Bookings', icon: 'CheckCircle2' },
+  { id: 4, value: 99.2, suffix: '%', label: 'Customer Satisfaction', icon: 'Heart' },
+];
+
+// ─── Booking Process Steps ───────────────────────────────────────────────────
+export const BOOKING_STEPS = [
+  { step: 1, title: 'Browse', description: 'Explore our curated collection of luxury vehicles', icon: 'Search' },
+  { step: 2, title: 'Select', description: 'Choose your perfect vehicle and customize your experience', icon: 'MousePointerClick' },
+  { step: 3, title: 'Verify', description: 'Quick identity verification for your security', icon: 'ScanFace' },
+  { step: 4, title: 'Pay', description: 'Secure payment with multiple premium options', icon: 'CreditCard' },
+  { step: 5, title: 'Delivery', description: 'Doorstep delivery at your preferred time and location', icon: 'Truck' },
+  { step: 6, title: 'Drive', description: 'Experience the extraordinary on the open road', icon: 'Gauge' },
+];
+
+// ─── Featured Vehicles (Demo Data) ──────────────────────────────────────────
+export const FEATURED_VEHICLES = [
+  {
+    id: 'feat-1',
+    name: 'Ghost Series II',
+    brand: 'Rolls-Royce',
+    image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1200',
+    pricePerDay: 2500,
+    category: 'luxury',
+    rating: { average: 4.9, count: 128 },
+    seats: 5,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '250 km/h',
+    horsepower: '571 HP',
+    engine: '6.75L V12 Twin-Turbo',
+    location: 'Mumbai',
+    isAvailable: true,
+    badge: 'Editors Choice',
+    features: ['Starlight Headliner', 'Bespoke Audio', 'Night Vision', 'Massage Seats', 'Champagne Cooler'],
+  },
+  {
+    id: 'feat-2',
+    name: '296 GTB',
+    brand: 'Ferrari',
+    image: 'https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&q=80&w=1200',
+    pricePerDay: 3200,
+    category: 'sports',
+    rating: { average: 4.8, count: 96 },
+    seats: 2,
+    transmission: 'automatic',
+    fuelType: 'hybrid',
+    topSpeed: '330 km/h',
+    horsepower: '830 HP',
+    engine: '3.0L V6 Hybrid',
+    location: 'Delhi',
+    isAvailable: true,
+    badge: 'Most Popular',
+    features: ['Carbon Fiber Body', 'Fiorano Package', 'Racing Seats', 'Telemetry System', 'Track Mode'],
+  },
+  {
+    id: 'feat-3',
+    name: 'Continental GT',
+    brand: 'Bentley',
+    image: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?auto=format&fit=crop&q=80&w=1200',
+    pricePerDay: 1800,
+    category: 'luxury',
+    rating: { average: 4.9, count: 156 },
+    seats: 4,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '335 km/h',
+    horsepower: '659 HP',
+    engine: '6.0L W12 Twin-Turbo',
+    location: 'Bangalore',
+    isAvailable: true,
+    badge: 'Highest Rated',
+    features: ['Diamond Knurling', 'Rotating Display', 'Naim Audio', 'Handcrafted Interior', 'All-Wheel Drive'],
+  },
+  {
+    id: 'feat-4',
+    name: 'Huracán EVO',
+    brand: 'Lamborghini',
+    image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=1200',
+    pricePerDay: 2800,
+    category: 'sports',
+    rating: { average: 4.7, count: 84 },
+    seats: 2,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '325 km/h',
+    horsepower: '640 HP',
+    engine: '5.2L V10',
+    location: 'Mumbai',
+    isAvailable: true,
+    badge: 'Supercar',
+    features: ['LDVI System', 'ALA Aero', 'Corsa Mode', 'Carbon Ceramics', 'Performante Kit'],
+  },
+  {
+    id: 'feat-5',
+    name: '911 Turbo S',
+    brand: 'Porsche',
+    image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80&w=1200',
+    pricePerDay: 2200,
+    category: 'sports',
+    rating: { average: 4.8, count: 210 },
+    seats: 4,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '330 km/h',
+    horsepower: '650 HP',
+    engine: '3.8L Flat-6 Twin-Turbo',
+    location: 'Delhi',
+    isAvailable: false,
+    badge: 'Iconic',
+    features: ['Sport Chrono', 'PCCB Brakes', 'Active Aero', 'Sport Exhaust', 'PDK Transmission'],
+  },
+  {
+    id: 'feat-6',
+    name: 'Maybach S 680',
+    brand: 'Mercedes-Maybach',
+    image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=1200',
+    pricePerDay: 2000,
+    category: 'luxury',
+    rating: { average: 4.9, count: 142 },
+    seats: 4,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '250 km/h',
+    horsepower: '621 HP',
+    engine: '6.0L V12 Biturbo',
+    location: 'Hyderabad',
+    isAvailable: true,
+    badge: 'Ultra Luxury',
+    features: ['Executive Rear Seats', 'Burmester 4D', 'Magic Body Control', 'Rear Entertainment', 'Fragrance System'],
+  },
+];
+
+// ─── Sort Options ────────────────────────────────────────────────────────────
+export const SORT_OPTIONS = [
+  { value: 'featured', label: 'Featured' },
+  { value: '-bookingCount', label: 'Most Popular' },
+  { value: '-createdAt', label: 'Newest First' },
+  { value: '-rating.average', label: 'Highest Rated' },
+  { value: 'pricePerDay', label: 'Price: Low to High' },
+  { value: '-pricePerDay', label: 'Price: High to Low' },
+];
+
+// ─── Filter Options ──────────────────────────────────────────────────────────
+export const FILTER_OPTIONS = {
+  brand: ['Rolls-Royce', 'Bentley', 'Ferrari', 'Lamborghini', 'Porsche', 'McLaren', 'Aston Martin', 'Mercedes-Maybach', 'BMW M', 'Audi RS'],
+  category: ['sports', 'suv', 'luxury', 'sedan', 'convertible', 'electric', 'limousine'],
+  transmission: ['automatic', 'manual'],
+  fuelType: ['petrol', 'diesel', 'electric', 'hybrid'],
+  seats: ['2', '4', '5', '7+'],
+  availability: ['available', 'all'],
+};
+
+// ─── Hero Statistics ─────────────────────────────────────────────────────────
+export const HERO_STATS = [
+  { value: 500, suffix: '+', label: 'Luxury Vehicles' },
+  { value: 50, suffix: '+', label: 'Premium Brands' },
+  { value: 15, suffix: 'K+', label: 'Happy Clients' },
+];
