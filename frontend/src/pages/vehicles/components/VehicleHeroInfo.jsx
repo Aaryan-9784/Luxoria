@@ -26,9 +26,6 @@ export default function VehicleHeroInfo({ vehicle }) {
                 <Star className="w-3.5 h-3.5 fill-current" /> Top Rated
               </span>
             )}
-            <span className="px-3 py-1 bg-surface border border-border text-primary text-caption font-semibold rounded-full uppercase tracking-wider">
-              {vehicle.year}
-            </span>
           </motion.div>
 
           <motion.h1 variants={staggerItem} className="text-display text-primary leading-[1.1] mb-2 uppercase">
@@ -44,7 +41,13 @@ export default function VehicleHeroInfo({ vehicle }) {
             <div className="w-1 h-1 rounded-full bg-border" />
             <div className="flex items-center gap-1.5">
               <MapPin className="w-4 h-4" />
-              <span>{vehicle.location?.city}, {vehicle.location?.state}</span>
+              <span>
+                {vehicle.location 
+                  ? (typeof vehicle.location === 'object' 
+                      ? `${vehicle.location.city || ''}${vehicle.location.city && vehicle.location.state ? ', ' : ''}${vehicle.location.state || ''}` 
+                      : vehicle.location)
+                  : 'Dubai, UAE'}
+              </span>
             </div>
           </motion.div>
         </div>

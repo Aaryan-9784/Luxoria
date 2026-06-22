@@ -10,7 +10,7 @@ export default function VehicleSpecs({ vehicle }) {
     { icon: Settings2, label: 'Transmission', value: vehicle.transmission },
     { icon: Fuel, label: 'Fuel Type', value: vehicle.fuelType },
     { icon: Users, label: 'Seats', value: `${vehicle.seats} Adults` },
-    { icon: Calendar, label: 'Year', value: vehicle.year },
+    { icon: Calendar, label: 'Year', value: vehicle.year || '2024' },
     // Mock data for luxury feel if not in DB
     { icon: Gauge, label: 'Top Speed', value: vehicle.category === 'sports' ? '320 km/h' : '250 km/h' },
     { icon: Zap, label: '0-100 km/h', value: vehicle.category === 'sports' ? '2.9s' : '4.5s' },

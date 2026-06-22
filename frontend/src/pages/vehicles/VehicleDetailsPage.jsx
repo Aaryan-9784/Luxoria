@@ -75,11 +75,11 @@ export default function VehicleDetailsPage() {
             <div className="mt-8 pt-8 border-t border-border">
               <h3 className="text-h5 font-semibold text-primary mb-5">Provided By</h3>
               <div className="flex items-center gap-4 p-5 rounded-2xl bg-surface border border-border">
-                <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center overflow-hidden shrink-0">
+                <div className="w-20 h-20 rounded-full bg-accent/10 relative overflow-hidden shrink-0 border border-border/50 shadow-sm">
                   <img 
                     src={vehicle.vendor?.avatar?.url || "/images/Asp2.jpeg"} 
                     alt={vehicle.vendor?.name || "Vendor Avatar"} 
-                    className="w-full h-full object-cover" 
+                    className="absolute w-[125%] h-[125%] max-w-none top-[-12.5%] left-[-12.5%] object-cover object-top" 
                   />
                 </div>
                 <div className="flex-1">
