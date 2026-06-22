@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import AuthImage from '@/components/ui/AuthImage';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Car, Lock, ArrowRight } from 'lucide-react';
+import { Car, Lock, ArrowRight, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { pageTransition, EASE_LUXE } from '@/lib/motion';
 import { useDispatch } from 'react-redux';
 import { resetPassword } from '@/redux/slices/authSlice';
@@ -16,6 +16,8 @@ export default function ResetPasswordPage() {
   const { token } = useParams();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const password = watch('password');
 
@@ -94,12 +96,12 @@ export default function ResetPasswordPage() {
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* Password */}
             <div className="auth-input-group" style={{ marginBottom: '16px' }}>
-              <div className="auth-input-wrapper">
+              <div className="auth-input-wrapper relative">
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   placeholder="New Password"
-                  className={`auth-input ${errors.password ? 'has-error' : ''}`}
+                  className={`auth-input pr-12 ${errors.password ? 'has-error' : ''}`}
                   {...register('password', {
                     required: 'Password is required',
                     minLength: { value: 6, message: 'Minimum 6 characters' }
@@ -107,18 +109,26 @@ export default function ResetPasswordPage() {
                 />
                 <label htmlFor="password" className="auth-floating-label">New Password</label>
                 <Lock className="auth-input-icon" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors focus:outline-none"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
               {errors.password && <div className="auth-input-error"><span>{errors.password.message}</span></div>}
             </div>
 
             {/* Confirm Password */}
             <div className="auth-input-group" style={{ marginBottom: '24px' }}>
-              <div className="auth-input-wrapper">
+              <div className="auth-input-wrapper relative">
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   id="confirmPassword"
                   placeholder="Confirm Password"
-                  className={`auth-input ${errors.confirmPassword ? 'has-error' : ''}`}
+                  className={`auth-input pr-12 ${errors.confirmPassword ? 'has-error' : ''}`}
                   {...register('confirmPassword', {
                     required: 'Please confirm password',
                     validate: value => value === password || 'Passwords do not match'
@@ -126,6 +136,14 @@ export default function ResetPasswordPage() {
                 />
                 <label htmlFor="confirmPassword" className="auth-floating-label">Confirm Password</label>
                 <Lock className="auth-input-icon" />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors focus:outline-none"
+                  aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
               {errors.confirmPassword && <div className="auth-input-error"><span>{errors.confirmPassword.message}</span></div>}
             </div>
@@ -135,8 +153,16 @@ export default function ResetPasswordPage() {
             </button>
           </form>
 
-          <p className="auth-switch" style={{ marginTop: '24px' }}>
-            Remember your password? <Link to="/login">Sign In</Link>
+          {/* Switch to Login */}
+          <div className="auth-divider" style={{ marginTop: '32px', marginBottom: '24px' }}>
+            <div className="auth-divider-line" />
+          </div>
+          
+          <p className="auth-switch">
+            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <ArrowLeft className="w-4 h-4" />
+              Back to Sign In
+            </Link>
           </p>
         </motion.div>
       </div>

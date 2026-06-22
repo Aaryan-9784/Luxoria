@@ -92,6 +92,13 @@ export const fetchVehicleById = createAsyncThunk(
   'vehicle/fetchById',
   async (id, { rejectWithValue }) => {
     try {
+      // Intercept mock IDs to prevent 400 Bad Request errors from MongoDB CastError
+      if (typeof id === 'string' && id.startsWith('feat-')) {
+        const vehicle = FEATURED_VEHICLES.find(v => v.id === id);
+        if (vehicle) return vehicle;
+        throw new Error('Mock vehicle not found');
+      }
+
       try {
         const response = await api.get(`/vehicles/${id}`);
         return response.data.data.vehicle;

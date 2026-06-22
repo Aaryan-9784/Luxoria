@@ -11,7 +11,7 @@ const AUTH_IMAGES = [
   'https://www.hdcarwallpapers.com/walls/2021_rolls_royce_phantom_extended_5k_2-HD.jpg', // Register
   'https://wallpaperaccess.com/full/1125043.jpg',          // Forgot Password
   'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&q=80&w=1920', // Reset
-  'https://images.alphacoders.com/112/1123013.jpg',        // Vendor Login
+  'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',        // Vendor Login
 ];
 
 let preloaded = false;

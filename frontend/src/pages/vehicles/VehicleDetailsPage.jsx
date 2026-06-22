@@ -56,7 +56,7 @@ export default function VehicleDetailsPage() {
   }
 
   return (
-    <motion.div {...pageTransition} className="pt-28 pb-20 bg-background min-h-screen">
+    <motion.div {...pageTransition} className="pt-28 pb-20 bg-background min-h-screen relative">
       <div className="container-luxe">
         {/* 1. Cinematic Gallery */}
         <div className="mb-8">

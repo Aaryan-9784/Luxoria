@@ -39,13 +39,38 @@ class EmailService {
 
   async sendWelcomeEmail(user) {
     const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #0F172A; text-transform: uppercase; letter-spacing: 2px;">Welcome to Luxoria</h2>
-        <p>Dear ${user.name},</p>
-        <p>Thank you for joining the premier luxury vehicle platform. Your journey to extraordinary experiences begins here.</p>
-        <p>Explore our curated fleet of sports cars, luxury sedans, and premium SUVs.</p>
-        <div style="margin-top: 30px;">
-          <a href="${process.env.CLIENT_URL}/vehicles" style="background-color: #0F172A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Explore Fleet</a>
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+        <!-- Redesigned Header with Logo -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0F172A; border-bottom: 4px solid #D4AF37;">
+          <tr>
+            <td align="center" style="padding: 40px 30px;">
+              <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                <tr>
+                  <td align="center" valign="middle" style="padding-right: 15px;">
+                    <img src="https://api.iconify.design/lucide:car.svg?color=%23D4AF37&width=140&height=140" width="35" height="35" alt="Luxoria Logo" style="display: block; border: 0;" />
+                  </td>
+                  <td align="center" valign="middle">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 6px; text-transform: uppercase;">Luxoria</h1>
+                  </td>
+                </tr>
+              </table>
+              <p style="color: #D4AF37; margin: 15px 0 0 0; font-size: 13px; letter-spacing: 4px; text-transform: uppercase; font-weight: 600;">Welcome to the Elite</p>
+            </td>
+          </tr>
+        </table>
+        
+        <div style="padding: 40px 30px; text-align: center;">
+          <h2 style="color: #0F172A; font-size: 20px; font-weight: 600; margin-bottom: 20px;">Dear ${user.name},</h2>
+          <p style="color: #4B5563; font-size: 16px; line-height: 1.6;">Thank you for joining the premier luxury vehicle platform. Your journey to extraordinary experiences begins right here.</p>
+          <p style="color: #4B5563; font-size: 16px; line-height: 1.6;">Explore our curated fleet of sports cars, luxury sedans, and premium SUVs.</p>
+          <div style="margin: 40px 0;">
+            <a href="${process.env.CLIENT_URL}/vehicles" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 15px; letter-spacing: 1px; display: inline-block; text-transform: uppercase;">Explore The Fleet</a>
+          </div>
+        </div>
+        <div style="background-color: #F8FAFC; padding: 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+          <p style="color: #64748B; font-size: 13px; line-height: 1.6; margin: 0;">
+            <strong style="color: #0F172A;">&copy; ${new Date().getFullYear()} Luxoria Premium Private Limited.</strong><br>All rights reserved.
+          </p>
         </div>
       </div>
     `;
@@ -54,16 +79,48 @@ class EmailService {
 
   async sendBookingConfirmation(user, booking, vehicle) {
     const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #0F172A;">Booking Confirmed: ${vehicle.name}</h2>
-        <p>Dear ${user.name},</p>
-        <p>Your reservation (ID: ${booking.bookingId}) is confirmed.</p>
-        <div style="background-color: #F8FAFC; padding: 15px; border-left: 4px solid #0F172A; margin: 20px 0;">
-          <p><strong>Dates:</strong> ${new Date(booking.startDate).toLocaleDateString()} - ${new Date(booking.endDate).toLocaleDateString()}</p>
-          <p><strong>Location:</strong> ${booking.pickupLocation}</p>
-          <p><strong>Total Paid:</strong> ₹${booking.totalAmount.toLocaleString('en-IN')}</p>
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+        <!-- Redesigned Header with Logo -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0F172A; border-bottom: 4px solid #D4AF37;">
+          <tr>
+            <td align="center" style="padding: 40px 30px;">
+              <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                <tr>
+                  <td align="center" valign="middle" style="padding-right: 15px;">
+                    <img src="https://api.iconify.design/lucide:car.svg?color=%23D4AF37&width=140&height=140" width="35" height="35" alt="Luxoria Logo" style="display: block; border: 0;" />
+                  </td>
+                  <td align="center" valign="middle">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 6px; text-transform: uppercase;">Luxoria</h1>
+                  </td>
+                </tr>
+              </table>
+              <p style="color: #D4AF37; margin: 15px 0 0 0; font-size: 13px; letter-spacing: 4px; text-transform: uppercase; font-weight: 600;">Booking Confirmed</p>
+            </td>
+          </tr>
+        </table>
+        
+        <div style="padding: 40px 30px;">
+          <h2 style="color: #0F172A; font-size: 20px; font-weight: 600; margin-bottom: 20px; text-align: center;">Dear ${user.name},</h2>
+          <p style="color: #4B5563; font-size: 16px; line-height: 1.6; text-align: center;">Your reservation for the <strong>${vehicle.brand} ${vehicle.name}</strong> is confirmed. (ID: ${booking.bookingId})</p>
+          
+          <div style="background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 25px; margin-top: 35px;">
+            <h3 style="color: #0F172A; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px 0; border-bottom: 1px solid #E5E7EB; padding-bottom: 12px; font-weight: 700;">Itinerary Details</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tbody>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px; width: 35%;"><strong>Dates:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${new Date(booking.startDate).toLocaleDateString()} - ${new Date(booking.endDate).toLocaleDateString()}</td></tr>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Location:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${booking.pickupLocation}</td></tr>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Total Paid:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">₹${booking.totalAmount.toLocaleString('en-IN')}</td></tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <p style="color: #4B5563; font-size: 15px; line-height: 1.6; margin-top: 35px; text-align: center;">Your vendor partner will be preparing the vehicle to our highest luxury standards.</p>
         </div>
-        <p>Your vendor partner will be preparing the vehicle to our highest luxury standards.</p>
+        <div style="background-color: #F8FAFC; padding: 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+          <p style="color: #64748B; font-size: 13px; line-height: 1.6; margin: 0;">
+            <strong style="color: #0F172A;">&copy; ${new Date().getFullYear()} Luxoria Premium Private Limited.</strong><br>All rights reserved.
+          </p>
+        </div>
       </div>
     `;
     await this.sendEmail({ email: user.email, subject: `Booking Confirmed: ${vehicle.brand} ${vehicle.name}`, html });
@@ -71,42 +128,112 @@ class EmailService {
 
   async sendPasswordReset(user, resetUrl) {
     const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #0F172A;">Password Reset Request</h2>
-        <p>We received a request to reset your Luxoria password.</p>
-        <p>Click the button below to set a new password. This link will expire in 10 minutes.</p>
-        <div style="margin-top: 30px; margin-bottom: 30px;">
-          <a href="${resetUrl}" style="background-color: #0F172A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Reset Password</a>
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+        <!-- Redesigned Header with Logo -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0F172A; border-bottom: 4px solid #D4AF37;">
+          <tr>
+            <td align="center" style="padding: 40px 30px;">
+              <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                <tr>
+                  <td align="center" valign="middle" style="padding-right: 15px;">
+                    <img src="https://api.iconify.design/lucide:car.svg?color=%23D4AF37&width=140&height=140" width="35" height="35" alt="Luxoria Logo" style="display: block; border: 0;" />
+                  </td>
+                  <td align="center" valign="middle">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 6px; text-transform: uppercase;">Luxoria</h1>
+                  </td>
+                </tr>
+              </table>
+              <p style="color: #D4AF37; margin: 15px 0 0 0; font-size: 13px; letter-spacing: 4px; text-transform: uppercase; font-weight: 600;">Account Security</p>
+            </td>
+          </tr>
+        </table>
+        
+        <!-- Body -->
+        <div style="padding: 40px 30px; text-align: center;">
+          <h2 style="color: #0F172A; font-size: 20px; font-weight: 600; margin-bottom: 20px;">Password Reset Request</h2>
+          <p style="color: #4B5563; font-size: 16px; line-height: 1.6; margin-top: 0;">We received a request to reset the password for your Luxoria account.</p>
+          <p style="color: #4B5563; font-size: 16px; line-height: 1.6;">Click the secure link below to set a new password. For your protection, this link will expire in 10 minutes.</p>
+          
+          <div style="margin: 40px 0;">
+            <a href="${resetUrl}" style="background-color: #0F172A; color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 15px; letter-spacing: 1px; display: inline-block; border: 1px solid #0F172A; text-transform: uppercase;">Reset Your Password</a>
+          </div>
+          
+          <p style="color: #9CA3AF; font-size: 13px; line-height: 1.5; margin-top: 30px; padding-top: 30px; border-top: 1px solid #F3F4F6;">If you did not request a password reset, please ignore this email or contact support if you have concerns regarding your account security.</p>
         </div>
-        <p style="color: #64748B; font-size: 12px;">If you did not request this, please ignore this email.</p>
+        
+        <!-- Footer -->
+        <div style="background-color: #F8FAFC; padding: 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+          <p style="color: #64748B; font-size: 13px; line-height: 1.6; margin: 0;">
+            <strong style="color: #0F172A;">&copy; ${new Date().getFullYear()} Luxoria Premium Private Limited.</strong><br>All rights reserved.
+          </p>
+        </div>
       </div>
     `;
-    await this.sendEmail({ email: user.email, subject: 'Luxoria Password Reset', html });
+    await this.sendEmail({ email: user.email, subject: 'Luxoria Security: Password Reset Request', html });
   }
 
   async sendContactInquiryToAdmin(data) {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@luxoria.com';
     const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-        <h2 style="color: #0F172A; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #D4AF37; padding-bottom: 10px;">New Experience Inquiry</h2>
-        
-        <p style="color: #334155; font-size: 16px;">A new inquiry has been submitted via the Luxoria platform.</p>
-        
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-          <tbody>
-            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Name:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.firstName} ${data.lastName}</td></tr>
-            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Email:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><a href="mailto:${data.email}">${data.email}</a></td></tr>
-            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Phone:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.phone}</td></tr>
-            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>City:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.city}</td></tr>
-            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Service Type:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.serviceType}</td></tr>
-            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Event Date:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.eventDate}</td></tr>
-            <tr><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>Preferred Vehicle:</strong></td><td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">${data.preferredVehicle || 'N/A'}</td></tr>
-          </tbody>
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+        <!-- Redesigned Header with Logo -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0F172A; border-bottom: 4px solid #D4AF37;">
+          <tr>
+            <td align="center" style="padding: 40px 30px;">
+              <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                <tr>
+                  <td align="center" valign="middle" style="padding-right: 15px;">
+                    <img src="https://api.iconify.design/lucide:car.svg?color=%23D4AF37&width=140&height=140" width="35" height="35" alt="Luxoria Logo" style="display: block; border: 0;" />
+                  </td>
+                  <td align="center" valign="middle">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 6px; text-transform: uppercase;">Luxoria</h1>
+                  </td>
+                </tr>
+              </table>
+              <p style="color: #D4AF37; margin: 15px 0 0 0; font-size: 13px; letter-spacing: 4px; text-transform: uppercase; font-weight: 600;">New Experience Inquiry</p>
+            </td>
+          </tr>
         </table>
         
-        <div style="background-color: #F8FAFC; padding: 15px; border-left: 4px solid #0F172A; margin: 20px 0;">
-          <p style="margin: 0; color: #475569;"><strong>Additional Details:</strong></p>
-          <p style="margin-top: 5px; color: #1e293b; white-space: pre-wrap;">${data.message || 'No additional details provided.'}</p>
+        <div style="padding: 40px 30px;">
+          <p style="color: #4B5563; font-size: 16px; line-height: 1.6; margin-top: 0; text-align: center;">A new inquiry has been submitted via the Luxoria platform.</p>
+          
+          <div style="background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 25px; margin-top: 35px;">
+            <h3 style="color: #0F172A; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px 0; border-bottom: 1px solid #E5E7EB; padding-bottom: 12px; font-weight: 700;">Client Details</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tbody>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px; width: 35%;"><strong>Client Name:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${data.firstName} ${data.lastName}</td></tr>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Email Address:</strong></td><td style="padding: 10px 0; font-size: 15px;"><a href="mailto:${data.email}" style="color: #D4AF37; text-decoration: none; font-weight: 600;">${data.email}</a></td></tr>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Phone Number:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${data.phone}</td></tr>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>City:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${data.city}</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 25px; margin-top: 25px;">
+            <h3 style="color: #0F172A; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px 0; border-bottom: 1px solid #E5E7EB; padding-bottom: 12px; font-weight: 700;">Experience Request</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tbody>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px; width: 35%;"><strong>Service Type:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600; text-transform: capitalize;">${data.serviceType}</td></tr>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Event Date:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${data.eventDate}</td></tr>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Preferred Vehicle:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${data.preferredVehicle || 'N/A'}</td></tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div style="margin-top: 35px;">
+            <h3 style="color: #0F172A; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0; font-weight: 700;">Additional Details</h3>
+            <div style="background-color: #ffffff; border-left: 4px solid #D4AF37; padding: 25px; color: #374151; font-size: 15px; line-height: 1.7; box-shadow: 0 2px 10px rgba(0,0,0,0.02); border-radius: 0 8px 8px 0; border-top: 1px solid #F3F4F6; border-right: 1px solid #F3F4F6; border-bottom: 1px solid #F3F4F6;">
+              <i>"${data.message || 'No additional details provided.'}"</i>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="background-color: #F8FAFC; padding: 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+          <p style="color: #64748B; font-size: 13px; line-height: 1.6; margin: 0;">
+            <strong style="color: #0F172A;">&copy; ${new Date().getFullYear()} Luxoria Premium Private Limited.</strong><br>All rights reserved.
+          </p>
         </div>
       </div>
     `;
@@ -116,11 +243,24 @@ class EmailService {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@luxoria.com';
     const html = `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
-        <!-- Header -->
-        <div style="background-color: #0F172A; padding: 40px 30px; text-align: center; border-bottom: 4px solid #D4AF37;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 300; letter-spacing: 5px; text-transform: uppercase;">Luxoria</h1>
-          <p style="color: #D4AF37; margin: 12px 0 0 0; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600;">Exclusive Vendor Inquiry</p>
-        </div>
+        <!-- Redesigned Header with Logo -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0F172A; border-bottom: 4px solid #D4AF37;">
+          <tr>
+            <td align="center" style="padding: 40px 30px;">
+              <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                <tr>
+                  <td align="center" valign="middle" style="padding-right: 15px;">
+                    <img src="https://api.iconify.design/lucide:car.svg?color=%23D4AF37&width=140&height=140" width="35" height="35" alt="Luxoria Logo" style="display: block; border: 0;" />
+                  </td>
+                  <td align="center" valign="middle">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 6px; text-transform: uppercase;">Luxoria</h1>
+                  </td>
+                </tr>
+              </table>
+              <p style="color: #D4AF37; margin: 15px 0 0 0; font-size: 13px; letter-spacing: 4px; text-transform: uppercase; font-weight: 600;">Exclusive Vendor Inquiry</p>
+            </td>
+          </tr>
+        </table>
         
         <!-- Body -->
         <div style="padding: 40px 30px;">
@@ -165,14 +305,14 @@ class EmailService {
         </div>
       </div>
     `;
-    await this.sendEmail({ 
-      email: adminEmail, 
+    await this.sendEmail({
+      email: adminEmail,
       to: `"Aryan Patel" <${adminEmail}>`,
       from: `"${data.name}" <${process.env.SMTP_FROM || 'noreply@luxoria.com'}>`,
       replyTo: data.email,
-      subject: `VIP Vendor Inquiry: ${data.vehicleName}`, 
-      html, 
-      message: `New vendor contact request from ${data.name} for vehicle ${data.vehicleName}.` 
+      subject: `VIP Vendor Inquiry: ${data.vehicleName}`,
+      html,
+      message: `New vendor contact request from ${data.name} for vehicle ${data.vehicleName}.`
     });
   }
 }

@@ -81,7 +81,7 @@ export default function AuthImage({ src, alt = 'Background', style, ...rest }) {
         className={`auth-bg-image${loaded ? ' loaded' : ''}`}
         loading="eager"
         decoding="async"
-        fetchpriority="high"
+        fetchPriority="high"
         style={style}
         {...rest}
       />

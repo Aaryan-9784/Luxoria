@@ -46,7 +46,7 @@ export default function VendorLoginPage() {
       {/* LEFT PANEL */}
       <div className="auth-left-panel hidden md:flex">
         <AuthImage
-          src="https://images.alphacoders.com/112/1123013.jpg"
+          src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Luxurious fleet"
           style={{ filter: 'brightness(0.8)' }}
         />
