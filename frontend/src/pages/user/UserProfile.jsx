@@ -119,41 +119,41 @@ export default function UserProfile() {
             <h3 className="text-h4 text-primary border-b border-border pb-4 mb-6">Personal Information</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-caption font-semibold text-primary uppercase mb-1.5 block">Full Name</label>
-                <input 
-                  type="text" 
-                  value={formData.name} 
-                  onChange={e => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-body-sm outline-none focus:border-accent transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-caption font-semibold text-primary uppercase mb-1.5 block">Email Address (Read Only)</label>
-                <input 
-                  type="email" 
-                  value={user?.email || ''} 
-                  disabled
-                  className="w-full bg-surface/50 border border-border rounded-xl px-4 py-3 text-body-sm text-muted cursor-not-allowed"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-caption font-semibold text-primary uppercase mb-1.5 block">Phone</label>
+                  <label className="label uppercase text-caption">Full Name</label>
                   <input 
-                    type="tel" 
-                    value={formData.phone} 
-                    onChange={e => setFormData({...formData, phone: e.target.value})}
-                    className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-body-sm outline-none focus:border-accent transition-colors"
+                    type="text" 
+                    value={formData.name} 
+                    onChange={e => setFormData({...formData, name: e.target.value})}
+                    className="input"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-semibold text-primary uppercase mb-1.5 block">City / Address</label>
+                  <label className="label uppercase text-caption">Email Address (Read Only)</label>
                   <input 
-                    type="text" 
-                    value={formData.address} 
-                    onChange={e => setFormData({...formData, address: e.target.value})}
-                    className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-body-sm outline-none focus:border-accent transition-colors"
+                    type="email" 
+                    value={user?.email || ''} 
+                    disabled
+                    className="input bg-surface/50 text-muted cursor-not-allowed"
                   />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="label uppercase text-caption">Phone</label>
+                    <input 
+                      type="tel" 
+                      value={formData.phone} 
+                      onChange={e => setFormData({...formData, phone: e.target.value})}
+                      className="input"
+                    />
+                  </div>
+                  <div>
+                    <label className="label uppercase text-caption">City / Address</label>
+                    <input 
+                      type="text" 
+                      value={formData.address} 
+                      onChange={e => setFormData({...formData, address: e.target.value})}
+                      className="input"
+                    />
                 </div>
               </div>
             </div>
@@ -168,27 +168,27 @@ export default function UserProfile() {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="text-caption font-semibold text-primary uppercase mb-1.5 block">Current Password</label>
+                <label className="label uppercase text-caption">Current Password</label>
                 <input 
                   type="password" 
                   required
                   value={passwordData.currentPassword} 
                   onChange={e => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                  className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-body-sm outline-none focus:border-accent transition-colors"
+                  className="input"
                 />
               </div>
               <div>
-                <label className="text-caption font-semibold text-primary uppercase mb-1.5 block">New Password</label>
+                <label className="label uppercase text-caption">New Password</label>
                 <input 
                   type="password" 
                   required
                   value={passwordData.newPassword} 
                   onChange={e => setPasswordData({...passwordData, newPassword: e.target.value})}
-                  className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-body-sm outline-none focus:border-accent transition-colors"
+                  className="input"
                 />
               </div>
             </div>
-            <button type="submit" disabled={loading} className="btn bg-surface border border-border hover:border-primary text-primary transition-colors">Update Password</button>
+            <button type="submit" disabled={loading} className="btn btn-secondary">Update Password</button>
           </form>
 
         </div>

@@ -38,15 +38,16 @@ export default function VendorOverview() {
           { label: 'Total Fleet', value: stats?.totalVehicles || 0, icon: BarChart3, color: 'text-accent', bg: 'bg-accent/10' },
           { label: 'Pending Approvals', value: stats?.pendingApprovals || 0, icon: ShieldAlert, color: 'text-error', bg: 'bg-error/10' },
         ].map((kpi, idx) => (
-          <div key={idx} className="bg-white p-6 rounded-2xl border border-border shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-4">
+          <div key={idx} className="card-stat relative overflow-hidden group">
+            <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full bg-gradient-gold-subtle group-hover:scale-150 transition-transform duration-700`} />
+            <div className="relative z-10 flex justify-between items-start mb-4">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${kpi.bg} ${kpi.color}`}>
                 <kpi.icon className="w-6 h-6" />
               </div>
             </div>
-            <div>
+            <div className="relative z-10">
               <h3 className="text-h3 text-primary mb-1">{kpi.value}</h3>
-              <p className="text-caption font-semibold text-muted uppercase tracking-wider">{kpi.label}</p>
+              <p className="text-caption font-semibold text-secondary uppercase tracking-wider">{kpi.label}</p>
             </div>
           </div>
         ))}
@@ -55,10 +56,10 @@ export default function VendorOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Placeholder for Chart */}
-        <motion.div variants={staggerItem} className="lg:col-span-2 bg-white p-6 rounded-2xl border border-border shadow-sm">
+        <motion.div variants={staggerItem} className="lg:col-span-2 glass-card-elevated p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-h4 text-primary">Revenue Trends</h3>
-            <select className="bg-surface border border-border rounded-lg px-3 py-1.5 text-body-sm outline-none">
+            <select className="input py-1.5 px-3">
               <option>This Month</option>
               <option>Last 3 Months</option>
             </select>
@@ -69,7 +70,7 @@ export default function VendorOverview() {
         </motion.div>
 
         {/* Recent Requests */}
-        <motion.div variants={staggerItem} className="bg-white p-6 rounded-2xl border border-border shadow-sm flex flex-col">
+        <motion.div variants={staggerItem} className="glass-card-elevated p-6 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-h4 text-primary">Pending Requests</h3>
             <Link to="/vendor/bookings" className="text-caption font-semibold text-accent hover:text-primary transition-colors">
@@ -85,15 +86,15 @@ export default function VendorOverview() {
               </div>
             ) : (
               recentRequests.map(req => (
-                <div key={req._id} className="p-4 rounded-xl border border-border hover:border-accent/30 transition-colors">
+                <div key={req._id} className="p-4 rounded-xl border border-border hover:border-accent/30 transition-colors group">
                   <div className="flex justify-between items-start mb-2">
                     <p className="text-body-sm font-semibold text-primary">{req.vehicle.name}</p>
-                    <span className="text-xs font-semibold px-2 py-1 bg-accent/10 text-accent rounded-md">New</span>
+                    <span className="badge badge-accent">New</span>
                   </div>
                   <p className="text-xs text-secondary mb-3">
                     {new Date(req.startDate).toLocaleDateString()} - {new Date(req.endDate).toLocaleDateString()}
                   </p>
-                  <Link to="/vendor/bookings" className="text-caption font-semibold text-primary flex items-center gap-1 group">
+                  <Link to="/vendor/bookings" className="text-caption font-semibold text-primary flex items-center gap-1">
                     Review Request <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>

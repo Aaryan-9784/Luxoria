@@ -123,7 +123,7 @@ export default function AddVehicleWizard() {
       </div>
 
       {/* Form Container */}
-      <div className="bg-white p-8 md:p-10 rounded-3xl border border-border shadow-sm relative overflow-hidden">
+      <div className="glass-card-elevated p-8 md:p-10 relative overflow-hidden">
         
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <AnimatePresence mode="wait">
@@ -139,24 +139,24 @@ export default function AddVehicleWizard() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Vehicle Title</label>
-                    <input {...register("name", { required: true })} className="input-field" placeholder="e.g. Porsche 911 GT3 RS" />
+                    <label className="label">Vehicle Title</label>
+                    <input {...register("name", { required: true })} className="input" placeholder="e.g. Porsche 911 GT3 RS" />
                   </div>
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Brand</label>
-                    <input {...register("brand", { required: true })} className="input-field" placeholder="e.g. Porsche" />
+                    <label className="label">Brand</label>
+                    <input {...register("brand", { required: true })} className="input" placeholder="e.g. Porsche" />
                   </div>
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Model</label>
-                    <input {...register("model", { required: true })} className="input-field" placeholder="e.g. 911 GT3 RS" />
+                    <label className="label">Model</label>
+                    <input {...register("model", { required: true })} className="input" placeholder="e.g. 911 GT3 RS" />
                   </div>
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Year</label>
-                    <input {...register("year", { required: true })} type="number" className="input-field" placeholder="e.g. 2024" />
+                    <label className="label">Year</label>
+                    <input {...register("year", { required: true })} type="number" className="input" placeholder="e.g. 2024" />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Description (Cinematic Storytelling)</label>
-                    <textarea {...register("description", { required: true })} className="input-field min-h-[120px]" placeholder="Describe the luxury experience..." />
+                    <label className="label">Description (Cinematic Storytelling)</label>
+                    <textarea {...register("description", { required: true })} className="input min-h-[120px]" placeholder="Describe the luxury experience..." />
                   </div>
                 </div>
 
@@ -177,8 +177,8 @@ export default function AddVehicleWizard() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Category</label>
-                    <select {...register("category", { required: true })} className="input-field">
+                    <label className="label">Category</label>
+                    <select {...register("category", { required: true })} className="input">
                       <option value="sports">Sports</option>
                       <option value="luxury">Luxury</option>
                       <option value="suv">SUV</option>
@@ -186,19 +186,19 @@ export default function AddVehicleWizard() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Price Per Day ($)</label>
-                    <input {...register("pricePerDay", { required: true })} type="number" className="input-field" placeholder="e.g. 15000" />
+                    <label className="label">Price Per Day ($)</label>
+                    <input {...register("pricePerDay", { required: true })} type="number" className="input" placeholder="e.g. 15000" />
                   </div>
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Transmission</label>
-                    <select {...register("transmission")} className="input-field">
+                    <label className="label">Transmission</label>
+                    <select {...register("transmission")} className="input">
                       <option value="automatic">Automatic</option>
                       <option value="manual">Manual</option>
                     </select>
                   </div>
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Fuel Type</label>
-                    <select {...register("fuelType")} className="input-field">
+                    <label className="label">Fuel Type</label>
+                    <select {...register("fuelType")} className="input">
                       <option value="petrol">Petrol</option>
                       <option value="diesel">Diesel</option>
                       <option value="electric">Electric</option>
@@ -206,16 +206,16 @@ export default function AddVehicleWizard() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Seats</label>
-                    <input {...register("seats")} type="number" className="input-field" placeholder="4" />
+                    <label className="label">Seats</label>
+                    <input {...register("seats")} type="number" className="input" placeholder="4" />
                   </div>
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">City Location</label>
-                    <input {...register("city", { required: true })} className="input-field" placeholder="e.g. Mumbai" />
+                    <label className="label">City Location</label>
+                    <input {...register("city", { required: true })} className="input" placeholder="e.g. Mumbai" />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Features (Comma Separated)</label>
-                    <input {...register("features")} className="input-field" placeholder="e.g. Sunroof, Burmester Audio, Massaging Seats" />
+                    <label className="label">Features (Comma Separated)</label>
+                    <input {...register("features")} className="input" placeholder="e.g. Sunroof, Burmester Audio, Massaging Seats" />
                   </div>
                 </div>
 

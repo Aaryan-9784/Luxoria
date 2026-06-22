@@ -37,8 +37,8 @@ export default function VendorRevenue() {
 
       {/* KPI Widgets */}
       <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-border shadow-sm flex flex-col justify-between relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-success/10 group-hover:scale-150 transition-transform duration-700" />
+        <div className="card-stat relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-gradient-gold-subtle group-hover:scale-150 transition-transform duration-700" />
           <div className="relative z-10 flex justify-between items-start mb-4">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-success/10 text-success">
               <Wallet className="w-6 h-6" />
@@ -50,8 +50,8 @@ export default function VendorRevenue() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-border shadow-sm flex flex-col justify-between relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-accent/10 group-hover:scale-150 transition-transform duration-700" />
+        <div className="card-stat relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-gradient-gold-subtle group-hover:scale-150 transition-transform duration-700" />
           <div className="relative z-10 flex justify-between items-start mb-4">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-accent/10 text-accent">
               <TrendingUp className="w-6 h-6" />
@@ -63,8 +63,8 @@ export default function VendorRevenue() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-border shadow-sm flex flex-col justify-between relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-warning/10 group-hover:scale-150 transition-transform duration-700" />
+        <div className="card-stat relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-gradient-gold-subtle group-hover:scale-150 transition-transform duration-700" />
           <div className="relative z-10 flex justify-between items-start mb-4">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-warning/10 text-warning">
               <DollarSign className="w-6 h-6" />
@@ -78,7 +78,7 @@ export default function VendorRevenue() {
       </motion.div>
 
       {/* Transactions List */}
-      <motion.div variants={staggerItem} className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+      <motion.div variants={staggerItem} className="glass-card-elevated rounded-2xl border border-border overflow-hidden">
         <div className="p-6 border-b border-border">
           <h3 className="text-h4 text-primary">Recent Transactions</h3>
         </div>
@@ -89,36 +89,38 @@ export default function VendorRevenue() {
             <p className="text-secondary font-medium">No transactions yet.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-surface/50 text-caption font-semibold text-muted uppercase tracking-wider">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="table-premium">
+              <thead>
                 <tr>
-                  <th className="px-6 py-4">Transaction ID</th>
-                  <th className="px-6 py-4">Vehicle</th>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4">Amount</th>
-                  <th className="px-6 py-4">Status</th>
+                  <th>Transaction ID</th>
+                  <th>Vehicle</th>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody>
                 {completedBookings.slice(0, 10).map((booking) => (
-                  <tr key={booking._id} className="hover:bg-surface/30 transition-colors">
-                    <td className="px-6 py-4">
-                      <span className="font-mono text-xs text-secondary">{booking._id.slice(-8).toUpperCase()}</span>
+                  <tr key={booking._id} className="group">
+                    <td>
+                      <span className="font-mono text-body-sm text-secondary">{booking._id.slice(-8).toUpperCase()}</span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       <span className="text-body-sm font-semibold text-primary">{booking.vehicle?.name || 'Unknown Vehicle'}</span>
                     </td>
-                    <td className="px-6 py-4 text-body-sm text-secondary">
-                      {new Date(booking.createdAt).toLocaleDateString()}
+                    <td>
+                      <span className="text-body-sm text-secondary">
+                        {new Date(booking.createdAt).toLocaleDateString()}
+                      </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       <span className="text-body-sm font-bold text-success flex items-center gap-1">
                         +${booking.totalAmount.toLocaleString('en-US')} <ArrowUpRight className="w-3 h-3" />
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="px-2.5 py-1 text-xs font-bold rounded-md bg-success/10 text-success uppercase tracking-wide">
+                    <td>
+                      <span className="badge badge-success">
                         Paid
                       </span>
                     </td>

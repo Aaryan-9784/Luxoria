@@ -23,9 +23,9 @@ export default function ManageFleet() {
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'approved': return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-success/10 text-success border border-success/20 uppercase tracking-wider"><CheckCircle2 className="w-3.5 h-3.5" /> Approved</span>;
-      case 'pending': return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-accent/10 text-accent border border-accent/20 uppercase tracking-wider"><Clock className="w-3.5 h-3.5" /> Under Review</span>;
-      case 'rejected': return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-error/10 text-error border border-error/20 uppercase tracking-wider"><AlertCircle className="w-3.5 h-3.5" /> Rejected</span>;
+      case 'approved': return <span className="badge badge-success"><CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Approved</span>;
+      case 'pending': return <span className="badge badge-accent"><Clock className="w-3.5 h-3.5 mr-1" /> Under Review</span>;
+      case 'rejected': return <span className="badge badge-error"><AlertCircle className="w-3.5 h-3.5 mr-1" /> Rejected</span>;
       default: return null;
     }
   };
@@ -57,7 +57,7 @@ export default function ManageFleet() {
             placeholder="Search fleet by name or brand..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white border border-border rounded-xl pl-9 pr-4 py-2.5 text-body-sm outline-none focus:border-accent transition-colors shadow-sm"
+            className="input pl-9"
           />
         </div>
       </div>
@@ -73,10 +73,10 @@ export default function ManageFleet() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredVehicles.map((vehicle) => (
-            <motion.div variants={staggerItem} key={vehicle._id} className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+            <motion.div variants={staggerItem} key={vehicle._id} className="card-lift flex flex-col relative group">
               
               {/* Image & Status */}
-              <div className="relative h-48 bg-surface">
+              <div className="relative h-48 bg-surface border-b border-border">
                 {vehicle.images && vehicle.images.length > 0 ? (
                   <img src={vehicle.images[0].url} alt={vehicle.name} className="w-full h-full object-cover" />
                 ) : (
@@ -87,10 +87,10 @@ export default function ManageFleet() {
                 </div>
                 <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="flex gap-2">
-                    <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md text-secondary hover:text-accent transition-colors">
+                    <button className="btn-icon bg-white text-secondary hover:text-accent shadow-md border-transparent">
                       <Edit2 className="w-4 h-4" />
                     </button>
-                    <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md text-secondary hover:text-error transition-colors">
+                    <button className="btn-icon bg-white text-secondary hover:text-error shadow-md border-transparent">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -122,7 +122,7 @@ export default function ManageFleet() {
                 </div>
 
                 {vehicle.status === 'rejected' && (
-                  <div className="mt-4 p-3 bg-error/10 border border-error/20 rounded-lg text-sm text-error font-medium">
+                  <div className="mt-4 p-3 bg-error/10 border border-error/20 rounded-lg text-body-sm text-error font-medium">
                     Please review admin feedback and update.
                   </div>
                 )}

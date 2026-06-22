@@ -37,7 +37,7 @@ export default function PaymentsDashboard() {
     fetchPayments();
   }, []);
 
-  if (loading) return <div className="animate-pulse">Loading payment history...</div>;
+  if (loading) return <div className="animate-pulse text-secondary text-body-sm">Loading payment history...</div>;
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
@@ -56,39 +56,39 @@ export default function PaymentsDashboard() {
       ) : (
         <div className="glass-card-elevated rounded-2xl overflow-hidden border border-border">
           <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-left border-collapse">
+            <table className="table-premium">
               <thead>
-                <tr className="bg-surface/50 border-b border-border">
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Reference</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Description</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Method</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Amount</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider text-right">Invoice</th>
+                <tr>
+                  <th>Date</th>
+                  <th>Reference</th>
+                  <th>Description</th>
+                  <th>Method</th>
+                  <th>Amount</th>
+                  <th className="text-right">Invoice</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/50">
+              <tbody>
                 {payments.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-surface/30 transition-colors group">
-                    <td className="px-6 py-4 text-body-sm text-secondary">
+                  <tr key={tx.id} className="group">
+                    <td>
                       {new Date(tx.date).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'})}
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="font-mono text-xs bg-surface border border-border px-2 py-1 rounded-md text-primary">
+                    <td>
+                      <span className="badge badge-muted font-mono">
                         {tx.bookingId.substring(0,8).toUpperCase()}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-body-sm text-primary font-medium">
+                    <td className="font-medium">
                       Booking: {tx.vehicle}
                     </td>
-                    <td className="px-6 py-4 text-body-sm text-secondary">
+                    <td>
                       {tx.method}
                     </td>
-                    <td className="px-6 py-4 text-body-sm font-semibold text-primary">
+                    <td className="font-semibold text-primary">
                       ${tx.amount.toLocaleString('en-US')}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="p-2 text-muted hover:text-accent transition-colors rounded-full hover:bg-accent/10 inline-flex">
+                    <td className="text-right">
+                      <button className="btn-icon hover:text-accent">
                         <Download className="w-4 h-4" />
                       </button>
                     </td>
@@ -102,7 +102,7 @@ export default function PaymentsDashboard() {
 
       <div className="flex items-start gap-3 p-4 rounded-xl bg-surface border border-border mt-8">
         <AlertCircle className="w-5 h-5 text-muted shrink-0 mt-0.5" />
-        <p className="text-sm text-secondary">
+        <p className="text-body-sm text-secondary">
           Invoices are generated automatically after a successful payment capture. For any billing discrepancies, please contact Luxoria Premium Support within 7 days of the transaction.
         </p>
       </div>

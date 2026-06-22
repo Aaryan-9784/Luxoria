@@ -21,12 +21,12 @@ export default function VendorBookings() {
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'confirmed': return 'bg-success/10 text-success border-success/20';
-      case 'pending': return 'bg-accent/10 text-accent border-accent/20';
-      case 'active': return 'bg-primary/10 text-primary border-primary/20';
-      case 'completed': return 'bg-muted/10 text-secondary border-border';
-      case 'cancelled': return 'bg-error/10 text-error border-error/20';
-      default: return 'bg-surface text-secondary border-border';
+      case 'confirmed': return 'badge-success';
+      case 'pending': return 'badge-accent';
+      case 'active': return 'badge-primary';
+      case 'completed': return 'badge-muted';
+      case 'cancelled': return 'badge-error';
+      default: return 'badge-muted';
     }
   };
 
@@ -55,34 +55,34 @@ export default function VendorBookings() {
             placeholder="Search bookings or clients..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white border border-border rounded-xl pl-9 pr-4 py-2.5 text-body-sm outline-none focus:border-accent shadow-sm"
+            className="input pl-9"
           />
         </div>
       </div>
 
       {/* Booking List */}
-      <div className="glass-card-elevated rounded-2xl overflow-hidden border border-border bg-white shadow-sm">
+      <div className="glass-card-elevated rounded-2xl overflow-hidden border border-border">
         {filteredBookings.length === 0 ? (
           <div className="p-12 text-center">
             <p className="text-secondary">No booking requests found.</p>
           </div>
         ) : (
           <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-left border-collapse">
+            <table className="table-premium">
               <thead>
-                <tr className="bg-surface/50 border-b border-border">
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Client & Vehicle</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Dates & Location</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Total ($)</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider text-right">Actions</th>
+                <tr>
+                  <th>Client & Vehicle</th>
+                  <th>Dates & Location</th>
+                  <th>Total ($)</th>
+                  <th>Status</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/50">
+              <tbody>
                 {filteredBookings.map((booking) => (
-                  <tr key={booking._id} className="hover:bg-surface/30 transition-colors">
+                  <tr key={booking._id} className="group">
                     
-                    <td className="px-6 py-4 align-top">
+                    <td className="align-top">
                       <div className="flex flex-col gap-3">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
@@ -94,7 +94,7 @@ export default function VendorBookings() {
                           </div>
                           <div>
                             <p className="text-body-sm font-semibold text-primary">{booking.user?.name}</p>
-                            <p className="text-xs text-muted">{booking.user?.email}</p>
+                            <p className="text-caption text-muted">{booking.user?.email}</p>
                           </div>
                         </div>
                         <div className="text-body-sm text-secondary font-medium">
@@ -103,39 +103,39 @@ export default function VendorBookings() {
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 align-top">
+                    <td className="align-top">
                       <p className="text-body-sm text-primary mb-1 flex items-center gap-1.5">
                         <CalendarDays className="w-3.5 h-3.5 text-muted" /> 
                         {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                       </p>
-                      <p className="text-xs text-secondary flex items-center gap-1.5">
+                      <p className="text-caption text-secondary flex items-center gap-1.5">
                         <MapPin className="w-3.5 h-3.5 text-muted" /> {booking.pickupLocation}
                       </p>
                     </td>
 
-                    <td className="px-6 py-4 align-top">
+                    <td className="align-top">
                       <p className="text-body-sm font-bold text-primary">${booking.totalAmount.toLocaleString('en-US')}</p>
                     </td>
 
-                    <td className="px-6 py-4 align-top">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider border ${getStatusBadge(booking.status)}`}>
+                    <td className="align-top">
+                      <span className={`badge ${getStatusBadge(booking.status)}`}>
                         {booking.status}
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 align-top text-right">
+                    <td className="align-top text-right">
                       {booking.status === 'pending' ? (
                         <div className="flex items-center justify-end gap-2">
                           <button 
                             onClick={() => handleStatusUpdate(booking._id, 'confirmed')}
-                            className="w-8 h-8 rounded-full bg-success/10 text-success hover:bg-success hover:text-white flex items-center justify-center transition-colors"
+                            className="btn-icon bg-success/10 text-success hover:bg-success hover:text-white transition-colors border-transparent"
                             title="Accept Booking"
                           >
                             <Check className="w-4 h-4" />
                           </button>
                           <button 
                             onClick={() => handleStatusUpdate(booking._id, 'cancelled')}
-                            className="w-8 h-8 rounded-full bg-error/10 text-error hover:bg-error hover:text-white flex items-center justify-center transition-colors"
+                            className="btn-icon bg-error/10 text-error hover:bg-error hover:text-white transition-colors border-transparent"
                             title="Reject Booking"
                           >
                             <RejectIcon className="w-4 h-4" />

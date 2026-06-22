@@ -34,8 +34,8 @@ const DUMMY_NOTIFICATIONS = [
     time: '2 days ago',
     read: true,
     icon: CheckCircle2,
-    color: 'text-green-500',
-    bg: 'bg-green-500/10'
+    color: 'text-success',
+    bg: 'bg-success/10'
   },
   {
     id: 4,
@@ -64,9 +64,9 @@ export default function NotificationsPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
+      <div className="glass-card-elevated overflow-hidden border border-border">
         {DUMMY_NOTIFICATIONS.length > 0 ? (
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border/50">
             {DUMMY_NOTIFICATIONS.map((notification) => {
               const Icon = notification.icon;
               return (
@@ -74,7 +74,7 @@ export default function NotificationsPage() {
                   key={notification.id} 
                   className={cn(
                     "p-5 flex gap-4 transition-colors hover:bg-surface/50",
-                    !notification.read && "bg-surface/30"
+                    !notification.read ? "bg-accent/5" : "bg-transparent"
                   )}
                 >
                   <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shrink-0", notification.bg)}>
@@ -109,8 +109,8 @@ export default function NotificationsPage() {
             <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4">
               <Bell className="w-8 h-8 text-muted" />
             </div>
-            <h3 className="text-h6 text-primary mb-2">No notifications yet</h3>
-            <p className="text-secondary">When you get notifications, they'll show up here.</p>
+            <h3 className="text-h4 text-primary mb-2">No notifications yet</h3>
+            <p className="text-body-sm text-secondary">When you get notifications, they'll show up here.</p>
           </div>
         )}
       </div>

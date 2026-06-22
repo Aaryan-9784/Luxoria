@@ -21,12 +21,12 @@ export default function AdminBookings() {
 
   const getStatusStyle = (status) => {
     switch(status) {
-      case 'confirmed': return 'bg-success/10 text-success';
-      case 'pending': return 'bg-accent/10 text-accent';
-      case 'active': return 'bg-primary/10 text-primary';
-      case 'completed': return 'bg-surface text-secondary';
-      case 'cancelled': return 'bg-error/10 text-error';
-      default: return 'bg-surface text-secondary';
+      case 'confirmed': return 'badge-success';
+      case 'pending': return 'badge-accent';
+      case 'active': return 'badge-primary';
+      case 'completed': return 'badge-muted';
+      case 'cancelled': return 'badge-error';
+      default: return 'badge-muted';
     }
   };
 
@@ -45,56 +45,56 @@ export default function AdminBookings() {
             placeholder="Search by ID, User, or Vendor..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white border border-border rounded-xl pl-9 pr-4 py-2 text-body-sm outline-none focus:border-accent shadow-sm"
+            className="input pl-9"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
+      <div className="glass-card-elevated rounded-2xl overflow-hidden border border-border">
         {loading && bookings.length === 0 ? (
           <div className="p-10 text-center animate-pulse text-muted">Loading master ledger...</div>
         ) : (
           <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-left border-collapse">
+            <table className="table-premium">
               <thead>
-                <tr className="bg-surface/50 border-b border-border">
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Ref ID</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Vendor</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Timeline</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider text-right">Value ($)</th>
+                <tr>
+                  <th>Ref ID</th>
+                  <th>Customer</th>
+                  <th>Vendor</th>
+                  <th>Timeline</th>
+                  <th>Status</th>
+                  <th className="text-right">Value ($)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/50">
+              <tbody>
                 {filteredBookings.map((booking) => (
-                  <tr key={booking._id} className="hover:bg-surface/30 transition-colors">
-                    <td className="px-6 py-4">
-                      <span className="font-mono text-xs bg-surface border border-border px-2 py-1 rounded text-primary">
+                  <tr key={booking._id} className="group">
+                    <td>
+                      <span className="badge badge-muted font-mono">
                         {booking.bookingId.substring(0,8).toUpperCase()}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-semibold text-primary">{booking.user?.name}</p>
-                      <p className="text-xs text-muted">{booking.user?.email}</p>
+                    <td>
+                      <p className="text-body-sm font-semibold text-primary">{booking.user?.name}</p>
+                      <p className="text-caption text-muted">{booking.user?.email}</p>
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-semibold text-primary">{booking.vendor?.name}</p>
-                      <p className="text-xs text-accent uppercase tracking-widest mt-0.5">{booking.vehicle?.brand}</p>
+                    <td>
+                      <p className="text-body-sm font-semibold text-primary">{booking.vendor?.name}</p>
+                      <p className="text-[10px] text-accent uppercase tracking-widest mt-0.5">{booking.vehicle?.brand}</p>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-sm text-secondary">
+                    <td>
+                      <div className="flex items-center gap-1.5 text-body-sm text-secondary">
                         <CalendarDays className="w-3.5 h-3.5 text-muted" />
                         {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${getStatusStyle(booking.status)}`}>
+                    <td>
+                      <span className={`badge ${getStatusStyle(booking.status)}`}>
                         {booking.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <span className="text-sm font-bold text-primary">${booking.totalAmount.toLocaleString('en-US')}</span>
+                    <td className="text-right">
+                      <span className="text-body-sm font-bold text-primary">${booking.totalAmount.toLocaleString('en-US')}</span>
                     </td>
                   </tr>
                 ))}

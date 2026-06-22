@@ -41,75 +41,75 @@ export default function VendorManagement() {
             placeholder="Search partners..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white border border-border rounded-xl pl-9 pr-4 py-2 text-body-sm outline-none focus:border-accent shadow-sm"
+            className="input pl-9"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
+      <div className="glass-card-elevated rounded-2xl overflow-hidden border border-border">
         {loading && vendors.length === 0 ? (
           <div className="p-10 text-center animate-pulse text-muted">Loading vendor database...</div>
         ) : (
           <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-left border-collapse">
+            <table className="table-premium">
               <thead>
-                <tr className="bg-surface/50 border-b border-border">
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Business / Partner</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Contact</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Verification</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Account State</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider text-right">Admin Actions</th>
+                <tr>
+                  <th>Business / Partner</th>
+                  <th>Contact</th>
+                  <th>Verification</th>
+                  <th>Account State</th>
+                  <th className="text-right">Admin Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/50">
+              <tbody>
                 {filteredVendors.map((vendor) => (
-                  <tr key={vendor._id} className="hover:bg-surface/30 transition-colors group">
-                    <td className="px-6 py-4">
+                  <tr key={vendor._id} className="group">
+                    <td>
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center overflow-hidden">
                           {vendor.avatar?.url ? <img src={vendor.avatar.url} alt="avatar" className="w-full h-full object-cover" /> : <Building2 className="w-5 h-5 text-accent" />}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-primary">{vendor.name}</p>
-                          <p className="text-xs text-muted">ID: {vendor._id.substring(0,8)}</p>
+                          <p className="text-body-sm font-semibold text-primary">{vendor.name}</p>
+                          <p className="text-caption text-muted">ID: {vendor._id.substring(0,8)}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm text-primary">{vendor.email}</p>
-                      <p className="text-xs text-muted">{vendor.phone || 'N/A'}</p>
+                    <td>
+                      <p className="text-body-sm text-primary">{vendor.email}</p>
+                      <p className="text-caption text-muted">{vendor.phone || 'N/A'}</p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       {vendor.isVerified ? (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium bg-success/10 text-success border border-success/20">
-                          <CheckCircle className="w-3.5 h-3.5" /> Approved
+                        <span className="badge badge-success">
+                          <CheckCircle className="w-3.5 h-3.5 mr-1" /> Approved
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/20">
+                        <span className="badge badge-accent">
                           Pending KYC
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       {vendor.isActive ? (
-                        <span className="inline-flex px-2 py-1 rounded text-xs font-medium bg-surface text-secondary border border-border">Active</span>
+                        <span className="badge badge-muted">Active</span>
                       ) : (
-                        <span className="inline-flex px-2 py-1 rounded text-xs font-medium bg-error/10 text-error">Suspended</span>
+                        <span className="badge badge-error">Suspended</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="text-right">
                       <div className="flex justify-end items-center gap-2">
                         <button 
                           onClick={() => toggleApproval(vendor._id, vendor.isVerified)}
-                          className={`text-xs font-semibold px-3 py-1.5 rounded-md transition-colors border ${
-                            vendor.isVerified ? 'border-border text-secondary hover:bg-surface' : 'bg-primary text-white hover:bg-primary/90'
+                          className={`btn btn-sm ${
+                            vendor.isVerified ? 'btn-outline text-secondary' : 'btn-primary'
                           }`}
                         >
                           {vendor.isVerified ? 'Revoke Approval' : 'Approve Partner'}
                         </button>
                         <button 
                           onClick={() => toggleStatus(vendor._id, vendor.isActive)}
-                          className="w-8 h-8 rounded-md flex items-center justify-center text-muted hover:text-error hover:bg-error/10 transition-colors"
+                          className="btn-icon hover:text-error hover:border-error transition-colors"
                           title={vendor.isActive ? "Suspend Vendor" : "Activate Vendor"}
                         >
                           <XCircle className="w-4 h-4" />

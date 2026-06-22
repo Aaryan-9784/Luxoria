@@ -35,15 +35,15 @@ export default function AdminOverview() {
       
       {/* Header */}
       <div>
-        <h1 className="text-h2 text-[#0F172A] mb-2 font-bold tracking-tight">System Overview</h1>
+        <h1 className="text-h2 text-primary mb-2 font-bold tracking-tight">System Overview</h1>
         <p className="text-secondary text-lg">Real-time enterprise analytics and platform health.</p>
       </div>
 
       {/* KPI Widgets */}
       <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {KPI_DATA.map((kpi, idx) => (
-          <div key={idx} className="bg-white p-6 rounded-2xl border border-border/50 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
-            <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full ${kpi.bg} group-hover:scale-150 transition-transform duration-700`} />
+          <div key={idx} className="card-stat relative overflow-hidden group">
+            <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full bg-gradient-gold-subtle group-hover:scale-150 transition-transform duration-700`} />
             <div className="relative z-10 flex justify-between items-start mb-4">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${kpi.bg} ${kpi.color}`}>
                 <kpi.icon className="w-6 h-6" />
@@ -51,7 +51,7 @@ export default function AdminOverview() {
             </div>
             <div className="relative z-10">
               <h3 className="text-h3 text-primary mb-1">{kpi.value}</h3>
-              <p className="text-caption font-bold text-muted uppercase tracking-wider">{kpi.label}</p>
+              <p className="text-caption font-bold text-secondary uppercase tracking-wider">{kpi.label}</p>
             </div>
           </div>
         ))}
@@ -61,65 +61,65 @@ export default function AdminOverview() {
         
         {/* Action Center */}
         <motion.div variants={staggerItem} className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-2xl border border-border shadow-sm">
-            <h3 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+          <div className="glass-card-elevated p-6">
+            <h3 className="text-h4 text-primary mb-4 flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-accent" /> Action Items
             </h3>
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-surface/50">
+              <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-surface/50 transition-colors hover:bg-surface">
                 <div>
                   <p className="font-semibold text-primary">{analytics.vehicles.pending}</p>
-                  <p className="text-xs text-secondary uppercase tracking-wider">Pending Vehicles</p>
+                  <p className="text-caption text-secondary uppercase tracking-wider">Pending Vehicles</p>
                 </div>
-                <Link to="/admin/vehicles" className="text-accent text-sm font-semibold hover:underline">Review &rarr;</Link>
+                <Link to="/admin/vehicles" className="text-accent text-body-sm font-semibold hover:text-accent-hover transition-colors">Review &rarr;</Link>
               </div>
               
-              <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-surface/50">
+              <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-surface/50 transition-colors hover:bg-surface">
                 <div>
                   <p className="font-semibold text-primary">{analytics.bookings.pending}</p>
-                  <p className="text-xs text-secondary uppercase tracking-wider">Pending Bookings</p>
+                  <p className="text-caption text-secondary uppercase tracking-wider">Pending Bookings</p>
                 </div>
-                <Link to="/admin/bookings" className="text-accent text-sm font-semibold hover:underline">View &rarr;</Link>
+                <Link to="/admin/bookings" className="text-accent text-body-sm font-semibold hover:text-accent-hover transition-colors">View &rarr;</Link>
               </div>
             </div>
           </div>
         </motion.div>
 
         {/* Breakdown Charts Placeholder */}
-        <motion.div variants={staggerItem} className="lg:col-span-2 bg-white p-6 rounded-2xl border border-border shadow-sm flex flex-col">
+        <motion.div variants={staggerItem} className="lg:col-span-2 glass-card-elevated p-6 flex flex-col">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-primary">Booking Distribution</h3>
+            <h3 className="text-h4 text-primary">Booking Distribution</h3>
           </div>
           
           <div className="flex-1 flex flex-col justify-center gap-8">
             <div className="space-y-2">
-              <div className="flex justify-between text-sm font-medium">
+              <div className="flex justify-between text-body-sm font-medium">
                 <span className="text-secondary">Completed</span>
                 <span className="text-primary">{analytics.bookings.completed}</span>
               </div>
               <div className="w-full bg-surface h-2 rounded-full overflow-hidden">
-                <div className="bg-success h-full rounded-full" style={{ width: `${(analytics.bookings.completed / analytics.bookings.total) * 100}%` }} />
+                <div className="bg-success h-full rounded-full transition-all duration-1000" style={{ width: `${(analytics.bookings.completed / analytics.bookings.total) * 100}%` }} />
               </div>
             </div>
 
             <div className="space-y-2">
-              <div className="flex justify-between text-sm font-medium">
+              <div className="flex justify-between text-body-sm font-medium">
                 <span className="text-secondary">Confirmed</span>
                 <span className="text-primary">{analytics.bookings.confirmed}</span>
               </div>
               <div className="w-full bg-surface h-2 rounded-full overflow-hidden">
-                <div className="bg-primary h-full rounded-full" style={{ width: `${(analytics.bookings.confirmed / analytics.bookings.total) * 100}%` }} />
+                <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${(analytics.bookings.confirmed / analytics.bookings.total) * 100}%` }} />
               </div>
             </div>
 
             <div className="space-y-2">
-              <div className="flex justify-between text-sm font-medium">
+              <div className="flex justify-between text-body-sm font-medium">
                 <span className="text-secondary">Cancelled</span>
                 <span className="text-primary">{analytics.bookings.cancelled}</span>
               </div>
               <div className="w-full bg-surface h-2 rounded-full overflow-hidden">
-                <div className="bg-error h-full rounded-full" style={{ width: `${(analytics.bookings.cancelled / analytics.bookings.total) * 100}%` }} />
+                <div className="bg-error h-full rounded-full transition-all duration-1000" style={{ width: `${(analytics.bookings.cancelled / analytics.bookings.total) * 100}%` }} />
               </div>
             </div>
           </div>
