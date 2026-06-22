@@ -7,7 +7,7 @@ const TEAM = [
   {
     name: 'Aryan Patel',
     role: 'Founder & CEO',
-    image: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+    image: '/images/Asp2.jpeg'
   },
   {
     name: 'Kevin Patel',
@@ -66,11 +66,11 @@ export default function AboutLeadership() {
               transition={{ duration: 0.6, delay: index * 0.15 }}
               className="group relative"
             >
-              <div className="relative aspect-[3/4] overflow-hidden rounded-[2px] mb-6 bg-surface">
+              <div className="relative aspect-square overflow-hidden rounded-[2px] mb-6 bg-surface">
                 <LuxuryImage
                   src={member.image}
                   alt={member.name}
-                  className="w-full h-full object-cover grayscale opacity-90 transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100"
+                  className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-105"
                 />
                 
                 {/* Hover Socials */}

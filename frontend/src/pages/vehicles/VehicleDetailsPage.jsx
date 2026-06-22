@@ -57,11 +57,11 @@ export default function VehicleDetailsPage() {
     <motion.div {...pageTransition} className="pt-28 pb-20 bg-background min-h-screen">
       <div className="container-luxe">
         {/* 1. Cinematic Gallery */}
-        <div className="mb-12">
+        <div className="mb-8">
           <VehicleGallery images={vehicle.images || (vehicle.image ? [{ url: vehicle.image }] : [])} />
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-12 relative items-start">
+        <div className="flex flex-col lg:flex-row gap-8 relative items-start">
           
           {/* ── Left Content ── */}
           <div className="flex-1 min-w-0">
@@ -72,20 +72,20 @@ export default function VehicleDetailsPage() {
             <VehicleSpecs vehicle={vehicle} />
 
             {/* 4. Vendor Info */}
-            <div className="mt-16 pt-12 border-t border-border">
-              <h3 className="text-h4 text-primary mb-6">Provided By</h3>
-              <div className="flex items-center gap-6 p-6 rounded-2xl bg-surface border border-border">
-                <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center overflow-hidden shrink-0">
-                  {vehicle.vendor?.avatar?.url ? (
-                    <img src={vehicle.vendor.avatar.url} alt={vehicle.vendor.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-h4 text-accent">{vehicle.vendor?.name?.charAt(0)}</span>
-                  )}
+            <div className="mt-8 pt-8 border-t border-border">
+              <h3 className="text-h5 font-semibold text-primary mb-5">Provided By</h3>
+              <div className="flex items-center gap-4 p-5 rounded-2xl bg-surface border border-border">
+                <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center overflow-hidden shrink-0">
+                  <img 
+                    src={vehicle.vendor?.avatar?.url || "/images/Asp2.jpeg"} 
+                    alt={vehicle.vendor?.name || "Vendor Avatar"} 
+                    className="w-full h-full object-cover" 
+                  />
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="text-lg font-semibold text-primary">{vehicle.vendor?.name}</h4>
-                    <BadgeCheck className="w-5 h-5 text-accent" />
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h4 className="text-base font-semibold text-primary">{vehicle.vendor?.name}</h4>
+                    <BadgeCheck className="w-4 h-4 text-accent" />
                   </div>
                   <p className="text-caption text-secondary">Verified Luxury Partner</p>
                 </div>
@@ -96,18 +96,18 @@ export default function VehicleDetailsPage() {
             </div>
 
             {/* 5. Rental Policies (Accordion placeholder) */}
-            <div className="mt-16 pt-12 border-t border-border">
-              <h3 className="text-h4 text-primary mb-6">Rental Policies</h3>
-              <div className="space-y-4 text-body-sm text-secondary">
-                <div className="flex gap-4">
+            <div className="mt-8 pt-8 border-t border-border">
+              <h3 className="text-h5 font-semibold text-primary mb-5">Rental Policies</h3>
+              <div className="space-y-3 text-body-sm text-secondary">
+                <div className="flex gap-3">
                   <ShieldCheck className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                   <p><strong>Security Deposit:</strong> A refundable security deposit of $50,000 is required at pickup.</p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <ShieldCheck className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                   <p><strong>Mileage Limit:</strong> Includes 150km per day. Additional mileage charged at $100/km.</p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <ShieldCheck className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                   <p><strong>Fuel Policy:</strong> Full-to-Full. Return the vehicle with a full tank to avoid premium refueling charges.</p>
                 </div>

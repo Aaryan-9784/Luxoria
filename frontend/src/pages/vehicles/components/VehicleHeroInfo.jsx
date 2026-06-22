@@ -11,7 +11,7 @@ export default function VehicleHeroInfo({ vehicle }) {
       variants={staggerContainer}
       initial="initial"
       animate="animate"
-      className="mb-12 border-b border-border pb-12"
+      className="mb-8 border-b border-border pb-8"
     >
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
         
@@ -62,7 +62,7 @@ export default function VehicleHeroInfo({ vehicle }) {
         </motion.div>
       </div>
 
-      <motion.p variants={staggerItem} className="mt-8 text-lg text-secondary leading-relaxed max-w-4xl">
+      <motion.p variants={staggerItem} className="mt-6 text-body text-secondary leading-relaxed max-w-4xl">
         {vehicle.description}
       </motion.p>
     </motion.div>
