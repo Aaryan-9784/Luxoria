@@ -163,7 +163,7 @@ export default function LuxuryVehicleCard({
           {location && (
             <span className="flex items-center gap-1">
               <MapPin className="w-3 h-3" />
-              {location}
+              {typeof location === 'object' ? location?.city : location}
             </span>
           )}
         </div>

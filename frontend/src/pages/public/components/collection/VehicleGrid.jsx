@@ -56,7 +56,7 @@ function VehicleCard({ vehicle, isCompared, toggleCompare }) {
 
         <div className="flex items-center text-slate-500 text-sm mb-6 mt-1">
           <MapPin size={14} className="mr-1" />
-          {vehicle.location}
+          {typeof vehicle.location === 'object' ? vehicle.location?.city : vehicle.location}
         </div>
 
         {/* Specs Grid */}

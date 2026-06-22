@@ -127,7 +127,7 @@ export default function QuickViewModal() {
                     {vehicle.location && (
                       <span className="flex items-center gap-1 text-xs text-muted">
                         <MapPin className="w-3.5 h-3.5" />
-                        {vehicle.location}
+                        {typeof vehicle.location === 'object' ? vehicle.location?.city : vehicle.location}
                       </span>
                     )}
                     <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${

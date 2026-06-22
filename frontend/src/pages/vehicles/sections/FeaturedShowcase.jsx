@@ -70,7 +70,7 @@ function FeaturedCard({ vehicle, isWishlisted, onQuickView, onWishlist, onCompar
             <span>{vehicle.topSpeed}</span>
             <span className="flex items-center gap-1">
               <MapPin className="w-3.5 h-3.5" />
-              {vehicle.location}
+              {typeof vehicle.location === 'object' ? vehicle.location?.city : vehicle.location}
             </span>
           </div>
 
