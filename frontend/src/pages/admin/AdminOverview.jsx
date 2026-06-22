@@ -24,10 +24,10 @@ export default function AdminOverview() {
   }
 
   const KPI_DATA = [
-    { label: 'Total Revenue', value: `$${analytics.revenue.totalAmount.toLocaleString('en-US')}`, icon: Wallet, color: 'text-success', bg: 'bg-success/10' },
-    { label: 'Total Users', value: analytics.users.total, icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
-    { label: 'Active Vendors', value: analytics.users.vendors, icon: Building2, color: 'text-[#8B5CF6]', bg: 'bg-[#8B5CF6]/10' },
-    { label: 'Approved Fleet', value: analytics.vehicles.approved, icon: Car, color: 'text-accent', bg: 'bg-accent/10' },
+    { label: 'Total Revenue', value: `$${(analytics?.overview?.totalRevenue || 0).toLocaleString('en-US')}`, icon: Wallet, color: 'text-success', bg: 'bg-success/10' },
+    { label: 'Total Users', value: analytics?.overview?.totalUsers || 0, icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
+    { label: 'Active Vendors', value: analytics?.overview?.totalVendors || 0, icon: Building2, color: 'text-[#8B5CF6]', bg: 'bg-[#8B5CF6]/10' },
+    { label: 'Total Fleet', value: analytics?.overview?.totalVehicles || 0, icon: Car, color: 'text-accent', bg: 'bg-accent/10' },
   ];
 
   return (
@@ -69,7 +69,7 @@ export default function AdminOverview() {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-surface/50 transition-colors hover:bg-surface">
                 <div>
-                  <p className="font-semibold text-primary">{analytics.vehicles.pending}</p>
+                  <p className="font-semibold text-primary">0</p>
                   <p className="text-caption text-secondary uppercase tracking-wider">Pending Vehicles</p>
                 </div>
                 <Link to="/admin/vehicles" className="text-accent text-body-sm font-semibold hover:text-accent-hover transition-colors">Review &rarr;</Link>
@@ -77,7 +77,7 @@ export default function AdminOverview() {
               
               <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-surface/50 transition-colors hover:bg-surface">
                 <div>
-                  <p className="font-semibold text-primary">{analytics.bookings.pending}</p>
+                  <p className="font-semibold text-primary">{analytics?.bookingsByStatus?.pending || 0}</p>
                   <p className="text-caption text-secondary uppercase tracking-wider">Pending Bookings</p>
                 </div>
                 <Link to="/admin/bookings" className="text-accent text-body-sm font-semibold hover:text-accent-hover transition-colors">View &rarr;</Link>
@@ -96,30 +96,30 @@ export default function AdminOverview() {
             <div className="space-y-2">
               <div className="flex justify-between text-body-sm font-medium">
                 <span className="text-secondary">Completed</span>
-                <span className="text-primary">{analytics.bookings.completed}</span>
+                <span className="text-primary">{analytics?.bookingsByStatus?.completed || 0}</span>
               </div>
               <div className="w-full bg-surface h-2 rounded-full overflow-hidden">
-                <div className="bg-success h-full rounded-full transition-all duration-1000" style={{ width: `${(analytics.bookings.completed / analytics.bookings.total) * 100}%` }} />
+                <div className="bg-success h-full rounded-full transition-all duration-1000" style={{ width: `${((analytics?.bookingsByStatus?.completed || 0) / (analytics?.overview?.totalBookings || 1)) * 100}%` }} />
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between text-body-sm font-medium">
                 <span className="text-secondary">Confirmed</span>
-                <span className="text-primary">{analytics.bookings.confirmed}</span>
+                <span className="text-primary">{analytics?.bookingsByStatus?.confirmed || 0}</span>
               </div>
               <div className="w-full bg-surface h-2 rounded-full overflow-hidden">
-                <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${(analytics.bookings.confirmed / analytics.bookings.total) * 100}%` }} />
+                <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${((analytics?.bookingsByStatus?.confirmed || 0) / (analytics?.overview?.totalBookings || 1)) * 100}%` }} />
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between text-body-sm font-medium">
                 <span className="text-secondary">Cancelled</span>
-                <span className="text-primary">{analytics.bookings.cancelled}</span>
+                <span className="text-primary">{analytics?.bookingsByStatus?.cancelled || 0}</span>
               </div>
               <div className="w-full bg-surface h-2 rounded-full overflow-hidden">
-                <div className="bg-error h-full rounded-full transition-all duration-1000" style={{ width: `${(analytics.bookings.cancelled / analytics.bookings.total) * 100}%` }} />
+                <div className="bg-error h-full rounded-full transition-all duration-1000" style={{ width: `${((analytics?.bookingsByStatus?.cancelled || 0) / (analytics?.overview?.totalBookings || 1)) * 100}%` }} />
               </div>
             </div>
           </div>

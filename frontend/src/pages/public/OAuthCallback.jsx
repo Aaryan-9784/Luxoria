@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '@/redux/slices/authSlice';
 import { motion } from 'framer-motion';
 import { Car } from 'lucide-react';
@@ -26,47 +26,31 @@ export default function OAuthCallback() {
         navigate('/login?error=auth_failed');
         return;
       }
-
-      try {
-        // Step 1: The backend set an HTTP-only refresh token cookie after Google OAuth.
-        // Call /auth/refresh to exchange the refresh cookie for an access token.
-        const refreshRes = await axios.post(
-          `${baseURL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
-
-        const accessToken = refreshRes.data.data.accessToken;
-
-        // Step 2: Use the access token to fetch the user profile
-        const profileRes = await axios.get(`${baseURL}/auth/me`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-          withCredentials: true,
-        });
-
-        const user = profileRes.data.data.user;
-
-        // Step 3: Set credentials in Redux
-        dispatch(setCredentials({ user, accessToken }));
-
-        // Step 4: Redirect based on role
-        const role = user.role;
-        navigate(
-          role === 'admin'
-            ? '/admin/dashboard'
-            : role === 'vendor'
-              ? '/vendor/dashboard'
-              : '/dashboard',
-          { replace: true }
-        );
-      } catch (err) {
-        console.error('OAuth callback error:', err);
-        navigate('/login?error=auth_failed');
-      }
+      
+      // We no longer manually call /auth/refresh here.
+      // AppRoutes.jsx already calls /auth/refresh on initial load, which happens concurrently.
+      // If we call it here too, the backend's Strict Token Rotation will detect token reuse and invalidate the session (401).
+      // Let's just wait for Redux to be updated by AppRoutes.jsx!
     };
 
     handleAuth();
-  }, [searchParams, navigate, dispatch]);
+  }, [searchParams, navigate]);
+
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const role = user.role;
+      navigate(
+        role === 'admin'
+          ? '/admin/dashboard'
+          : role === 'vendor'
+            ? '/vendor/dashboard'
+            : '/dashboard',
+        { replace: true }
+      );
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center">

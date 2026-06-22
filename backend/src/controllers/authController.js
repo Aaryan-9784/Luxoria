@@ -66,9 +66,6 @@ export const login = asyncHandler(async (req, res) => {
     throw ApiError.unauthorized('Invalid email or password');
   }
 
-  if (user.role !== 'user') {
-    throw ApiError.forbidden('Please use the correct login portal for your account type.');
-  }
 
   if (!user.isActive) {
     throw ApiError.forbidden('Your account has been deactivated. Contact support.');
@@ -200,25 +197,32 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     throw ApiError.unauthorized('User not found');
   }
 
-  // Verify token exists in DB (rotation check)
-  const tokenIndex = user.refreshTokens.findIndex((t) => t.token === refreshToken);
-  if (tokenIndex === -1) {
-    // Token reuse detected — clear all tokens (security measure)
-    user.refreshTokens = [];
-    await user.save({ validateBeforeSave: false });
+  // Rotate: Replace old token atomically
+  const newRefreshToken = generateRefreshToken(user._id);
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: user._id, 'refreshTokens.token': refreshToken },
+    {
+      $set: {
+        'refreshTokens.$.token': newRefreshToken,
+        'refreshTokens.$.expiresAt': expiresAt
+      }
+    },
+    { new: true }
+  );
+
+  if (!updatedUser) {
+    // Token reuse detected - the token was already rotated by another concurrent request!
+    await User.findByIdAndUpdate(user._id, { $set: { refreshTokens: [] } });
     clearRefreshTokenCookie(res);
     throw ApiError.unauthorized('Token reuse detected. Please login again.');
   }
 
-  // Rotate: remove old, add new
-  user.refreshTokens.splice(tokenIndex, 1);
-  const newRefreshToken = generateRefreshToken(user._id);
-  user.refreshTokens.push({
-    token: newRefreshToken,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  });
-  user.cleanExpiredTokens();
-  await user.save({ validateBeforeSave: false });
+  // Clean expired tokens asynchronously to keep DB clean
+  User.findByIdAndUpdate(user._id, {
+    $pull: { refreshTokens: { expiresAt: { $lt: new Date() } } }
+  }).exec().catch(() => {});
 
   const newAccessToken = generateAccessToken(user._id);
   setRefreshTokenCookie(res, newRefreshToken);
@@ -330,6 +334,7 @@ export const googleOAuthCallback = asyncHandler(async (req, res) => {
 
   // Generate tokens
   const refreshToken = generateRefreshToken(user._id);
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   // Manage tokens in DB
   user.cleanExpiredTokens();
