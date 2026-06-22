@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFilter, clearFilters, fetchVehicles, setSortBy, setViewMode, toggleWishlist, setQuickView, addToCompare } from '@/redux/slices/vehicleSlice';
 import LuxuryVehicleCard from '../components/LuxuryVehicleCard';
 import Skeleton from '@/components/ui/Skeleton';
-import { LayoutGrid, List, SearchX, X, AlertCircle } from 'lucide-react';
+import { LayoutGrid, List, SearchX, X, AlertCircle, SlidersHorizontal } from 'lucide-react';
 import { staggerContainer, revealOnScroll } from '@/lib/motion';
 import { SORT_OPTIONS } from '../data/vehiclesPageData';
 
-export default function PremiumVehicleGrid() {
+export default function PremiumVehicleGrid({ onOpenFilters }) {
   const dispatch = useDispatch();
   const { vehicles, loading, error, filters, sortBy, viewMode, pagination, wishlist } = useSelector(state => state.vehicle);
 
@@ -48,6 +48,15 @@ export default function PremiumVehicleGrid() {
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
+          {/* Filters Button (Desktop) */}
+          <button
+            onClick={onOpenFilters}
+            className="hidden lg:flex items-center gap-2 bg-surface border border-border text-primary hover:border-primary px-4 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm hover:shadow-md"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            Filters
+          </button>
+
           {/* Sort — visible on desktop, hidden on mobile (handled by filter panel) */}
           <div className="hidden lg:block">
             <select

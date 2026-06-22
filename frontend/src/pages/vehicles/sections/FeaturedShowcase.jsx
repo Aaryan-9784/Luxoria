@@ -129,10 +129,16 @@ export default function FeaturedShowcase() {
     <motion.section {...revealOnScroll} className="py-16 md:py-24">
       <div className="container-luxe">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <span className="text-overline text-accent mb-3 block">Handpicked Excellence</span>
-          <h2 className="text-h2 text-primary mb-4">Featured Vehicles</h2>
-          <p className="text-secondary text-body max-w-xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="w-12 h-[1px] bg-accent/60" />
+            <span className="text-[10px] font-bold text-accent uppercase tracking-[0.2em]">Handpicked Excellence</span>
+            <div className="w-12 h-[1px] bg-accent/60" />
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary mb-4 tracking-tight uppercase">
+            FEATURED <span className="lowercase italic font-light text-secondary">vehicles</span>
+          </h2>
+          <p className="text-sm md:text-base text-secondary max-w-2xl mx-auto leading-relaxed">
             Our editors' selection of the most exceptional vehicles currently available
           </p>
         </div>

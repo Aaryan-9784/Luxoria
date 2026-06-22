@@ -73,31 +73,33 @@ export default function EliteBrandShowcase() {
     >
       <div className="container-luxe">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <motion.span
+        <div className="text-center mb-16">
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: EASE_LUXE }}
-            className="text-overline text-accent mb-3 block"
+            className="flex items-center justify-center gap-4 mb-4"
           >
-            Elite Marques
-          </motion.span>
+            <div className="w-12 h-[1px] bg-accent/60" />
+            <span className="text-[10px] font-bold text-accent uppercase tracking-[0.2em]">Elite Marques</span>
+            <div className="w-12 h-[1px] bg-accent/60" />
+          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1, ease: EASE_LUXE }}
-            className="text-h2 text-primary mb-4"
+            className="text-4xl md:text-5xl lg:text-6xl font-black text-primary mb-4 tracking-tight uppercase"
           >
-            The World's Finest Brands
+            THE WORLD'S FINEST <span className="lowercase italic font-light text-secondary">brands</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2, ease: EASE_LUXE }}
-            className="text-secondary text-body max-w-xl mx-auto"
+            className="text-sm md:text-base text-secondary max-w-2xl mx-auto leading-relaxed"
           >
             Select from our curated collection of the most prestigious automotive brands in the world
           </motion.p>

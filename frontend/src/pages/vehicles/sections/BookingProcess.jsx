@@ -13,8 +13,14 @@ export default function BookingProcess() {
     <motion.section {...revealOnScroll} className="py-20 md:py-32 overflow-hidden">
       <div className="container-luxe">
         <div className="text-center mb-16 md:mb-24">
-          <span className="text-overline text-accent mb-3 block">Simple & Seamless</span>
-          <h2 className="text-h2 text-primary">The Luxoria Experience</h2>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="w-12 h-[1px] bg-accent/60" />
+            <span className="text-[10px] font-bold text-accent uppercase tracking-[0.2em]">Simple & Seamless</span>
+            <div className="w-12 h-[1px] bg-accent/60" />
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary tracking-tight uppercase">
+            THE LUXORIA <span className="lowercase italic font-light text-secondary">experience</span>
+          </h2>
         </div>
 
         <div className="relative">

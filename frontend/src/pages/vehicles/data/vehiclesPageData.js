@@ -71,7 +71,7 @@ export const COLLECTIONS = [
     id: 'wedding-collection',
     title: 'Wedding Collection',
     description: 'Make your special day unforgettable',
-    image: 'https://images.unsplash.com/photo-1549275301-c9b60d0b4ced?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=800',
     vehicleCount: 18,
     category: 'luxury',
   },

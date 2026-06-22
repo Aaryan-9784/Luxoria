@@ -1,10 +1,67 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFilter, fetchVehicles } from '@/redux/slices/vehicleSlice';
-import { Search, MapPin, Car, Layers } from 'lucide-react';
+import { Search, MapPin, Car, Layers, ChevronDown } from 'lucide-react';
 import { EASE_LUXE, revealOnScroll } from '@/lib/motion';
 import { FILTER_OPTIONS } from '../data/vehiclesPageData';
+
+const LuxurySelect = ({ value, onChange, options, placeholder }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setIsOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative w-full">
+      <div 
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between w-full cursor-pointer h-full"
+      >
+        <span className={value ? "text-primary font-semibold text-sm capitalize" : "text-primary text-sm font-medium"}>
+          {value || placeholder}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-muted transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+      </div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 5, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute top-full left-[-20px] md:left-0 mt-4 w-[240px] bg-background/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl overflow-hidden z-50 p-2"
+          >
+            <div className="max-h-[280px] overflow-y-auto custom-scrollbar flex flex-col gap-1">
+              <button
+                onClick={() => { onChange(''); setIsOpen(false); }}
+                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all ${!value ? 'bg-accent/10 text-accent font-bold' : 'text-primary hover:bg-surface hover:text-accent font-medium'}`}
+              >
+                {placeholder}
+              </button>
+              {options.map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => { onChange(opt); setIsOpen(false); }}
+                  className={`w-full text-left px-4 py-2.5 rounded-xl text-sm capitalize transition-all ${value === opt ? 'bg-accent/10 text-accent font-bold' : 'text-primary hover:bg-surface hover:text-accent font-medium'}`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default function SmartSearch() {
   const dispatch = useDispatch();
@@ -81,16 +138,12 @@ export default function SmartSearch() {
               <Car className="w-4.5 h-4.5 text-muted shrink-0" />
               <div className="flex-1">
                 <label className="text-[10px] uppercase tracking-[0.15em] text-muted font-semibold block mb-0.5 hidden md:block">Brand</label>
-                <select
+                <LuxurySelect
                   value={localBrand}
-                  onChange={(e) => setLocalBrand(e.target.value)}
-                  className="w-full bg-transparent outline-none text-primary text-sm font-medium appearance-none cursor-pointer"
-                >
-                  <option value="">All Brands</option>
-                  {FILTER_OPTIONS.brand.map(b => (
-                    <option key={b} value={b}>{b}</option>
-                  ))}
-                </select>
+                  onChange={setLocalBrand}
+                  options={FILTER_OPTIONS.brand}
+                  placeholder="All Brands"
+                />
               </div>
             </div>
 
@@ -120,16 +173,12 @@ export default function SmartSearch() {
               <Layers className="w-4.5 h-4.5 text-muted shrink-0" />
               <div className="flex-1">
                 <label className="text-[10px] uppercase tracking-[0.15em] text-muted font-semibold block mb-0.5 hidden md:block">Category</label>
-                <select
+                <LuxurySelect
                   value={localCategory}
-                  onChange={(e) => setLocalCategory(e.target.value)}
-                  className="w-full bg-transparent outline-none text-primary text-sm font-medium appearance-none cursor-pointer capitalize"
-                >
-                  <option value="">All Categories</option>
-                  {FILTER_OPTIONS.category.map(c => (
-                    <option key={c} value={c} className="capitalize">{c}</option>
-                  ))}
-                </select>
+                  onChange={setLocalCategory}
+                  options={FILTER_OPTIONS.category}
+                  placeholder="All Categories"
+                />
               </div>
             </div>
 

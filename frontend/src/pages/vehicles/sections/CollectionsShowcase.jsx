@@ -65,14 +65,18 @@ export default function CollectionsShowcase() {
     <motion.section {...revealOnScroll} className="py-16 md:py-24 bg-surface/30">
       <div className="container-luxe">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div className="max-w-2xl">
-            <span className="text-overline text-accent mb-3 block">Curated Collections</span>
-            <h2 className="text-h2 text-primary mb-4">Discover Your Style</h2>
-            <p className="text-secondary text-body">
-              Explore our meticulously organized collections tailored for specific experiences, events, and driving preferences.
-            </p>
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="w-12 h-[1px] bg-accent/60" />
+            <span className="text-[10px] font-bold text-accent uppercase tracking-[0.2em]">Curated Collections</span>
+            <div className="w-12 h-[1px] bg-accent/60" />
           </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary mb-4 tracking-tight uppercase">
+            DISCOVER YOUR <span className="lowercase italic font-light text-secondary">style</span>
+          </h2>
+          <p className="text-sm md:text-base text-secondary max-w-2xl mx-auto leading-relaxed">
+            Explore our meticulously organized collections tailored for specific experiences, events, and driving preferences.
+          </p>
         </div>
 
         {/* Grid */}

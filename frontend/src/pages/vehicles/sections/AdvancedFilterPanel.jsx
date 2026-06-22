@@ -242,15 +242,7 @@ export default function AdvancedFilterPanel({ mobileOpen, setMobileOpen }) {
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <motion.div
-        {...revealOnScroll}
-        className="hidden lg:block w-80 shrink-0 sticky top-[100px] h-[calc(100vh-120px)] p-6 bg-background border border-border rounded-2xl shadow-sm overflow-hidden"
-      >
-        <PanelContent />
-      </motion.div>
-
-      {/* Mobile Drawer */}
+      {/* Universal Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -259,14 +251,14 @@ export default function AdvancedFilterPanel({ mobileOpen, setMobileOpen }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="fixed inset-0 bg-black/60 z-50 lg:hidden backdrop-blur-sm"
+              className="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm"
             />
             <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 bottom-0 w-[320px] bg-background z-50 lg:hidden p-6 shadow-2xl flex flex-col"
+              className="fixed top-0 left-0 bottom-0 w-[320px] max-w-[90vw] bg-background z-50 p-6 shadow-2xl flex flex-col"
             >
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-h4 text-primary">Refine Results</h3>

@@ -13,9 +13,6 @@ import FeaturedShowcase from './sections/FeaturedShowcase';
 import PremiumVehicleGrid from './sections/PremiumVehicleGrid';
 import VehiclePaginationNew from './sections/VehiclePaginationNew';
 import CollectionsShowcase from './sections/CollectionsShowcase';
-import LuxuryBenefits from './sections/LuxuryBenefits';
-import ClientTestimonials from './sections/ClientTestimonials';
-import TrustCredibility from './sections/TrustCredibility';
 import BookingProcess from './sections/BookingProcess';
 import LuxuryCTA from './sections/LuxuryCTA';
 
@@ -59,8 +56,7 @@ export default function VehicleListPage() {
       {/* 2. Smart Search (Floats over hero) */}
       <SmartSearch />
 
-      {/* 3. Brands Showcase */}
-      <EliteBrandShowcase />
+
 
       {/* Main Content Area Container */}
       <div className="bg-surface/30 border-t border-border/50 pb-20">
@@ -77,14 +73,14 @@ export default function VehicleListPage() {
         </div>
 
         <div className="container-luxe py-12 lg:py-16">
-          <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 relative items-start">
+          <div className="flex flex-col relative items-start w-full">
             {/* 4. Filter Panel */}
             <AdvancedFilterPanel mobileOpen={mobileFilterOpen} setMobileOpen={setMobileFilterOpen} />
 
             {/* Main Grid Area */}
-            <div className="flex-1 min-w-0 flex flex-col">
+            <div className="flex-1 min-w-0 flex flex-col w-full">
               {/* 5. Grid */}
-              <PremiumVehicleGrid />
+              <PremiumVehicleGrid onOpenFilters={() => setMobileFilterOpen(true)} />
               
               {/* 6. Pagination */}
               <VehiclePaginationNew />
@@ -98,15 +94,6 @@ export default function VehicleListPage() {
 
       {/* 8. Collections */}
       <CollectionsShowcase />
-
-      {/* 9. Benefits */}
-      <LuxuryBenefits />
-
-      {/* 10. Testimonials */}
-      <ClientTestimonials />
-
-      {/* 11. Trust & Credibility */}
-      <TrustCredibility />
 
       {/* 12. Booking Process */}
       <BookingProcess />

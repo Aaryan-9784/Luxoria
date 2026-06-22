@@ -15,7 +15,7 @@ export default function LuxuryCTA() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=2560"
+          src="https://static0.topspeedimages.com/wordpress/wp-content/uploads/2023/01/rolls-royce-wraith.jpg?w=1600&h=900&fit=crop"
           alt="Luxury CTA Background"
           className="w-full h-full object-cover opacity-90"
         />
@@ -30,29 +30,29 @@ export default function LuxuryCTA() {
           transition={{ duration: 0.8, ease: EASE_LUXE }}
           className="max-w-4xl mx-auto"
         >
-          <span className="text-accent text-[11px] font-bold tracking-[0.25em] uppercase block mb-4 drop-shadow-md">
-            Begin Your Journey
-          </span>
-          <h2 className="text-[clamp(2.5rem,5vw,4.5rem)] font-bold leading-tight tracking-tight mb-6">
-            Reserve Your Dream <br />
-            <span className="text-gradient-gold">Vehicle Today</span>
+
+          <h2 className="text-[clamp(2.5rem,5vw,4.5rem)] font-black leading-tight tracking-tight mb-6 uppercase">
+            RESERVE YOUR DREAM <span className="lowercase italic font-light text-gradient-gold pr-2">vehicle</span>
           </h2>
-          <p className="text-lg md:text-xl text-white/70 font-light max-w-2xl mx-auto mb-12">
+          <p className="text-sm md:text-base text-white/70 font-light max-w-2xl mx-auto mb-12">
             Experience the pinnacle of automotive engineering and unmatched luxury service.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <button
               onClick={scrollToCollection}
-              className="w-full sm:w-auto btn bg-accent text-white hover:bg-accent-hover btn-xl rounded-full shadow-[0_0_30px_rgba(201,167,93,0.3)] hover:shadow-[0_0_50px_rgba(201,167,93,0.5)] transition-all duration-500 hover:scale-105"
+              className="group relative px-8 py-4 bg-accent text-white font-medium text-xs md:text-sm tracking-[0.15em] uppercase overflow-hidden rounded-sm transition-all duration-300 hover:bg-accent-hover hover:shadow-[0_0_30px_rgba(201,167,93,0.4)]"
             >
-              Browse Collection
+              <span className="relative z-10 flex items-center justify-center gap-3">
+                Browse Collection
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
             </button>
             <Link
               to="/contact"
-              className="w-full sm:w-auto btn bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 btn-xl rounded-full transition-all duration-500 hover:scale-105"
+              className="group px-8 py-4 bg-transparent border border-white/30 text-white font-medium text-xs md:text-sm tracking-[0.15em] uppercase rounded-sm hover:border-white hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
             >
-              <Phone className="w-5 h-5 mr-2" />
+              <Phone className="w-4 h-4 mr-3 opacity-70 group-hover:opacity-100 transition-opacity" />
               Contact Concierge
             </Link>
           </div>
