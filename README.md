@@ -11,6 +11,7 @@
   [![Node.js](https://img.shields.io/badge/Node.js-18.x-339933?logo=node.js&style=for-the-badge)](https://nodejs.org)
   [![Express.js](https://img.shields.io/badge/Express.js-4.x-000000?logo=express&style=for-the-badge)](https://expressjs.com)
   [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&style=for-the-badge)](https://mongodb.com)
+  [![Redux Toolkit](https://img.shields.io/badge/Redux-593D88?logo=redux&style=for-the-badge)](https://redux.js.org/)
 
   <p align="center">
     <b>Engineered with a premium white glassmorphism aesthetic inspired by Apple, Tesla, and Stripe, LUXORIA seamlessly connects elite clientele with premium automotive partners.</b>
@@ -22,9 +23,10 @@
 ## 📑 Table of Contents
 - [Ecosystem Overview](#-ecosystem-overview)
 - [Key Features](#-key-features)
+- [Dashboards \& Portals](#-dashboards--portals)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
-- [Installation & Local Setup](#️-installation--local-setup)
+- [Installation \& Local Setup](#️-installation--local-setup)
 - [Architecture Highlights](#-architecture-highlights)
 - [Deployment Strategy](#-deployment-strategy)
 - [Contributing](#-contributing)
@@ -48,6 +50,34 @@ The platform is divided into three comprehensive interfaces designed to handle t
 - **Payment Gateway**: End-to-end Razorpay integration for secure and reliable transaction processing.
 - **Cloud Media**: High-performance image storage and delivery via Cloudinary.
 - **Interactive Dashboards**: Data-rich vendor and admin panels powered by MongoDB aggregation pipelines.
+
+---
+
+## 📊 Dashboards & Portals
+
+LUXORIA provides tailor-made dashboards specific to the logged-in user role:
+
+### 1. User Dashboard
+Designed for clients to manage their luxury experience:
+- **Dashboard Overview:** Quick glance at recent activities.
+- **My Bookings:** History and active bookings.
+- **Payments:** Payment history and statuses.
+- **Profile & Wishlist:** Manage personal details and saved luxury vehicles.
+- **Notifications:** Real-time alerts and booking updates.
+
+### 2. Vendor Dashboard
+Empowering fleet owners with complete control:
+- **Vendor Overview:** Key metrics and performance indicators.
+- **Manage Fleet:** Add, update, and remove vehicles.
+- **Vendor Bookings:** View and manage incoming client reservations.
+- **Revenue Tracker:** Detailed insights into earnings and payouts.
+
+### 3. Admin Dashboard
+Administrative command center for platform governance:
+- **Admin Overview:** Platform-wide analytics and health.
+- **User & Vendor Management:** Full control over accounts.
+- **Vehicle Approvals:** Quality control and listing approvals.
+- **Global Bookings:** Platform-wide transaction oversight.
 
 ---
 
