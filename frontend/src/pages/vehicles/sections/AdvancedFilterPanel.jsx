@@ -176,7 +176,7 @@ export default function AdvancedFilterPanel({ mobileOpen, setMobileOpen }) {
             <input
               type="number"
               name="minPrice"
-              placeholder="Min ₹"
+              placeholder="Min $"
               value={filters.minPrice}
               onChange={handlePriceChange}
               onBlur={applyPrice}
@@ -186,7 +186,7 @@ export default function AdvancedFilterPanel({ mobileOpen, setMobileOpen }) {
             <input
               type="number"
               name="maxPrice"
-              placeholder="Max ₹"
+              placeholder="Max $"
               value={filters.maxPrice}
               onChange={handlePriceChange}
               onBlur={applyPrice}

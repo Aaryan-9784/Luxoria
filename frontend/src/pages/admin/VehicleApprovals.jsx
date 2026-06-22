@@ -66,7 +66,7 @@ export default function VehicleApprovals() {
                 )}
                 <div className="absolute top-3 left-3">
                   <span className="px-2.5 py-1 bg-white/90 backdrop-blur text-primary text-xs font-bold uppercase tracking-wider rounded shadow-sm">
-                    ₹{vehicle.pricePerDay.toLocaleString('en-IN')}/day
+                    ${vehicle.pricePerDay.toLocaleString('en-US')}/day
                   </span>
                 </div>
               </div>

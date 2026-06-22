@@ -85,7 +85,7 @@ export default function PaymentsDashboard() {
                       {tx.method}
                     </td>
                     <td className="px-6 py-4 text-body-sm font-semibold text-primary">
-                      ₹{tx.amount.toLocaleString('en-IN')}
+                      ${tx.amount.toLocaleString('en-US')}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button className="p-2 text-muted hover:text-accent transition-colors rounded-full hover:bg-accent/10 inline-flex">

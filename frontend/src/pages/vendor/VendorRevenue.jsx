@@ -45,7 +45,7 @@ export default function VendorRevenue() {
             </div>
           </div>
           <div className="relative z-10">
-            <h3 className="text-h3 text-primary mb-1">₹{totalRevenue.toLocaleString('en-IN')}</h3>
+            <h3 className="text-h3 text-primary mb-1">${totalRevenue.toLocaleString('en-US')}</h3>
             <p className="text-caption font-bold text-muted uppercase tracking-wider">Total Earnings</p>
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function VendorRevenue() {
             </div>
           </div>
           <div className="relative z-10">
-            <h3 className="text-h3 text-primary mb-1">₹{pendingRevenue.toLocaleString('en-IN')}</h3>
+            <h3 className="text-h3 text-primary mb-1">${pendingRevenue.toLocaleString('en-US')}</h3>
             <p className="text-caption font-bold text-muted uppercase tracking-wider">Projected Revenue (Pending)</p>
           </div>
         </div>
@@ -114,7 +114,7 @@ export default function VendorRevenue() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-body-sm font-bold text-success flex items-center gap-1">
-                        +₹{booking.totalAmount.toLocaleString('en-IN')} <ArrowUpRight className="w-3 h-3" />
+                        +${booking.totalAmount.toLocaleString('en-US')} <ArrowUpRight className="w-3 h-3" />
                       </span>
                     </td>
                     <td className="px-6 py-4">

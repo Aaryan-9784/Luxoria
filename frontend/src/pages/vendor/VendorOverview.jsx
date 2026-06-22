@@ -33,7 +33,7 @@ export default function VendorOverview() {
       {/* KPI Widgets */}
       <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Total Revenue', value: `₹${stats?.totalRevenue?.toLocaleString('en-IN') || 0}`, icon: Wallet, color: 'text-success', bg: 'bg-success/10' },
+          { label: 'Total Revenue', value: `$${stats?.totalRevenue?.toLocaleString('en-US') || 0}`, icon: Wallet, color: 'text-success', bg: 'bg-success/10' },
           { label: 'Active Rentals', value: stats?.activeRentals || 0, icon: Car, color: 'text-primary', bg: 'bg-primary/10' },
           { label: 'Total Fleet', value: stats?.totalVehicles || 0, icon: BarChart3, color: 'text-accent', bg: 'bg-accent/10' },
           { label: 'Pending Approvals', value: stats?.pendingApprovals || 0, icon: ShieldAlert, color: 'text-error', bg: 'bg-error/10' },

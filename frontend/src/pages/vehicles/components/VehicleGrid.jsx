@@ -80,7 +80,7 @@ export default function VehicleGrid() {
                 className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20"
               >
                 <span className="text-caption font-medium text-accent capitalize">
-                  {key === 'minPrice' ? `Min ₹${val}` : key === 'maxPrice' ? `Max ₹${val}` : val}
+                  {key === 'minPrice' ? `Min $${val}` : key === 'maxPrice' ? `Max $${val}` : val}
                 </span>
                 <button onClick={() => removeFilter(key)} className="text-accent hover:text-primary transition-colors">
                   <X className="w-3.5 h-3.5" />

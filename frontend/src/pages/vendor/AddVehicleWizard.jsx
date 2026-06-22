@@ -186,7 +186,7 @@ export default function AddVehicleWizard() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Price Per Day (₹)</label>
+                    <label className="text-caption font-semibold text-primary uppercase block mb-1.5">Price Per Day ($)</label>
                     <input {...register("pricePerDay", { required: true })} type="number" className="input-field" placeholder="e.g. 15000" />
                   </div>
                   <div>

@@ -182,7 +182,7 @@ export default function QuickViewModal() {
                     <div>
                       <span className="text-[10px] text-muted uppercase tracking-wider block mb-0.5">Starting from</span>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-bold text-primary">₹{vehicle.pricePerDay?.toLocaleString()}</span>
+                        <span className="text-3xl font-bold text-primary">${vehicle.pricePerDay?.toLocaleString()}</span>
                         <span className="text-sm text-muted">/day</span>
                       </div>
                     </div>

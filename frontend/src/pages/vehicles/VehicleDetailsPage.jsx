@@ -58,7 +58,7 @@ export default function VehicleDetailsPage() {
       <div className="container-luxe">
         {/* 1. Cinematic Gallery */}
         <div className="mb-12">
-          <VehicleGallery images={vehicle.images} />
+          <VehicleGallery images={vehicle.images || (vehicle.image ? [{ url: vehicle.image }] : [])} />
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12 relative items-start">
@@ -101,11 +101,11 @@ export default function VehicleDetailsPage() {
               <div className="space-y-4 text-body-sm text-secondary">
                 <div className="flex gap-4">
                   <ShieldCheck className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <p><strong>Security Deposit:</strong> A refundable security deposit of ₹50,000 is required at pickup.</p>
+                  <p><strong>Security Deposit:</strong> A refundable security deposit of $50,000 is required at pickup.</p>
                 </div>
                 <div className="flex gap-4">
                   <ShieldCheck className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                  <p><strong>Mileage Limit:</strong> Includes 150km per day. Additional mileage charged at ₹100/km.</p>
+                  <p><strong>Mileage Limit:</strong> Includes 150km per day. Additional mileage charged at $100/km.</p>
                 </div>
                 <div className="flex gap-4">
                   <ShieldCheck className="w-5 h-5 text-accent shrink-0 mt-0.5" />

@@ -97,7 +97,7 @@ function FeaturedCard({ vehicle, isWishlisted, onQuickView, onWishlist, onCompar
             <div>
               <span className="text-[10px] text-muted uppercase tracking-wider block mb-1">Starting from</span>
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-primary">₹{vehicle.pricePerDay?.toLocaleString()}</span>
+                <span className="text-2xl font-bold text-primary">${vehicle.pricePerDay?.toLocaleString()}</span>
                 <span className="text-sm text-muted">/day</span>
               </div>
             </div>

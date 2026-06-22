@@ -160,7 +160,7 @@ export default function MobileAppSection() {
                   </div>
                   <p className="text-caption font-bold text-white uppercase tracking-wider">Payment</p>
                 </div>
-                <p className="text-body font-bold text-white">₹85,000</p>
+                <p className="text-body font-bold text-white">$85,000</p>
                 <p className="text-[10px] text-white/40">Processed securely</p>
               </motion.div>
             </motion.div>

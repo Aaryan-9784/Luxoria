@@ -180,7 +180,7 @@ export default function CompareVehicles() {
                     </tr>
                   </thead>
                   <tbody>
-                    <CompareRow label="Price/Day" icon={Star} values={compareList.map(v => `₹${v.pricePerDay?.toLocaleString()}`)} />
+                    <CompareRow label="Price/Day" icon={Star} values={compareList.map(v => `$${v.pricePerDay?.toLocaleString()}`)} />
                     <CompareRow label="Horsepower" icon={Zap} values={compareList.map(v => v.horsepower)} />
                     <CompareRow label="Top Speed" icon={Gauge} values={compareList.map(v => v.topSpeed)} />
                     <CompareRow label="Engine" icon={Settings} values={compareList.map(v => v.engine)} />

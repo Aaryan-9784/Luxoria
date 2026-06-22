@@ -63,7 +63,7 @@ export default function AdminBookings() {
                   <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Vendor</th>
                   <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Timeline</th>
                   <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider text-right">Value (₹)</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-secondary uppercase tracking-wider text-right">Value ($)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
@@ -94,7 +94,7 @@ export default function AdminBookings() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-sm font-bold text-primary">₹{booking.totalAmount.toLocaleString('en-IN')}</span>
+                      <span className="text-sm font-bold text-primary">${booking.totalAmount.toLocaleString('en-US')}</span>
                     </td>
                   </tr>
                 ))}

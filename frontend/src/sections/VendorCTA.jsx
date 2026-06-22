@@ -74,7 +74,7 @@ export default function VendorCTA() {
               <div className="bg-surface/50 p-6 border-b border-border flex justify-between items-center">
                 <div>
                   <p className="text-caption text-secondary uppercase tracking-widest font-semibold mb-1">Total Revenue</p>
-                  <p className="text-3xl font-bold text-primary tracking-tight">₹4,250,000</p>
+                  <p className="text-3xl font-bold text-primary tracking-tight">$4,250,000</p>
                 </div>
                 <div className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center shadow-sm relative">
                   <Bell className="w-5 h-5 text-secondary" />
@@ -110,7 +110,7 @@ export default function VendorCTA() {
                 <span className="text-caption font-bold text-primary uppercase tracking-widest">Live Booking</span>
               </div>
               <p className="text-body-sm text-secondary">Porsche 911 GT3 RS just booked for 3 days.</p>
-              <p className="text-caption font-bold text-success mt-2">+₹45,000 Expected</p>
+              <p className="text-caption font-bold text-success mt-2">+$45,000 Expected</p>
             </motion.div>
 
             {/* Floating Card: Vendor Payout */}
@@ -125,7 +125,7 @@ export default function VendorCTA() {
                 </div>
                 <div>
                   <p className="text-caption text-muted uppercase tracking-widest font-semibold mb-1">Next Payout</p>
-                  <p className="text-xl font-bold text-primary tracking-tight">₹1,250,000</p>
+                  <p className="text-xl font-bold text-primary tracking-tight">$1,250,000</p>
                 </div>
               </div>
             </motion.div>

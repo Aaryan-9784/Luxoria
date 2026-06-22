@@ -73,7 +73,7 @@ export default function VendorBookings() {
                 <tr className="bg-surface/50 border-b border-border">
                   <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Client & Vehicle</th>
                   <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Dates & Location</th>
-                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Total (₹)</th>
+                  <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Total ($)</th>
                   <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider">Status</th>
                   <th className="px-6 py-4 text-caption font-semibold text-secondary uppercase tracking-wider text-right">Actions</th>
                 </tr>
@@ -114,7 +114,7 @@ export default function VendorBookings() {
                     </td>
 
                     <td className="px-6 py-4 align-top">
-                      <p className="text-body-sm font-bold text-primary">₹{booking.totalAmount.toLocaleString('en-IN')}</p>
+                      <p className="text-body-sm font-bold text-primary">${booking.totalAmount.toLocaleString('en-US')}</p>
                     </td>
 
                     <td className="px-6 py-4 align-top">

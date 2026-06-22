@@ -109,7 +109,7 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
                 className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/8 border border-accent/15"
               >
                 <span className="text-[11px] font-semibold text-accent capitalize">
-                  {key === 'minPrice' ? `Min ₹${val}` : key === 'maxPrice' ? `Max ₹${val}` : val}
+                  {key === 'minPrice' ? `Min $${val}` : key === 'maxPrice' ? `Max $${val}` : val}
                 </span>
                 <button onClick={() => removeFilter(key)} className="text-accent/60 hover:text-accent transition-colors">
                   <X className="w-3 h-3" />

@@ -176,7 +176,7 @@ export default function LuxuryVehicleCard({
           <div>
             <span className="text-[9px] text-muted uppercase tracking-wider block mb-0.5">From</span>
             <div className="flex items-baseline gap-0.5">
-              <span className="text-xl font-bold text-primary">₹{pricePerDay?.toLocaleString()}</span>
+              <span className="text-xl font-bold text-primary">${pricePerDay?.toLocaleString()}</span>
               <span className="text-xs text-muted">/day</span>
             </div>
           </div>

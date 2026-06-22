@@ -31,7 +31,7 @@ export default function DashboardOverview() {
           <div className="relative z-10 flex items-center justify-between">
             <div>
               <p className="text-caption text-muted uppercase tracking-wider mb-2">Total Spent</p>
-              <h3 className="text-h3 text-primary">₹{stats?.totalSpent?.toLocaleString('en-IN') || 0}</h3>
+              <h3 className="text-h3 text-primary">${stats?.totalSpent?.toLocaleString('en-US') || 0}</h3>
             </div>
             <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
               <Wallet className="w-6 h-6" />

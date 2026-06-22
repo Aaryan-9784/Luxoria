@@ -24,7 +24,7 @@ export default function AdminOverview() {
   }
 
   const KPI_DATA = [
-    { label: 'Total Revenue', value: `₹${analytics.revenue.totalAmount.toLocaleString('en-IN')}`, icon: Wallet, color: 'text-success', bg: 'bg-success/10' },
+    { label: 'Total Revenue', value: `$${analytics.revenue.totalAmount.toLocaleString('en-US')}`, icon: Wallet, color: 'text-success', bg: 'bg-success/10' },
     { label: 'Total Users', value: analytics.users.total, icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
     { label: 'Active Vendors', value: analytics.users.vendors, icon: Building2, color: 'text-[#8B5CF6]', bg: 'bg-[#8B5CF6]/10' },
     { label: 'Approved Fleet', value: analytics.vehicles.approved, icon: Car, color: 'text-accent', bg: 'bg-accent/10' },

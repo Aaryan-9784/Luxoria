@@ -105,7 +105,7 @@ export default function ManageFleet() {
                     <h3 className="text-lg font-bold text-primary leading-tight">{vehicle.name}</h3>
                   </div>
                   <div className="text-right">
-                    <p className="text-body font-bold text-primary">₹{vehicle.pricePerDay?.toLocaleString('en-IN')}</p>
+                    <p className="text-body font-bold text-primary">${vehicle.pricePerDay?.toLocaleString('en-US')}</p>
                     <p className="text-[10px] text-muted uppercase tracking-wider">Per Day</p>
                   </div>
                 </div>

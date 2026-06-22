@@ -109,7 +109,7 @@ export default function FloatingBookingWidget({ vehicle }) {
     <div className="glass-card-elevated p-8 rounded-3xl sticky top-28">
       <div className="mb-6">
         <div className="flex items-end gap-2 mb-1">
-          <span className="text-h3 text-primary">₹{vehicle?.pricePerDay?.toLocaleString('en-IN')}</span>
+          <span className="text-h3 text-primary">${vehicle?.pricePerDay?.toLocaleString('en-US')}</span>
           <span className="text-body-sm text-secondary mb-1">/ day</span>
         </div>
         <p className="text-caption text-success flex items-center gap-1 font-medium">
@@ -170,16 +170,16 @@ export default function FloatingBookingWidget({ vehicle }) {
       {days > 0 && (
         <div className="border-t border-border pt-4 mb-6 space-y-3">
           <div className="flex justify-between text-body-sm text-secondary">
-            <span>₹{vehicle?.pricePerDay?.toLocaleString('en-IN')} x {days} {days === 1 ? 'day' : 'days'}</span>
-            <span>₹{baseTotal.toLocaleString('en-IN')}</span>
+            <span>${vehicle?.pricePerDay?.toLocaleString('en-US')} x {days} {days === 1 ? 'day' : 'days'}</span>
+            <span>${baseTotal.toLocaleString('en-US')}</span>
           </div>
           <div className="flex justify-between text-body-sm text-secondary">
             <span className="flex items-center gap-1 underline decoration-dashed underline-offset-4 cursor-help">Taxes & Fees (18%)</span>
-            <span>₹{taxes.toLocaleString('en-IN')}</span>
+            <span>${taxes.toLocaleString('en-US')}</span>
           </div>
           <div className="flex justify-between text-h4 text-primary pt-3 border-t border-border">
             <span>Total</span>
-            <span>₹{grandTotal.toLocaleString('en-IN')}</span>
+            <span>${grandTotal.toLocaleString('en-US')}</span>
           </div>
         </div>
       )}
