@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchVehicleById } from '@/redux/slices/vehicleSlice';
@@ -9,6 +9,7 @@ import VehicleGallery from './components/VehicleGallery';
 import VehicleHeroInfo from './components/VehicleHeroInfo';
 import VehicleSpecs from './components/VehicleSpecs';
 import FloatingBookingWidget from './components/FloatingBookingWidget';
+import ContactVendorModal from './components/ContactVendorModal';
 import Skeleton from '@/components/ui/Skeleton';
 import { ShieldCheck, MessageSquare, BadgeCheck } from 'lucide-react';
 
@@ -17,6 +18,7 @@ export default function VehicleDetailsPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { vehicleDetails: vehicle, loading, error } = useSelector(state => state.vehicle);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchVehicleById(id));
@@ -89,7 +91,10 @@ export default function VehicleDetailsPage() {
                   </div>
                   <p className="text-caption text-secondary">Verified Luxury Partner</p>
                 </div>
-                <button className="btn btn-outline btn-sm hidden md:flex">
+                <button 
+                  onClick={() => setIsContactModalOpen(true)}
+                  className="btn btn-outline btn-sm hidden md:flex"
+                >
                   <MessageSquare className="w-4 h-4 mr-2" /> Contact Vendor
                 </button>
               </div>
@@ -116,13 +121,19 @@ export default function VehicleDetailsPage() {
             
           </div>
 
-          {/* ── Right Rail: Sticky Booking Widget ── */}
+          {/* Right Rail: Sticky Booking Widget */}
           <div className="w-full lg:w-[420px] shrink-0">
             <FloatingBookingWidget vehicle={vehicle} />
           </div>
 
         </div>
       </div>
+
+      <ContactVendorModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+        vehicle={vehicle} 
+      />
     </motion.div>
   );
 }
