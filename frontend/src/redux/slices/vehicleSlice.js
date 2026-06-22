@@ -55,6 +55,15 @@ export const fetchVehicles = createAsyncThunk(
 
       try {
         const response = await api.get(`/vehicles?${queryParams.toString()}`);
+        
+        // Fallback to mock data if the database is completely empty
+        if (response.data && response.data.data && response.data.data.length === 0) {
+          return {
+            data: FEATURED_VEHICLES,
+            pagination: { page: 1, limit: 12, total: FEATURED_VEHICLES.length, pages: 1 }
+          };
+        }
+        
         return response.data;
       } catch (err) {
         console.warn('API fetch failed, falling back to mock data');
@@ -76,9 +85,14 @@ export const fetchFeaturedVehicles = createAsyncThunk(
     try {
       try {
         const response = await api.get('/vehicles/featured');
-        return response.data.data.vehicles;
+        const vehicles = response.data?.data?.vehicles || response.data?.data || [];
+        
+        if (vehicles.length === 0) {
+          return FEATURED_VEHICLES;
+        }
+        
+        return vehicles;
       } catch (err) {
-        console.warn('API fetch failed, falling back to mock featured vehicles');
         return FEATURED_VEHICLES;
       }
     } catch (error) {
@@ -103,7 +117,6 @@ export const fetchVehicleById = createAsyncThunk(
         const response = await api.get(`/vehicles/${id}`);
         return response.data.data.vehicle;
       } catch (err) {
-        console.warn('API fetch failed, falling back to mock vehicle details');
         const vehicle = FEATURED_VEHICLES.find(v => v.id === id);
         if (vehicle) return vehicle;
         throw err;

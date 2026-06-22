@@ -14,6 +14,11 @@ const vehicleSchema = new mongoose.Schema(
       trim: true,
       maxlength: [150, 'Name cannot exceed 150 characters'],
     },
+    slug: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     brand: {
       type: String,
       required: [true, 'Brand is required'],

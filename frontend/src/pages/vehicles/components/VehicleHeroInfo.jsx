@@ -28,7 +28,7 @@ export default function VehicleHeroInfo({ vehicle }) {
             )}
           </motion.div>
 
-          <motion.h1 variants={staggerItem} className="text-display text-primary leading-[1.1] mb-2 uppercase">
+          <motion.h1 variants={staggerItem} className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary leading-[1.1] mb-2 uppercase tracking-tight">
             {vehicle.brand} <span className="font-light">{vehicle.model || vehicle.name.replace(vehicle.brand, '')}</span>
           </motion.h1>
 

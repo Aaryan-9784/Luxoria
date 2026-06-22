@@ -11,7 +11,7 @@ import VehicleSpecs from './components/VehicleSpecs';
 import FloatingBookingWidget from './components/FloatingBookingWidget';
 import ContactVendorModal from './components/ContactVendorModal';
 import Skeleton from '@/components/ui/Skeleton';
-import { ShieldCheck, MessageSquare, BadgeCheck } from 'lucide-react';
+import { ShieldCheck, MessageSquare, BadgeCheck, Crown } from 'lucide-react';
 
 export default function VehicleDetailsPage() {
   const { id } = useParams();
@@ -77,16 +77,12 @@ export default function VehicleDetailsPage() {
             <div className="mt-8 pt-8 border-t border-border">
               <h3 className="text-h5 font-semibold text-primary mb-5">Provided By</h3>
               <div className="flex items-center gap-4 p-5 rounded-2xl bg-surface border border-border">
-                <div className="w-20 h-20 rounded-full bg-accent/10 relative overflow-hidden shrink-0 border border-border/50 shadow-sm">
-                  <img 
-                    src={vehicle.vendor?.avatar?.url || "/images/Asp2.jpeg"} 
-                    alt={vehicle.vendor?.name || "Vendor Avatar"} 
-                    className="absolute w-[125%] h-[125%] max-w-none top-[-12.5%] left-[-12.5%] object-cover object-top" 
-                  />
+                <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center shrink-0 border border-border/50 shadow-sm text-accent">
+                  <Crown className="w-10 h-10" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h4 className="text-base font-semibold text-primary">{vehicle.vendor?.name || 'Aryan Patel'}</h4>
+                    <h4 className="text-base font-semibold text-primary">{vehicle.vendor?.name || 'Sovereign Elite Mobility'}</h4>
                     <BadgeCheck className="w-4 h-4 text-accent" />
                   </div>
                   <p className="text-caption text-secondary">Verified Luxury Partner</p>
