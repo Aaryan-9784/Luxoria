@@ -25,13 +25,7 @@ function FeaturedCard({ vehicle, isWishlisted, onQuickView, onWishlist, onCompar
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-background/20 lg:to-background" />
 
           {/* Badge */}
-          {vehicle.badge && (
-            <div className="absolute top-5 left-5 z-10">
-              <span className="px-4 py-1.5 bg-accent text-white text-[10px] font-bold uppercase tracking-[0.15em] rounded-full shadow-lg">
-                {vehicle.badge}
-              </span>
-            </div>
-          )}
+
 
           {/* Floating Actions */}
           <div className="absolute top-5 right-5 flex flex-col gap-2 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 z-10">

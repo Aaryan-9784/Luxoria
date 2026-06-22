@@ -120,12 +120,7 @@ export default function SignatureCollection() {
                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.08]"
               />
 
-              {/* Premium Badges */}
-              <div className="absolute top-6 right-6 z-20">
-                <span className="px-4 py-1.5 bg-black/40 backdrop-blur-md text-white border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg">
-                  {vehicle.badge}
-                </span>
-              </div>
+
 
               {/* Premium Dark Overlays */}
               {/* Base Gradient Overlay for Text Readability */}

@@ -114,12 +114,7 @@ export default function ExperienceCollections() {
                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.08]"
               />
 
-              {/* Premium Badges */}
-              <div className="absolute top-6 right-6 z-20">
-                <span className="px-4 py-1.5 bg-black/40 backdrop-blur-md text-white border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg">
-                  {collection.badge}
-                </span>
-              </div>
+
 
               {/* Premium Dark Overlays */}
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/80 transition-opacity duration-[400ms]" />

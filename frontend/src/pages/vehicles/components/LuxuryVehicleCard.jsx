@@ -52,11 +52,7 @@ export default function LuxuryVehicleCard({
 
         {/* Top Badges */}
         <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
-          {badge && (
-            <span className="px-3 py-1 bg-accent text-white text-[9px] font-bold uppercase tracking-[0.15em] rounded-full shadow-md">
-              {badge}
-            </span>
-          )}
+
           {category && (
             <span className="px-3 py-1 bg-black/50 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-[0.12em] rounded-full border border-white/10 capitalize">
               {category}

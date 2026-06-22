@@ -46,13 +46,7 @@ export default function VehicleCard({
 
         {/* Top Row — Category Badge (Left) & Premium Badge (Right) */}
         {/* We can hide category badge if not needed, but keeping it top-left as in original or removed. Image doesn't show left badge, only right badge. Let's keep right badge. */}
-        {badge && (
-          <div className="absolute top-5 right-5 z-20">
-            <span className="px-4 py-1.5 bg-black/60 backdrop-blur-md text-white border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg">
-              {badge}
-            </span>
-          </div>
-        )}
+
 
         {/* Top Right — Floating Actions (Hover Reveal - keep below badge or left) */}
         <div className="absolute top-16 right-5 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out z-30">

@@ -185,7 +185,7 @@ export const FEATURED_VEHICLES = [
     id: 'feat-1',
     name: 'Ghost Series II',
     brand: 'Rolls-Royce',
-    image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1200',
+    image: 'https://calibremag.com/wp-content/uploads/2025/04/Rolls-Royce-Ghost-Series-II-Scotland-2025-CALIBRE-01.webp',
     pricePerDay: 2500,
     category: 'luxury',
     rating: { average: 4.9, count: 128 },

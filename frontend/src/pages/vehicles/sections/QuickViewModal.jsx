@@ -84,14 +84,7 @@ export default function QuickViewModal() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
-                  {/* Badge */}
-                  {vehicle.badge && (
-                    <div className="absolute top-5 left-5">
-                      <span className="px-4 py-1.5 bg-accent text-white text-[10px] font-bold uppercase tracking-[0.15em] rounded-full shadow-lg">
-                        {vehicle.badge}
-                      </span>
-                    </div>
-                  )}
+
                 </div>
 
                 {/* Thumbnails */}
