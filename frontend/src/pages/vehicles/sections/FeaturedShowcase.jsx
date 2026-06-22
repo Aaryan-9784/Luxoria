@@ -17,7 +17,7 @@ function FeaturedCard({ vehicle, isWishlisted, onQuickView, onWishlist, onCompar
         {/* Image */}
         <div className="relative lg:w-[55%] aspect-[16/10] lg:aspect-auto overflow-hidden">
           <img
-            src={vehicle.image}
+            src={vehicle.image || (vehicle.images?.length > 0 ? vehicle.images[0].url : 'https://images.unsplash.com/photo-1503376760367-11ea234057a6?auto=format&fit=crop&q=80&w=800')}
             alt={`${vehicle.brand} ${vehicle.name}`}
             className="w-full h-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"
             loading="lazy"

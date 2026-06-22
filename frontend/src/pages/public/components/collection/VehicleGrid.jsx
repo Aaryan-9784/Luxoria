@@ -13,7 +13,7 @@ function VehicleCard({ vehicle, isCompared, toggleCompare }) {
       {/* Image Container */}
       <div className="relative h-64 overflow-hidden bg-slate-100">
         <img 
-          src={vehicle.image} 
+          src={vehicle.image || (vehicle.images?.length > 0 ? vehicle.images[0].url : 'https://images.unsplash.com/photo-1503376760367-11ea234057a6?auto=format&fit=crop&q=80&w=800')} 
           alt={vehicle.name} 
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
