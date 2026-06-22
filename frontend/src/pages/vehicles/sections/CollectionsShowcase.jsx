@@ -10,7 +10,7 @@ function CollectionCard({ collection, onClick }) {
     <motion.button
       variants={staggerItem}
       onClick={onClick}
-      className="group relative overflow-hidden rounded-3xl aspect-[4/5] sm:aspect-square md:aspect-[3/4] cursor-pointer text-left w-full"
+      className="group relative overflow-hidden rounded-3xl aspect-video cursor-pointer text-left w-full"
     >
       {/* Background Image */}
       <img
@@ -85,7 +85,7 @@ export default function CollectionsShowcase() {
           whileInView="animate"
           viewport={{ once: true, margin: '-50px' }}
           variants={staggerContainer}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
         >
           {COLLECTIONS.map((collection) => (
             <CollectionCard
