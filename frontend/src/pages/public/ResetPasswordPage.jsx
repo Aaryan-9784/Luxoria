@@ -35,7 +35,15 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <motion.div {...pageTransition} className="auth-page">
+    <motion.div 
+      {...pageTransition} 
+      className="auth-page"
+      style={{
+        '--auth-theme-hex': '#CBD5E1',
+        '--auth-theme-hex-light': '#FFFFFF',
+        '--auth-theme-rgb': '203, 213, 225'
+      }}
+    >
       <div className="auth-left-panel hidden md:flex">
         <AuthImage
           src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&q=80&w=1920"

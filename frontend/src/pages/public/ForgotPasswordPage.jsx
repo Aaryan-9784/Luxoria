@@ -35,9 +35,9 @@ export default function ForgotPasswordPage() {
       {...pageTransition} 
       className="auth-page"
       style={{
-        '--auth-theme-hex': '#EF4444',
-        '--auth-theme-hex-light': '#F87171',
-        '--auth-theme-rgb': '239, 68, 68'
+        '--auth-theme-hex': '#CBD5E1',
+        '--auth-theme-hex-light': '#FFFFFF',
+        '--auth-theme-rgb': '203, 213, 225'
       }}
     >
 

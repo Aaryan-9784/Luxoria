@@ -18,7 +18,6 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 import HomePage from '@/pages/public/HomePage';
 import LoginPage from '@/pages/public/LoginPage';
 import VendorLoginPage from '@/pages/vendor/VendorLoginPage';
-import AdminLoginPage from '@/pages/admin/AdminLoginPage';
 import RegisterPage from '@/pages/public/RegisterPage';
 import VendorSignupPage from '@/pages/public/VendorSignupPage';
 import ForgotPasswordPage from '@/pages/public/ForgotPasswordPage';
@@ -124,7 +123,6 @@ export default function AppRoutes() {
       <Route element={<GuestRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/vendor/login" element={<VendorLoginPage />} />
-        <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
