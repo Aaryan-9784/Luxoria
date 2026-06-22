@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
+import { FEATURED_VEHICLES } from '../../pages/vehicles/data/vehiclesPageData';
 
 const initialState = {
   vehicles: [],
@@ -42,22 +43,28 @@ export const fetchVehicles = createAsyncThunk(
     try {
       const { filters, pagination, sortBy } = getState().vehicle;
       
-      // Build query string
       const queryParams = new URLSearchParams({
         page: pagination.page,
         limit: pagination.limit,
         sort: sortBy,
       });
 
-      // Append active filters
       Object.entries(filters).forEach(([key, value]) => {
         if (value) queryParams.append(key, value);
       });
 
-      const response = await api.get(`/vehicles?${queryParams.toString()}`);
-      return response.data;
+      try {
+        const response = await api.get(`/vehicles?${queryParams.toString()}`);
+        return response.data;
+      } catch (err) {
+        console.warn('API fetch failed, falling back to mock data');
+        return {
+          data: FEATURED_VEHICLES,
+          pagination: { page: 1, limit: 12, total: FEATURED_VEHICLES.length, pages: 1 }
+        };
+      }
     } catch (error) {
-      return rejectWithValue(error.response?.data?.error?.message || 'Failed to fetch vehicles');
+      return rejectWithValue('Failed to fetch vehicles');
     }
   }
 );
@@ -67,8 +74,13 @@ export const fetchFeaturedVehicles = createAsyncThunk(
   'vehicle/fetchFeatured',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/vehicles/featured');
-      return response.data.data.vehicles;
+      try {
+        const response = await api.get('/vehicles/featured');
+        return response.data.data.vehicles;
+      } catch (err) {
+        console.warn('API fetch failed, falling back to mock featured vehicles');
+        return FEATURED_VEHICLES;
+      }
     } catch (error) {
       return rejectWithValue('Failed to fetch featured vehicles');
     }
@@ -80,10 +92,17 @@ export const fetchVehicleById = createAsyncThunk(
   'vehicle/fetchById',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/vehicles/${id}`);
-      return response.data.data.vehicle;
+      try {
+        const response = await api.get(`/vehicles/${id}`);
+        return response.data.data.vehicle;
+      } catch (err) {
+        console.warn('API fetch failed, falling back to mock vehicle details');
+        const vehicle = FEATURED_VEHICLES.find(v => v.id === id);
+        if (vehicle) return vehicle;
+        throw err;
+      }
     } catch (error) {
-      return rejectWithValue(error.response?.data?.error?.message || 'Failed to fetch vehicle details');
+      return rejectWithValue('Failed to fetch vehicle details');
     }
   }
 );

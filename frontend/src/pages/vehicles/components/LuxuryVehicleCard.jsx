@@ -39,7 +39,7 @@ export default function LuxuryVehicleCard({
       )}
     >
       {/* Image Container */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-surface">
+      <div className="relative aspect-[16/10] overflow-hidden bg-surface">
         <img
           src={image || 'https://images.unsplash.com/photo-1503376760367-11ea234057a6?auto=format&fit=crop&q=80&w=800'}
           alt={`${brand} ${name}`}
