@@ -86,7 +86,7 @@ export default function VehicleDetailsPage() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h4 className="text-base font-semibold text-primary">{vehicle.vendor?.name}</h4>
+                    <h4 className="text-base font-semibold text-primary">{vehicle.vendor?.name || 'Aryan Patel'}</h4>
                     <BadgeCheck className="w-4 h-4 text-accent" />
                   </div>
                   <p className="text-caption text-secondary">Verified Luxury Partner</p>
