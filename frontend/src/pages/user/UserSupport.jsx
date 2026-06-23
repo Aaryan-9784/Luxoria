@@ -130,9 +130,9 @@ export default function UserSupport() {
 
         {/* Right Column: Ticket Form */}
         <motion.div variants={staggerItem} className="bg-white border border-[#ECECEC] rounded-2xl shadow-sm overflow-hidden h-max sticky top-24">
-          <div className="p-6 border-b border-[#ECECEC] bg-[#0F0F0F] text-white flex items-center gap-3">
+          <div className="p-6 border-b border-[#ECECEC] bg-[#F5F5F5]/50 flex items-center gap-3">
             <MessageSquare className="w-5 h-5 text-[#C9A75D]" />
-            <h3 className="text-[16px] font-bold tracking-wider uppercase">Open a Ticket</h3>
+            <h3 className="text-[16px] font-bold text-[#0F0F0F] tracking-wider uppercase">Open a Ticket</h3>
           </div>
           
           <div className="p-6">
@@ -186,9 +186,9 @@ export default function UserSupport() {
                   <button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg disabled:opacity-50 transition-all"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-white border border-[#ECECEC] text-[#0F0F0F] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#F5F5F5] hover:shadow-sm disabled:opacity-50 transition-all"
                   >
-                    {isSubmitting ? 'Submitting...' : 'Send Message'} <Send className="w-4 h-4" />
+                    {isSubmitting ? 'Submitting...' : 'Send Message'} <Send className="w-4 h-4 text-[#C9A75D]" />
                   </button>
                   <div className="mt-4 p-3 bg-[#C9A75D]/10 border border-[#C9A75D]/20 rounded-lg flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-[#B59345] shrink-0 mt-0.5" />

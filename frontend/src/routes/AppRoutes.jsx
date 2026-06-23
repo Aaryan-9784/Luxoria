@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, Outlet as RouterOutlet, Navigate } from 'react-router-dom';
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setCredentials, setLoading } from '@/redux/slices/authSlice';
 import axios from 'axios';
@@ -12,6 +12,7 @@ import GuestRoute from './GuestRoute';
 
 // Layouts
 import MainLayout from '@/layouts/MainLayout';
+import Navbar from '@/components/common/Navbar';
 import DashboardLayout from '@/layouts/DashboardLayout';
 
 // Public Pages
@@ -112,7 +113,6 @@ export default function AppRoutes() {
         <Route path="/vehicles" element={<VehicleListPage />} />
         <Route path="/vehicles/:id" element={<VehicleDetailsPage />} />
         <Route path="/experience" element={<ExperiencePage />} />
-        <Route path="/watch" element={<WatchExperiencePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         
@@ -120,6 +120,11 @@ export default function AppRoutes() {
         
         <Route path="/unauthorized" element={<div className="pt-28 container-luxe section-spacing text-center text-error">Unauthorized Access</div>} />
         <Route path="/oauth-callback" element={<OAuthCallback />} />
+      </Route>
+
+      {/* Watch page — Navbar only, no Footer */}
+      <Route element={<div className="min-h-screen bg-background flex flex-col relative overflow-hidden"><Navbar /><main className="flex-grow"><Outlet /></main></div>}>
+        <Route path="/watch" element={<WatchExperiencePage />} />
       </Route>
 
       {/* Guest Only Routes (Auth UI) */}
