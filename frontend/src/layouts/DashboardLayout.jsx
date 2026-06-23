@@ -149,7 +149,7 @@ export default function DashboardLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex">
+    <div className="h-screen overflow-hidden bg-[#F8FAFC] flex">
       <AnimatePresence>
         {showLogoutConfirm && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#08152E]/40 backdrop-blur-sm p-4">
@@ -220,10 +220,10 @@ export default function DashboardLayout() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-screen relative overflow-x-hidden">
+      <main className="flex-1 flex flex-col h-screen overflow-y-auto overflow-x-hidden relative">
         
         {/* Sticky Topbar */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#E5E7EB] px-6 lg:px-10 h-16 flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#E5E7EB] px-6 lg:px-10 h-16 shrink-0 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 rounded-lg text-[#0F0F0F] hover:bg-[#F5F5F5]">
               <Menu className="w-6 h-6" />
