@@ -4,60 +4,122 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import LuxuryImage from '@/components/ui/LuxuryImage';
 
+import LuxuryVehicleCard from '@/pages/vehicles/components/LuxuryVehicleCard';
+
 const COLLECTION = [
   {
-    id: '1',
-    name: 'Rolls Royce Ghost',
-    brand: 'Rolls Royce',
-    price: '$2,500',
-    specs: '563 HP • 250 km/h • 4.8 sec',
-    badge: 'New Arrival',
-    image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?q=80&w=2070&auto=format&fit=crop'
-  },
-  {
-    id: '2',
-    name: 'Bugatti Chiron',
-    brand: 'Bugatti',
-    price: '$15,000',
-    specs: '1500 HP • 420 km/h • 2.4 sec',
-    badge: 'Most Popular',
-    image: 'https://images.unsplash.com/photo-1600712242805-5f78671b24da?q=80&w=2070&auto=format&fit=crop'
-  },
-  {
-    id: '3',
-    name: 'Porsche 911 Turbo S',
+    id: 'feat-5',
+    name: '911 Turbo S',
     brand: 'Porsche',
-    price: '$1,500',
-    specs: '640 HP • 330 km/h • 2.6 sec',
-    badge: 'Editors Choice',
-    image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop'
+    image: 'https://images.collectingcars.com/023148/DSC03123-EDITED.jpg?w=3840&q=75',
+    pricePerDay: 2200,
+    category: 'sports',
+    rating: { average: 4.8, count: 210 },
+    seats: 4,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '330 km/h',
+    horsepower: '650 HP',
+    engine: '3.8L Flat-6 Twin-Turbo',
+    location: 'Delhi',
+    isAvailable: false,
+    badge: 'Iconic',
+    features: ['Sport Chrono', 'PCCB Brakes', 'Active Aero', 'Sport Exhaust', 'PDK Transmission'],
   },
   {
-    id: '4',
-    name: 'McLaren 720S',
+    id: 'feat-6',
+    name: '720S',
     brand: 'McLaren',
-    price: '$1,900',
-    specs: '710 HP • 341 km/h • 2.8 sec',
-    badge: 'Track Focused',
-    image: 'https://images.unsplash.com/photo-1621135802920-133df287f89c?q=80&w=2070&auto=format&fit=crop'
+    image: 'https://issimi-vehicles-cdn.b-cdn.net/publicamlvehiclemanagement/VehicleDetails/628/timestamped-1722570747278-2018%20McLaren%20720S_001.jpg?width=3840&quality=75',
+    pricePerDay: 2500,
+    category: 'sports',
+    rating: { average: 4.9, count: 110 },
+    seats: 2,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '341 km/h',
+    horsepower: '710 HP',
+    engine: '4.0L V8 Twin-Turbo',
+    location: 'Hyderabad',
+    isAvailable: true,
+    badge: 'Ultra Luxury',
+    features: ['Executive Rear Seats', 'Burmester 4D', 'Magic Body Control', 'Rear Entertainment', 'Fragrance System'],
   },
   {
-    id: '5',
-    name: 'Ferrari 296 GTB',
+    id: 'feat-2',
+    name: '296 GTB',
     brand: 'Ferrari',
-    price: '$2,200',
-    specs: '819 HP • 330 km/h • 2.9 sec',
-    badge: 'Limited Edition',
-    image: 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=2070&auto=format&fit=crop'
+    image: 'https://images.collectingcars.com/081193/AS-01-10-06.jpg?w=1920&q=95',
+    pricePerDay: 3200,
+    category: 'sports',
+    rating: { average: 4.8, count: 96 },
+    seats: 2,
+    transmission: 'automatic',
+    fuelType: 'hybrid',
+    topSpeed: '330 km/h',
+    horsepower: '830 HP',
+    engine: '3.0L V6 Hybrid',
+    location: 'Delhi',
+    isAvailable: true,
+    badge: 'Most Popular',
+    features: ['Carbon Fiber Body', 'Fiorano Package', 'Racing Seats', 'Telemetry System', 'Track Mode'],
   },
   {
-    id: '6',
-    name: 'Lamborghini Huracan EVO',
+    id: 'feat-3',
+    name: 'Mistral',
+    brand: 'Bugatti',
+    image: 'https://cdn.motor1.com/images/mgl/eoBpg8/s1/bugatti-brouillard.webp',
+    pricePerDay: 15000,
+    category: 'sports',
+    rating: { average: 5.0, count: 82 },
+    seats: 2,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '420 km/h',
+    horsepower: '1600 HP',
+    engine: '8.0L W16 Quad-Turbo',
+    location: 'Bangalore',
+    isAvailable: true,
+    badge: 'Highest Rated',
+    features: ['Diamond Knurling', 'Rotating Display', 'Naim Audio', 'Handcrafted Interior', 'All-Wheel Drive'],
+  },
+  {
+    id: 'feat-4',
+    name: 'Huracán EVO',
     brand: 'Lamborghini',
-    price: '$2,800',
-    specs: '630 HP • 325 km/h • 2.9 sec',
-    badge: 'Exotic Pick',
-    image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2070&auto=format&fit=crop'
+    image: 'https://houstonexotics.blob.core.windows.net/ech-ga12749/full/1img4066.jpg',
+    pricePerDay: 2800,
+    category: 'sports',
+    rating: { average: 4.7, count: 84 },
+    seats: 2,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '325 km/h',
+    horsepower: '640 HP',
+    engine: '5.2L V10',
+    location: 'Mumbai',
+    isAvailable: true,
+    badge: 'Supercar',
+    features: ['LDVI System', 'ALA Aero', 'Corsa Mode', 'Carbon Ceramics', 'Performante Kit'],
+  },
+  {
+    id: 'feat-1',
+    name: 'Ghost Series II',
+    brand: 'Rolls-Royce',
+    image: 'https://calibremag.com/wp-content/uploads/2025/04/Rolls-Royce-Ghost-Series-II-Scotland-2025-CALIBRE-01.webp',
+    pricePerDay: 2500,
+    category: 'luxury',
+    rating: { average: 4.9, count: 128 },
+    seats: 5,
+    transmission: 'automatic',
+    fuelType: 'petrol',
+    topSpeed: '250 km/h',
+    horsepower: '571 HP',
+    engine: '6.75L V12 Twin-Turbo',
+    location: 'Mumbai',
+    isAvailable: true,
+    badge: 'Editors Choice',
+    features: ['Starlight Headliner', 'Bespoke Audio', 'Night Vision', 'Massage Seats', 'Champagne Cooler'],
   }
 ];
 
@@ -106,51 +168,12 @@ export default function SignatureCollection() {
           {COLLECTION.map((vehicle, index) => (
             <motion.div
               key={vehicle.id}
-              className="group relative w-full aspect-[4/5] rounded-[32px] overflow-hidden bg-surface shadow-md hover:shadow-2xl transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[12px] hover:shadow-[0_40px_80px_rgba(201,167,93,0.15)]"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
             >
-              {/* Image */}
-              <LuxuryImage
-                src={vehicle.image}
-                alt={vehicle.name}
-                loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.08]"
-              />
-
-
-
-              {/* Premium Dark Overlays */}
-              {/* Base Gradient Overlay for Text Readability */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/80 transition-opacity duration-[400ms]" />
-              {/* Hover Darken Overlay */}
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-[400ms]" />
-
-              {/* Content */}
-              <div className="absolute inset-x-0 bottom-0 p-8 lg:p-10 flex flex-col justify-end transform transition-transform duration-[400ms] ease-out z-10">
-
-                {/* Brand & Name */}
-                <p className="text-accent uppercase tracking-widest text-xs font-bold mb-2 drop-shadow-md">{vehicle.brand}</p>
-                <h3 className="text-3xl font-bold text-white mb-2 leading-tight drop-shadow-lg">{vehicle.name}</h3>
-
-                {/* Vehicle Specs */}
-                <p className="text-white/70 text-xs font-medium tracking-wide uppercase mb-8 border-l-2 border-accent pl-3">
-                  {vehicle.specs}
-                </p>
-
-                {/* Price & CTA */}
-                <div className="flex items-center justify-between border-t border-white/10 pt-6">
-                  <div>
-                    <p className="text-white/60 text-xs uppercase tracking-widest mb-1 font-medium">Starting from</p>
-                    <p className="text-xl font-bold text-white drop-shadow-md">{vehicle.price} <span className="text-sm font-normal text-white/50">/day</span></p>
-                  </div>
-
-
-                </div>
-
-              </div>
+              <LuxuryVehicleCard vehicle={vehicle} />
             </motion.div>
           ))}
         </div>
