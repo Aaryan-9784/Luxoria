@@ -17,9 +17,7 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 // Public Pages
 import HomePage from '@/pages/public/HomePage';
 import LoginPage from '@/pages/public/LoginPage';
-import VendorLoginPage from '@/pages/vendor/VendorLoginPage';
 import RegisterPage from '@/pages/public/RegisterPage';
-import VendorSignupPage from '@/pages/public/VendorSignupPage';
 import ForgotPasswordPage from '@/pages/public/ForgotPasswordPage';
 import ResetPasswordPage from '@/pages/public/ResetPasswordPage';
 import OAuthCallback from '@/pages/public/OAuthCallback';
@@ -118,8 +116,7 @@ export default function AppRoutes() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         
-        {/* Vendor Onboarding */}
-        <Route path="/vendor/signup" element={<VendorSignupPage />} />
+        {/* Vendor Onboarding Removed */}
         
         <Route path="/unauthorized" element={<div className="pt-28 container-luxe section-spacing text-center text-error">Unauthorized Access</div>} />
         <Route path="/oauth-callback" element={<OAuthCallback />} />
@@ -128,7 +125,6 @@ export default function AppRoutes() {
       {/* Guest Only Routes (Auth UI) */}
       <Route element={<GuestRoute />}>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/vendor/login" element={<VendorLoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />

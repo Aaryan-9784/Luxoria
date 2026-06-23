@@ -49,7 +49,7 @@ export default function VendorCTA() {
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <Link to="/vendor/signup" className="btn btn-primary btn-xl rounded-full shadow-lg hover:-translate-y-1 transition-transform group">
+              <Link to="/register" className="btn btn-primary btn-xl rounded-full shadow-lg hover:-translate-y-1 transition-transform group">
                 Start Earning <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link to="/contact" className="btn btn-outline btn-xl rounded-full">
