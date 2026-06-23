@@ -114,11 +114,15 @@ export default function UserManagement() {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#C9A75D] to-[#E8D090] p-[2px] shrink-0">
-                          <div className="w-full h-full rounded-full border border-white bg-white overflow-hidden flex items-center justify-center">
-                            {user.avatar?.url ? (
-                              <img src={user.avatar.url} alt="avatar" className="w-full h-full object-cover" />
-                            ) : (
-                              <span className="font-bold text-[#0F0F0F] text-sm">{user.name.charAt(0)}</span>
+                          <div className="w-full h-full rounded-full border border-white bg-white flex items-center justify-center relative overflow-hidden">
+                            <span className="font-bold text-[#0F0F0F] text-sm">{user.name.charAt(0)}</span>
+                            {user.avatar?.url && (
+                              <img 
+                                src={user.avatar.url} 
+                                alt="avatar" 
+                                className="w-full h-full object-cover absolute top-0 left-0 bg-white"
+                                onError={(e) => e.target.style.display = 'none'}
+                              />
                             )}
                           </div>
                         </div>
