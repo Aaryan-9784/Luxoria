@@ -1,86 +1,199 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@/redux/slices/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Car, Heart, CreditCard, 
-  Bell, Settings, LogOut, Menu, X, User 
+  Settings, LogOut, Menu, X, Bell, User,
+  ChevronLeft, ChevronRight, Star, Receipt, 
+  MessageSquare, Shield, HelpCircle
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
+import CalendarDropdown from '@/components/common/CalendarDropdown';
 
-const NAV_LINKS = [
-  { path: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-  { path: '/bookings', label: 'My Bookings', icon: Car },
-  { path: '/wishlist', label: 'Wishlist', icon: Heart },
-  { path: '/payments', label: 'Payments', icon: CreditCard },
-  { path: '/profile', label: 'Profile', icon: Settings },
+const NAV_GROUPS = [
+  {
+    label: 'Core',
+    items: [
+      { path: '/dashboard', label: 'Overview', icon: LayoutDashboard },
+      { path: '/bookings', label: 'My Bookings', icon: Car },
+      { path: '/wishlist', label: 'Saved Vehicles', icon: Heart },
+      { path: '/reviews', label: 'My Reviews', icon: Star },
+    ]
+  },
+  {
+    label: 'Finance',
+    items: [
+      { path: '/payments', label: 'Payment Methods', icon: CreditCard },
+      { path: '/invoices', label: 'Billing & Invoices', icon: Receipt },
+    ]
+  },
+  {
+    label: 'Account',
+    items: [
+      { path: '/messages', label: 'Inbox', icon: MessageSquare },
+      { path: '/verification', label: 'Identity Check', icon: Shield },
+      { path: '/profile', label: 'Profile Settings', icon: Settings },
+      { path: '/support', label: 'Help & Support', icon: HelpCircle },
+    ]
+  }
 ];
 
 export default function DashboardLayout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useSelector(state => state.auth);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const getActivePageName = () => {
+    for (const group of NAV_GROUPS) {
+      const activeItem = group.items.find(item => item.path === location.pathname);
+      if (activeItem) return activeItem.label;
+    }
+    if (location.pathname === '/profile') return 'My Profile';
+    return 'Dashboard';
+  };
+
+  const activePageName = getActivePageName();
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
   };
 
-  const SidebarContent = () => (
+  const renderSidebarContent = (collapsed = false, showToggle = false) => (
     <>
-      <div className="flex items-center gap-3 mb-10 px-2">
-        <Car className="w-8 h-8 text-accent" />
-        <span className="text-xl font-bold tracking-[0.2em] uppercase text-primary">Luxoria</span>
+      <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-4'} h-[80px] mb-4 shrink-0 px-4`}>
+        <div className="flex items-center justify-center shrink-0">
+          <img src="/favicon.svg" alt="Luxoria Symbol" className="w-10 h-10 drop-shadow-sm rounded-full" />
+        </div>
+        {!collapsed && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col justify-center items-center overflow-hidden whitespace-nowrap">
+            <span className="text-[22px] font-serif tracking-[0.12em] text-[#000000] leading-none font-bold" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>LUXORIA</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">User Workspace</span>
+          </motion.div>
+        )}
       </div>
 
-      <nav className="flex-1 space-y-2">
-        {NAV_LINKS.map((link) => (
-          <NavLink
-            key={link.path}
-            to={link.path}
-            end={link.path === '/dashboard'}
-            onClick={() => setMobileMenuOpen(false)}
-            className={({ isActive }) =>
-              `flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group ${
-                isActive 
-                  ? 'bg-accent/10 text-accent font-medium shadow-inner' 
-                  : 'text-secondary hover:bg-surface hover:text-primary'
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <link.icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
-                {link.label}
-              </>
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col">
+        {NAV_GROUPS.map((group, idx) => (
+          <div key={group.label} className={`flex flex-col gap-2.5 ${idx !== NAV_GROUPS.length - 1 ? 'mb-6' : 'mb-2'}`}>
+            {!collapsed && (
+              <span className="px-8 text-[10px] font-bold uppercase tracking-[0.15em] text-[#9CA3AF]">
+                {group.label}
+              </span>
             )}
-          </NavLink>
+            <div className="flex flex-col gap-2.5">
+              {group.items.map((link) => (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  end={link.path === '/dashboard'}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `relative flex items-center ${collapsed ? 'justify-center w-[48px] mx-auto' : 'gap-3 mx-4 px-4'} h-[48px] rounded-xl transition-all duration-300 ease-out group ${
+                      isActive 
+                        ? 'bg-gradient-to-r from-[#0F0F0F] to-[#1A1A1A] text-white shadow-lg shadow-black/10' 
+                        : 'text-[#666666] hover:bg-[#F5F5F5] hover:text-[#0F0F0F] hover:translate-x-1'
+                    }`
+                  }
+                  title={collapsed ? link.label : undefined}
+                >
+                  {({ isActive }) => (
+                    <>
+                      {isActive && !collapsed && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#C9A75D] rounded-r-md shadow-[0_0_8px_rgba(201,167,93,0.6)]" />
+                      )}
+                      {isActive && collapsed && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-[#C9A75D] rounded-r-md" />
+                      )}
+                      <link.icon className={`w-[20px] h-[20px] shrink-0 transition-transform duration-300 ${isActive ? 'scale-110 text-[#C9A75D]' : 'group-hover:scale-110'}`} />
+                      {!collapsed && (
+                        <span className="font-semibold text-[13.5px] whitespace-nowrap">{link.label}</span>
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </div>
+          </div>
         ))}
       </nav>
 
-      <div className="mt-auto pt-8 border-t border-border">
+      <div className="mt-auto shrink-0 px-4 py-3 flex flex-col gap-2">
         <button 
-          onClick={handleLogout}
-          className="flex items-center gap-4 px-4 py-3 w-full rounded-xl text-muted hover:bg-error/10 hover:text-error transition-all duration-300 group"
+          onClick={() => setShowLogoutConfirm(true)}
+          className={`flex items-center justify-center gap-2 w-full h-[36px] rounded-lg text-[#5A1122] hover:bg-[#F3F4F6] transition-all duration-300 group ${collapsed ? 'px-0 mx-auto w-10' : 'px-3'}`}
+          title={collapsed ? "Terminate Session" : undefined}
         >
-          <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          Sign Out
+          <LogOut className="w-[16px] h-[16px] shrink-0 group-hover:-translate-x-1 transition-transform" />
+          {!collapsed && <span className="text-[11px] font-bold uppercase tracking-widest">Logout</span>}
         </button>
+        
+        {showToggle && (
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="flex items-center justify-center w-full pt-2 mt-1 text-[#666666] hover:text-[#0F0F0F] hover:bg-[#F5F5F5] transition-all rounded-b-xl"
+          >
+            <div className="p-1 transition-transform group-hover:scale-110">
+              {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+            </div>
+          </button>
+        )}
       </div>
     </>
   );
 
   return (
-    <div className="min-h-screen bg-surface flex">
+    <div className="min-h-screen bg-[#F8FAFC] flex">
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#08152E]/40 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl border border-[#E5E7EB]"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#5A1122]/10 flex items-center justify-center mb-5 mx-auto">
+                <LogOut className="w-7 h-7 text-[#5A1122]" />
+              </div>
+              <h3 className="text-xl font-bold text-[#08152E] text-center mb-2">Terminate Session?</h3>
+              <p className="text-[13px] text-[#4B5563] text-center mb-8 leading-relaxed">
+                You are about to log out of the Luxoria Workspace. Any unsaved changes may be lost.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className="flex-1 py-3 rounded-xl border border-[#E5E7EB] text-[#4B5563] font-bold text-[13px] hover:bg-[#F3F4F6] transition-colors"
+                >
+                  CANCEL
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#5A1122] to-[#7A172E] text-white font-bold text-[13px] hover:shadow-lg hover:shadow-[#5A1122]/30 transition-all"
+                >
+                  CONFIRM
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
       
-      {/* ── Desktop Sidebar ── */}
-      <aside className="hidden lg:flex flex-col w-[280px] h-screen sticky top-0 border-r border-border bg-background p-6 z-40">
-        <SidebarContent />
+      {/* Desktop Sidebar */}
+      <aside 
+        className={`hidden lg:flex flex-col h-screen sticky top-0 border-r border-[#E5E7EB] bg-white z-40 transition-all duration-300 ease-in-out relative ${isCollapsed ? 'w-[88px]' : 'w-[280px]'}`}
+      >
+        {renderSidebarContent(isCollapsed, true)}
       </aside>
 
-      {/* ── Mobile Sidebar Drawer ── */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -89,67 +202,112 @@ export default function DashboardLayout() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 bg-[#08152E]/60 backdrop-blur-sm z-40 lg:hidden"
             />
             <motion.aside
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 bottom-0 w-[280px] bg-background z-50 p-6 flex flex-col border-r border-border lg:hidden"
+              className="fixed top-0 left-0 bottom-0 w-[280px] bg-white z-50 flex flex-col border-r border-[#E5E7EB] lg:hidden shadow-2xl"
             >
-              <button 
-                onClick={() => setMobileMenuOpen(false)}
-                className="absolute top-6 right-6 p-2 rounded-full bg-surface text-primary"
-              >
-                <X className="w-5 h-5" />
+              <button onClick={() => setMobileMenuOpen(false)} className="absolute top-6 right-4 p-1.5 rounded-full bg-[#F3F4F6] text-[#08152E] hover:bg-[#E5E7EB] transition-colors z-50">
+                <X className="w-4 h-4" />
               </button>
-              <SidebarContent />
+              {renderSidebarContent(false)}
             </motion.aside>
           </>
         )}
       </AnimatePresence>
 
-      {/* ── Main Content Area ── */}
+      {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-screen relative overflow-x-hidden">
         
         {/* Sticky Topbar */}
-        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border px-6 lg:px-10 h-20 flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#E5E7EB] px-6 lg:px-10 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden p-2 rounded-lg text-primary hover:bg-surface"
-            >
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 rounded-lg text-[#0F0F0F] hover:bg-[#F5F5F5]">
               <Menu className="w-6 h-6" />
             </button>
-            <h2 className="text-h4 text-primary hidden sm:block tracking-wide">
-              Welcome back, {user?.name?.split(' ')[0]}
-            </h2>
+            <div className="hidden lg:flex items-center gap-3">
+              <span className="text-[11px] font-bold text-[#666666] tracking-[0.15em] uppercase">User Core</span>
+              <span className="text-[#ECECEC] text-lg font-light leading-none mb-0.5">/</span>
+              <span className="text-[13px] font-bold text-[#C9A75D] tracking-wider uppercase">{activePageName}</span>
+            </div>
           </div>
-
-          <div className="flex items-center gap-6">
-            <button className="relative p-2 text-muted hover:text-primary transition-colors">
-              <Bell className="w-6 h-6" />
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-background" />
+          
+          <div className="flex items-center gap-4 lg:gap-6 relative">
+            <CalendarDropdown />
+            <button onClick={() => navigate('/notifications')} className="relative p-2 text-[#666666] hover:text-[#0F0F0F] transition-colors" title="Notifications">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#5A1122] rounded-full ring-2 ring-white" />
             </button>
             
-            <div className="flex items-center gap-3">
-              <div className="hidden md:block text-right">
-                <p className="text-body-sm font-semibold text-primary">{user?.name}</p>
-                <p className="text-caption text-muted capitalize">{user?.role}</p>
+            <button 
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-white border border-[#ECECEC] shadow-sm hover:shadow-md transition-all group focus:outline-none focus:ring-2 focus:ring-[#C9A75D]/30"
+              title="Profile menu"
+            >
+              <div className="relative shrink-0 w-8 h-8 rounded-full p-[2px] bg-gradient-to-tr from-[#C9A75D] to-[#E8D090]">
+                <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-[#0F0F0F]">
+                  {user?.avatar?.url ? (
+                    <img src={user.avatar.url} alt="User" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="w-full h-full flex items-center justify-center text-xs font-bold text-[#C9A75D]">{user?.name?.charAt(0) || 'U'}</span>
+                  )}
+                </div>
+                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#16A34A] border-2 border-white rounded-full"></div>
               </div>
-              <div className="w-10 h-10 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-accent transition-all">
-                {user?.avatar?.url ? (
-                  <img src={user.avatar.url} alt="Profile" className="w-full h-full object-cover" />
-                ) : (
-                  <User className="w-5 h-5 text-accent" />
-                )}
+              
+              <div className="text-left hidden sm:block">
+                <p className="text-[13px] font-bold text-[#0F0F0F] leading-tight group-hover:text-[#C9A75D] transition-colors">{user?.name || 'Luxoria Client'}</p>
+                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5">{user?.role === 'user' ? 'Valued Client' : (user?.role || 'Member')}</p>
               </div>
-            </div>
+            </button>
+
+            <AnimatePresence>
+              {showProfileMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowProfileMenu(false)}
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-[#ECECEC] overflow-hidden z-50"
+                  >
+                    <div className="p-4 border-b border-[#ECECEC] bg-[#F5F5F5]/50">
+                      <p className="text-sm font-bold text-[#0F0F0F] truncate">{user?.name || 'Luxoria Client'}</p>
+                      <p className="text-xs text-[#666666] truncate">{user?.email || 'client@example.com'}</p>
+                    </div>
+                    <div className="p-2 flex flex-col gap-1">
+                      <button 
+                        onClick={() => { setShowProfileMenu(false); navigate('/profile'); }}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#666666] hover:text-[#0F0F0F] hover:bg-[#F5F5F5] transition-colors w-full text-left"
+                      >
+                        <User className="w-4 h-4" />
+                        My Profile
+                      </button>
+                      <div className="h-px w-full bg-[#ECECEC] my-1"></div>
+                      <button 
+                        onClick={() => { setShowProfileMenu(false); setShowLogoutConfirm(true); }}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold text-[#5A1122] hover:bg-[#5A1122]/10 transition-colors w-full text-left"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
           </div>
         </header>
 
-        {/* Dynamic Outlet */}
+        {/* Outlet */}
         <div className="p-6 lg:p-10 flex-1 w-full max-w-7xl mx-auto">
           <motion.div {...pageTransition} key={location.pathname}>
             <Outlet />

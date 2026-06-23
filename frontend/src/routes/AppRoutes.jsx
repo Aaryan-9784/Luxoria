@@ -39,7 +39,10 @@ import WishlistPage from '@/pages/user/WishlistPage';
 import PaymentsDashboard from '@/pages/user/PaymentsDashboard';
 import UserProfile from '@/pages/user/UserProfile';
 import NotificationsPage from '@/pages/user/NotificationsPage';
-
+import UserReviews from '@/pages/user/UserReviews';
+import UserInvoices from '@/pages/user/UserInvoices';
+import UserMessages from '@/pages/user/UserMessages';
+import UserVerification from '@/pages/user/UserVerification';
 import VendorDashboardLayout from '@/layouts/VendorDashboardLayout';
 import VendorOverview from '@/pages/vendor/VendorOverview';
 import ManageFleet from '@/pages/vendor/ManageFleet';
@@ -140,8 +143,12 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<DashboardOverview />} />
           <Route path="/bookings" element={<MyBookings />} />
           <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/reviews" element={<UserReviews />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/payments" element={<PaymentsDashboard />} />
+          <Route path="/invoices" element={<UserInvoices />} />
+          <Route path="/messages" element={<UserMessages />} />
+          <Route path="/verification" element={<UserVerification />} />
           <Route path="/profile" element={<UserProfile />} />
         </Route>
       </Route>
@@ -157,6 +164,7 @@ export default function AppRoutes() {
           <Route path="/vendor/revenue" element={<VendorRevenue />} />
           <Route path="/vendor/support" element={<VendorSupport />} />
           <Route path="/vendor/analytics" element={<VendorAnalytics />} />
+          <Route path="/vendor/notifications" element={<NotificationsPage />} />
           <Route path="/vendor/profile" element={<UserProfile />} />
         </Route>
       </Route>
@@ -174,6 +182,7 @@ export default function AppRoutes() {
           <Route path="/admin/collections" element={<AdminCollections />} />
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
           <Route path="/admin/settings" element={<UserProfile />} />
+          <Route path="/admin/notifications" element={<NotificationsPage />} />
           <Route path="/admin/profile" element={<UserProfile />} />
         </Route>
       </Route>

@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Users, Building2, Car, ShieldCheck, 
   CalendarDays, Settings, LogOut, Menu, X, Command,
-  ChevronLeft, ChevronRight, CreditCard, BarChart3, User
+  ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
+import CalendarDropdown from '@/components/common/CalendarDropdown';
 
 const NAV_GROUPS = [
   {
@@ -233,8 +234,14 @@ export default function AdminDashboardLayout() {
             </div>
           </div>
           
-          <div className="flex items-center gap-6 relative">
+          <div className="flex items-center gap-4 lg:gap-6 relative">
             
+            <CalendarDropdown />
+            <button onClick={() => navigate('/admin/notifications')} className="relative p-2 text-[#666666] hover:text-[#0F0F0F] transition-colors" title="Notifications">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#5A1122] rounded-full ring-2 ring-white" />
+            </button>
+
             <button 
               onClick={() => setShowProfileMenu(!showProfileMenu)}
               className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-white border border-[#ECECEC] shadow-sm hover:shadow-md transition-all group focus:outline-none focus:ring-2 focus:ring-[#C9A75D]/30"
