@@ -6,13 +6,13 @@ import { staggerContainer, staggerItem, EASE_LUXE } from '@/lib/motion';
 import { SectionHeader } from '@/components/ui/Typography';
 import VehicleCard from '@/components/ui/VehicleCard';
 
-const FEATURED_VEHICLES = [
+export const HOME_FEATURED_VEHICLES = [
   {
     id: '1',
     name: 'Rolls-Royce Cullinan',
     brand: 'Rolls-Royce',
     pricePerDay: 4500,
-    image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1687634366100-547fd24324f1?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cm9sbHMlMjByb3ljZSUyMGN1bGxpbmFufGVufDB8fDB8fHww',
     category: 'Luxury SUV',
     seats: 5,
     transmission: 'Auto',
@@ -44,7 +44,7 @@ const FEATURED_VEHICLES = [
     name: 'Porsche Taycan Turbo GT',
     brand: 'Porsche',
     pricePerDay: 2200,
-    image: 'https://images.unsplash.com/photo-1619682817481-e994891cd1f5?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://prs.porsche.com/iod/image/XD/992452/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRFoA9cBaAGwgB3XjHrQ+-WjFwgqEAA74izEADc09OBlnIQrWoQDWuRSAC+5qrShq44qHSi6W7PQHk0hOMXlKCUMSollT8iAAW+FBIqCBsHAAiAIIAmnIgisqBzCEgCuKsAK5gLnFuIACcFQBMACwArNXpmQFBoJCwiKQgAAwAkgDM6T0AcvXDIwBCwwAK41QAjJMAaukLAOIAHGsAMgAaayNDiyN9azMA7GsAKrVrewvp1QDCV1TVMwBiT9cAEk8AVX+72Wd3eAHU3iABpN5tDPt8qANftMkTswdCAIrXdIDADKPVxAPW6VqSWOIFqCQptU+TSotXWM1JOwAbKSAYiQPVfgl0vU9gBpfkALWZVFZPQAsulWUkoazJqiQKyAKIUtWq2WfR4Sz6Y2WDWUAKT5EsFFVlACVnrK9qsqBcksLHZ8MRcUekLoKKRdrjsvcSvSltlRNsaAelNjtgSBNiMoZtrrq48tY5sReyqBV6sqKkkzZVjUl0hVlgHs+CcdmRVqqEkdsqG3j0s2APozClJa4k+s9jtd5YukBJIcD1vLB0jyfj+vLNJzlKzkcHKgJb3pVU9EtUVVS+kgT4jUOH64Uz4ijHrDbpda-CnrZYpvrglOmt+quHGnYHwWbW1UDs6zXAkVoViAIwYjMCyWlQmILMa6SYgkGKYr8KaYsaFKYpiB6YssWYgACfQHgCexQuWhJUMsUonssIwpssVoUdclqUOAECFM49AAJ4cHshZYBABj8CktCaCg1Q9NUrKWFYICELQuBRAgbQgDAED0DguggAAVgotBIFQuCMIECiaDYugwGg-CKZYQA?clientId=icc',
     category: 'Electric',
     seats: 4,
     transmission: 'Auto',
@@ -191,7 +191,7 @@ export default function FeaturedVehicles() {
           variants={staggerContainer}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8"
         >
-          {FEATURED_VEHICLES.slice(0, 6).map((vehicle) => (
+          {HOME_FEATURED_VEHICLES.slice(0, 6).map((vehicle) => (
             <motion.div key={vehicle.id} variants={staggerItem}>
               <VehicleCard {...vehicle} />
             </motion.div>

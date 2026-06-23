@@ -68,6 +68,15 @@ export default function PageCTA({
           {/* Secondary Button */}
           <Link 
             to={secondaryBtnLink}
+            onClick={(e) => {
+              if (secondaryBtnLink?.startsWith('#')) {
+                e.preventDefault();
+                const target = document.querySelector(secondaryBtnLink);
+                if (target) {
+                  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }
+            }}
             className="flex items-center gap-6 text-white font-semibold hover:text-[#D4AF37] transition-all duration-700 group hover:-translate-y-[2px]"
           >
             <div className="w-[52px] h-[52px] rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#D4AF37]/50 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] transition-all duration-700 relative bg-white/10 backdrop-blur-md">

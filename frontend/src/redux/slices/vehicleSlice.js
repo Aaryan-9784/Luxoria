@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 import { FEATURED_VEHICLES } from '../../pages/vehicles/data/vehiclesPageData';
+import { HOME_FEATURED_VEHICLES } from '../../sections/FeaturedVehicles';
+import { vehicles as COLLECTION_VEHICLES } from '../../pages/public/components/collection/data';
 
 const initialState = {
   vehicles: [],
@@ -107,8 +109,12 @@ export const fetchVehicleById = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       // Intercept mock IDs to prevent 400 Bad Request errors from MongoDB CastError
-      if (typeof id === 'string' && id.startsWith('feat-')) {
-        const vehicle = FEATURED_VEHICLES.find(v => v.id === id);
+      const isMongoId = /^[0-9a-fA-F]{24}$/.test(String(id));
+      
+      if (!isMongoId) {
+        const vehicle = FEATURED_VEHICLES.find(v => String(v.id) === String(id)) ||
+                        HOME_FEATURED_VEHICLES.find(v => String(v.id) === String(id)) ||
+                        COLLECTION_VEHICLES.find(v => String(v.id) === String(id));
         if (vehicle) return vehicle;
         throw new Error('Mock vehicle not found');
       }
@@ -117,7 +123,9 @@ export const fetchVehicleById = createAsyncThunk(
         const response = await api.get(`/vehicles/${id}`);
         return response.data.data.vehicle;
       } catch (err) {
-        const vehicle = FEATURED_VEHICLES.find(v => v.id === id);
+        const vehicle = FEATURED_VEHICLES.find(v => String(v.id) === String(id)) ||
+                        HOME_FEATURED_VEHICLES.find(v => String(v.id) === String(id)) ||
+                        COLLECTION_VEHICLES.find(v => String(v.id) === String(id));
         if (vehicle) return vehicle;
         throw err;
       }

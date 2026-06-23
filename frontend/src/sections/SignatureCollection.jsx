@@ -147,10 +147,7 @@ export default function SignatureCollection() {
                     <p className="text-xl font-bold text-white drop-shadow-md">{vehicle.price} <span className="text-sm font-normal text-white/50">/day</span></p>
                   </div>
 
-                  {/* Hover Button */}
-                  <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-white opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-[400ms] ease-out shadow-[0_10px_20px_rgba(201,167,93,0.3)]">
-                    <ArrowRight className="w-5 h-5 -rotate-45" />
-                  </div>
+
                 </div>
 
               </div>

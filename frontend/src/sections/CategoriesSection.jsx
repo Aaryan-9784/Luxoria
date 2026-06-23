@@ -64,15 +64,7 @@ export default function CategoriesSection() {
                 to={`/vehicles?category=${cat.slug}`}
                 className="group relative flex flex-col items-center justify-end p-6 h-64 md:h-80 rounded-3xl border border-white/10 bg-primary overflow-hidden shadow-sm hover:shadow-glow-gold hover:-translate-y-2 transition-all duration-500"
               >
-                {/* Background Image */}
-                <div className="absolute inset-0 z-0 overflow-hidden">
-                  <LuxuryImage 
-                    src={cat.image} 
-                    alt={cat.name}
-                    className="w-full h-full object-cover object-center opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/50 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-500" />
-                </div>
+
 
                 <div className="relative z-10 flex flex-col items-center text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
                   <div className="w-12 h-12 rounded-full glass-dark flex items-center justify-center mb-4 group-hover:bg-accent group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-500 border border-white/20">
