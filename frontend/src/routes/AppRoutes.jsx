@@ -40,6 +40,7 @@ import NotificationsPage from '@/pages/user/NotificationsPage';
 import UserReviews from '@/pages/user/UserReviews';
 import UserInvoices from '@/pages/user/UserInvoices';
 import UserMessages from '@/pages/user/UserMessages';
+import UserSupport from '@/pages/user/UserSupport';
 import VendorDashboardLayout from '@/layouts/VendorDashboardLayout';
 import VendorOverview from '@/pages/vendor/VendorOverview';
 import ManageFleet from '@/pages/vendor/ManageFleet';
@@ -144,6 +145,7 @@ export default function AppRoutes() {
           <Route path="/invoices" element={<UserInvoices />} />
           <Route path="/messages" element={<UserMessages />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/support" element={<UserSupport />} />
         </Route>
       </Route>
 
