@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/redux/slices/authSlice';
+import { fetchWishlist, toggleWishlist } from '@/redux/slices/dashboardSlice';
 import Avatar from '@/components/ui/Avatar';
 import Dropdown, { DropdownItem, DropdownDivider } from '@/components/ui/Dropdown';
 import { preloadAuthImages } from '@/lib/preloadAuthImages';
@@ -22,6 +23,7 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { wishlist } = useSelector((state) => state.dashboard);
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -31,6 +33,17 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchWishlist());
+    }
+  }, [dispatch, isAuthenticated]);
+
+  const handleRemoveWishlist = async (e, vehicleId) => {
+    e.stopPropagation();
+    await dispatch(toggleWishlist(vehicleId));
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -49,13 +62,13 @@ export default function Navbar() {
     <div className="flex justify-center w-full px-2 lg:px-8">
       <header
         className={cn(
-          'fixed z-50 transition-all duration-500 ease-out w-[calc(100%-16px)] lg:w-full max-w-[1440px] mx-auto overflow-x-auto no-scrollbar',
+          'fixed z-50 transition-all duration-500 ease-out w-[calc(100%-16px)] lg:w-full max-w-[1440px] mx-auto',
           'top-4 lg:top-6 h-[90px] rounded-[50px] shadow-sm flex items-center px-4 lg:px-10',
           'bg-white/80 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)]',
           navTransparent ? 'bg-white/70' : 'bg-white/90'
         )}
       >
-        <div className="flex items-center justify-between w-full min-w-max gap-8">
+        <div className="flex items-center justify-between w-full gap-4 lg:gap-8">
 
           {/* ── Logo ── */}
           <Link to="/" className="flex items-center gap-3 group select-none relative hover:scale-105 transition-transform duration-300">
@@ -101,28 +114,48 @@ export default function Navbar() {
                   trigger={
                     <button className="btn-icon relative text-secondary hover:text-error transition-colors hover:bg-surface/50 group">
                       <Heart className="w-5 h-5 group-hover:fill-error/20" />
-                      <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-white shadow-sm" />
+                      {wishlist?.filter(w => w.vehicle)?.length > 0 && (
+                        <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-white shadow-sm" />
+                      )}
                     </button>
                   }
                 >
                   <div className="flex items-center justify-between px-4 py-3 border-b border-border" onClick={(e) => e.stopPropagation()}>
                     <h3 className="font-semibold text-primary">My Wishlist</h3>
-                    <span className="text-caption bg-surface px-2 py-0.5 rounded-full font-medium text-secondary">2 Items</span>
+                    <span className="text-caption bg-surface px-2 py-0.5 rounded-full font-medium text-secondary">
+                      {wishlist?.filter(w => w.vehicle)?.length || 0} Items
+                    </span>
                   </div>
                   <div className="max-h-[340px] overflow-y-auto">
-                    {/* Wishlist Item 1 */}
-                    <div className="px-4 py-3 hover:bg-surface/50 cursor-pointer border-b border-border/50 transition-colors flex items-center gap-4">
-                      <div className="w-12 h-10 rounded-lg bg-surface flex-shrink-0 overflow-hidden relative flex items-center justify-center">
-                        <Car className="w-5 h-5 text-muted" />
+                    {wishlist?.filter(item => item.vehicle).length > 0 ? (
+                      wishlist.filter(item => item.vehicle).slice(0, 5).map((item) => {
+                        const v = item.vehicle;
+                        const name = v.name || `${v.brand || v.make} ${v.model}`;
+                        return (
+                          <div key={v._id || v.id} className="px-4 py-3 hover:bg-surface/50 cursor-pointer border-b border-border/50 transition-colors flex items-center gap-4" onClick={() => navigate(`/vehicles/${v._id || v.id}`)}>
+                            <div className="w-12 h-10 rounded-lg bg-surface flex-shrink-0 overflow-hidden relative flex items-center justify-center">
+                              {v.images?.[0] ? (
+                                <img src={v.images[0].url || v.images[0]} alt={name} className="w-full h-full object-cover" />
+                              ) : (
+                                <Car className="w-5 h-5 text-muted" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-body-sm font-semibold text-primary truncate">{name}</p>
+                              <p className="text-caption text-muted">${v.pricePerDay?.toLocaleString() || v.price?.toLocaleString()} / day</p>
+                            </div>
+                            <button className="text-secondary hover:text-error transition-colors p-1" onClick={(e) => handleRemoveWishlist(e, v._id || v.id)} title="Remove">
+                               <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="px-4 py-8 text-center">
+                        <Heart className="w-8 h-8 text-muted/30 mx-auto mb-2" />
+                        <p className="text-body-sm font-medium text-secondary">Your wishlist is empty</p>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-body-sm font-semibold text-primary truncate">Rolls-Royce Ghost</p>
-                        <p className="text-caption text-muted">$1,500 / day</p>
-                      </div>
-                      <button className="text-secondary hover:text-error transition-colors p-1" onClick={(e) => e.stopPropagation()}>
-                         <X className="w-4 h-4" />
-                      </button>
-                    </div>
+                    )}
                   </div>
                   <div className="p-2 border-t border-border bg-surface/30">
                     <button 
@@ -134,35 +167,20 @@ export default function Navbar() {
                   </div>
                 </Dropdown>
 
-                {/* User Dropdown */}
-                <Dropdown
-                  align="right"
-                  trigger={
-                    <div className="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-colors hover:bg-surface/50">
-                      <Avatar
-                        src={user?.avatar?.url}
-                        name={user?.name}
-                        size="sm"
-                      />
-                      <span className="text-body-sm font-medium hidden xl:block text-primary">
-                        {user?.name?.split(' ')[0]}
-                      </span>
-                      <ChevronDown className="w-4 h-4 hidden xl:block text-muted" />
-                    </div>
-                  }
+                {/* User Profile Button */}
+                <div 
+                  onClick={() => navigate(dashboardPath)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-colors hover:bg-surface/50 group"
                 >
-                  <div className="px-4 py-3 border-b border-border">
-                    <p className="text-body-sm font-semibold text-primary truncate">{user?.name}</p>
-                    <p className="text-caption text-muted truncate">{user?.email}</p>
-                  </div>
-                  <DropdownItem icon={LayoutDashboard} onClick={() => navigate(dashboardPath)}>
-                    Dashboard
-                  </DropdownItem>
-                  <DropdownDivider />
-                  <DropdownItem icon={LogOut} danger onClick={handleLogout}>
-                    Sign Out
-                  </DropdownItem>
-                </Dropdown>
+                  <Avatar
+                    src={user?.avatar?.url}
+                    name={user?.name}
+                    size="sm"
+                  />
+                  <span className="text-body-sm font-medium hidden xl:block text-primary group-hover:text-accent transition-colors">
+                    {user?.name}
+                  </span>
+                </div>
               </div>
             ) : (
               <div className="flex items-center gap-5">

@@ -164,7 +164,10 @@ export default function RegisterPage() {
                   className={`auth-input ${errors.password ? 'has-error' : ''}`}
                   {...register('password', {
                     required: 'Password is required',
-                    minLength: { value: 6, message: 'Minimum 6 characters' }
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message: 'Password must contain at least one uppercase, lowercase, number, and special character (min 8 chars).'
+                    }
                   })}
                 />
                 <label htmlFor="password" className="auth-floating-label">Password</label>

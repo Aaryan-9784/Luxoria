@@ -9,7 +9,7 @@ const categories = ['All', 'Supercars', 'Hypercars', 'Chauffeur Experience', 'Ex
 const videos = [
   { id: 1, title: 'The Ferrari Roma Experience', category: 'Supercars', thumbnail: 'https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&q=80&w=1200', videoUrl: 'https://videos.pexels.com/video-files/8569830/8569830-hd_1920_1080_30fps.mp4' },
   { id: 2, title: 'Bugatti Chiron Pur Sport', category: 'Hypercars', thumbnail: 'https://images.unsplash.com/photo-1627454819213-9a3b61033ce5?auto=format&fit=crop&q=80&w=1200', videoUrl: 'https://videos.pexels.com/video-files/5309605/5309605-hd_1920_1080_25fps.mp4' },
-  { id: 3, title: 'Rolls-Royce Phantom Arrival', category: 'Chauffeur Experience', thumbnail: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&q=80&w=1200', videoUrl: 'https://videos.pexels.com/video-files/3752831/3752831-hd_1920_1080_24fps.mp4' },
+  { id: 3, title: 'Rolls-Royce Phantom Arrival', category: 'Chauffeur Experience', thumbnail: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&q=80&w=1200', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
   { id: 4, title: 'Lamborghini Aventador SVJ', category: 'Exotic Collection', thumbnail: 'https://images.unsplash.com/photo-1519245659620-e859806a8d3b?auto=format&fit=crop&q=80&w=1200', videoUrl: 'https://videos.pexels.com/video-files/8569830/8569830-hd_1920_1080_30fps.mp4' },
   { id: 5, title: 'White-Glove Handover', category: 'VIP Delivery', thumbnail: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1200', videoUrl: 'https://videos.pexels.com/video-files/5309605/5309605-hd_1920_1080_25fps.mp4' },
 ];

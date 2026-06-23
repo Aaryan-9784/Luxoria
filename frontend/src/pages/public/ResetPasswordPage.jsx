@@ -112,7 +112,10 @@ export default function ResetPasswordPage() {
                   className={`auth-input pr-12 ${errors.password ? 'has-error' : ''}`}
                   {...register('password', {
                     required: 'Password is required',
-                    minLength: { value: 6, message: 'Minimum 6 characters' }
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message: 'Password must contain at least one uppercase, lowercase, number, and special character (min 8 chars).'
+                    }
                   })}
                 />
                 <label htmlFor="password" className="auth-floating-label">New Password</label>

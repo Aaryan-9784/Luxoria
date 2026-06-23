@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@/redux/slices/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Users, Building2, Car, ShieldCheck, 
   CalendarDays, Settings, LogOut, Menu, X, Command,
-  ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell
+  ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell, Globe
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';
@@ -66,7 +66,7 @@ export default function AdminDashboardLayout() {
 
   const renderSidebarContent = (collapsed = false, showToggle = false) => (
     <>
-      <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-4'} h-[80px] mb-4 shrink-0 px-4`}>
+      <Link to="/" className={`flex items-center ${collapsed ? 'justify-center' : 'gap-4'} h-[80px] mb-4 shrink-0 px-4 group hover:opacity-80 transition-opacity`} title="Return to Landing Page">
         <div className="flex items-center justify-center shrink-0">
           <img src="/favicon.svg" alt="Luxoria Symbol" className="w-10 h-10 drop-shadow-sm rounded-full" />
         </div>
@@ -76,7 +76,7 @@ export default function AdminDashboardLayout() {
             <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">Admin Workspace</span>
           </motion.div>
         )}
-      </div>
+      </Link>
 
       <nav className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col">
         {NAV_GROUPS.map((group, idx) => (
@@ -123,7 +123,7 @@ export default function AdminDashboardLayout() {
         ))}
       </nav>
 
-      <div className="mt-auto shrink-0 px-4 py-3 flex flex-col gap-2">
+      <div className="mt-auto shrink-0 px-4 py-3 flex flex-col gap-2 pt-4">
         <button 
           onClick={() => setShowLogoutConfirm(true)}
           className={`flex items-center justify-center gap-2 w-full h-[36px] rounded-lg text-[#5A1122] hover:bg-[#F3F4F6] transition-all duration-300 group ${collapsed ? 'px-0 mx-auto w-10' : 'px-3'}`}

@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@/redux/slices/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Car, PlusCircle, CalendarDays, 
   LineChart, Settings, LogOut, Menu, X,
-  ChevronLeft, ChevronRight, User,
-  CalendarRange, Wallet, HelpCircle, Bell
+  ChevronLeft, ChevronRight, BarChart3, Clock, ShieldCheck, Heart, User, Bell, Globe, Wallet, HelpCircle
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';
@@ -25,7 +24,7 @@ const NAV_GROUPS = [
     label: 'Operations',
     items: [
       { path: '/vendor/bookings', label: 'Bookings', icon: CalendarDays },
-      { path: '/vendor/availability', label: 'Calendar', icon: CalendarRange },
+      { path: '/vendor/availability', label: 'Calendar', icon: CalendarDays },
       { path: '/vendor/revenue', label: 'Earnings', icon: Wallet },
       { path: '/vendor/analytics', label: 'Analytics', icon: LineChart },
     ]
@@ -67,17 +66,17 @@ export default function VendorDashboardLayout() {
 
   const renderSidebarContent = (collapsed = false, showToggle = false) => (
     <>
-      <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-4'} h-[80px] mb-4 shrink-0 px-4`}>
+      <Link to="/" className={`flex items-center ${collapsed ? 'justify-center' : 'gap-4'} h-[80px] mb-4 shrink-0 px-4 group hover:opacity-80 transition-opacity`} title="Return to Landing Page">
         <div className="flex items-center justify-center shrink-0">
           <img src="/favicon.svg" alt="Luxoria Symbol" className="w-10 h-10 drop-shadow-sm rounded-full" />
         </div>
         {!collapsed && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col justify-center items-center overflow-hidden whitespace-nowrap">
             <span className="text-[22px] font-serif tracking-[0.12em] text-[#000000] leading-none font-bold" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>LUXORIA</span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">Partner Panel</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">Vendor Workspace</span>
           </motion.div>
         )}
-      </div>
+      </Link>
 
       <nav className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col">
         {NAV_GROUPS.map((group, idx) => (
@@ -124,7 +123,7 @@ export default function VendorDashboardLayout() {
         ))}
       </nav>
 
-      <div className="mt-auto shrink-0 px-4 py-3 flex flex-col gap-2">
+      <div className="mt-auto shrink-0 px-4 py-3 flex flex-col gap-2 pt-4">
         <button 
           onClick={() => setShowLogoutConfirm(true)}
           className={`flex items-center justify-center gap-2 w-full h-[36px] rounded-lg text-[#5A1122] hover:bg-[#F3F4F6] transition-all duration-300 group ${collapsed ? 'px-0 mx-auto w-10' : 'px-3'}`}
@@ -149,7 +148,7 @@ export default function VendorDashboardLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex">
+    <div className="h-screen overflow-hidden bg-[#F8FAFC] flex">
       <AnimatePresence>
         {showLogoutConfirm && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#08152E]/40 backdrop-blur-sm p-4">
@@ -220,10 +219,10 @@ export default function VendorDashboardLayout() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-screen relative overflow-x-hidden">
+      <main className="flex-1 flex flex-col h-screen overflow-y-auto overflow-x-hidden relative">
         
         {/* Sticky Topbar */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#E5E7EB] px-6 lg:px-10 h-16 flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#E5E7EB] px-6 lg:px-10 h-16 shrink-0 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 rounded-lg text-[#0F0F0F] hover:bg-[#F5F5F5]">
               <Menu className="w-6 h-6" />

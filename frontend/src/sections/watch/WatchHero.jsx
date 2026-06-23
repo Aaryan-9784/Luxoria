@@ -17,7 +17,7 @@ export default function WatchHero() {
           className="w-full h-full object-cover"
         >
           {/* Using a high-quality placeholder car video from Pexels */}
-          <source src="https://videos.pexels.com/video-files/3752831/3752831-hd_1920_1080_24fps.mp4" type="video/mp4" />
+          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
         </video>
       </div>
 
