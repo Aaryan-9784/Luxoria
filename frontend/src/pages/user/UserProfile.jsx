@@ -115,7 +115,9 @@ export default function UserProfile() {
           </motion.div>
 
           <h2 className="text-lg font-serif text-[#0F0F0F] mb-1">{user?.name || 'Valued Client'}</h2>
-          <p className="text-[11px] font-bold text-[#0F0F0F] tracking-widest uppercase mb-1.5">CEO & Founder</p>
+          <p className="text-[11px] font-bold text-[#0F0F0F] tracking-widest uppercase mb-1.5">
+            {user?.role === 'vendor' ? 'Partner Company' : user?.role === 'admin' ? 'CEO & Founder' : 'Valued Client'}
+          </p>
           <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-[#C9A75D]">
             <ShieldCheck className="w-3.5 h-3.5" /> Verified Account
           </span>

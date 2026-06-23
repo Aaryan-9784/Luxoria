@@ -46,6 +46,9 @@ import ManageFleet from '@/pages/vendor/ManageFleet';
 import AddVehicleWizard from '@/pages/vendor/AddVehicleWizard';
 import VendorBookings from '@/pages/vendor/VendorBookings';
 import VendorRevenue from '@/pages/vendor/VendorRevenue';
+import VendorSupport from '@/pages/vendor/VendorSupport';
+import VendorAnalytics from '@/pages/vendor/VendorAnalytics';
+import VendorAvailability from '@/pages/vendor/VendorAvailability';
 
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout';
 import AdminOverview from '@/pages/admin/AdminOverview';
@@ -150,7 +153,10 @@ export default function AppRoutes() {
           <Route path="/vendor/vehicles" element={<ManageFleet />} />
           <Route path="/vendor/add-vehicle" element={<AddVehicleWizard />} />
           <Route path="/vendor/bookings" element={<VendorBookings />} />
+          <Route path="/vendor/availability" element={<VendorAvailability />} />
           <Route path="/vendor/revenue" element={<VendorRevenue />} />
+          <Route path="/vendor/support" element={<VendorSupport />} />
+          <Route path="/vendor/analytics" element={<VendorAnalytics />} />
           <Route path="/vendor/profile" element={<UserProfile />} />
         </Route>
       </Route>

@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { createVendorVehicle } from '@/redux/slices/vendorSlice';
 import api from '@/services/api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UploadCloud, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ArrowLeft, X, Link as LinkIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import Button from '@/components/ui/Button';
 
 const STEPS = [
   { id: 1, title: 'Basic Information' },
@@ -20,8 +19,9 @@ export default function AddVehicleWizard() {
   const [currentStep, setCurrentStep] = useState(1);
   const [createdVehicleId, setCreatedVehicleId] = useState(null);
   
-  // Image Upload State
+  // Image URL State
   const [selectedImages, setSelectedImages] = useState([]);
+  const [currentUrl, setCurrentUrl] = useState('');
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [uploadError, setUploadError] = useState('');
 
@@ -30,7 +30,6 @@ export default function AddVehicleWizard() {
   // Step 1 & 2 Submit (Creates Vehicle in DB)
   const onFormSubmit = async (data) => {
     try {
-      // Format data
       const vehicleData = {
         name: data.name,
         brand: data.brand,
@@ -45,23 +44,23 @@ export default function AddVehicleWizard() {
         location: {
           city: data.city,
           state: data.state,
-          coordinates: [0, 0] // Default, could use Geocoding API later
+          coordinates: [0, 0]
         },
         features: data.features.split(',').map(f => f.trim()).filter(Boolean)
       };
 
       const result = await dispatch(createVendorVehicle(vehicleData)).unwrap();
       setCreatedVehicleId(result._id);
-      setCurrentStep(3); // Move to image upload
+      setCurrentStep(3);
     } catch (err) {
       alert("Failed to create vehicle: " + err);
     }
   };
 
-  // Step 3 Submit (Uploads Images to created vehicle)
+  // Step 3 Submit (Updates vehicle with image URLs)
   const handleImageUpload = async () => {
     if (selectedImages.length === 0) {
-      setUploadError('Please select at least one image.');
+      setUploadError('Please add at least one image URL.');
       return;
     }
 
@@ -69,53 +68,60 @@ export default function AddVehicleWizard() {
     setUploadError('');
     
     try {
-      const formData = new FormData();
-      selectedImages.forEach(file => {
-        formData.append('images', file);
-      });
+      const imagesPayload = selectedImages.map((url, idx) => ({
+        url: url,
+        publicId: `external-url-${Date.now()}-${idx}`
+      }));
 
-      await api.post(`/vehicles/${createdVehicleId}/images`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-
-      navigate('/vendor/vehicles'); // Success
+      await api.put(`/vehicles/${createdVehicleId}`, { images: imagesPayload });
+      navigate('/vendor/vehicles');
     } catch (err) {
-      setUploadError(err.response?.data?.error?.message || 'Failed to upload images.');
+      setUploadError(err.response?.data?.error?.message || 'Failed to save images.');
     } finally {
       setIsUploadingImages(false);
     }
   };
 
-  const handleFileSelect = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedImages(prev => [...prev, ...files].slice(0, 5)); // Limit to 5
+  const handleAddUrl = () => {
+    if (currentUrl && selectedImages.length < 5) {
+      setSelectedImages(prev => [...prev, currentUrl]);
+      setCurrentUrl('');
+      setUploadError('');
+    } else if (selectedImages.length >= 5) {
+      setUploadError('Maximum 5 images allowed.');
+    }
   };
 
+  const inputClasses = "w-full bg-[#F5F5F5]/50 border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3.5 px-4 rounded-xl focus:outline-none focus:border-[#C9A75D] focus:ring-1 focus:ring-[#C9A75D]/30 transition-all placeholder:text-[#9CA3AF]";
+  const labelClasses = "block text-[10px] font-bold text-[#666666] uppercase tracking-[0.15em] mb-2";
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-10">
       
       {/* Wizard Header */}
-      <div>
-        <h1 className="text-h3 text-primary mb-1">Add New Vehicle</h1>
-        <p className="text-secondary">Expand your fleet and reach more luxury clients.</p>
+      <div className="text-center">
+        <h1 className="text-[32px] font-bold text-[#0F0F0F] tracking-tight mb-2" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Add New Vehicle</h1>
+        <p className="text-[#666666] text-[13px] font-medium tracking-wide">Expand your fleet and reach more luxury clients.</p>
       </div>
 
       {/* Progress Bar */}
-      <div className="flex items-center justify-between relative mb-12">
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-border -z-10 rounded-full" />
+      <div className="flex items-center justify-between relative mb-12 max-w-2xl mx-auto">
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-[#ECECEC] -z-10" />
         <div 
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary -z-10 rounded-full transition-all duration-500"
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-[#C9A75D] -z-10 transition-all duration-500"
           style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
         />
         
         {STEPS.map((step) => (
-          <div key={step.id} className="flex flex-col items-center gap-2 bg-surface">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-colors ${
-              currentStep >= step.id ? 'bg-primary text-white shadow-lg' : 'bg-surface border-2 border-border text-muted'
+          <div key={step.id} className="flex flex-col items-center gap-3 bg-[#F8FAFC]">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+              currentStep >= step.id 
+                ? 'bg-[#0F0F0F] text-[#C9A75D] shadow-[0_0_15px_rgba(201,167,93,0.3)] ring-4 ring-white' 
+                : 'bg-white border-2 border-[#ECECEC] text-[#9CA3AF] ring-4 ring-[#F8FAFC]'
             }`}>
-              {currentStep > step.id ? <CheckCircle2 className="w-5 h-5" /> : step.id}
+              {currentStep > step.id ? <CheckCircle2 className="w-5 h-5 text-[#C9A75D]" /> : step.id}
             </div>
-            <span className={`text-xs font-semibold uppercase tracking-wider ${currentStep >= step.id ? 'text-primary' : 'text-muted'}`}>
+            <span className={`text-[10px] font-bold uppercase tracking-[0.15em] ${currentStep >= step.id ? 'text-[#0F0F0F]' : 'text-[#9CA3AF]'}`}>
               {step.title}
             </span>
           </div>
@@ -123,7 +129,7 @@ export default function AddVehicleWizard() {
       </div>
 
       {/* Form Container */}
-      <div className="glass-card-elevated p-8 md:p-10 relative overflow-hidden">
+      <div className="bg-white border border-[#ECECEC] rounded-2xl shadow-sm p-8 md:p-12 relative overflow-hidden">
         
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <AnimatePresence mode="wait">
@@ -133,35 +139,41 @@ export default function AddVehicleWizard() {
               <motion.div 
                 key="step1"
                 initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="space-y-6"
+                className="space-y-8"
               >
-                <h3 className="text-h4 text-primary border-b border-border pb-4 mb-6">Basic Information</h3>
+                <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] border-b border-[#ECECEC] pb-4">Basic Information</h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
-                    <label className="label">Vehicle Title</label>
-                    <input {...register("name", { required: true })} className="input" placeholder="e.g. Porsche 911 GT3 RS" />
+                    <label className={labelClasses}>Vehicle Title</label>
+                    <input {...register("name", { required: true })} className={inputClasses} placeholder="e.g. Porsche 911 GT3 RS" />
                   </div>
                   <div>
-                    <label className="label">Brand</label>
-                    <input {...register("brand", { required: true })} className="input" placeholder="e.g. Porsche" />
+                    <label className={labelClasses}>Brand</label>
+                    <input {...register("brand", { required: true })} className={inputClasses} placeholder="e.g. Porsche" />
                   </div>
                   <div>
-                    <label className="label">Model</label>
-                    <input {...register("model", { required: true })} className="input" placeholder="e.g. 911 GT3 RS" />
+                    <label className={labelClasses}>Model</label>
+                    <input {...register("model", { required: true })} className={inputClasses} placeholder="e.g. 911 GT3 RS" />
                   </div>
                   <div>
-                    <label className="label">Year</label>
-                    <input {...register("year", { required: true })} type="number" className="input" placeholder="e.g. 2024" />
+                    <label className={labelClasses}>Year</label>
+                    <input {...register("year", { required: true })} type="number" className={inputClasses} placeholder="e.g. 2024" />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="label">Description (Cinematic Storytelling)</label>
-                    <textarea {...register("description", { required: true })} className="input min-h-[120px]" placeholder="Describe the luxury experience..." />
+                    <label className={labelClasses}>Description (Cinematic Storytelling)</label>
+                    <textarea {...register("description", { required: true })} className={`${inputClasses} min-h-[140px] resize-y`} placeholder="Describe the luxury experience..." />
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-6">
-                  <Button type="button" onClick={() => setCurrentStep(2)} iconRight={ArrowRight}>Next Step</Button>
+                <div className="flex justify-end pt-8">
+                  <button 
+                    type="button" 
+                    onClick={() => setCurrentStep(2)} 
+                    className="flex items-center gap-2 px-8 py-3.5 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all"
+                  >
+                    Next Step <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               </motion.div>
             )}
@@ -171,14 +183,14 @@ export default function AddVehicleWizard() {
               <motion.div 
                 key="step2"
                 initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="space-y-6"
+                className="space-y-8"
               >
-                <h3 className="text-h4 text-primary border-b border-border pb-4 mb-6">Specifications & Pricing</h3>
+                <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] border-b border-[#ECECEC] pb-4">Specifications & Pricing</h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
-                    <label className="label">Category</label>
-                    <select {...register("category", { required: true })} className="input">
+                    <label className={labelClasses}>Category</label>
+                    <select {...register("category", { required: true })} className={inputClasses}>
                       <option value="sports">Sports</option>
                       <option value="luxury">Luxury</option>
                       <option value="suv">SUV</option>
@@ -186,19 +198,19 @@ export default function AddVehicleWizard() {
                     </select>
                   </div>
                   <div>
-                    <label className="label">Price Per Day ($)</label>
-                    <input {...register("pricePerDay", { required: true })} type="number" className="input" placeholder="e.g. 15000" />
+                    <label className={labelClasses}>Price Per Day ($)</label>
+                    <input {...register("pricePerDay", { required: true })} type="number" className={inputClasses} placeholder="e.g. 15000" />
                   </div>
                   <div>
-                    <label className="label">Transmission</label>
-                    <select {...register("transmission")} className="input">
+                    <label className={labelClasses}>Transmission</label>
+                    <select {...register("transmission")} className={inputClasses}>
                       <option value="automatic">Automatic</option>
                       <option value="manual">Manual</option>
                     </select>
                   </div>
                   <div>
-                    <label className="label">Fuel Type</label>
-                    <select {...register("fuelType")} className="input">
+                    <label className={labelClasses}>Fuel Type</label>
+                    <select {...register("fuelType")} className={inputClasses}>
                       <option value="petrol">Petrol</option>
                       <option value="diesel">Diesel</option>
                       <option value="electric">Electric</option>
@@ -206,23 +218,34 @@ export default function AddVehicleWizard() {
                     </select>
                   </div>
                   <div>
-                    <label className="label">Seats</label>
-                    <input {...register("seats")} type="number" className="input" placeholder="4" />
+                    <label className={labelClasses}>Seats</label>
+                    <input {...register("seats")} type="number" className={inputClasses} placeholder="4" />
                   </div>
                   <div>
-                    <label className="label">City Location</label>
-                    <input {...register("city", { required: true })} className="input" placeholder="e.g. Mumbai" />
+                    <label className={labelClasses}>City Location</label>
+                    <input {...register("city", { required: true })} className={inputClasses} placeholder="e.g. Mumbai" />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="label">Features (Comma Separated)</label>
-                    <input {...register("features")} className="input" placeholder="e.g. Sunroof, Burmester Audio, Massaging Seats" />
+                    <label className={labelClasses}>Features (Comma Separated)</label>
+                    <input {...register("features")} className={inputClasses} placeholder="e.g. Sunroof, Burmester Audio, Massaging Seats" />
                   </div>
                 </div>
 
-                <div className="flex justify-between pt-6">
-                  <Button type="button" variant="outline" onClick={() => setCurrentStep(1)} iconLeft={ArrowLeft}>Back</Button>
-                  {/* Submitting step 2 creates the vehicle and moves to step 3 */}
-                  <Button type="submit" loading={isSubmitting} iconRight={ArrowRight}>Create Vehicle Profile</Button>
+                <div className="flex justify-between pt-8 border-t border-[#ECECEC]">
+                  <button 
+                    type="button" 
+                    onClick={() => setCurrentStep(1)} 
+                    className="flex items-center gap-2 px-6 py-3.5 bg-white border border-[#ECECEC] text-[#0F0F0F] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#F5F5F5] transition-all"
+                  >
+                    <ArrowLeft className="w-4 h-4" /> Back
+                  </button>
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#C9A75D] to-[#B59345] text-[#0F0F0F] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:shadow-[0_0_20px_rgba(201,167,93,0.4)] disabled:opacity-50 transition-all"
+                  >
+                    {isSubmitting ? 'Processing...' : 'Create Vehicle Profile'} <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               </motion.div>
             )}
@@ -230,56 +253,72 @@ export default function AddVehicleWizard() {
           </AnimatePresence>
         </form>
 
-        {/* Step 3: Images (Not part of React Hook Form since it uses a separate API call) */}
+        {/* Step 3: Images */}
         <AnimatePresence>
           {currentStep === 3 && (
             <motion.div 
               key="step3"
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
+              className="space-y-8"
             >
-              <h3 className="text-h4 text-primary border-b border-border pb-4 mb-6">Upload Cinematic Images</h3>
+              <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] border-b border-[#ECECEC] pb-4">Add Vehicle Images (URLs)</h3>
               
-              <div className="bg-success/10 text-success p-4 rounded-xl border border-success/20 mb-6 font-medium">
-                Vehicle profile created successfully! Now upload up to 5 high-quality images.
+              <div className="bg-[#16A34A]/10 text-[#16A34A] p-5 rounded-xl border border-[#16A34A]/20 flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 shrink-0" />
+                <p className="text-[13px] font-bold">Vehicle profile created successfully! Now add up to 5 image URLs.</p>
               </div>
 
-              {uploadError && <div className="text-error text-sm mb-4">{uploadError}</div>}
+              {uploadError && <div className="text-[#DC2626] text-[13px] font-medium p-4 bg-[#DC2626]/10 rounded-xl">{uploadError}</div>}
 
-              <div className="border-2 border-dashed border-border rounded-3xl p-12 flex flex-col items-center justify-center text-center hover:border-accent hover:bg-accent/5 transition-colors group relative cursor-pointer">
-                <input 
-                  type="file" 
-                  multiple 
-                  accept="image/*" 
-                  onChange={handleFileSelect}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-                <div className="w-16 h-16 rounded-full bg-surface group-hover:bg-white flex items-center justify-center shadow-sm mb-4 transition-colors">
-                  <UploadCloud className="w-8 h-8 text-accent" />
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <LinkIcon className="w-4 h-4 text-[#9CA3AF]" />
+                  </div>
+                  <input 
+                    type="url" 
+                    value={currentUrl}
+                    onChange={(e) => setCurrentUrl(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddUrl()}
+                    placeholder="https://example.com/car-image.jpg"
+                    className={`${inputClasses} pl-10`}
+                  />
                 </div>
-                <h4 className="text-lg font-semibold text-primary mb-2">Drag & Drop Images</h4>
-                <p className="text-body-sm text-secondary">or click to browse from your computer (Max 5 images)</p>
+                <button 
+                  type="button"
+                  onClick={handleAddUrl}
+                  disabled={!currentUrl || selectedImages.length >= 5}
+                  className="px-8 py-3.5 bg-white border border-[#ECECEC] text-[#0F0F0F] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#F5F5F5] disabled:opacity-50 transition-all whitespace-nowrap"
+                >
+                  Add Image URL
+                </button>
               </div>
 
               {selectedImages.length > 0 && (
-                <div className="grid grid-cols-5 gap-4 mt-6">
-                  {selectedImages.map((file, idx) => (
-                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-border shadow-sm">
-                      <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover" />
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {selectedImages.map((url, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-[#ECECEC] shadow-sm group bg-[#F5F5F5]">
+                      <img src={url} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <button 
+                        type="button"
+                        onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== idx))}
+                        className="absolute top-2 right-2 bg-white/90 text-[#DC2626] p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
                     </div>
                   ))}
                 </div>
               )}
 
-              <div className="flex justify-end pt-6">
-                <Button 
+              <div className="flex justify-end pt-8 border-t border-[#ECECEC]">
+                <button 
                   onClick={handleImageUpload} 
-                  loading={isUploadingImages}
-                  disabled={selectedImages.length === 0}
-                  iconRight={CheckCircle2}
+                  disabled={selectedImages.length === 0 || isUploadingImages}
+                  className="flex items-center gap-2 px-8 py-3.5 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  Complete Upload
-                </Button>
+                  {isUploadingImages ? 'Saving...' : 'Complete Upload'} <CheckCircle2 className="w-4 h-4" />
+                </button>
               </div>
             </motion.div>
           )}
