@@ -21,10 +21,7 @@ export function preloadAuthImages() {
   preloaded = true;
 
   AUTH_IMAGES.forEach((src) => {
-    const link = document.createElement('link');
-    link.rel = 'prefetch';
-    link.as = 'image';
-    link.href = src;
-    document.head.appendChild(link);
+    const img = new Image();
+    img.src = src;
   });
 }

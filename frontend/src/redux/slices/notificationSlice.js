@@ -53,8 +53,20 @@ export const notificationSlice = createSlice({
       .addCase(fetchNotifications.pending, (state) => { state.loading = true; })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.loading = false;
-        state.notifications = action.payload;
-        state.unreadCount = action.payload.filter(n => !n.isRead).length;
+        // The backend returns { notifications, unreadCount } inside response.data.data
+        if (action.payload && action.payload.notifications) {
+          state.notifications = action.payload.notifications;
+          state.unreadCount = action.payload.unreadCount !== undefined 
+            ? action.payload.unreadCount 
+            : action.payload.notifications.filter(n => !n.isRead).length;
+        } else if (Array.isArray(action.payload)) {
+          // Fallback in case the API changes to return an array directly
+          state.notifications = action.payload;
+          state.unreadCount = action.payload.filter(n => !n.isRead).length;
+        } else {
+          state.notifications = [];
+          state.unreadCount = 0;
+        }
       })
       .addCase(fetchNotifications.rejected, (state, action) => {
         state.loading = false;

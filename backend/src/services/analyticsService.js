@@ -16,11 +16,13 @@ export const getDashboardAnalytics = async () => {
     bookingsByStatus,
     recentBookings,
     monthlyRevenue,
+    pendingVehicles,
   ] = await Promise.all([
     User.countDocuments({ role: 'user', isActive: true }),
     User.countDocuments({ role: 'vendor', isActive: true }),
     Vehicle.countDocuments({ isActive: true }),
     Booking.countDocuments({ isActive: true }),
+    Vehicle.countDocuments({ status: 'pending', isActive: true }),
 
     // Total revenue
     Payment.aggregate([
@@ -65,6 +67,7 @@ export const getDashboardAnalytics = async () => {
       totalUsers,
       totalVendors,
       totalVehicles,
+      pendingVehicles,
       totalBookings,
       totalRevenue: revenueStats[0]?.total || 0,
       totalPayments: revenueStats[0]?.count || 0,

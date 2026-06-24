@@ -36,16 +36,26 @@ export default function VendorManagement() {
   };
 
   const handleExport = () => {
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "Business Name,Email,Phone,Verification,Account State\n"
-      + filteredVendors.map(v => `${v.name},${v.email},${v.phone || 'N/A'},${v.isVerified ? 'Verified' : 'Pending KYC'},${v.isActive ? 'Active' : 'Suspended'}`).join("\n");
-    const encodedUri = encodeURI(csvContent);
+    const csvRows = ["Business Name,Email,Phone,Verification,Account State"];
+    filteredVendors.forEach(v => {
+      const name = `"${v.name.replace(/"/g, '""')}"`;
+      const email = `"${v.email.replace(/"/g, '""')}"`;
+      const phone = `"${(v.phone || 'N/A').replace(/"/g, '""')}"`;
+      const verification = v.isVerified ? 'Verified' : 'Pending KYC';
+      const status = v.isActive ? 'Active' : 'Suspended';
+      csvRows.push(`${name},${email},${phone},${verification},${status}`);
+    });
+    
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", "luxoria_vendors.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (

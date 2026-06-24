@@ -32,17 +32,26 @@ export default function UserManagement() {
   };
 
   const handleExport = () => {
-    // Placeholder CSV export functionality
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "Name,Email,Phone,Joined,Status\n"
-      + filteredUsers.map(u => `${u.name},${u.email},${u.phone || 'N/A'},${new Date(u.createdAt).toLocaleDateString()},${u.isActive ? 'Active' : 'Suspended'}`).join("\n");
-    const encodedUri = encodeURI(csvContent);
+    const csvRows = ["Name,Email,Phone,Joined,Status"];
+    filteredUsers.forEach(u => {
+      const name = `"${u.name.replace(/"/g, '""')}"`;
+      const email = `"${u.email.replace(/"/g, '""')}"`;
+      const phone = `"${(u.phone || 'N/A').replace(/"/g, '""')}"`;
+      const joined = `"${new Date(u.createdAt).toLocaleDateString()}"`;
+      const status = u.isActive ? 'Active' : 'Suspended';
+      csvRows.push(`${name},${email},${phone},${joined},${status}`);
+    });
+    
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", "luxoria_users.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (

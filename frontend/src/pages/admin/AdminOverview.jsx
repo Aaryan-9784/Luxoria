@@ -72,7 +72,7 @@ export default function AdminOverview() {
             <div className="space-y-3">
               <div className="flex items-center justify-between p-4 rounded-xl border border-[#ECECEC] bg-[#F5F5F5]/50 transition-all hover:bg-white hover:border-[#C9A75D]/50 hover:shadow-md group">
                 <div>
-                  <p className="font-bold text-xl text-[#0F0F0F]">0</p>
+                  <p className="font-bold text-xl text-[#0F0F0F]">{analytics?.overview?.pendingVehicles || 0}</p>
                   <p className="text-[10px] text-[#666666] font-bold uppercase tracking-[0.1em] mt-1">Pending Vehicles</p>
                 </div>
                 <Link to="/admin/vehicles" className="text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider group-hover:text-[#B59345] transition-colors flex items-center gap-1">Review <span className="text-[14px] leading-none">&rarr;</span></Link>
