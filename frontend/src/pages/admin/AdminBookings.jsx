@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminBookings } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
 import { Search, CalendarDays, Download, Filter, ChevronLeft, ChevronRight, Hash, Eye } from 'lucide-react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function AdminBookings() {
   const dispatch = useDispatch();
@@ -103,20 +104,17 @@ export default function AdminBookings() {
           </div>
 
           {/* Filter */}
-          <div className="relative w-full sm:w-auto">
-            <select 
-              value={filterStatus}
-              onChange={(e) => {setFilterStatus(e.target.value); setCurrentPage(1);}}
-              className="w-full sm:w-auto bg-white border border-[#ECECEC] rounded-xl pl-4 pr-10 py-2.5 text-[13px] text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] transition-colors appearance-none cursor-pointer"
-            >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
-          </div>
+          <CustomSelect
+            value={filterStatus}
+            onChange={(val) => {setFilterStatus(val); setCurrentPage(1);}}
+            options={[
+              { value: 'all', label: 'All Statuses' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'confirmed', label: 'Confirmed' },
+              { value: 'completed', label: 'Completed' },
+              { value: 'cancelled', label: 'Cancelled' }
+            ]}
+          />
 
           {/* Export */}
           <button onClick={handleExport} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#1A1A1A] transition-colors shadow-lg shadow-[#0F0F0F]/10">

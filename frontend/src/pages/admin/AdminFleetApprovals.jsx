@@ -1,56 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAdminVehicles, approveVehicle } from '@/redux/slices/adminSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Clock, XCircle, CheckCircle2, ChevronRight, Car, AlertCircle, FileText, Image as ImageIcon, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import CountUp from 'react-countup';
 
 export default function AdminFleetApprovals() {
+  const dispatch = useDispatch();
+  const { vehicles, loading } = useSelector(state => state.admin);
   const [filter, setFilter] = useState('pending');
 
-  // Mock Data
-  const [approvals, setApprovals] = useState([
-    {
-      id: 'REQ-092',
-      vendor: 'Elite Motors',
-      vehicle: { make: 'Rolls-Royce', model: 'Phantom Series II', year: 2024, price: 1800, class: 'Luxury Sedan' },
-      submitted: '2026-06-22',
-      status: 'pending',
-      checks: { specs: true, photos: true, insurance: false },
-      image: 'https://images.unsplash.com/photo-1631259596396-1f900a6e0c70?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      id: 'REQ-091',
-      vendor: 'Prestige Exotics',
-      vehicle: { make: 'Lamborghini', model: 'Aventador SVJ', year: 2023, price: 2500, class: 'Supercar' },
-      submitted: '2026-06-21',
-      status: 'pending',
-      checks: { specs: true, photos: false, insurance: true },
-      image: 'https://images.unsplash.com/photo-1544636331-e26879cd30c2?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      id: 'REQ-090',
-      vendor: 'Crown Classics',
-      vehicle: { make: 'Bentley', model: 'Continental GT', year: 2025, price: 1200, class: 'Luxury Coupe' },
-      submitted: '2026-06-20',
-      status: 'pending',
-      checks: { specs: true, photos: true, insurance: true },
-      image: 'https://images.unsplash.com/photo-1620882814836-88a2c88bdff8?auto=format&fit=crop&q=80&w=600'
-    }
-  ]);
+  useEffect(() => {
+    dispatch(fetchAdminVehicles());
+  }, [dispatch]);
 
   const kpis = {
-    pending: 12,
-    approved: 45,
-    rejected: 3,
-    avgTime: '4.2h'
+    pending: vehicles.filter(v => v.status === 'pending').length,
+    approved: vehicles.filter(v => v.status === 'approved').length,
+    rejected: vehicles.filter(v => v.status === 'rejected').length,
+    avgTime: '2.4h' // Mocked avg time for now
   };
 
-  const handleApprove = (id) => {
-    setApprovals(approvals.filter(a => a.id !== id));
-    // In a real app, make API call here
+  const filteredVehicles = vehicles.filter(v => v.status === filter);
+
+  const handleApprove = async (id) => {
+    await dispatch(approveVehicle({ id, status: 'approved' }));
   };
 
-  const handleReject = (id) => {
-    setApprovals(approvals.filter(a => a.id !== id));
+  const handleReject = async (id) => {
+    await dispatch(approveVehicle({ id, status: 'rejected' }));
   };
 
   return (
@@ -103,7 +81,7 @@ export default function AdminFleetApprovals() {
             <Car className="w-4 h-4 text-[#C9A75D]" /> Submission Queue
           </h3>
           <div className="flex gap-2">
-            {['pending', 'in-review', 'action-required'].map(status => (
+            {['pending', 'approved', 'rejected'].map(status => (
               <button 
                 key={status}
                 onClick={() => setFilter(status)}
@@ -113,7 +91,7 @@ export default function AdminFleetApprovals() {
                     : 'bg-white border border-[#ECECEC] text-[#666666] hover:border-[#C9A75D] hover:text-[#0F0F0F]'
                 }`}
               >
-                {status.replace('-', ' ')}
+                {status}
               </button>
             ))}
           </div>
@@ -122,19 +100,28 @@ export default function AdminFleetApprovals() {
         {/* Queue List */}
         <div className="divide-y divide-[#ECECEC]">
           <AnimatePresence>
-            {approvals.map((req) => (
+            {loading && vehicles.length === 0 ? (
+              <div className="py-20 flex flex-col items-center justify-center">
+                <div className="w-8 h-8 border-4 border-[#C9A75D] border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-[12px] font-bold text-[#666666] uppercase tracking-widest">Loading Vehicles...</p>
+              </div>
+            ) : filteredVehicles.map((req) => (
               <motion.div 
-                key={req.id}
+                key={req._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 className="p-6 hover:bg-[#F9F9F9] transition-colors group flex flex-col lg:flex-row gap-6"
               >
                 {/* Thumbnail */}
-                <div className="w-full lg:w-48 h-32 rounded-xl overflow-hidden shrink-0 relative">
-                  <img src={req.image} alt={req.vehicle.model} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="w-full lg:w-48 h-32 rounded-xl overflow-hidden shrink-0 relative bg-[#F5F5F5] flex items-center justify-center">
+                  {req.images && req.images.length > 0 ? (
+                    <img src={req.images[0].url} alt={req.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  ) : (
+                    <Car className="w-8 h-8 text-[#ECECEC]" />
+                  )}
                   <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[10px] font-bold text-white uppercase tracking-wider">
-                    {req.id}
+                    {req._id.substring(0,8)}
                   </div>
                 </div>
 
@@ -142,61 +129,55 @@ export default function AdminFleetApprovals() {
                 <div className="flex-1 flex flex-col justify-center">
                   <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
                     <div>
-                      <p className="text-[11px] font-bold text-[#C9A75D] uppercase tracking-wider mb-1">{req.vehicle.class}</p>
-                      <h4 className="text-xl font-serif text-[#0F0F0F] mb-1">{req.vehicle.year} {req.vehicle.make} {req.vehicle.model}</h4>
-                      <p className="text-[13px] text-[#666666]">Submitted by <span className="font-bold text-[#0F0F0F]">{req.vendor}</span> on {new Date(req.submitted).toLocaleDateString()}</p>
+                      <p className="text-[11px] font-bold text-[#C9A75D] uppercase tracking-wider mb-1">{req.category}</p>
+                      <h4 className="text-xl font-serif text-[#0F0F0F] mb-1">{req.year} {req.brand} {req.model || req.name}</h4>
+                      <p className="text-[13px] text-[#666666]">Submitted by <span className="font-bold text-[#0F0F0F]">{req.vendor?.name || (typeof req.vendor === 'string' ? req.vendor : 'Sovereign Elite Mobility')}</span> on {new Date(req.createdAt || req.submitted).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-[#0F0F0F]">${req.vehicle.price}<span className="text-[12px] text-[#666666] font-normal">/day</span></p>
+                      <p className="text-lg font-bold text-[#0F0F0F]">${req.pricePerDay}<span className="text-[12px] text-[#666666] font-normal">/day</span></p>
                     </div>
                   </div>
 
                   {/* Quality Checks */}
                   <div className="flex flex-wrap items-center gap-4 mt-2">
-                    <div className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider ${req.checks.specs ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
-                      {req.checks.specs ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                      Specs Verified
+                    <div className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#16A34A]`}>
+                      <CheckCircle2 className="w-4 h-4" /> Specs Verified
                     </div>
-                    <div className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider ${req.checks.photos ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
-                      {req.checks.photos ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                    <div className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider ${req.images && req.images.length > 0 ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
+                      {req.images && req.images.length > 0 ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
                       High-Res Media
-                    </div>
-                    <div className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider ${req.checks.insurance ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
-                      {req.checks.insurance ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                      Insurance Docs
                     </div>
                   </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex lg:flex-col items-center lg:items-end justify-center gap-3 shrink-0 lg:border-l lg:border-[#ECECEC] lg:pl-6">
-                  <button 
-                    onClick={() => handleApprove(req.id)}
-                    className="w-full sm:w-auto lg:w-40 flex items-center justify-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#C9A75D] transition-colors shadow-md"
-                  >
-                    <CheckCircle2 className="w-4 h-4" /> Approve
-                  </button>
-                  <button 
-                    className="w-full sm:w-auto lg:w-40 flex items-center justify-center gap-2 bg-white border border-[#ECECEC] text-[#0F0F0F] px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:border-[#0F0F0F] transition-colors"
-                  >
-                    <FileText className="w-4 h-4" /> Request Fix
-                  </button>
-                  <button 
-                    onClick={() => handleReject(req.id)}
-                    className="w-full sm:w-auto lg:w-40 flex items-center justify-center gap-2 bg-white text-[#DC2626] px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#DC2626]/10 transition-colors"
-                  >
-                    <XCircle className="w-4 h-4" /> Reject
-                  </button>
+                  {req.status !== 'approved' && (
+                    <button 
+                      onClick={() => handleApprove(req._id)}
+                      className="w-full sm:w-auto lg:w-40 flex items-center justify-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#C9A75D] transition-colors shadow-md"
+                    >
+                      <CheckCircle2 className="w-4 h-4" /> Approve
+                    </button>
+                  )}
+                  {req.status !== 'rejected' && (
+                    <button 
+                      onClick={() => handleReject(req._id)}
+                      className="w-full sm:w-auto lg:w-40 flex items-center justify-center gap-2 bg-white text-[#DC2626] px-5 py-2.5 rounded-xl border border-[#ECECEC] text-[11px] font-bold uppercase tracking-wider hover:bg-[#DC2626]/10 hover:border-[#DC2626]/10 transition-colors"
+                    >
+                      <XCircle className="w-4 h-4" /> Reject
+                    </button>
+                  )}
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
 
-          {approvals.length === 0 && (
+          {!loading && filteredVehicles.length === 0 && (
             <div className="py-20 flex flex-col items-center justify-center bg-[#FDFBF7]/50">
               <ShieldCheck className="w-16 h-16 text-[#ECECEC] mb-4" />
               <h3 className="text-lg font-serif text-[#0F0F0F] mb-1">Queue Empty</h3>
-              <p className="text-[12px] font-bold text-[#666666] uppercase tracking-widest">All fleet submissions are reviewed</p>
+              <p className="text-[12px] font-bold text-[#666666] uppercase tracking-widest">No vehicles found in this category</p>
             </div>
           )}
         </div>

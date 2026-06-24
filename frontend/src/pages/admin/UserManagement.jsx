@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers, updateUserStatus } from '@/redux/slices/adminSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Shield, Ban, CheckCircle, MoreVertical, Download, Filter, ChevronLeft, ChevronRight, UserX, UserCheck } from 'lucide-react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function UserManagement() {
   const dispatch = useDispatch();
@@ -78,18 +79,15 @@ export default function UserManagement() {
           </div>
 
           {/* Filter */}
-          <div className="relative w-full sm:w-auto">
-            <select 
-              value={filterStatus}
-              onChange={(e) => {setFilterStatus(e.target.value); setCurrentPage(1);}}
-              className="w-full sm:w-auto bg-white border border-[#ECECEC] rounded-xl pl-4 pr-10 py-2.5 text-[13px] text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] transition-colors appearance-none cursor-pointer"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="suspended">Suspended</option>
-            </select>
-            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
-          </div>
+          <CustomSelect
+            value={filterStatus}
+            onChange={(val) => {setFilterStatus(val); setCurrentPage(1);}}
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'active', label: 'Active' },
+              { value: 'suspended', label: 'Suspended' }
+            ]}
+          />
 
           {/* Export */}
           <button onClick={handleExport} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#1A1A1A] transition-colors shadow-lg shadow-[#0F0F0F]/10">

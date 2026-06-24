@@ -1,39 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAdminBookings } from '@/redux/slices/adminSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CreditCard, ArrowUpRight, ArrowDownRight, Wallet, Receipt, DollarSign, Download, Filter, Search, CheckCircle2, Clock, XCircle, ArrowRightLeft } from 'lucide-react';
 import CountUp from 'react-countup';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function AdminCollections() {
+  const dispatch = useDispatch();
+  const { bookings, loading } = useSelector(state => state.admin);
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [processing, setProcessing] = useState(false);
 
-  // Mock Financial Data
-  const data = {
-    kpis: {
-      totalCollected: 2450000,
-      pendingPayouts: 145000,
-      processingFees: 73500,
-      netRevenue: 2231500
-    },
-    transactions: [
-      { id: 'TXN-9823', type: 'collection', entity: 'Client: James W.', amount: 4500, date: '2026-06-22', status: 'completed', method: 'Credit Card (Stripe)' },
-      { id: 'TXN-9822', type: 'payout', entity: 'Vendor: Elite Motors', amount: 12400, date: '2026-06-21', status: 'pending', method: 'Wire Transfer' },
-      { id: 'TXN-9821', type: 'collection', entity: 'Client: Sarah L.', amount: 2100, date: '2026-06-21', status: 'completed', method: 'Apple Pay' },
-      { id: 'TXN-9820', type: 'fee', entity: 'Stripe Processing', amount: 135, date: '2026-06-20', status: 'completed', method: 'Platform Deduction' },
-      { id: 'TXN-9819', type: 'payout', entity: 'Vendor: Prestige Exotics', amount: 8900, date: '2026-06-19', status: 'completed', method: 'Wire Transfer' },
-      { id: 'TXN-9818', type: 'collection', entity: 'Client: Michael B.', amount: 5500, date: '2026-06-18', status: 'failed', method: 'Bank Transfer' },
-      { id: 'TXN-9817', type: 'payout', entity: 'Vendor: Crown Classics', amount: 3200, date: '2026-06-18', status: 'pending', method: 'Wire Transfer' },
-      { id: 'TXN-9816', type: 'collection', entity: 'Client: Emma C.', amount: 1800, date: '2026-06-17', status: 'completed', method: 'Credit Card (Stripe)' },
-    ]
+  useEffect(() => {
+    dispatch(fetchAdminBookings());
+  }, [dispatch]);
+
+  const totalCollected = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+  const processingFees = totalCollected * 0.15; // 15% platform fee
+  const pendingPayouts = bookings.filter(b => b.status !== 'completed').reduce((sum, b) => sum + ((b.totalAmount || 0) * 0.85), 0);
+  const netRevenue = processingFees; // Our profit is the fees
+
+  const kpis = {
+    totalCollected,
+    pendingPayouts,
+    processingFees,
+    netRevenue
   };
+
+  const transactions = bookings.flatMap(b => {
+    const amount = b.totalAmount || 0;
+    const fee = amount * 0.15;
+    const payout = amount * 0.85;
+    const date = b.createdAt;
+    
+    return [
+      {
+        id: `COL-${b.bookingId?.substring(0,6) || b._id?.substring(0,6)}`,
+        type: 'collection',
+        entity: `Client: ${b.user?.name || 'Unknown'}`,
+        amount: amount,
+        date: date,
+        status: b.paymentStatus === 'paid' ? 'completed' : 'pending',
+        method: b.paymentMethod || 'Credit Card'
+      },
+      {
+        id: `FEE-${b.bookingId?.substring(0,6) || b._id?.substring(0,6)}`,
+        type: 'fee',
+        entity: 'Platform Fee',
+        amount: fee,
+        date: date,
+        status: 'completed',
+        method: 'System Deduction'
+      },
+      {
+        id: `PAY-${b.bookingId?.substring(0,6) || b._id?.substring(0,6)}`,
+        type: 'payout',
+        entity: `Vendor: ${b.vendor?.name || 'Unknown'}`,
+        amount: payout,
+        date: date,
+        status: b.status === 'completed' ? 'completed' : 'pending',
+        method: 'Bank Transfer'
+      }
+    ];
+  }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
 
   const handleExport = () => {
     // Mock export functionality
     const csvContent = "data:text/csv;charset=utf-8,ID,Type,Entity,Amount,Date,Status\\n" 
-      + data.transactions.map(t => `${t.id},${t.type},${t.entity},${t.amount},${t.date},${t.status}`).join("\\n");
+      + transactions.map(t => `${t.id},${t.type},${t.entity},${t.amount},${t.date},${t.status}`).join("\\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -59,7 +97,7 @@ export default function AdminCollections() {
     }
   };
 
-  const filteredTransactions = data.transactions.filter(t => {
+  const filteredTransactions = transactions.filter(t => {
     if (filter !== 'all' && t.type !== filter) return false;
     if (searchQuery && !t.entity.toLowerCase().includes(searchQuery.toLowerCase()) && !t.id.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
@@ -95,10 +133,10 @@ export default function AdminCollections() {
       {/* KPI Grid (Matched perfectly to theme) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { title: 'Gross Collected (YTD)', value: data.kpis.totalCollected, icon: CreditCard, prefix: '$', trend: '+18.2%', isUp: true },
-          { title: 'Pending Payouts', value: data.kpis.pendingPayouts, icon: Wallet, prefix: '$', trend: '+4.5%', isUp: false }, // Down visually implies more pending
-          { title: 'Platform Fees', value: data.kpis.processingFees, icon: Receipt, prefix: '$', trend: '-1.2%', isUp: true }, // Less fees is good
-          { title: 'Net Revenue', value: data.kpis.netRevenue, icon: DollarSign, prefix: '$', trend: '+22.4%', isUp: true },
+          { title: 'Gross Collected (YTD)', value: kpis.totalCollected, icon: CreditCard, prefix: '$', trend: '', isUp: true },
+          { title: 'Pending Payouts', value: kpis.pendingPayouts, icon: Wallet, prefix: '$', trend: '', isUp: false },
+          { title: 'Platform Fees', value: kpis.processingFees, icon: Receipt, prefix: '$', trend: '', isUp: true },
+          { title: 'Net Revenue', value: kpis.netRevenue, icon: DollarSign, prefix: '$', trend: '', isUp: true },
         ].map((kpi, idx) => (
           <div key={idx} className="relative overflow-hidden group bg-white border border-[#ECECEC] rounded-2xl p-6 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-default flex flex-col justify-between h-full min-h-[160px]">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C9A75D] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -143,16 +181,17 @@ export default function AdminCollections() {
               />
             </div>
             {/* Filter */}
-            <select 
+            <CustomSelect
               value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="w-full sm:w-auto appearance-none bg-[#F9F9F9] border border-[#ECECEC] rounded-xl px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] transition-colors cursor-pointer"
-            >
-              <option value="all">All Entries</option>
-              <option value="collection">Collections (In)</option>
-              <option value="payout">Payouts (Out)</option>
-              <option value="fee">Fees (Deductions)</option>
-            </select>
+              onChange={(val) => setFilter(val)}
+              options={[
+                { value: 'all', label: 'All Entries' },
+                { value: 'collection', label: 'Collections (In)' },
+                { value: 'payout', label: 'Payouts (Out)' },
+                { value: 'fee', label: 'Fees (Deductions)' }
+              ]}
+              className="bg-[#F9F9F9]"
+            />
           </div>
         </div>
 
@@ -171,7 +210,16 @@ export default function AdminCollections() {
             </thead>
             <tbody>
               <AnimatePresence>
-                {filteredTransactions.map((txn, idx) => (
+                {loading && transactions.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="py-16 text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <div className="w-8 h-8 border-4 border-[#C9A75D] border-t-transparent rounded-full animate-spin mb-4" />
+                        <p className="text-[11px] font-bold text-[#666666] uppercase tracking-wider animate-pulse">Loading Financials...</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredTransactions.map((txn, idx) => (
                   <motion.tr 
                     key={txn.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -205,7 +253,7 @@ export default function AdminCollections() {
               </AnimatePresence>
             </tbody>
           </table>
-          {filteredTransactions.length === 0 && (
+          {!loading && filteredTransactions.length === 0 && (
             <div className="py-16 flex flex-col items-center justify-center">
               <Receipt className="w-12 h-12 text-[#ECECEC] mb-4" />
               <p className="text-[12px] font-bold text-[#666666] uppercase tracking-widest">No transactions found</p>

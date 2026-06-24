@@ -1,57 +1,96 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAnalytics, fetchAdminVehicles, fetchAdminBookings } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
 import { Users, Car, DollarSign, Calendar, ArrowUpRight, ArrowDownRight, Activity, Download, ChevronDown } from 'lucide-react';
 import CountUp from 'react-countup';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function AdminAnalytics() {
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { analytics, vehicles, bookings, loading } = useSelector(state => state.admin);
   const [dateRange, setDateRange] = useState('year'); // year, month, week
 
-  // Mock analytics data
-  const data = {
-    kpis: {
-      revenue: 1245000,
-      bookings: 842,
-      activeUsers: 12450,
-      vendors: 156
-    },
-    revenueData: [
-      { month: 'Jan', value: 45000 },
-      { month: 'Feb', value: 52000 },
-      { month: 'Mar', value: 48000 },
-      { month: 'Apr', value: 61000 },
-      { month: 'May', value: 59000 },
-      { month: 'Jun', value: 75000 },
-      { month: 'Jul', value: 82000 },
-      { month: 'Aug', value: 95000 },
-      { month: 'Sep', value: 88000 },
-      { month: 'Oct', value: 105000 },
-      { month: 'Nov', value: 112000 },
-      { month: 'Dec', value: 125000 }
-    ],
-    vehicleClasses: [
-      { name: 'Luxury Sedans', percentage: 45, color: '#0F0F0F' },
-      { name: 'Supercars', percentage: 25, color: '#C9A75D' },
-      { name: 'SUVs', percentage: 20, color: '#666666' },
-      { name: 'Classics', percentage: 10, color: '#ECECEC' }
-    ],
-    topVendors: [
-      { name: 'Elite Motors', bookings: 145, revenue: 320000, trend: '+12%' },
-      { name: 'Prestige Exotics', bookings: 98, revenue: 215000, trend: '+8%' },
-      { name: 'Crown Classics', bookings: 64, revenue: 140000, trend: '-3%' },
-      { name: 'Royal Fleet', bookings: 42, revenue: 95000, trend: '+5%' }
-    ]
+  useEffect(() => {
+    dispatch(fetchAnalytics());
+    dispatch(fetchAdminVehicles());
+    dispatch(fetchAdminBookings());
+  }, [dispatch]);
+  const kpis = {
+    revenue: analytics?.overview?.totalRevenue || 0,
+    bookings: analytics?.overview?.totalBookings || 0,
+    activeUsers: analytics?.overview?.totalUsers || 0,
+    vendors: analytics?.overview?.totalVendors || 0
   };
+
+  const revenueData = useMemo(() => {
+    if (!analytics?.monthlyRevenue?.length) {
+      // Default 12 months of 0 if no data
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return months.map(m => ({ month: m, value: 0 }));
+    }
+    
+    // Map backend response
+    const mapped = analytics.monthlyRevenue.map(item => {
+      const monthStr = new Date(0, item._id.month - 1).toLocaleString('default', { month: 'short' });
+      return {
+        month: monthStr,
+        value: item.revenue
+      };
+    });
+    
+    // Ensure we have 12 items for chart layout if possible
+    if (mapped.length < 12) {
+       const missing = 12 - mapped.length;
+       for (let i = 0; i < missing; i++) {
+         mapped.push({ month: '-', value: 0 });
+       }
+    }
+    return mapped;
+  }, [analytics]);
+
+  const vehicleClasses = useMemo(() => {
+    if (!vehicles.length) return [];
+    const counts = vehicles.reduce((acc, v) => {
+      acc[v.category] = (acc[v.category] || 0) + 1;
+      return acc;
+    }, {});
+    
+    const colors = ['#0F0F0F', '#C9A75D', '#666666', '#ECECEC', '#8B5A2B', '#A9A9A9', '#D3D3D3'];
+    return Object.entries(counts).map(([name, count], idx) => ({
+      name: name.replace('-', ' '),
+      percentage: Math.round((count / vehicles.length) * 100),
+      color: colors[idx % colors.length]
+    })).sort((a,b) => b.percentage - a.percentage);
+  }, [vehicles]);
+
+  const topVendors = useMemo(() => {
+    if (!bookings.length) return [];
+    
+    const vendorStats = bookings.reduce((acc, b) => {
+      if (b.vendor && b.vendor.name) {
+        if (!acc[b.vendor.name]) acc[b.vendor.name] = { name: b.vendor.name, bookings: 0, revenue: 0 };
+        acc[b.vendor.name].bookings += 1;
+        acc[b.vendor.name].revenue += b.totalAmount || 0;
+      }
+      return acc;
+    }, {});
+    
+    return Object.values(vendorStats)
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 4)
+      .map(v => ({ ...v, trend: '+0%' })); // Static trend for now
+  }, [bookings]);
 
   const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
 
   // Find max revenue for chart scaling, ensure it's not 0
-  const maxRevenue = Math.max(...data.revenueData.map(d => d.value)) || 1;
+  const maxRevenue = Math.max(...revenueData.map(d => d.value), 1000); // Default scale to 1000 if 0
 
   const handleExport = () => {
     // Mock export functionality
     const csvContent = "data:text/csv;charset=utf-8,Month,Revenue\\n" 
-      + data.revenueData.map(d => `${d.month},${d.value}`).join("\\n");
+      + revenueData.map(d => `${d.month},${d.value}`).join("\\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -71,18 +110,16 @@ export default function AdminAnalytics() {
           <p className="text-[13px] text-[#666666] tracking-wide">Enterprise performance metrics and global insights.</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="relative group">
-            <select 
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-              className="appearance-none bg-white border border-[#ECECEC] rounded-xl pl-4 pr-10 py-2.5 text-[12px] font-bold uppercase tracking-wider text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] transition-colors cursor-pointer"
-            >
-              <option value="year">2026 Fiscal Year</option>
-              <option value="month">Last 30 Days</option>
-              <option value="week">Last 7 Days</option>
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999999] group-hover:text-[#C9A75D] transition-colors pointer-events-none" />
-          </div>
+          <CustomSelect
+            value={dateRange}
+            onChange={(val) => setDateRange(val)}
+            icon={ChevronDown}
+            options={[
+              { value: 'year', label: '2026 Fiscal Year' },
+              { value: 'month', label: 'Last 30 Days' },
+              { value: 'week', label: 'Last 7 Days' }
+            ]}
+          />
           <button 
             onClick={handleExport}
             className="flex items-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#C9A75D] transition-colors shadow-lg shadow-[#0F0F0F]/10"
@@ -95,10 +132,10 @@ export default function AdminAnalytics() {
       {/* KPI Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { title: 'Total Revenue', value: data.kpis.revenue, icon: DollarSign, prefix: '$', trend: '+12.5%', isUp: true },
-          { title: 'Global Bookings', value: data.kpis.bookings, icon: Calendar, prefix: '', trend: '+8.2%', isUp: true },
-          { title: 'Active Clients', value: data.kpis.activeUsers, icon: Users, prefix: '', trend: '+15.3%', isUp: true },
-          { title: 'Vendor Partners', value: data.kpis.vendors, icon: Car, prefix: '', trend: '-2.1%', isUp: false },
+          { title: 'Total Revenue', value: kpis.revenue, icon: DollarSign, prefix: '$', trend: '', isUp: true },
+          { title: 'Global Bookings', value: kpis.bookings, icon: Calendar, prefix: '', trend: '', isUp: true },
+          { title: 'Active Clients', value: kpis.activeUsers, icon: Users, prefix: '', trend: '', isUp: true },
+          { title: 'Vendor Partners', value: kpis.vendors, icon: Car, prefix: '', trend: '', isUp: false },
         ].map((kpi, idx) => (
           <div key={idx} className="relative overflow-hidden group bg-white border border-[#ECECEC] rounded-2xl p-6 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-default flex flex-col justify-between h-full min-h-[160px]">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C9A75D] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -135,8 +172,9 @@ export default function AdminAnalytics() {
           </div>
 
           {/* The CSS Chart - Fixed height so bars render correctly */}
-          <div className="flex-1 min-h-[300px] flex items-end justify-between gap-1 sm:gap-2 min-w-0 overflow-x-auto no-scrollbar pb-2">
-            {data.revenueData.map((month, idx) => {
+          <div className="flex-1 min-h-[300px] flex items-end justify-between gap-1 sm:gap-2 min-w-0 overflow-x-auto no-scrollbar pb-2 relative">
+            {loading && <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#C9A75D] border-t-transparent rounded-full animate-spin" /></div>}
+            {revenueData.map((month, idx) => {
               const heightPercent = (month.value / maxRevenue) * 100;
               return (
                 <div key={idx} className="flex flex-col items-center flex-1 min-w-[24px] h-full justify-end group">
@@ -172,8 +210,8 @@ export default function AdminAnalytics() {
             <h3 className="text-lg font-serif text-[#0F0F0F] mb-6">Class Distribution</h3>
             
             {/* Stacked Bar */}
-            <div className="w-full h-3 rounded-full flex overflow-hidden mb-6">
-              {data.vehicleClasses.map((vc, idx) => (
+            <div className="w-full h-3 rounded-full flex overflow-hidden mb-6 bg-[#F5F5F5]">
+              {vehicleClasses.map((vc, idx) => (
                 <motion.div 
                   key={idx} 
                   initial={{ width: 0 }} 
@@ -186,7 +224,9 @@ export default function AdminAnalytics() {
 
             {/* Legend */}
             <div className="space-y-4">
-              {data.vehicleClasses.map((vc, idx) => (
+              {vehicleClasses.length === 0 ? (
+                <p className="text-[12px] text-[#666666] italic">No vehicle data available.</p>
+              ) : vehicleClasses.map((vc, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: vc.color }} />
@@ -203,8 +243,10 @@ export default function AdminAnalytics() {
             <h3 className="text-lg font-serif text-[#0F0F0F] mb-6">Top Partners</h3>
             
             <div className="space-y-6">
-              {data.topVendors.map((vendor, idx) => {
-                const maxBookings = data.topVendors[0].bookings;
+              {topVendors.length === 0 ? (
+                <p className="text-[12px] text-[#666666] italic">No partner data available.</p>
+              ) : topVendors.map((vendor, idx) => {
+                const maxBookings = topVendors[0]?.bookings || 1;
                 const widthPercent = (vendor.bookings / maxBookings) * 100;
                 const isUp = vendor.trend.includes('+');
                 

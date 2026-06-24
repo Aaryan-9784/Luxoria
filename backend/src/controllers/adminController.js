@@ -141,13 +141,15 @@ export const approveVehicle = asyncHandler(async (req, res) => {
     throw ApiError.notFound('Vehicle not found');
   }
 
-  await Notification.create({
-    recipient: vehicle.vendor._id,
-    type: 'approval',
-    title: `Vehicle ${status === 'approved' ? 'Approved' : 'Rejected'}`,
-    message: `Your vehicle "${vehicle.name}" has been ${status}.`,
-    data: { vehicleId: vehicle._id },
-  });
+  if (vehicle.vendor) {
+    await Notification.create({
+      recipient: vehicle.vendor._id,
+      type: 'approval',
+      title: `Vehicle ${status === 'approved' ? 'Approved' : 'Rejected'}`,
+      message: `Your vehicle "${vehicle.name}" has been ${status}.`,
+      data: { vehicleId: vehicle._id },
+    });
+  }
 
   ApiResponse.success(res, { vehicle }, `Vehicle ${status}`);
 });
