@@ -13,6 +13,7 @@ const initialState = {
   totalVendors: 0,
   totalVehicles: 0,
   totalBookings: 0,
+  conciergeRequests: [],
 };
 
 // Async Thunks
@@ -97,6 +98,24 @@ export const fetchAdminBookings = createAsyncThunk('admin/fetchBookings', async 
   }
 });
 
+export const fetchConciergeRequests = createAsyncThunk('admin/fetchConciergeRequests', async (queryParams = '', { rejectWithValue }) => {
+  try {
+    const response = await api.get(`/admin/concierge${queryParams}`);
+    return response.data.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error?.message || 'Failed to fetch concierge requests');
+  }
+});
+
+export const updateConciergeStatus = createAsyncThunk('admin/updateConciergeStatus', async ({ id, status }, { rejectWithValue }) => {
+  try {
+    const response = await api.put(`/admin/concierge/${id}/status`, { status });
+    return response.data.data.request;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error?.message || 'Failed to update concierge status');
+  }
+});
+
 export const adminSlice = createSlice({
   name: 'admin',
   initialState,
@@ -166,6 +185,23 @@ export const adminSlice = createSlice({
         state.loading = false;
         state.bookings = action.payload.bookings;
         state.totalBookings = action.payload.total;
+      })
+      
+      // Concierge
+      .addCase(fetchConciergeRequests.pending, (state) => { state.loading = true; })
+      .addCase(fetchConciergeRequests.fulfilled, (state, action) => {
+        state.loading = false;
+        state.conciergeRequests = action.payload;
+      })
+      .addCase(fetchConciergeRequests.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateConciergeStatus.fulfilled, (state, action) => {
+        const index = state.conciergeRequests.findIndex(r => r.requestId === action.payload.requestId);
+        if (index !== -1) {
+          state.conciergeRequests[index] = action.payload;
+        }
       });
   }
 });

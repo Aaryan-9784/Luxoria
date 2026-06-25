@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   getUsers, updateUserStatus, getVendors, approveVendor,
   getAllVehicles, approveVehicle, deleteAdminVehicle, getAllBookings, getAnalytics,
+  getConciergeRequests, updateConciergeStatus
 } from '../controllers/adminController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -18,5 +19,9 @@ router.put('/vehicles/:id/approve', approveVehicle);
 router.delete('/vehicles/:id', deleteAdminVehicle);
 router.get('/bookings', getAllBookings);
 router.get('/analytics', getAnalytics);
+
+// Concierge routes
+router.get('/concierge', getConciergeRequests);
+router.put('/concierge/:id/status', updateConciergeStatus);
 
 export default router;

@@ -194,3 +194,72 @@ export const deleteAdminVehicle = asyncHandler(async (req, res) => {
   }
   ApiResponse.success(res, null, 'Vehicle deleted successfully');
 });
+
+/**
+ * @desc    Get all concierge requests
+ * @route   GET /api/admin/concierge
+ * @access  Admin
+ */
+export const getConciergeRequests = asyncHandler(async (req, res) => {
+  const { status, search } = req.query;
+
+  let query = {};
+
+  if (status && status !== 'all') {
+    query.status = status;
+  }
+
+  if (search) {
+    query.$or = [
+      { clientName: { $regex: search, $options: 'i' } },
+      { requestId: { $regex: search, $options: 'i' } },
+    ];
+  }
+
+  const { default: ConciergeRequest } = await import('../models/ConciergeRequest.js');
+
+  const requests = await ConciergeRequest.find(query).sort({ createdAt: -1 });
+  
+  // Create pagination object structure if needed by frontend
+  const pagination = {
+    total: requests.length,
+    page: 1,
+    pages: 1,
+    limit: requests.length || 10
+  };
+
+  // We must return what adminSlice expects. The other routes use ApiResponse.paginated or ApiResponse.success
+  // The fetchConcierge thunk will expect response.data.data
+  res.status(200).json({
+    success: true,
+    data: requests,
+    pagination
+  });
+});
+
+/**
+ * @desc    Update concierge request status
+ * @route   PUT /api/admin/concierge/:id/status
+ * @access  Admin
+ */
+export const updateConciergeStatus = asyncHandler(async (req, res) => {
+  const { status } = req.body;
+
+  if (!['pending', 'in-progress', 'completed'].includes(status)) {
+    throw ApiError.badRequest('Invalid status value');
+  }
+
+  const { default: ConciergeRequest } = await import('../models/ConciergeRequest.js');
+
+  const request = await ConciergeRequest.findOneAndUpdate(
+    { requestId: req.params.id },
+    { status },
+    { new: true, runValidators: true }
+  );
+
+  if (!request) {
+    throw ApiError.notFound(`Request not found with id of ${req.params.id}`);
+  }
+
+  ApiResponse.success(res, { request }, `Request status updated to ${status}`);
+});
