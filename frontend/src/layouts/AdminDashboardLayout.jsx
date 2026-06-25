@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Users, Building2, Car, ShieldCheck, 
   CalendarDays, Settings, LogOut, Menu, X, Command,
-  ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell, Globe
+  ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell, Globe, Headset
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';
@@ -27,7 +27,7 @@ const NAV_GROUPS = [
       { path: '/admin/fleet-approvals', label: 'Fleet Approvals', icon: ShieldCheck },
       { path: '/admin/bookings', label: 'Global Bookings', icon: CalendarDays },
       { path: '/admin/collections', label: 'Collections', icon: CreditCard },
-      { path: '/admin/vehicles', label: 'Vehicles', icon: Car },
+      { path: '/admin/concierge', label: 'VIP Concierge', icon: Headset },
       { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
     ]
   },

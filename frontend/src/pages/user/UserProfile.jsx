@@ -14,7 +14,7 @@ export default function UserProfile() {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
-    address: user?.address || '',
+    address: user?.address?.city || '',
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -34,7 +34,15 @@ export default function UserProfile() {
     setLoading(true);
     setErrorMsg(''); setSuccessMsg('');
     try {
-      const res = await api.put('/users/me', formData);
+      const payload = {
+        name: formData.name,
+        phone: formData.phone,
+        address: {
+          ...user?.address,
+          city: formData.address
+        }
+      };
+      const res = await api.put('/users/me', payload);
       dispatch(updateUser(res.data.data));
       setSuccessMsg('Personal details updated successfully.');
       

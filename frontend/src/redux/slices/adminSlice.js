@@ -79,6 +79,15 @@ export const approveVehicle = createAsyncThunk('admin/approveVehicle', async ({ 
   }
 });
 
+export const deleteAdminVehicle = createAsyncThunk('admin/deleteVehicle', async (id, { rejectWithValue }) => {
+  try {
+    await api.delete(`/admin/vehicles/${id}`);
+    return id;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error?.message || 'Failed to delete vehicle');
+  }
+});
+
 export const fetchAdminBookings = createAsyncThunk('admin/fetchBookings', async (queryParams = '', { rejectWithValue }) => {
   try {
     const response = await api.get(`/admin/bookings${queryParams}`);
@@ -115,6 +124,9 @@ export const adminSlice = createSlice({
       .addCase(updateUserStatus.fulfilled, (state, action) => {
         const index = state.users.findIndex(u => u._id === action.payload._id);
         if (index !== -1) state.users[index] = action.payload;
+        
+        const vendorIndex = state.vendors.findIndex(v => v._id === action.payload._id);
+        if (vendorIndex !== -1) state.vendors[vendorIndex] = action.payload;
       })
       
       // Vendors
@@ -127,6 +139,9 @@ export const adminSlice = createSlice({
       .addCase(approveVendor.fulfilled, (state, action) => {
         const index = state.vendors.findIndex(v => v._id === action.payload._id);
         if (index !== -1) state.vendors[index] = action.payload;
+        
+        const userIndex = state.users.findIndex(u => u._id === action.payload._id);
+        if (userIndex !== -1) state.users[userIndex] = action.payload;
       })
       
       // Vehicles
@@ -139,6 +154,10 @@ export const adminSlice = createSlice({
       .addCase(approveVehicle.fulfilled, (state, action) => {
         const index = state.vehicles.findIndex(v => v._id === action.payload._id);
         if (index !== -1) state.vehicles[index] = action.payload;
+      })
+      .addCase(deleteAdminVehicle.fulfilled, (state, action) => {
+        state.vehicles = state.vehicles.filter(v => v._id !== action.payload);
+        state.totalVehicles -= 1;
       })
       
       // Bookings

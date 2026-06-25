@@ -69,9 +69,9 @@ export const PAGINATION = {
 };
 
 export const RATE_LIMITS = {
-  GENERAL: { windowMs: 15 * 60 * 1000, max: 100 },
-  AUTH: { windowMs: 15 * 60 * 1000, max: 10 },
-  UPLOAD: { windowMs: 15 * 60 * 1000, max: 20 },
+  GENERAL: { windowMs: 15 * 60 * 1000, max: 1000 },
+  AUTH: { windowMs: 15 * 60 * 1000, max: 100 },
+  UPLOAD: { windowMs: 15 * 60 * 1000, max: 100 },
 };
 
 export const UPLOAD = {

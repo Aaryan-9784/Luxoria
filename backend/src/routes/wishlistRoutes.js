@@ -4,7 +4,7 @@ import { protect, authorize } from '../middleware/auth.js';
 
 const router = Router();
 
-router.use(protect, authorize('user'));
+router.use(protect);
 
 router.get('/', getWishlist);
 router.post('/:vehicleId', addToWishlist);

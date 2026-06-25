@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   getUsers, updateUserStatus, getVendors, approveVendor,
-  getAllVehicles, approveVehicle, getAllBookings, getAnalytics,
+  getAllVehicles, approveVehicle, deleteAdminVehicle, getAllBookings, getAnalytics,
 } from '../controllers/adminController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -15,6 +15,7 @@ router.get('/vendors', getVendors);
 router.put('/vendors/:id/approve', approveVendor);
 router.get('/vehicles', getAllVehicles);
 router.put('/vehicles/:id/approve', approveVehicle);
+router.delete('/vehicles/:id', deleteAdminVehicle);
 router.get('/bookings', getAllBookings);
 router.get('/analytics', getAnalytics);
 

@@ -87,6 +87,14 @@ export default function AdminAnalytics() {
   // Find max revenue for chart scaling, ensure it's not 0
   const maxRevenue = Math.max(...revenueData.map(d => d.value), 1000); // Default scale to 1000 if 0
 
+  const points = revenueData.map((d, i) => {
+    const x = (i / (revenueData.length - 1)) * 100;
+    const y = 100 - (d.value / maxRevenue) * 95;
+    return `${x},${y}`;
+  }).join(' ');
+
+  const areaPoints = `0,100 ${points} 100,100`;
+
   const handleExport = () => {
     // Mock export functionality
     const csvContent = "data:text/csv;charset=utf-8,Month,Revenue\\n" 
@@ -163,7 +171,7 @@ export default function AdminAnalytics() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Revenue Chart */}
-        <div className="lg:col-span-2 bg-white border border-[#ECECEC] rounded-2xl p-8 shadow-sm flex flex-col min-w-0">
+        <div className="lg:col-span-2 bg-white border border-[#ECECEC] rounded-2xl p-8 shadow-sm flex flex-col min-w-0 overflow-hidden">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-lg font-serif text-[#0F0F0F]">Revenue Growth</h3>
             <div className="flex items-center gap-2 text-[11px] font-bold text-[#666666] uppercase tracking-wider">
@@ -171,34 +179,70 @@ export default function AdminAnalytics() {
             </div>
           </div>
 
-          {/* The CSS Chart - Fixed height so bars render correctly */}
-          <div className="flex-1 min-h-[300px] flex items-end justify-between gap-1 sm:gap-2 min-w-0 overflow-x-auto no-scrollbar pb-2 relative">
-            {loading && <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#C9A75D] border-t-transparent rounded-full animate-spin" /></div>}
-            {revenueData.map((month, idx) => {
-              const heightPercent = (month.value / maxRevenue) * 100;
-              return (
-                <div key={idx} className="flex flex-col items-center flex-1 min-w-[24px] h-full justify-end group">
-                  {/* Tooltip */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-[#0F0F0F] text-white text-[10px] font-bold py-1.5 px-3 rounded-lg mb-2 whitespace-nowrap pointer-events-none shadow-lg transform -translate-y-2">
-                    {formatCurrency(month.value)}
-                  </div>
-                  {/* Bar */}
-                  <div className="w-full relative flex justify-center items-end" style={{ height: 'calc(100% - 40px)' }}>
-                    <motion.div 
-                      initial={{ height: 0 }} 
-                      animate={{ height: `${heightPercent}%` }} 
-                      transition={{ duration: 1, delay: idx * 0.05 }}
-                      className="w-full max-w-[40px] bg-[#F5F5F5] group-hover:bg-[#C9A75D] rounded-t-sm transition-colors relative overflow-hidden"
-                    >
-                      {/* Inner accent line */}
-                      <div className="absolute top-0 left-0 w-full h-1 bg-[#0F0F0F] opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </motion.div>
-                  </div>
-                  {/* Label */}
-                  <span className="text-[10px] text-[#999999] uppercase tracking-widest mt-4 font-bold group-hover:text-[#0F0F0F] transition-colors">{month.month}</span>
+          {/* Enhanced SVG Chart */}
+          <div className="flex-1 min-h-[300px] flex flex-col relative w-full pt-10">
+            {loading && <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-30 flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#C9A75D] border-t-transparent rounded-full animate-spin" /></div>}
+            
+            {/* Y-axis Grid Lines */}
+            <div className="absolute top-10 bottom-8 left-0 right-0 flex flex-col justify-between pointer-events-none">
+              {[4,3,2,1,0].map((step, i) => (
+                <div key={i} className="w-full border-t border-dashed border-[#ECECEC] flex items-center h-0 relative">
+                  <span className="absolute -top-2.5 bg-white pr-2 text-[9px] text-[#999999] font-medium hidden sm:block z-10">
+                    {formatCurrency((maxRevenue * step) / 4)}
+                  </span>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+
+            {/* SVG Graph */}
+            <div className="relative w-full flex-1 mb-8 mt-2">
+              <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#C9A75D" stopOpacity={0.3}/>
+                    <stop offset="100%" stopColor="#C9A75D" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <polygon points={areaPoints} fill="url(#colorRevenue)" />
+                <polyline points={points} fill="none" stroke="#C9A75D" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+              </svg>
+              
+              {/* Interaction Overlay */}
+              <div className="absolute inset-0">
+                {revenueData.map((month, idx) => {
+                  const xPercent = (idx / (revenueData.length - 1)) * 100;
+                  const yPercent = 100 - (month.value / maxRevenue) * 95;
+                  return (
+                    <div key={idx} className="absolute top-0 bottom-0 w-8 -ml-4 group cursor-crosshair z-20" style={{ left: `${xPercent}%` }}>
+                       {/* Hover Guide Line */}
+                       <div className="absolute top-0 bottom-0 left-1/2 -ml-[0.5px] w-[1px] bg-[#0F0F0F] opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
+                       
+                       {/* Dot */}
+                       <div className="absolute w-3 h-3 bg-white border-2 border-[#C9A75D] rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform -translate-x-1/2 -translate-y-1/2 shadow-md pointer-events-none"
+                            style={{ left: '50%', top: `${yPercent}%` }} />
+                            
+                       {/* Tooltip */}
+                       <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-[#0F0F0F] text-white text-[10px] font-bold py-1.5 px-3 rounded-lg pointer-events-none shadow-lg transform -translate-x-1/2 -translate-y-[calc(100%+12px)] whitespace-nowrap z-30"
+                            style={{ left: '50%', top: `${yPercent}%` }}>
+                         {formatCurrency(month.value)}
+                       </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* X-axis Labels */}
+            <div className="relative w-full h-8">
+              {revenueData.map((month, idx) => {
+                const xPercent = (idx / (revenueData.length - 1)) * 100;
+                return (
+                  <span key={idx} className="absolute text-[10px] text-[#999999] uppercase tracking-widest font-bold transform -translate-x-1/2" style={{ left: `${xPercent}%` }}>
+                    {month.month}
+                  </span>
+                );
+              })}
+            </div>
           </div>
         </div>
 

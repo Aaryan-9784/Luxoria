@@ -21,7 +21,7 @@ export default function AdminFleetApprovals() {
     avgTime: '2.4h' // Mocked avg time for now
   };
 
-  const filteredVehicles = vehicles.filter(v => v.status === filter);
+  const filteredVehicles = filter === 'all' ? vehicles : vehicles.filter(v => v.status === filter);
 
   const handleApprove = async (id) => {
     await dispatch(approveVehicle({ id, status: 'approved' }));
@@ -80,8 +80,8 @@ export default function AdminFleetApprovals() {
           <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] flex items-center gap-2">
             <Car className="w-4 h-4 text-[#C9A75D]" /> Submission Queue
           </h3>
-          <div className="flex gap-2">
-            {['pending', 'approved', 'rejected'].map(status => (
+          <div className="flex flex-wrap gap-2">
+            {['all', 'pending', 'approved', 'rejected'].map(status => (
               <button 
                 key={status}
                 onClick={() => setFilter(status)}

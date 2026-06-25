@@ -186,3 +186,11 @@ export const getAnalytics = asyncHandler(async (req, res) => {
   const analytics = await getDashboardAnalytics();
   ApiResponse.success(res, { analytics });
 });
+
+export const deleteAdminVehicle = asyncHandler(async (req, res) => {
+  const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
+  if (!vehicle) {
+    throw ApiError.notFound('Vehicle not found');
+  }
+  ApiResponse.success(res, null, 'Vehicle deleted successfully');
+});

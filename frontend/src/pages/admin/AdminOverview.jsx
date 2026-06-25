@@ -75,7 +75,7 @@ export default function AdminOverview() {
                   <p className="font-bold text-xl text-[#0F0F0F]">{analytics?.overview?.pendingVehicles || 0}</p>
                   <p className="text-[10px] text-[#666666] font-bold uppercase tracking-[0.1em] mt-1">Pending Vehicles</p>
                 </div>
-                <Link to="/admin/vehicles" className="text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider group-hover:text-[#B59345] transition-colors flex items-center gap-1">Review <span className="text-[14px] leading-none">&rarr;</span></Link>
+                <Link to="/admin/fleet-approvals" className="text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider group-hover:text-[#B59345] transition-colors flex items-center gap-1">Review <span className="text-[14px] leading-none">&rarr;</span></Link>
               </div>
               
               <div className="flex items-center justify-between p-4 rounded-xl border border-[#ECECEC] bg-[#F5F5F5]/50 transition-all hover:bg-white hover:border-[#C9A75D]/50 hover:shadow-md group">
@@ -178,7 +178,7 @@ export default function AdminOverview() {
                 <ShieldCheck className="w-5 h-5 text-[#666666] group-hover:text-[#C9A75D] mb-2 transition-colors" />
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#0F0F0F]">Verify Vendors</span>
               </Link>
-              <Link to="/admin/vehicles" className="flex flex-col items-center justify-center p-4 rounded-xl border border-[#ECECEC] hover:border-[#C9A75D] hover:bg-[#F5F5F5] transition-all group text-center">
+              <Link to="/admin/fleet-approvals" className="flex flex-col items-center justify-center p-4 rounded-xl border border-[#ECECEC] hover:border-[#C9A75D] hover:bg-[#F5F5F5] transition-all group text-center">
                 <Car className="w-5 h-5 text-[#666666] group-hover:text-[#C9A75D] mb-2 transition-colors" />
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#0F0F0F]">Fleet Approvals</span>
               </Link>

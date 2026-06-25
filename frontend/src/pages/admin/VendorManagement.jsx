@@ -183,10 +183,14 @@ export default function VendorManagement() {
                         </button>
                         <button 
                           onClick={() => toggleStatus(vendor._id, vendor.isActive)}
-                          className="p-1.5 rounded-lg text-[#666666] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors"
+                          className={`p-1.5 rounded-lg transition-colors ${
+                            vendor.isActive
+                              ? 'text-[#666666] hover:bg-[#DC2626]/10 hover:text-[#DC2626]'
+                              : 'text-[#DC2626] hover:bg-[#16A34A]/10 hover:text-[#16A34A]'
+                          }`}
                           title={vendor.isActive ? "Suspend Vendor" : "Activate Vendor"}
                         >
-                          <XCircle className="w-4 h-4" />
+                          {vendor.isActive ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
                         </button>
                       </div>
                     </td>

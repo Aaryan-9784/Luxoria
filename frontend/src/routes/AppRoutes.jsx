@@ -56,7 +56,7 @@ import AdminDashboardLayout from '@/layouts/AdminDashboardLayout';
 const AdminOverview = React.lazy(() => import('@/pages/admin/AdminOverview'));
 const UserManagement = React.lazy(() => import('@/pages/admin/UserManagement'));
 const VendorManagement = React.lazy(() => import('@/pages/admin/VendorManagement'));
-const VehicleApprovals = React.lazy(() => import('@/pages/admin/VehicleApprovals'));
+const AdminConcierge = React.lazy(() => import('@/pages/admin/AdminConcierge'));
 const AdminBookings = React.lazy(() => import('@/pages/admin/AdminBookings'));
 const AdminAnalytics = React.lazy(() => import('@/pages/admin/AdminAnalytics'));
 const AdminCollections = React.lazy(() => import('@/pages/admin/AdminCollections'));
@@ -179,7 +179,7 @@ export default function AppRoutes() {
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/vendors" element={<VendorManagement />} />
             <Route path="/admin/fleet-approvals" element={<AdminFleetApprovals />} />
-            <Route path="/admin/vehicles" element={<VehicleApprovals />} />
+            <Route path="/admin/concierge" element={<AdminConcierge />} />
             <Route path="/admin/bookings" element={<AdminBookings />} />
             <Route path="/admin/collections" element={<AdminCollections />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
