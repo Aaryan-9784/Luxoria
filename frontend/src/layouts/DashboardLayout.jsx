@@ -76,11 +76,11 @@ export default function DashboardLayout() {
   const renderSidebarContent = (collapsed = false, showToggle = false) => (
     <>
       <Link to="/" className={`flex items-center ${collapsed ? 'justify-center' : 'gap-4'} h-[80px] mb-4 shrink-0 px-4 group hover:opacity-80 transition-opacity`} title="Return to Landing Page">
-        <div className="flex items-center justify-center shrink-0">
-          <img src="/favicon.svg" alt="Luxoria Symbol" className="w-10 h-10 drop-shadow-sm rounded-full" />
+        <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center shadow-lg shrink-0">
+          <Car className="w-6 h-6 text-white" />
         </div>
         {!collapsed && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col justify-center items-center overflow-hidden whitespace-nowrap">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col justify-center items-start overflow-hidden whitespace-nowrap">
             <span className="text-[22px] font-serif tracking-[0.12em] text-[#000000] leading-none font-bold" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>LUXORIA</span>
             <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">User Workspace</span>
           </motion.div>
@@ -237,7 +237,7 @@ export default function DashboardLayout() {
               <Menu className="w-6 h-6" />
             </button>
             <div className="hidden lg:flex items-center gap-3">
-              <span className="text-[11px] font-bold text-[#666666] tracking-[0.15em] uppercase">User Core</span>
+              <span className="text-[11px] font-bold text-[#666666] tracking-[0.15em] uppercase">User Workspace</span>
               <span className="text-[#ECECEC] text-lg font-light leading-none mb-0.5">/</span>
               <span className="text-[13px] font-bold text-[#C9A75D] tracking-wider uppercase">{activePageName}</span>
             </div>
@@ -270,7 +270,7 @@ export default function DashboardLayout() {
               
               <div className="text-left hidden sm:block">
                 <p className="text-[13px] font-bold text-[#0F0F0F] leading-tight group-hover:text-[#C9A75D] transition-colors">{user?.name || 'Luxoria Client'}</p>
-                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5">{user?.role === 'user' ? 'Valued Client' : (user?.role || 'Member')}</p>
+                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5">User Workspace</p>
               </div>
             </button>
 

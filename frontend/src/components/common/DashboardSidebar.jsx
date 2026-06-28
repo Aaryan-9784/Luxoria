@@ -65,11 +65,16 @@ export default function DashboardSidebar() {
         collapsed ? 'justify-center' : 'justify-between'
       )}>
         {!collapsed && (
-          <NavLink to="/" className="flex items-center gap-2 group">
-            <Car className="w-6 h-6 text-accent" />
-            <span className="text-lg font-bold tracking-[0.15em] uppercase text-primary">
-              Luxoria
-            </span>
+          <NavLink to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center shadow-md shrink-0">
+              <Car className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex flex-col justify-center items-start overflow-hidden whitespace-nowrap">
+              <span className="text-[20px] font-serif tracking-[0.12em] text-primary leading-none font-bold">LUXORIA</span>
+              <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-accent mt-1">
+                {user?.role === 'admin' ? 'Admin Workspace' : user?.role === 'vendor' ? 'Partner Workspace' : 'User Workspace'}
+              </span>
+            </div>
           </NavLink>
         )}
         {collapsed && <Car className="w-6 h-6 text-accent" />}
@@ -115,7 +120,9 @@ export default function DashboardSidebar() {
             <Avatar src={user?.avatar?.url} name={user?.name} size="sm" />
             <div className="flex-1 min-w-0">
               <p className="text-body-sm font-semibold text-primary truncate">{user?.name}</p>
-              <p className="text-caption text-muted truncate capitalize">{user?.role}</p>
+              <p className="text-caption text-muted truncate capitalize">
+                {user?.role === 'admin' ? 'Admin Workspace' : user?.role === 'vendor' ? 'Partner Workspace' : 'User Workspace'}
+              </p>
             </div>
           </div>
         ) : (

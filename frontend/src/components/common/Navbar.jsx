@@ -75,9 +75,16 @@ export default function Navbar() {
             <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center shadow-lg group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-shadow">
               <Car className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold tracking-[0.2em] uppercase text-primary font-serif">
-              Luxoria
-            </span>
+            <div className="flex flex-col items-start">
+              <span className="text-[22px] font-bold tracking-[0.12em] uppercase text-primary font-serif leading-none">
+                LUXORIA
+              </span>
+              {isAuthenticated && user?.role && (
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-accent mt-1">
+                  {user.role === 'admin' ? 'Admin Workspace' : user.role === 'vendor' ? 'Partner Workspace' : 'User Workspace'}
+                </span>
+              )}
+            </div>
           </Link>
 
           {/* ── Center Nav ── */}
@@ -177,9 +184,14 @@ export default function Navbar() {
                     name={user?.name}
                     size="sm"
                   />
-                  <span className="text-body-sm font-medium hidden xl:block text-primary group-hover:text-accent transition-colors">
-                    {user?.name}
-                  </span>
+                  <div className="hidden xl:flex flex-col text-left">
+                    <span className="text-body-sm font-medium text-primary group-hover:text-accent transition-colors leading-tight">
+                      {user?.name}
+                    </span>
+                    <span className="text-[10px] font-medium text-secondary mt-0.5 uppercase tracking-wider">
+                      {user?.role === 'admin' ? 'Admin Workspace' : user?.role === 'vendor' ? 'Partner Workspace' : 'User Workspace'}
+                    </span>
+                  </div>
                 </div>
               </div>
             ) : (
