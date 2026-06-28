@@ -5,7 +5,8 @@ import { createVendorVehicle } from '@/redux/slices/vendorSlice';
 import api from '@/services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, ArrowRight, ArrowLeft, X, Link as LinkIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 const STEPS = [
   { id: 1, title: 'Basic Information' },
@@ -25,7 +26,13 @@ export default function AddVehicleWizard() {
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [uploadError, setUploadError] = useState('');
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
+  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm({
+    defaultValues: {
+      category: 'sports',
+      transmission: 'automatic',
+      fuelType: 'petrol'
+    }
+  });
 
   // Step 1 & 2 Submit (Creates Vehicle in DB)
   const onFormSubmit = async (data) => {
@@ -190,12 +197,25 @@ export default function AddVehicleWizard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <label className={labelClasses}>Category</label>
-                    <select {...register("category", { required: true })} className={inputClasses}>
-                      <option value="sports">Sports</option>
-                      <option value="luxury">Luxury</option>
-                      <option value="suv">SUV</option>
-                      <option value="sedan">Sedan</option>
-                    </select>
+                    <Controller
+                      name="category"
+                      control={control}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <CustomSelect
+                          value={field.value}
+                          onChange={field.onChange}
+                          options={[
+                            { value: 'sports', label: 'Sports' },
+                            { value: 'luxury', label: 'Luxury' },
+                            { value: 'suv', label: 'SUV' },
+                            { value: 'sedan', label: 'Sedan' }
+                          ]}
+                          className={inputClasses + " p-0"}
+                          icon={null}
+                        />
+                      )}
+                    />
                   </div>
                   <div>
                     <label className={labelClasses}>Price Per Day ($)</label>
@@ -203,19 +223,43 @@ export default function AddVehicleWizard() {
                   </div>
                   <div>
                     <label className={labelClasses}>Transmission</label>
-                    <select {...register("transmission")} className={inputClasses}>
-                      <option value="automatic">Automatic</option>
-                      <option value="manual">Manual</option>
-                    </select>
+                    <Controller
+                      name="transmission"
+                      control={control}
+                      render={({ field }) => (
+                        <CustomSelect
+                          value={field.value}
+                          onChange={field.onChange}
+                          options={[
+                            { value: 'automatic', label: 'Automatic' },
+                            { value: 'manual', label: 'Manual' }
+                          ]}
+                          className={inputClasses + " p-0"}
+                          icon={null}
+                        />
+                      )}
+                    />
                   </div>
                   <div>
                     <label className={labelClasses}>Fuel Type</label>
-                    <select {...register("fuelType")} className={inputClasses}>
-                      <option value="petrol">Petrol</option>
-                      <option value="diesel">Diesel</option>
-                      <option value="electric">Electric</option>
-                      <option value="hybrid">Hybrid</option>
-                    </select>
+                    <Controller
+                      name="fuelType"
+                      control={control}
+                      render={({ field }) => (
+                        <CustomSelect
+                          value={field.value}
+                          onChange={field.onChange}
+                          options={[
+                            { value: 'petrol', label: 'Petrol' },
+                            { value: 'diesel', label: 'Diesel' },
+                            { value: 'electric', label: 'Electric' },
+                            { value: 'hybrid', label: 'Hybrid' }
+                          ]}
+                          className={inputClasses + " p-0"}
+                          icon={null}
+                        />
+                      )}
+                    />
                   </div>
                   <div>
                     <label className={labelClasses}>Seats</label>

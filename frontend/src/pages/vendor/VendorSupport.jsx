@@ -5,6 +5,7 @@ import {
   MessageSquare, PhoneCall, Mail, ChevronDown, 
   Send, CheckCircle2, AlertCircle, FileText, Sparkles
 } from 'lucide-react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 const FAQS = [
   {
@@ -175,15 +176,17 @@ export default function VendorSupport() {
                 <div>
                   <label className="block text-[10px] font-bold text-[#0F0F0F] uppercase tracking-[0.2em] mb-2.5">Priority Level</label>
                   <div className="relative">
-                    <select 
+                    <CustomSelect
                       value={ticketPriority}
-                      onChange={(e) => setTicketPriority(e.target.value)}
-                      className="w-full bg-[#F5F5F5] border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3.5 px-4 rounded-xl focus:outline-none focus:border-[#C9A75D] focus:ring-1 focus:ring-[#C9A75D]/50 transition-all appearance-none cursor-pointer"
-                    >
-                      <option value="normal">Normal</option>
-                      <option value="high">High (Time Sensitive)</option>
-                      <option value="urgent">Urgent (Active Booking Issue)</option>
-                    </select>
+                      onChange={setTicketPriority}
+                      options={[
+                        { value: 'normal', label: 'Normal' },
+                        { value: 'high', label: 'High (Time Sensitive)' },
+                        { value: 'urgent', label: 'Urgent (Active Booking Issue)' }
+                      ]}
+                      icon={null}
+                      className="w-full bg-[#F5F5F5] border border-[#ECECEC] py-3.5 px-4"
+                    />
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
                   </div>
                 </div>

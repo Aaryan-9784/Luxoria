@@ -4,6 +4,7 @@ import { fetchVendorBookings, updateBookingStatus } from '@/redux/slices/vendorS
 import { motion } from 'framer-motion';
 import { Search, CalendarDays, MapPin, Check, X as RejectIcon, User, Filter, AlertCircle, FileText } from 'lucide-react';
 import { staggerContainer, staggerItem } from '@/lib/motion';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function VendorBookings() {
   const dispatch = useDispatch();
@@ -69,18 +70,20 @@ export default function VendorBookings() {
             />
           </div>
           <div className="relative w-full sm:w-48">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
-            <select 
+            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
+            <CustomSelect
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full bg-white border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3 pl-11 pr-4 rounded-xl focus:outline-none focus:border-[#C9A75D] transition-all appearance-none cursor-pointer shadow-sm"
-            >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
+              onChange={setStatusFilter}
+              options={[
+                { value: 'all', label: 'All Statuses' },
+                { value: 'pending', label: 'Pending' },
+                { value: 'confirmed', label: 'Confirmed' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' }
+              ]}
+              icon={null}
+              className="w-full text-[13px] py-3 pl-11 shadow-sm"
+            />
           </div>
         </div>
       </div>

@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchVendorVehicles, fetchVendorBookings } from '@/redux/slices/vendorSlice';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import { Car, Wallet, ArrowRight, AlertCircle, BarChart3, CalendarDays, PlusCircle, CheckCircle2, LayoutGrid, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function VendorOverview() {
   const dispatch = useDispatch();
   const { stats, bookings, loading } = useSelector(state => state.vendor);
+  const [timeFilter, setTimeFilter] = useState('This Month');
 
   useEffect(() => {
     dispatch(fetchVendorVehicles());
@@ -95,11 +97,17 @@ export default function VendorOverview() {
         <motion.div variants={staggerItem} className="lg:col-span-2 bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F]">Revenue Trends</h3>
-            <select className="bg-[#F5F5F5] border border-[#ECECEC] text-[#0F0F0F] text-[11px] font-bold uppercase tracking-wider py-2 px-3 rounded-lg focus:outline-none focus:border-[#C9A75D] cursor-pointer">
-              <option>This Month</option>
-              <option>Last 3 Months</option>
-              <option>This Year</option>
-            </select>
+            <CustomSelect
+              value={timeFilter}
+              onChange={setTimeFilter}
+              options={[
+                { value: 'This Month', label: 'This Month' },
+                { value: 'Last 3 Months', label: 'Last 3 Months' },
+                { value: 'This Year', label: 'This Year' }
+              ]}
+              icon={null}
+              className="bg-[#F5F5F5] py-2 px-3"
+            />
           </div>
           
           <div className="flex-1 min-h-[250px] flex items-center justify-center border border-dashed border-[#ECECEC] rounded-xl bg-[#F5F5F5]/30">

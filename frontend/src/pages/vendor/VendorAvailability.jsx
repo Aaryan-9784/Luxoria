@@ -4,6 +4,7 @@ import { fetchVendorVehicles, fetchVendorBookings } from '@/redux/slices/vendorS
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import { CalendarRange, Car, ChevronLeft, ChevronRight, Settings2, Plus, Calendar as CalendarIcon, ShieldAlert } from 'lucide-react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function VendorAvailability() {
   const dispatch = useDispatch();
@@ -82,17 +83,17 @@ export default function VendorAvailability() {
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
-            <Car className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
-            <select 
+            <Car className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
+            <CustomSelect
               value={selectedVehicle}
-              onChange={(e) => setSelectedVehicle(e.target.value)}
-              className="w-full bg-white border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3 pl-11 pr-4 rounded-xl focus:outline-none focus:border-[#C9A75D] transition-all appearance-none cursor-pointer shadow-sm"
-            >
-              <option value="all">All Vehicles</option>
-              {activeVehicles.map(v => (
-                <option key={v._id} value={v._id}>{v.name}</option>
-              ))}
-            </select>
+              onChange={setSelectedVehicle}
+              options={[
+                { value: 'all', label: 'All Vehicles' },
+                ...activeVehicles.map(v => ({ value: v._id, label: v.name }))
+              ]}
+              icon={null}
+              className="w-full text-[13px] py-3 pl-11 shadow-sm"
+            />
           </div>
           <button 
             className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all w-full sm:w-auto shrink-0"

@@ -4,6 +4,7 @@ import { fetchVendorBookings } from '@/redux/slices/vendorSlice';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import { Wallet, TrendingUp, DollarSign, Download, ArrowUpRight, Calendar, FileText } from 'lucide-react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function VendorRevenue() {
   const dispatch = useDispatch();
@@ -79,16 +80,18 @@ export default function VendorRevenue() {
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <div className="relative w-full sm:w-48">
-            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
-            <select 
+            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
+            <CustomSelect
               value={timeFilter}
-              onChange={(e) => setTimeFilter(e.target.value)}
-              className="w-full bg-white border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3 pl-11 pr-4 rounded-xl focus:outline-none focus:border-[#C9A75D] transition-all appearance-none cursor-pointer shadow-sm"
-            >
-              <option value="all">All Time</option>
-              <option value="this_month">This Month</option>
-              <option value="last_30">Last 30 Days</option>
-            </select>
+              onChange={setTimeFilter}
+              options={[
+                { value: 'all', label: 'All Time' },
+                { value: 'this_month', label: 'This Month' },
+                { value: 'last_30', label: 'Last 30 Days' }
+              ]}
+              icon={null}
+              className="w-full text-[13px] py-3 pl-11 shadow-sm"
+            />
           </div>
           <button 
             onClick={handleExportCSV}

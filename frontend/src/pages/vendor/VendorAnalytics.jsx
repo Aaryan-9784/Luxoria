@@ -4,6 +4,7 @@ import { fetchVendorVehicles, fetchVendorBookings } from '@/redux/slices/vendorS
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import { BarChart3, TrendingUp, Users, Star, Car, Activity, Download, ArrowRight } from 'lucide-react';
+import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
 
 export default function VendorAnalytics() {
@@ -67,16 +68,18 @@ export default function VendorAnalytics() {
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <div className="relative w-full sm:w-48">
-            <Activity className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
-            <select 
+            <Activity className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
+            <CustomSelect
               value={timeFilter}
-              onChange={(e) => setTimeFilter(e.target.value)}
-              className="w-full bg-white border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3 pl-11 pr-4 rounded-xl focus:outline-none focus:border-[#C9A75D] transition-all appearance-none cursor-pointer shadow-sm"
-            >
-              <option value="this_year">This Year</option>
-              <option value="last_year">Last Year</option>
-              <option value="all_time">All Time</option>
-            </select>
+              onChange={setTimeFilter}
+              options={[
+                { value: 'this_year', label: 'This Year' },
+                { value: 'last_year', label: 'Last Year' },
+                { value: 'all_time', label: 'All Time' }
+              ]}
+              icon={null}
+              className="w-full text-[13px] py-3 pl-11 shadow-sm"
+            />
           </div>
           <button 
             className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all w-full sm:w-auto shrink-0"
