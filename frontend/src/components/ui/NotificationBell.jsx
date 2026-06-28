@@ -3,12 +3,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchNotifications, markAsRead, markAllAsRead } from '@/redux/slices/notificationSlice';
 import { Bell, Check, Info, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function NotificationBell() {
   const dispatch = useDispatch();
   const { notifications, unreadCount } = useSelector(state => state.notifications);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const location = useLocation();
+
+  const getNotificationsPath = () => {
+    if (location.pathname.startsWith('/admin')) return '/admin/notifications';
+    if (location.pathname.startsWith('/vendor')) return '/vendor/notifications';
+    return '/notifications';
+  };
 
   useEffect(() => {
     dispatch(fetchNotifications());
@@ -120,6 +128,16 @@ export default function NotificationBell() {
                   ))}
                 </div>
               )}
+            </div>
+            
+            <div className="p-3 border-t border-border bg-surface/30">
+              <Link 
+                to={getNotificationsPath()} 
+                onClick={() => setIsOpen(false)}
+                className="block w-full py-2 text-center text-sm font-semibold text-primary hover:bg-surface/50 rounded-lg transition-colors"
+              >
+                View all notifications
+              </Link>
             </div>
           </motion.div>
         )}

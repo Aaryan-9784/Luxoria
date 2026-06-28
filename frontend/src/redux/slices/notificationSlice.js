@@ -21,8 +21,8 @@ export const fetchNotifications = createAsyncThunk('notifications/fetchAll', asy
 // Mark a single notification as read
 export const markAsRead = createAsyncThunk('notifications/markAsRead', async (id, { rejectWithValue }) => {
   try {
-    const response = await api.put(`/notifications/${id}/read`);
-    return response.data.data.notification;
+    await api.put(`/notifications/${id}/read`);
+    return { _id: id };
   } catch (error) {
     return rejectWithValue(error.response?.data?.error?.message || 'Failed to mark notification as read');
   }

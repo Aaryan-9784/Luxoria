@@ -14,10 +14,11 @@ const router = Router();
 // Public routes
 router.get('/', getVehicles);
 router.get('/featured', getFeaturedVehicles);
-router.get('/:id', getVehicle);
-
 // Vendor routes
 router.get('/vendor', protect, authorize('vendor'), getVendorVehicles);
+
+// Public route with parameter
+router.get('/:id', getVehicle);
 router.post('/', protect, authorize('vendor'), validate(createVehicleSchema), createVehicle);
 router.put('/:id', protect, authorize('vendor'), validate(updateVehicleSchema), updateVehicle);
 router.delete('/:id', protect, authorize('vendor'), deleteVehicle);

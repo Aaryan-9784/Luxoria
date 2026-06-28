@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';
+import NotificationBell from '@/components/ui/NotificationBell';
 
 const NAV_GROUPS = [
   {
@@ -50,6 +51,7 @@ export default function DashboardLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
 
   useEffect(() => {
     dispatch(fetchNotifications());
@@ -243,12 +245,7 @@ export default function DashboardLayout() {
           
           <div className="flex items-center gap-4 lg:gap-6 relative">
             <CalendarDropdown />
-            <button onClick={() => navigate('/notifications')} className="relative p-2 text-[#666666] hover:text-[#0F0F0F] transition-colors" title="Notifications">
-              <Bell className="w-5 h-5" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#5A1122] rounded-full ring-2 ring-white" />
-              )}
-            </button>
+            <NotificationBell />
             
             <button 
               onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -257,8 +254,13 @@ export default function DashboardLayout() {
             >
               <div className="relative shrink-0 w-8 h-8 rounded-full p-[2px] bg-gradient-to-tr from-[#C9A75D] to-[#E8D090]">
                 <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-[#0F0F0F]">
-                  {user?.avatar?.url ? (
-                    <img src={user.avatar.url} alt="User" className="w-full h-full object-cover" />
+                  {user?.avatar?.url && !avatarError ? (
+                    <img 
+                      src={user.avatar.url} 
+                      alt="User" 
+                      className="w-full h-full object-cover" 
+                      onError={() => setAvatarError(true)}
+                    />
                   ) : (
                     <span className="w-full h-full flex items-center justify-center text-xs font-bold text-[#C9A75D]">{user?.name?.charAt(0) || 'U'}</span>
                   )}

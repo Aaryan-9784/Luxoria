@@ -11,6 +11,8 @@ export default function Avatar({
   size = 'md',
   className,
 }) {
+  const [hasError, setHasError] = React.useState(false);
+
   const sizeClasses = {
     xs: 'w-7 h-7 text-[10px]',
     sm: 'w-8 h-8 text-xs',
@@ -24,11 +26,12 @@ export default function Avatar({
     ? name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
     : '?';
 
-  if (src) {
+  if (src && !hasError) {
     return (
       <img
         src={src}
         alt={alt || name}
+        onError={() => setHasError(true)}
         className={cn(
           'rounded-full object-cover border-2 border-white shadow-sm',
           sizeClasses[size],
