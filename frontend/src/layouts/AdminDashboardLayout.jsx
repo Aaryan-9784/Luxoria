@@ -6,7 +6,7 @@ import { fetchNotifications } from '@/redux/slices/notificationSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Users, Building2, Car, ShieldCheck, 
-  CalendarDays, Settings, LogOut, Menu, X, Command,
+  CalendarDays, Settings, LogOut, Menu, X, Command, Home,
   ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell, Globe, Headset
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
@@ -236,6 +236,10 @@ export default function AdminDashboardLayout() {
               <Menu className="w-6 h-6" />
             </button>
             <div className="hidden lg:flex items-center gap-3">
+              <Link to="/" className="text-[#666666] hover:text-[#C9A75D] transition-colors flex items-center">
+                <Home className="w-[14px] h-[14px]" />
+              </Link>
+              <span className="text-[#ECECEC] text-lg font-light leading-none mb-0.5">/</span>
               <span className="text-[11px] font-bold text-[#666666] tracking-[0.15em] uppercase">Admin Workspace</span>
               <span className="text-[#ECECEC] text-lg font-light leading-none mb-0.5">/</span>
               <span className="text-[13px] font-bold text-[#C9A75D] tracking-wider uppercase">{activePageName}</span>

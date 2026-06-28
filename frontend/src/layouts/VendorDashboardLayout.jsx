@@ -6,7 +6,7 @@ import { fetchNotifications } from '@/redux/slices/notificationSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Car, PlusCircle, CalendarDays, 
-  LineChart, Settings, LogOut, Menu, X,
+  LineChart, Settings, LogOut, Menu, X, Home,
   ChevronLeft, ChevronRight, BarChart3, Clock, ShieldCheck, Heart, User, Bell, Globe, Wallet, HelpCircle
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
@@ -236,6 +236,10 @@ export default function VendorDashboardLayout() {
               <Menu className="w-6 h-6" />
             </button>
             <div className="hidden lg:flex items-center gap-3">
+              <Link to="/" className="text-[#666666] hover:text-[#C9A75D] transition-colors flex items-center">
+                <Home className="w-[14px] h-[14px]" />
+              </Link>
+              <span className="text-[#ECECEC] text-lg font-light leading-none mb-0.5">/</span>
               <span className="text-[11px] font-bold text-[#666666] tracking-[0.15em] uppercase">Partner Workspace</span>
               <span className="text-[#ECECEC] text-lg font-light leading-none mb-0.5">/</span>
               <span className="text-[13px] font-bold text-[#C9A75D] tracking-wider uppercase">{activePageName}</span>
