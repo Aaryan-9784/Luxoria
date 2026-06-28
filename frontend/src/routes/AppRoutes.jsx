@@ -46,6 +46,7 @@ import VendorDashboardLayout from '@/layouts/VendorDashboardLayout';
 const VendorOverview = React.lazy(() => import('@/pages/vendor/VendorOverview'));
 const ManageFleet = React.lazy(() => import('@/pages/vendor/ManageFleet'));
 const AddVehicleWizard = React.lazy(() => import('@/pages/vendor/AddVehicleWizard'));
+const EditVehicleWizard = React.lazy(() => import('@/pages/vendor/EditVehicleWizard'));
 const VendorBookings = React.lazy(() => import('@/pages/vendor/VendorBookings'));
 const VendorRevenue = React.lazy(() => import('@/pages/vendor/VendorRevenue'));
 const VendorSupport = React.lazy(() => import('@/pages/vendor/VendorSupport'));
@@ -161,6 +162,7 @@ export default function AppRoutes() {
             <Route path="/vendor/dashboard" element={<VendorOverview />} />
             <Route path="/vendor/vehicles" element={<ManageFleet />} />
             <Route path="/vendor/add-vehicle" element={<AddVehicleWizard />} />
+            <Route path="/vendor/edit-vehicle/:id" element={<EditVehicleWizard />} />
             <Route path="/vendor/bookings" element={<VendorBookings />} />
             <Route path="/vendor/availability" element={<VendorAvailability />} />
             <Route path="/vendor/revenue" element={<VendorRevenue />} />

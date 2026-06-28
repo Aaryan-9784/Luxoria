@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchVendorVehicles } from '@/redux/slices/vendorSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PlusCircle, Search, Edit2, Trash2, CheckCircle2, Clock, AlertCircle, Car } from 'lucide-react';
 import { staggerContainer, staggerItem } from '@/lib/motion';
+import { deleteVendorVehicle } from '@/redux/slices/vendorSlice';
 
 export default function ManageFleet() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { vehicles, loading } = useSelector(state => state.vendor);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -19,6 +21,12 @@ export default function ManageFleet() {
     v.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     v.brand.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this vehicle?')) {
+      dispatch(deleteVendorVehicle(id));
+    }
+  };
 
   const getStatusBadge = (status) => {
     switch(status) {
@@ -104,10 +112,10 @@ export default function ManageFleet() {
                 </div>
                 <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
                   <div className="flex flex-col gap-2">
-                    <button className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#C9A75D] shadow-lg transition-colors" title="Edit Vehicle">
+                    <button className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#C9A75D] shadow-lg transition-colors" title="Edit Vehicle" onClick={() => navigate(`/vendor/edit-vehicle/${vehicle._id}`)}>
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
-                    <button className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#DC2626] shadow-lg transition-colors" title="Delete Vehicle">
+                    <button className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#DC2626] shadow-lg transition-colors" title="Delete Vehicle" onClick={() => handleDelete(vehicle._id)}>
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>

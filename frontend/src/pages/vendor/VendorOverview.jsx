@@ -6,6 +6,7 @@ import { staggerContainer, staggerItem } from '@/lib/motion';
 import { Car, Wallet, ArrowRight, AlertCircle, BarChart3, CalendarDays, PlusCircle, CheckCircle2, LayoutGrid, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CustomSelect from '@/components/ui/CustomSelect';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function VendorOverview() {
   const dispatch = useDispatch();
@@ -34,6 +35,24 @@ export default function VendorOverview() {
     { label: 'Total Fleet', value: stats?.totalVehicles || 0, icon: LayoutGrid },
     { label: 'Pending Approvals', value: stats?.pendingApprovals || 0, icon: AlertCircle },
   ];
+
+  const generateChartData = () => {
+    // Generate dummy data based on timeFilter for demonstration
+    const data = [];
+    const points = timeFilter === 'This Year' ? 12 : timeFilter === 'Last 3 Months' ? 12 : 30;
+    const labelPrefix = timeFilter === 'This Year' ? 'Month ' : timeFilter === 'Last 3 Months' ? 'Week ' : 'Day ';
+    
+    let baseValue = 500;
+    for (let i = 1; i <= points; i++) {
+      baseValue = Math.max(100, baseValue + (Math.random() * 400 - 150));
+      data.push({
+        name: `${labelPrefix}${i}`,
+        revenue: Math.floor(baseValue)
+      });
+    }
+    return data;
+  };
+  const chartData = generateChartData();
 
   return (
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">
@@ -110,14 +129,44 @@ export default function VendorOverview() {
             />
           </div>
           
-          <div className="flex-1 min-h-[250px] flex items-center justify-center border border-dashed border-[#ECECEC] rounded-xl bg-[#F5F5F5]/30">
-            <div className="text-center">
-              <BarChart3 className="w-8 h-8 text-[#ECECEC] mx-auto mb-3" />
-              <p className="text-[12px] font-bold text-[#666666] uppercase tracking-wider flex items-center justify-center gap-2">
-                Chart Visualization Ready
-              </p>
-              <p className="text-[11px] text-[#9CA3AF] mt-1">Integrate Recharts or Chart.js here</p>
-            </div>
+          <div className="flex-1 min-h-[250px] w-full mt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#C9A75D" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#C9A75D" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ECECEC" />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 10, fill: '#9CA3AF', fontWeight: 'bold' }} 
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 10, fill: '#9CA3AF', fontWeight: 'bold' }}
+                  tickFormatter={(value) => `$${value}`}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0F0F0F', border: 'none', borderRadius: '8px', color: '#fff' }}
+                  itemStyle={{ color: '#C9A75D', fontWeight: 'bold' }}
+                  labelStyle={{ color: '#9CA3AF', marginBottom: '4px', fontSize: '12px' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="#C9A75D" 
+                  strokeWidth={3}
+                  fillOpacity={1} 
+                  fill="url(#colorRevenue)" 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </motion.div>
 

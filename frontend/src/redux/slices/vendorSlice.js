@@ -45,6 +45,15 @@ export const createVendorVehicle = createAsyncThunk('vendor/createVehicle', asyn
   }
 });
 
+export const deleteVendorVehicle = createAsyncThunk('vendor/deleteVehicle', async (id, { rejectWithValue }) => {
+  try {
+    await api.delete(`/vehicles/${id}`);
+    return id;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error?.message || 'Failed to delete vehicle');
+  }
+});
+
 export const vendorSlice = createSlice({
   name: 'vendor',
   initialState,
@@ -109,6 +118,14 @@ export const vendorSlice = createSlice({
           if (action.payload.status === 'pending') {
             state.stats.pendingApprovals += 1;
           }
+        }
+      })
+      
+      // Delete Vehicle
+      .addCase(deleteVendorVehicle.fulfilled, (state, action) => {
+        state.vehicles = state.vehicles.filter(v => v._id !== action.payload);
+        if (state.stats) {
+          state.stats.totalVehicles = Math.max(0, state.stats.totalVehicles - 1);
         }
       });
   }

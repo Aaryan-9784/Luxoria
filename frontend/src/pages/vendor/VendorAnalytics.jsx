@@ -6,6 +6,7 @@ import { staggerContainer, staggerItem } from '@/lib/motion';
 import { BarChart3, TrendingUp, Users, Star, Car, Activity, Download, ArrowRight } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
+import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function VendorAnalytics() {
   const dispatch = useDispatch();
@@ -119,28 +120,37 @@ export default function VendorAnalytics() {
             <span className="text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider">Last 6 Months</span>
           </div>
           
-          <div className="flex-1 flex items-end justify-between gap-4 h-64 mt-auto px-4">
-            {chartData.map((data, index) => {
-              const heightPercent = totalRevenue > 0 ? (data.revenue / maxRevenue) * 100 : 5;
-              return (
-                <div key={index} className="flex flex-col items-center flex-1 group">
-                  <div className="w-full relative flex items-end justify-center h-full rounded-t-md bg-[#F5F5F5] overflow-hidden">
-                    {/* Tooltip */}
-                    <div className="absolute top-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[#0F0F0F] text-white text-[10px] font-bold px-2 py-1 rounded pointer-events-none whitespace-nowrap z-10">
-                      ${Math.round(data.revenue).toLocaleString('en-US')}
-                    </div>
-                    {/* Bar */}
-                    <motion.div 
-                      initial={{ height: 0 }}
-                      animate={{ height: `${heightPercent}%` }}
-                      transition={{ duration: 1, delay: index * 0.1 }}
-                      className="w-full bg-[#0F0F0F] group-hover:bg-[#C9A75D] rounded-t-md transition-colors duration-300"
-                    />
-                  </div>
-                  <span className="text-[10px] font-bold text-[#666666] uppercase tracking-wider mt-3">{data.name}</span>
-                </div>
-              );
-            })}
+          <div className="flex-1 w-full h-64 mt-8">
+            <ResponsiveContainer width="100%" height="100%">
+              <RechartsBarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ECECEC" />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 10, fill: '#9CA3AF', fontWeight: 'bold' }} 
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 10, fill: '#9CA3AF', fontWeight: 'bold' }}
+                  tickFormatter={(value) => `$${value}`}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0F0F0F', border: 'none', borderRadius: '8px', color: '#fff' }}
+                  itemStyle={{ color: '#C9A75D', fontWeight: 'bold' }}
+                  labelStyle={{ color: '#9CA3AF', marginBottom: '4px', fontSize: '12px' }}
+                  cursor={{ fill: '#F5F5F5' }}
+                />
+                <Bar 
+                  dataKey="revenue" 
+                  fill="#0F0F0F" 
+                  radius={[4, 4, 0, 0]}
+                  activeBar={{ fill: '#C9A75D' }}
+                />
+              </RechartsBarChart>
+            </ResponsiveContainer>
           </div>
         </motion.div>
 
