@@ -6,7 +6,7 @@ import { fetchNotifications } from '@/redux/slices/notificationSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Car, PlusCircle, CalendarDays, 
-  LineChart, Settings, LogOut, Menu, X, Home,
+  LineChart, Settings, LogOut, Menu, X,
   ChevronLeft, ChevronRight, BarChart3, Clock, ShieldCheck, Heart, User, Bell, Globe, Wallet, HelpCircle
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
@@ -236,8 +236,13 @@ export default function VendorDashboardLayout() {
               <Menu className="w-6 h-6" />
             </button>
             <div className="hidden lg:flex items-center gap-3">
-              <Link to="/" className="text-[#666666] hover:text-[#C9A75D] transition-colors flex items-center">
-                <Home className="w-[14px] h-[14px]" />
+              <Link to="/" className="group/home flex items-center gap-1.5 transition-all duration-300" title="Back to Home">
+                <span className="flex items-center justify-center w-6 h-6 rounded-md bg-gradient-to-br from-[#C9A75D] to-[#B8963E] shadow-sm group-hover/home:shadow-md group-hover/home:scale-110 transition-all duration-300">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9.5L12 3L21 9.5V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9.5Z" fill="white" fillOpacity="0.95"/>
+                    <path d="M9 22V12H15V22" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.6"/>
+                  </svg>
+                </span>
               </Link>
               <span className="text-[#ECECEC] text-lg font-light leading-none mb-0.5">/</span>
               <span className="text-[11px] font-bold text-[#666666] tracking-[0.15em] uppercase">Partner Workspace</span>
