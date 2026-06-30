@@ -8,14 +8,16 @@ import CustomSelect from '@/components/ui/CustomSelect';
 export default function VendorManagement() {
   const dispatch = useDispatch();
   const { vendors, loading, totalVendors } = useSelector(state => state.admin);
+  const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'verified', 'pending'
   const [currentPage, setCurrentPage] = useState(1);
   const vendorsPerPage = 10;
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchVendors());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   // Filtering
   const filteredVendors = vendors.filter(v => {

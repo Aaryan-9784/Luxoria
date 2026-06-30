@@ -9,13 +9,15 @@ import CustomSelect from '@/components/ui/CustomSelect';
 export default function AdminCollections() {
   const dispatch = useDispatch();
   const { bookings, loading } = useSelector(state => state.admin);
+  const { accessToken } = useSelector(state => state.auth);
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchAdminBookings());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const totalCollected = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
   const processingFees = totalCollected * 0.15; // 15% platform fee

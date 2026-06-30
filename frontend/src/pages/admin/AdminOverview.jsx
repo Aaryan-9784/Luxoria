@@ -9,12 +9,14 @@ import { Link } from 'react-router-dom';
 export default function AdminOverview() {
   const dispatch = useDispatch();
   const { analytics, bookings, loading } = useSelector(state => state.admin);
+  const { accessToken } = useSelector(state => state.auth);
   const [analyticsLoaded, setAnalyticsLoaded] = React.useState(false);
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchAnalytics()).then(() => setAnalyticsLoaded(true));
     dispatch(fetchAdminBookings('?limit=5&sort=-createdAt'));
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   if (!analyticsLoaded || !analytics) {
     return (

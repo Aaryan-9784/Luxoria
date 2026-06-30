@@ -43,10 +43,12 @@ const getNotificationStyle = (type) => {
 export default function NotificationsPage() {
   const dispatch = useDispatch();
   const { notifications, loading } = useSelector((state) => state.notifications);
+  const { accessToken } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchNotifications());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const handleMarkAllAsRead = () => {
     dispatch(markAllAsRead());

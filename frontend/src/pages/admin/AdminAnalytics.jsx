@@ -51,11 +51,13 @@ const RevenueTooltip = ({ active, payload, label }) => {
 export default function AdminAnalytics() {
   const dispatch = useDispatch();
   const { analytics, loading } = useSelector((state) => state.admin);
+  const { accessToken } = useSelector((state) => state.auth);
   const [dateRange, setDateRange] = useState('year');
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchAnalytics(dateRange));
-  }, [dispatch, dateRange]);
+  }, [dispatch, dateRange, accessToken]);
 
   // ── KPIs
   const kpis = {

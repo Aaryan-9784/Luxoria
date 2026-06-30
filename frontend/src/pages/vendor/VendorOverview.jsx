@@ -11,12 +11,14 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 export default function VendorOverview() {
   const dispatch = useDispatch();
   const { stats, bookings, loading } = useSelector(state => state.vendor);
+  const { accessToken } = useSelector(state => state.auth);
   const [timeFilter, setTimeFilter] = useState('This Month');
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchVendorVehicles());
     dispatch(fetchVendorBookings());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const recentRequests = bookings.filter(b => b.status === 'pending');
 

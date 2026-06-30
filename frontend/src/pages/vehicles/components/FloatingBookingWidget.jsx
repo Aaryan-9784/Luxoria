@@ -5,6 +5,17 @@ import { createBooking, createPaymentOrder } from '@/redux/slices/bookingSlice';
 import { CalendarDays, MapPin, Info, ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
+/** Lazily inject the Razorpay checkout script only when needed */
+const loadRazorpayScript = () =>
+  new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true);
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+
 export default function FloatingBookingWidget({ vehicle }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -73,6 +84,13 @@ export default function FloatingBookingWidget({ vehicle }) {
       const orderResult = await dispatch(createPaymentOrder(bookingId));
       
       if (createPaymentOrder.fulfilled.match(orderResult)) {
+        // 3. Load Razorpay script lazily (only when payment is triggered)
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          alert("Failed to load payment gateway. Please check your connection and try again.");
+          return;
+        }
+
         const options = {
           key: orderResult.payload.key,
           amount: orderResult.payload.amount,

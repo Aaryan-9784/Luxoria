@@ -8,14 +8,16 @@ import CustomSelect from '@/components/ui/CustomSelect';
 export default function UserManagement() {
   const dispatch = useDispatch();
   const { users, loading, totalUsers } = useSelector(state => state.admin);
+  const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'active', 'suspended'
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchUsers('?role=user'));
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   // Filtering
   const filteredUsers = users.filter(u => {

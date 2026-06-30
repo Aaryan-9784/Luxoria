@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useSelector } from 'react-redux';
 import api from '@/services/api';
 import { Download, Receipt, AlertCircle, CreditCard, CalendarDays, Hash, ChevronLeft, ChevronRight, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -10,8 +11,10 @@ export default function UserInvoices() {
   const [timeframe, setTimeframe] = useState('all'); // all, month, year
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  const { accessToken } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    if (!accessToken) return;
     const fetchPayments = async () => {
       try {
         const res = await api.get('/bookings/my?status=confirmed,completed');
@@ -33,7 +36,7 @@ export default function UserInvoices() {
       }
     };
     fetchPayments();
-  }, []);
+  }, [accessToken]);
 
   const filteredPayments = useMemo(() => {
     const now = new Date();

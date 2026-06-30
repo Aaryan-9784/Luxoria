@@ -9,14 +9,16 @@ import CustomSelect from '@/components/ui/CustomSelect';
 export default function VendorAvailability() {
   const dispatch = useDispatch();
   const { vehicles, bookings, loading } = useSelector(state => state.vendor);
+  const { accessToken } = useSelector(state => state.auth);
   
   const [selectedVehicle, setSelectedVehicle] = useState('all');
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchVendorVehicles());
     dispatch(fetchVendorBookings());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const activeVehicles = vehicles.filter(v => v.status === 'approved');
 

@@ -8,14 +8,16 @@ import CustomSelect from '@/components/ui/CustomSelect';
 export default function AdminBookings() {
   const dispatch = useDispatch();
   const { bookings, loading, totalBookings } = useSelector(state => state.admin);
+  const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'confirmed', 'completed', 'cancelled'
   const [currentPage, setCurrentPage] = useState(1);
   const bookingsPerPage = 10;
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchAdminBookings());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   // Filtering
   const filteredBookings = bookings.filter(b => {

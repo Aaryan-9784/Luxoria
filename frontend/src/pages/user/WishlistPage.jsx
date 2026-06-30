@@ -9,12 +9,14 @@ import { Link } from 'react-router-dom';
 export default function WishlistPage() {
   const dispatch = useDispatch();
   const { wishlist, loading } = useSelector(state => state.dashboard);
+  const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('recent'); // recent, price-asc, price-desc
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchWishlist());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const handleRemove = async (e, vehicleId) => {
     e.preventDefault();

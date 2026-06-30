@@ -9,11 +9,13 @@ import CustomSelect from '@/components/ui/CustomSelect';
 export default function VendorRevenue() {
   const dispatch = useDispatch();
   const { bookings, loading } = useSelector(state => state.vendor);
+  const { accessToken } = useSelector(state => state.auth);
   const [timeFilter, setTimeFilter] = useState('all');
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchVendorBookings());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const filteredByTime = bookings.filter(b => {
     if (timeFilter === 'all') return true;

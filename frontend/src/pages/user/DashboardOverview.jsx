@@ -12,12 +12,13 @@ import { staggerContainer, staggerItem } from '@/lib/motion';
 export default function DashboardOverview() {
   const dispatch = useDispatch();
   const { stats, bookings, wishlist, loading } = useSelector(state => state.dashboard);
-  const { user } = useSelector(state => state.auth);
+  const { user, accessToken } = useSelector(state => state.auth);
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchMyBookings());
     dispatch(fetchWishlist());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const activeBookings = bookings.filter(b => ['pending', 'confirmed', 'active'].includes(b.status)).slice(0, 3);
 

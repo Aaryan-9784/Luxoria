@@ -8,11 +8,13 @@ import CountUp from 'react-countup';
 export default function AdminFleetApprovals() {
   const dispatch = useDispatch();
   const { vehicles, loading } = useSelector(state => state.admin);
+  const { accessToken } = useSelector(state => state.auth);
   const [filter, setFilter] = useState('pending');
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchAdminVehicles());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const kpis = {
     pending: vehicles.filter(v => v.status === 'pending').length,

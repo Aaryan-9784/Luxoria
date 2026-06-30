@@ -10,14 +10,15 @@ import CustomSelect from '@/components/ui/CustomSelect';
 export default function AdminConcierge() {
   const dispatch = useDispatch();
   const { conciergeRequests, loading } = useSelector(state => state.admin);
+  const { accessToken } = useSelector(state => state.auth);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
   useEffect(() => {
-    // Only fetch if necessary or re-fetch on mount
+    if (!accessToken) return;
     dispatch(fetchConciergeRequests());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const filteredRequests = (conciergeRequests || []).filter(req => {
     const searchMatch = req.clientName?.toLowerCase().includes(searchTerm.toLowerCase()) || req.requestId?.toLowerCase().includes(searchTerm.toLowerCase());

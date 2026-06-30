@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 export default function MyBookings() {
   const dispatch = useDispatch();
   const { bookings, loading } = useSelector(state => state.dashboard);
+  const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
@@ -16,8 +17,9 @@ export default function MyBookings() {
   const bookingsPerPage = 8;
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchMyBookings());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   // Filtering
   const filteredBookings = bookings.filter(b => {

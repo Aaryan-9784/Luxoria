@@ -11,11 +11,13 @@ export default function ManageFleet() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { vehicles, loading } = useSelector(state => state.vendor);
+  const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchVendorVehicles());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const filteredVehicles = vehicles.filter(v => 
     v.name.toLowerCase().includes(searchTerm.toLowerCase()) || 

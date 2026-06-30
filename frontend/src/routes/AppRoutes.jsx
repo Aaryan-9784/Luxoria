@@ -54,6 +54,8 @@ const VendorAnalytics = React.lazy(() => import('@/pages/vendor/VendorAnalytics'
 const VendorAvailability = React.lazy(() => import('@/pages/vendor/VendorAvailability'));
 
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout';
+const AdminLoginPage = React.lazy(() => import('@/pages/admin/AdminLoginPage'));
+const VendorLoginPage = React.lazy(() => import('@/pages/vendor/VendorLoginPage'));
 const AdminOverview = React.lazy(() => import('@/pages/admin/AdminOverview'));
 const UserManagement = React.lazy(() => import('@/pages/admin/UserManagement'));
 const VendorManagement = React.lazy(() => import('@/pages/admin/VendorManagement'));
@@ -135,6 +137,8 @@ export default function AppRoutes() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/vendor/login" element={<VendorLoginPage />} />
         </Route>
 
 

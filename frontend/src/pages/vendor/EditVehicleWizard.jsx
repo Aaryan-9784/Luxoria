@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createVendorVehicle } from '@/redux/slices/vendorSlice';
 import api from '@/services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, ArrowRight, ArrowLeft, X, Link as LinkIcon } from 'lucide-react';
@@ -15,9 +14,9 @@ const STEPS = [
 ];
 
 export default function EditVehicleWizard() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const { accessToken } = useSelector(state => state.auth);
   const [currentStep, setCurrentStep] = useState(1);
   const [createdVehicleId, setCreatedVehicleId] = useState(id);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,6 +36,7 @@ export default function EditVehicleWizard() {
   });
 
   useEffect(() => {
+    if (!accessToken) return;
     const fetchVehicle = async () => {
       try {
         const res = await api.get(`/vehicles/${id}`);
@@ -67,7 +67,7 @@ export default function EditVehicleWizard() {
       }
     };
     fetchVehicle();
-  }, [id, reset, navigate]);
+  }, [id, reset, navigate, accessToken]);
 
   // Step 1 & 2 Submit (Updates Vehicle in DB)
   const onFormSubmit = async (data) => {

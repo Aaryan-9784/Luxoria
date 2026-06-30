@@ -9,12 +9,14 @@ import CustomSelect from '@/components/ui/CustomSelect';
 export default function VendorBookings() {
   const dispatch = useDispatch();
   const { bookings, loading } = useSelector(state => state.vendor);
+  const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchVendorBookings());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const filteredBookings = bookings.filter(b => {
     const matchesSearch = b.vehicle?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 

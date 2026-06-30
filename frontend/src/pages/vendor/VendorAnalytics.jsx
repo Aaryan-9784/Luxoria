@@ -11,12 +11,14 @@ import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip
 export default function VendorAnalytics() {
   const dispatch = useDispatch();
   const { vehicles, bookings, loading } = useSelector(state => state.vendor);
+  const { accessToken } = useSelector(state => state.auth);
   const [timeFilter, setTimeFilter] = useState('this_year');
 
   useEffect(() => {
+    if (!accessToken) return;
     dispatch(fetchVendorVehicles());
     dispatch(fetchVendorBookings());
-  }, [dispatch]);
+  }, [dispatch, accessToken]);
 
   const completedBookings = bookings.filter(b => b.status === 'completed' || b.status === 'confirmed');
   const totalRevenue = completedBookings.reduce((sum, b) => sum + b.totalAmount, 0);
