@@ -2,103 +2,143 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAnalytics } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
-import { Users, Car, DollarSign, Calendar, Activity, Download, ChevronDown } from 'lucide-react';
+import {
+  Users, Car, DollarSign, Calendar,
+  Activity, Download, ChevronDown, TrendingUp,
+} from 'lucide-react';
 import CountUp from 'react-countup';
 import CustomSelect from '@/components/ui/CustomSelect';
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer,
+} from 'recharts';
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+const fmtINR = (val) =>
+  new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(val);
+
+const fmtINRShort = (val) => {
+  if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
+  if (val >= 1000)   return `₹${(val / 1000).toFixed(0)}K`;
+  return `₹${val}`;
+};
+
+// Month labels for an empty-state skeleton (Jan → Dec of current year)
+const EMPTY_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map(m => ({
+  month: m,
+  revenue: 0,
+}));
+
+// ─── Custom Tooltip ──────────────────────────────────────────────────────────
+
+const RevenueTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-[#0F0F0F] text-white rounded-xl px-4 py-3 shadow-2xl border border-white/10 min-w-[130px]">
+      <p className="text-[10px] font-bold text-[#C9A75D] uppercase tracking-widest mb-1">{label}</p>
+      <p className="text-[16px] font-bold">{fmtINR(payload[0].value)}</p>
+    </div>
+  );
+};
+
+// ─── Component ──────────────────────────────────────────────────────────────
 
 export default function AdminAnalytics() {
   const dispatch = useDispatch();
-  const { analytics, loading } = useSelector(state => state.admin);
-  const [dateRange, setDateRange] = useState('year'); // year, month, week
+  const { analytics, loading } = useSelector((state) => state.admin);
+  const [dateRange, setDateRange] = useState('year');
 
   useEffect(() => {
     dispatch(fetchAnalytics());
   }, [dispatch]);
+
+  // ── KPIs
   const kpis = {
-    revenue: analytics?.overview?.totalRevenue || 0,
-    bookings: analytics?.overview?.totalBookings || 0,
-    activeUsers: analytics?.overview?.totalUsers || 0,
-    vendors: analytics?.overview?.totalVendors || 0
+    revenue:     analytics?.overview?.totalRevenue  || 0,
+    bookings:    analytics?.overview?.totalBookings  || 0,
+    activeUsers: analytics?.overview?.totalUsers     || 0,
+    vendors:     analytics?.overview?.totalVendors   || 0,
   };
 
+  // ── Revenue chart data
   const revenueData = useMemo(() => {
-    if (!analytics?.monthlyRevenue?.length) {
-      return [];
-    }
-    
-    // Map backend response
-    return analytics.monthlyRevenue.map(item => {
-      const monthStr = new Date(0, item._id.month - 1).toLocaleString('default', { month: 'short' });
-      return {
-        month: monthStr,
-        value: item.revenue
-      };
-    });
-  }, [analytics]);
-
-  const vehicleClasses = useMemo(() => {
-    if (!analytics?.vehiclesByCategory?.length) return [];
-    const totalCount = analytics.vehiclesByCategory.reduce((sum, v) => sum + v.count, 0);
-    const colors = ['#0F0F0F', '#C9A75D', '#666666', '#ECECEC', '#8B5A2B', '#A9A9A9', '#D3D3D3'];
-    return analytics.vehiclesByCategory.map((item, idx) => ({
-      name: item.name,
-      percentage: totalCount > 0 ? Math.round((item.count / totalCount) * 100) : 0,
-      color: colors[idx % colors.length]
+    if (!analytics?.monthlyRevenue?.length) return null; // null = no real data yet
+    return analytics.monthlyRevenue.map((item) => ({
+      month: new Date(0, item._id.month - 1).toLocaleString('default', { month: 'short' }),
+      revenue: item.revenue,
     }));
   }, [analytics]);
 
-  const topVendors = useMemo(() => {
-    if (!analytics?.topVendors?.length) return [];
-    return analytics.topVendors;
+  const hasRevenueData = revenueData !== null && revenueData.some((d) => d.revenue > 0);
+  const chartData      = hasRevenueData ? revenueData : EMPTY_MONTHS;
+  const maxRevenue     = hasRevenueData
+    ? Math.max(...revenueData.map((d) => d.revenue))
+    : 0;
+
+  // ── Vehicle classes
+  const vehicleClasses = useMemo(() => {
+    if (!analytics?.vehiclesByCategory?.length) return [];
+    const total = analytics.vehiclesByCategory.reduce((s, v) => s + v.count, 0);
+    const colors = ['#0F0F0F', '#C9A75D', '#888888', '#BDBDBD', '#8B5A2B', '#A9A9A9', '#D3D3D3'];
+    return analytics.vehiclesByCategory.map((item, idx) => ({
+      name:       item.name,
+      count:      item.count,
+      percentage: total > 0 ? Math.round((item.count / total) * 100) : 0,
+      color:      colors[idx % colors.length],
+    }));
   }, [analytics]);
 
-  const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+  // ── Top vendors
+  const topVendors = useMemo(() => analytics?.topVendors || [], [analytics]);
+  const maxVendorRev = Math.max(...topVendors.map((v) => v.revenue), 1);
 
-  // Find max revenue for chart scaling, ensure it's not 0
-  const maxRevenue = Math.max(...revenueData.map(d => d.value), 1000); // Default scale to 1000 if 0
-
-  const points = revenueData.map((d, i) => {
-    const x = revenueData.length > 1 ? (i / (revenueData.length - 1)) * 100 : 50;
-    const y = 100 - (d.value / maxRevenue) * 95;
-    return `${x},${y}`;
-  }).join(' ');
-
-  const areaPoints = `0,100 ${points} 100,100`;
-
+  // ── Export CSV
   const handleExport = () => {
-    // Mock export functionality
-    const csvContent = "data:text/csv;charset=utf-8,Month,Revenue\\n" 
-      + revenueData.map(d => `${d.month},${d.value}`).join("\\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "luxoria_analytics_report.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const rows = (hasRevenueData ? revenueData : [])
+      .map((d) => `${d.month},${d.revenue}`)
+      .join('\n');
+    const uri = encodeURI(`data:text/csv;charset=utf-8,Month,Revenue\n${rows}`);
+    const a   = document.createElement('a');
+    a.href     = uri;
+    a.download = 'luxoria_analytics.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-7xl mx-auto pb-12">
-      
-      {/* Header & Controls */}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-8 max-w-7xl mx-auto pb-12"
+    >
+      {/* ── Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-2">Platform Analytics</h1>
-          <p className="text-[13px] text-[#666666] tracking-wide">Enterprise performance metrics and global insights.</p>
+          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-1">
+            Platform Analytics
+          </h1>
+          <p className="text-[13px] text-[#666666] tracking-wide">
+            Enterprise performance metrics and global insights.
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <CustomSelect
             value={dateRange}
-            onChange={(val) => setDateRange(val)}
+            onChange={setDateRange}
             icon={ChevronDown}
             options={[
-              { value: 'year', label: '2026 Fiscal Year' },
+              { value: 'year',  label: '2026 Fiscal Year' },
               { value: 'month', label: 'Last 30 Days' },
-              { value: 'week', label: 'Last 7 Days' }
+              { value: 'week',  label: 'Last 7 Days' },
             ]}
           />
-          <button 
+          <button
             onClick={handleExport}
             className="flex items-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#C9A75D] transition-colors shadow-lg shadow-[#0F0F0F]/10"
           >
@@ -107,184 +147,233 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* ── KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { title: 'Total Revenue', value: kpis.revenue, icon: DollarSign, prefix: '$' },
-          { title: 'Global Bookings', value: kpis.bookings, icon: Calendar, prefix: '' },
-          { title: 'Active Clients', value: kpis.activeUsers, icon: Users, prefix: '' },
-          { title: 'Vendor Partners', value: kpis.vendors, icon: Car, prefix: '' },
+          { title: 'Total Revenue',   value: kpis.revenue,     icon: DollarSign, prefix: '₹' },
+          { title: 'Global Bookings', value: kpis.bookings,    icon: Calendar,   prefix: ''  },
+          { title: 'Active Clients',  value: kpis.activeUsers, icon: Users,      prefix: ''  },
+          { title: 'Vendor Partners', value: kpis.vendors,     icon: Car,        prefix: ''  },
         ].map((kpi, idx) => (
-          <div key={idx} className="relative overflow-hidden group bg-white border border-[#ECECEC] rounded-2xl p-6 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-default flex flex-col justify-between h-full min-h-[160px]">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C9A75D] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            
-            <div className="flex justify-between items-start mb-4 relative z-10">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-[#0F0F0F] text-[#C9A75D] group-hover:scale-110 transition-transform duration-500 shadow-md">
-                <kpi.icon className="w-5 h-5" />
-              </div>
+          <div
+            key={idx}
+            className="relative overflow-hidden group bg-white border border-[#ECECEC] rounded-2xl p-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 cursor-default flex flex-col justify-between min-h-[156px]"
+          >
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#C9A75D] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-[#0F0F0F] text-[#C9A75D] group-hover:scale-110 transition-transform duration-500 shadow-md">
+              <kpi.icon className="w-5 h-5" />
             </div>
-            
-            <div className="relative z-10 mt-auto">
-              <h3 className="text-[32px] font-bold text-[#0F0F0F] tracking-tight mb-1">
-                {kpi.prefix}<CountUp end={kpi.value} duration={2} separator="," />
+            <div className="mt-auto">
+              <h3 className="text-[30px] font-bold text-[#0F0F0F] tracking-tight mb-0.5">
+                {kpi.prefix}
+                <CountUp end={kpi.value} duration={2} separator="," />
               </h3>
-              <p className="text-[11px] font-bold text-[#666666] uppercase tracking-[0.15em]">{kpi.title}</p>
+              <p className="text-[10px] font-bold text-[#888888] uppercase tracking-[0.15em]">
+                {kpi.title}
+              </p>
             </div>
           </div>
         ))}
       </div>
 
+      {/* ── Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Revenue Chart */}
-        <div className="lg:col-span-2 bg-white border border-[#ECECEC] rounded-2xl p-8 shadow-sm flex flex-col min-w-0 overflow-hidden">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-lg font-serif text-[#0F0F0F]">Revenue Growth</h3>
-            <div className="flex items-center gap-2 text-[11px] font-bold text-[#666666] uppercase tracking-wider">
+
+        {/* Revenue Chart — spans 2 cols */}
+        <div className="lg:col-span-2 bg-white border border-[#ECECEC] rounded-2xl p-8 shadow-sm">
+
+          {/* Chart header */}
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <h3 className="text-lg font-serif text-[#0F0F0F]">Revenue Growth</h3>
+              <p className="text-[11px] text-[#888888] mt-0.5">
+                {hasRevenueData
+                  ? `Peak month: ${fmtINR(maxRevenue)}`
+                  : 'No revenue recorded yet — chart shows full-year frame'}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-[11px] font-bold text-[#888888] uppercase tracking-wider">
               <Activity className="w-4 h-4 text-[#C9A75D]" /> Performance
             </div>
           </div>
 
-          {/* Enhanced SVG Chart */}
-          <div className="flex-1 min-h-[300px] flex flex-col relative w-full pt-10">
-            {loading && <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-30 flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#C9A75D] border-t-transparent rounded-full animate-spin" /></div>}
-            
-            {/* Y-axis Grid Lines */}
-            <div className="absolute top-10 bottom-8 left-0 right-0 flex flex-col justify-between pointer-events-none">
-              {[4,3,2,1,0].map((step, i) => (
-                <div key={i} className="w-full border-t border-dashed border-[#ECECEC] flex items-center h-0 relative">
-                  <span className="absolute -top-2.5 bg-white pr-2 text-[9px] text-[#999999] font-medium hidden sm:block z-10">
-                    {formatCurrency((maxRevenue * step) / 4)}
-                  </span>
-                </div>
-              ))}
+          {/* Empty-state banner */}
+          {!hasRevenueData && !loading && (
+            <div className="flex items-center gap-3 bg-[#FAFAFA] border border-[#ECECEC] rounded-xl px-4 py-3 mb-6 mt-4">
+              <TrendingUp className="w-4 h-4 text-[#C9A75D] shrink-0" />
+              <p className="text-[12px] text-[#666666]">
+                Revenue data will appear here once bookings are confirmed and payments are captured.
+              </p>
             </div>
+          )}
 
-            {/* SVG Graph */}
-            <div className="relative w-full flex-1 mb-8 mt-2">
-              <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#C9A75D" stopOpacity={0.3}/>
-                    <stop offset="100%" stopColor="#C9A75D" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <polygon points={areaPoints} fill="url(#colorRevenue)" />
-                <polyline points={points} fill="none" stroke="#C9A75D" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-              </svg>
-              
-              {/* Interaction Overlay */}
-              <div className="absolute inset-0">
-                {revenueData.map((month, idx) => {
-                  const xPercent = revenueData.length > 1 ? (idx / (revenueData.length - 1)) * 100 : 50;
-                  const yPercent = 100 - (month.value / maxRevenue) * 95;
+          {/* Recharts AreaChart */}
+          <div className="w-full mt-4" style={{ height: 280 }}>
+            {loading ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-8 h-8 border-[3px] border-[#C9A75D] border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={chartData}
+                  margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="revGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%"   stopColor="#C9A75D" stopOpacity={hasRevenueData ? 0.25 : 0.06} />
+                      <stop offset="100%" stopColor="#C9A75D" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+
+                  <CartesianGrid
+                    strokeDasharray="4 4"
+                    stroke="#F0F0F0"
+                    vertical={false}
+                  />
+
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fontSize: 10, fill: '#AAAAAA', fontWeight: 700, letterSpacing: 1 }}
+                    tickLine={false}
+                    axisLine={false}
+                    dy={8}
+                  />
+
+                  <YAxis
+                    tickFormatter={fmtINRShort}
+                    tick={{ fontSize: 10, fill: '#AAAAAA', fontWeight: 600 }}
+                    tickLine={false}
+                    axisLine={false}
+                    width={52}
+                    tickCount={5}
+                    domain={hasRevenueData ? ['auto', 'auto'] : [0, 1000]}
+                  />
+
+                  <Tooltip
+                    content={hasRevenueData ? <RevenueTooltip /> : () => null}
+                    cursor={
+                      hasRevenueData
+                        ? { stroke: '#C9A75D', strokeWidth: 1, strokeDasharray: '4 4' }
+                        : false
+                    }
+                  />
+
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke={hasRevenueData ? '#C9A75D' : '#E0E0E0'}
+                    strokeWidth={hasRevenueData ? 2.5 : 1.5}
+                    fill="url(#revGradient)"
+                    dot={false}
+                    activeDot={
+                      hasRevenueData
+                        ? { r: 5, fill: '#fff', stroke: '#C9A75D', strokeWidth: 2.5 }
+                        : false
+                    }
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </div>
+
+        {/* ── Side Panel */}
+        <div className="space-y-6">
+
+          {/* Class Distribution */}
+          <div className="bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm">
+            <h3 className="text-lg font-serif text-[#0F0F0F] mb-5">Class Distribution</h3>
+
+            {vehicleClasses.length === 0 ? (
+              <p className="text-[12px] text-[#888888] italic">No vehicle data available.</p>
+            ) : (
+              <>
+                {/* Stacked bar */}
+                <div className="w-full h-2.5 rounded-full flex overflow-hidden mb-5 bg-[#F5F5F5]">
+                  {vehicleClasses.map((vc, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${vc.percentage}%` }}
+                      transition={{ duration: 0.9, delay: 0.15 * idx }}
+                      style={{ backgroundColor: vc.color }}
+                    />
+                  ))}
+                </div>
+
+                {/* Legend */}
+                <div className="space-y-3">
+                  {vehicleClasses.map((vc, idx) => (
+                    <div key={idx} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className="w-2.5 h-2.5 rounded-full shrink-0"
+                          style={{ backgroundColor: vc.color }}
+                        />
+                        <span className="text-[11px] font-bold text-[#0F0F0F] uppercase tracking-wider">
+                          {vc.name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-[#888888]">{vc.count}</span>
+                        <span className="text-[11px] font-semibold text-[#0F0F0F] w-8 text-right">
+                          {vc.percentage}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Top Partners */}
+          <div className="bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm">
+            <h3 className="text-lg font-serif text-[#0F0F0F] mb-5">Top Partners</h3>
+
+            {topVendors.length === 0 ? (
+              <p className="text-[12px] text-[#888888] italic">No partner data available.</p>
+            ) : (
+              <div className="space-y-5">
+                {topVendors.map((vendor, idx) => {
+                  const pct = Math.round((vendor.revenue / maxVendorRev) * 100);
                   return (
-                    <div key={idx} className="absolute top-0 bottom-0 w-8 -ml-4 group cursor-crosshair z-20" style={{ left: `${xPercent}%` }}>
-                       {/* Hover Guide Line */}
-                       <div className="absolute top-0 bottom-0 left-1/2 -ml-[0.5px] w-[1px] bg-[#0F0F0F] opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
-                       
-                       {/* Dot */}
-                       <div className="absolute w-3 h-3 bg-white border-2 border-[#C9A75D] rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform -translate-x-1/2 -translate-y-1/2 shadow-md pointer-events-none"
-                            style={{ left: '50%', top: `${yPercent}%` }} />
-                            
-                       {/* Tooltip */}
-                       <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-[#0F0F0F] text-white text-[10px] font-bold py-1.5 px-3 rounded-lg pointer-events-none shadow-lg transform -translate-x-1/2 -translate-y-[calc(100%+12px)] whitespace-nowrap z-30"
-                            style={{ left: '50%', top: `${yPercent}%` }}>
-                         {formatCurrency(month.value)}
-                       </div>
+                    <div key={idx}>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-[11px] font-bold text-[#0F0F0F] uppercase tracking-wider truncate max-w-[110px]">
+                          {vendor.name}
+                        </span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-[11px] font-bold text-[#0F0F0F]">
+                            {fmtINR(vendor.revenue)}
+                          </span>
+                          <span className="text-[10px] text-[#888888]">
+                            {vendor.bookings} {vendor.bookings === 1 ? 'booking' : 'bookings'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-full h-1.5 bg-[#F5F5F5] rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.max(pct, vendor.revenue > 0 || vendor.bookings > 0 ? 4 : 0)}%` }}
+                          transition={{ duration: 0.9, delay: 0.1 * idx }}
+                          className="h-full rounded-full"
+                          style={{
+                            background: idx === 0
+                              ? 'linear-gradient(90deg, #C9A75D, #e8c97a)'
+                              : '#DEDEDE',
+                          }}
+                        />
+                      </div>
                     </div>
                   );
                 })}
               </div>
-            </div>
-
-            <div className="relative w-full h-8">
-              {revenueData.map((month, idx) => {
-                const xPercent = revenueData.length > 1 ? (idx / (revenueData.length - 1)) * 100 : 50;
-                return (
-                  <span key={idx} className="absolute text-[10px] text-[#999999] uppercase tracking-widest font-bold transform -translate-x-1/2" style={{ left: `${xPercent}%` }}>
-                    {month.month}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Side Panel: Distribution & Top Vendors */}
-        <div className="space-y-8">
-          
-          {/* Booking Distribution */}
-          <div className="bg-white border border-[#ECECEC] rounded-2xl p-8 shadow-sm">
-            <h3 className="text-lg font-serif text-[#0F0F0F] mb-6">Class Distribution</h3>
-            
-            {/* Stacked Bar */}
-            <div className="w-full h-3 rounded-full flex overflow-hidden mb-6 bg-[#F5F5F5]">
-              {vehicleClasses.map((vc, idx) => (
-                <motion.div 
-                  key={idx} 
-                  initial={{ width: 0 }} 
-                  animate={{ width: `${vc.percentage}%` }} 
-                  transition={{ duration: 1, delay: 0.2 }}
-                  style={{ backgroundColor: vc.color }}
-                />
-              ))}
-            </div>
-
-            {/* Legend */}
-            <div className="space-y-4">
-              {vehicleClasses.length === 0 ? (
-                <p className="text-[12px] text-[#666666] italic">No vehicle data available.</p>
-              ) : vehicleClasses.map((vc, idx) => (
-                <div key={idx} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: vc.color }} />
-                    <span className="text-[12px] font-bold text-[#0F0F0F] uppercase tracking-wider">{vc.name}</span>
-                  </div>
-                  <span className="text-[12px] text-[#666666] font-medium">{vc.percentage}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Top Vendors */}
-          <div className="bg-white border border-[#ECECEC] rounded-2xl p-8 shadow-sm">
-            <h3 className="text-lg font-serif text-[#0F0F0F] mb-6">Top Partners</h3>
-            
-            <div className="space-y-6">
-              {topVendors.length === 0 ? (
-                <p className="text-[12px] text-[#666666] italic">No partner data available.</p>
-              ) : topVendors.map((vendor, idx) => {
-                const maxBookings = topVendors[0]?.bookings || 1;
-                const widthPercent = (vendor.bookings / maxBookings) * 100;
-                
-                return (
-                  <div key={idx}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[12px] font-bold text-[#0F0F0F] uppercase tracking-wider">{vendor.name}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[12px] text-[#0F0F0F] font-bold">{formatCurrency(vendor.revenue)}</span>
-                        <span className="text-[10px] font-bold text-[#666666]">
-                          {vendor.bookings} {vendor.bookings === 1 ? 'booking' : 'bookings'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-full h-1.5 bg-[#F5F5F5] rounded-full overflow-hidden">
-                      <motion.div 
-                        initial={{ width: 0 }} 
-                        animate={{ width: `${widthPercent}%` }} 
-                        transition={{ duration: 1, delay: 0.2 + (idx * 0.1) }}
-                        className="h-full bg-[#C9A75D]"
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            )}
           </div>
 
         </div>
-
       </div>
     </motion.div>
   );

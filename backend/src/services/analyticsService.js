@@ -76,34 +76,31 @@ export const getDashboardAnalytics = async () => {
       { $sort: { count: -1 } },
     ]),
 
-    // 10: topVendorStats (for top partners)
-    Booking.aggregate([
-      { $match: { isActive: true } },
-      {
-        $group: {
-          _id: '$vendor',
-          bookings: { $sum: 1 },
-          revenue: { $sum: '$totalAmount' },
-        },
-      },
-      { $sort: { revenue: -1 } },
-      { $limit: 4 },
+    // 10: topVendorStats (for top partners) — join from users side so vendors
+    //     without bookings still appear, with bookings/revenue defaulting to 0
+    User.aggregate([
+      { $match: { role: 'vendor', isActive: true } },
       {
         $lookup: {
-          from: 'users',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'vendorInfo',
+          from: 'bookings',
+          let: { vendorId: '$_id' },
+          pipeline: [
+            { $match: { $expr: { $and: [{ $eq: ['$vendor', '$$vendorId'] }, { $eq: ['$isActive', true] }] } } },
+            { $group: { _id: null, bookings: { $sum: 1 }, revenue: { $sum: '$totalAmount' } } },
+          ],
+          as: 'stats',
         },
       },
-      { $unwind: { path: '$vendorInfo', preserveNullAndEmptyArrays: true } },
+      { $unwind: { path: '$stats', preserveNullAndEmptyArrays: true } },
       {
         $project: {
-          name: { $ifNull: ['$vendorInfo.name', 'Unknown'] },
-          bookings: 1,
-          revenue: 1,
+          name: 1,
+          bookings: { $ifNull: ['$stats.bookings', 0] },
+          revenue: { $ifNull: ['$stats.revenue', 0] },
         },
       },
+      { $sort: { revenue: -1, bookings: -1 } },
+      { $limit: 4 },
     ]),
   ]);
 
