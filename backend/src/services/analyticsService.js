@@ -5,8 +5,23 @@ import Vehicle from '../models/Vehicle.js';
 
 /**
  * Get admin dashboard analytics
+ * @param {string} period - 'year' | 'month' | 'week'
  */
-export const getDashboardAnalytics = async () => {
+export const getDashboardAnalytics = async (period = 'year') => {
+  // Build date filter based on period
+  const now = new Date();
+  let dateFrom;
+  if (period === 'week') {
+    dateFrom = new Date(now);
+    dateFrom.setDate(dateFrom.getDate() - 7);
+  } else if (period === 'month') {
+    dateFrom = new Date(now);
+    dateFrom.setDate(dateFrom.getDate() - 30);
+  } else {
+    // 'year' — current calendar year
+    dateFrom = new Date(now.getFullYear(), 0, 1);
+  }
+  const dateFilter = { createdAt: { $gte: dateFrom } };
   const [
     totalUsers,
     totalVendors,
@@ -31,13 +46,13 @@ export const getDashboardAnalytics = async () => {
 
     // 4: revenueStats
     Payment.aggregate([
-      { $match: { status: 'captured' } },
+      { $match: { status: 'captured', ...dateFilter } },
       { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
     ]),
 
     // 5: bookingsByStatus
     Booking.aggregate([
-      { $match: { isActive: true } },
+      { $match: { isActive: true, ...dateFilter } },
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]),
 
@@ -51,7 +66,7 @@ export const getDashboardAnalytics = async () => {
 
     // 7: monthlyRevenue (last 12 months)
     Payment.aggregate([
-      { $match: { status: 'captured' } },
+      { $match: { status: 'captured', ...dateFilter } },
       {
         $group: {
           _id: {

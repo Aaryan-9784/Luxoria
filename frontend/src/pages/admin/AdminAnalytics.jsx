@@ -54,8 +54,8 @@ export default function AdminAnalytics() {
   const [dateRange, setDateRange] = useState('year');
 
   useEffect(() => {
-    dispatch(fetchAnalytics());
-  }, [dispatch]);
+    dispatch(fetchAnalytics(dateRange));
+  }, [dispatch, dateRange]);
 
   // ── KPIs
   const kpis = {

@@ -47,7 +47,7 @@ export default function AdminConcierge() {
   };
 
   const handleContact = (clientName, id, type) => {
-    const formattedClient = clientName ? clientName.toLowerCase().replace(' ', '.') : 'client';
+    const formattedClient = clientName ? clientName.toLowerCase().replace(/\s+/g, '.') : 'client';
     window.location.href = `mailto:contact@${formattedClient}.com?subject=Re: ${id} - ${type}`;
   };
 

@@ -183,7 +183,8 @@ export const getAllBookings = asyncHandler(async (req, res) => {
  * @access  Admin
  */
 export const getAnalytics = asyncHandler(async (req, res) => {
-  const analytics = await getDashboardAnalytics();
+  const period = req.query.period || 'year'; // 'year', 'month', 'week'
+  const analytics = await getDashboardAnalytics(period);
   ApiResponse.success(res, { analytics });
 });
 

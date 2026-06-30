@@ -33,16 +33,23 @@ export default function AdminBookings() {
   const paginatedBookings = filteredBookings.slice((currentPage - 1) * bookingsPerPage, currentPage * bookingsPerPage);
 
   const handleExport = () => {
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "Ref ID,Customer,Vendor,Vehicle,Start Date,End Date,Status,Total Amount\n"
-      + filteredBookings.map(b => `${b.bookingId},${b.user?.name},${b.vendor?.name},${b.vehicle?.brand || ''},${new Date(b.startDate).toLocaleDateString()},${new Date(b.endDate).toLocaleDateString()},${b.status},${b.totalAmount}`).join("\n");
-    const encodedUri = encodeURI(csvContent);
+    const csvRows = ["Ref ID,Customer,Vendor,Vehicle,Start Date,End Date,Status,Total Amount"];
+    filteredBookings.forEach(b => {
+      const customer = `"${(b.user?.name || 'Unknown').replace(/"/g, '""')}"`;
+      const vendor = `"${(b.vendor?.name || 'Unknown').replace(/"/g, '""')}"`;
+      const vehicle = `"${(b.vehicle?.brand || '').replace(/"/g, '""')}"`;
+      csvRows.push(`${b.bookingId},${customer},${vendor},${vehicle},${new Date(b.startDate).toLocaleDateString()},${new Date(b.endDate).toLocaleDateString()},${b.status},${b.totalAmount || 0}`);
+    });
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", "luxoria_global_bookings.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const renderStatusBadge = (status) => {

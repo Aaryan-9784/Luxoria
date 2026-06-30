@@ -80,6 +80,7 @@ class ApiFeatures {
       page: this.page,
       limit: this.limit,
       totalPages,
+      total: this.totalCount,        // alias kept for backward compatibility
       totalResults: this.totalCount,
       hasNextPage: this.page < totalPages,
       hasPrevPage: this.page > 1,

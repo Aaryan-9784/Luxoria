@@ -9,13 +9,14 @@ import { Link } from 'react-router-dom';
 export default function AdminOverview() {
   const dispatch = useDispatch();
   const { analytics, bookings, loading } = useSelector(state => state.admin);
+  const [analyticsLoaded, setAnalyticsLoaded] = React.useState(false);
 
   useEffect(() => {
-    dispatch(fetchAnalytics());
+    dispatch(fetchAnalytics()).then(() => setAnalyticsLoaded(true));
     dispatch(fetchAdminBookings('?limit=5&sort=-createdAt'));
   }, [dispatch]);
 
-  if (loading || !analytics) {
+  if (!analyticsLoaded || !analytics) {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center">
         <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin mb-4" />
@@ -149,12 +150,12 @@ export default function AdminOverview() {
                       <CalendarDays className="w-4 h-4 text-[#C9A75D]" />
                     </div>
                     <div>
-                      <p className="font-bold text-[#0F0F0F] text-sm">{booking.vehicle?.make} {booking.vehicle?.model}</p>
+                      <p className="font-bold text-[#0F0F0F] text-sm">{booking.vehicle?.brand} {booking.vehicle?.name}</p>
                       <p className="text-[11px] font-bold text-[#666666] uppercase tracking-wider mt-0.5">{new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-[#0F0F0F]">${booking.totalPrice?.toLocaleString()}</p>
+                    <p className="font-bold text-[#0F0F0F]">${booking.totalAmount?.toLocaleString()}</p>
                     <p className={`text-[10px] font-bold uppercase tracking-wider mt-0.5 ${booking.status === 'completed' ? 'text-[#16A34A]' : booking.status === 'pending' ? 'text-[#C9A75D]' : 'text-[#666666]'}`}>{booking.status}</p>
                   </div>
                 </div>

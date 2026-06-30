@@ -17,9 +17,9 @@ const initialState = {
 };
 
 // Async Thunks
-export const fetchAnalytics = createAsyncThunk('admin/fetchAnalytics', async (_, { rejectWithValue }) => {
+export const fetchAnalytics = createAsyncThunk('admin/fetchAnalytics', async (period = 'year', { rejectWithValue }) => {
   try {
-    const response = await api.get('/admin/analytics');
+    const response = await api.get(`/admin/analytics?period=${period}`);
     return response.data.data.analytics;
   } catch (error) {
     return rejectWithValue(error.response?.data?.error?.message || 'Failed to fetch analytics');
@@ -29,7 +29,7 @@ export const fetchAnalytics = createAsyncThunk('admin/fetchAnalytics', async (_,
 export const fetchUsers = createAsyncThunk('admin/fetchUsers', async (queryParams = '', { rejectWithValue }) => {
   try {
     const response = await api.get(`/admin/users${queryParams}`);
-    return { users: response.data.data, total: response.data.pagination.total };
+    return { users: response.data.data, total: response.data.pagination?.totalResults ?? response.data.pagination?.total ?? 0 };
   } catch (error) {
     return rejectWithValue(error.response?.data?.error?.message || 'Failed to fetch users');
   }
@@ -47,7 +47,7 @@ export const updateUserStatus = createAsyncThunk('admin/updateUserStatus', async
 export const fetchVendors = createAsyncThunk('admin/fetchVendors', async (queryParams = '', { rejectWithValue }) => {
   try {
     const response = await api.get(`/admin/vendors${queryParams}`);
-    return { vendors: response.data.data, total: response.data.pagination.total };
+    return { vendors: response.data.data, total: response.data.pagination?.totalResults ?? response.data.pagination?.total ?? 0 };
   } catch (error) {
     return rejectWithValue(error.response?.data?.error?.message || 'Failed to fetch vendors');
   }
@@ -65,7 +65,7 @@ export const approveVendor = createAsyncThunk('admin/approveVendor', async ({ id
 export const fetchAdminVehicles = createAsyncThunk('admin/fetchVehicles', async (queryParams = '', { rejectWithValue }) => {
   try {
     const response = await api.get(`/admin/vehicles${queryParams}`);
-    return { vehicles: response.data.data, total: response.data.pagination.total };
+    return { vehicles: response.data.data, total: response.data.pagination?.totalResults ?? response.data.pagination?.total ?? 0 };
   } catch (error) {
     return rejectWithValue(error.response?.data?.error?.message || 'Failed to fetch vehicles');
   }
@@ -92,7 +92,7 @@ export const deleteAdminVehicle = createAsyncThunk('admin/deleteVehicle', async 
 export const fetchAdminBookings = createAsyncThunk('admin/fetchBookings', async (queryParams = '', { rejectWithValue }) => {
   try {
     const response = await api.get(`/admin/bookings${queryParams}`);
-    return { bookings: response.data.data, total: response.data.pagination.total };
+    return { bookings: response.data.data, total: response.data.pagination?.totalResults ?? response.data.pagination?.total ?? 0 };
   } catch (error) {
     return rejectWithValue(error.response?.data?.error?.message || 'Failed to fetch bookings');
   }

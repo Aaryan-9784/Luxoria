@@ -42,8 +42,8 @@ export default function AdminCollections() {
         entity: `Client: ${b.user?.name || 'Unknown'}`,
         amount: amount,
         date: date,
-        status: b.paymentStatus === 'paid' ? 'completed' : 'pending',
-        method: b.paymentMethod || 'Credit Card'
+        status: b.status === 'confirmed' || b.status === 'completed' ? 'completed' : 'pending',
+        method: 'Online Payment'
       },
       {
         id: `FEE-${b.bookingId?.substring(0,6) || b._id?.substring(0,6)}`,
@@ -69,16 +69,21 @@ export default function AdminCollections() {
   const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
 
   const handleExport = () => {
-    // Mock export functionality
-    const csvContent = "data:text/csv;charset=utf-8,ID,Type,Entity,Amount,Date,Status\\n" 
-      + transactions.map(t => `${t.id},${t.type},${t.entity},${t.amount},${t.date},${t.status}`).join("\\n");
-    const encodedUri = encodeURI(csvContent);
+    const rows = ["ID,Type,Entity,Amount,Date,Status"];
+    transactions.forEach(t => {
+      const entity = `"${String(t.entity).replace(/"/g, '""')}"`;
+      rows.push(`${t.id},${t.type},${entity},${t.amount},${new Date(t.date).toLocaleDateString()},${t.status}`);
+    });
+    const csvContent = rows.join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", "luxoria_financial_ledger.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const processAllPayouts = () => {
