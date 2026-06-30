@@ -9,13 +9,12 @@ node_modules/
 # Build output
 dist/
 build/
+dist-ssr/
 
-# Uploads
-uploads/
-public/uploads/
+# Vite / bundler cache
+.vite/
 
 # Logs
-logs/
 *.log
 npm-debug.log*
 
@@ -29,4 +28,3 @@ Thumbs.db
 
 # Coverage
 coverage/
-.nyc_output/

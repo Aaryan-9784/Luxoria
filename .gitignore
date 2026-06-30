@@ -1,63 +1,105 @@
 # ==============================
-# Node.js & Dependencies
+# Dependencies
 # ==============================
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-.pnpm-store
+.pnpm-store/
+.yarn/
+jspm_packages/
 
 # ==============================
 # Environment Variables
 # ==============================
 .env
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.staging
+.env.production
 .env.production.local
 *.env
-# (Allow example files)
+# Allow example/template files
 !.env.example
+!.env.sample
 
 # ==============================
-# Build & Compiled Output
+# Build Output
 # ==============================
+dist/
+build/
+out/
+dist-ssr/
 frontend/dist/
 frontend/build/
 backend/dist/
 backend/build/
-dist/
-build/
-.tscache/
+
+# ==============================
+# TypeScript
+# ==============================
 *.tsbuildinfo
-out/
-dist-ssr/
+.tscache/
+
+# ==============================
+# Vite / Bundler Cache
+# ==============================
+.vite/
+.rollup.cache/
+
+# ==============================
+# Testing & Coverage
+# ==============================
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+playwright-report/
+
+# ==============================
+# Logs
+# ==============================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # ==============================
 # Cache & Temporary Files
 # ==============================
 .cache/
-.vite/
 .npm/
 .eslintcache
 .stylelintcache
+.parcel-cache/
 .temp/
 .tmp/
 tmp/
-coverage/
-.nyc_output/
 
 # ==============================
-# Project Specific
+# Uploads & Generated Media
 # ==============================
-# Uploaded files
 backend/uploads/
 backend/public/uploads/
+frontend/public/uploads/
 
 # ==============================
-# OS & Editor Files
+# Secrets & Keys
+# ==============================
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+serviceAccountKey.json
+google-credentials.json
+firebase-adminsdk*.json
+
+# ==============================
+# OS Files
 # ==============================
 .DS_Store
 .DS_Store?
@@ -67,10 +109,15 @@ backend/public/uploads/
 ehthumbs.db
 Thumbs.db
 desktop.ini
+$RECYCLE.BIN/
 
-# IDEs and Editors
+# ==============================
+# IDEs & Editors
+# ==============================
 .vscode/
 !.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
 .idea/
 *.suo
 *.ntvs*
@@ -78,6 +125,9 @@ desktop.ini
 *.sln
 *.swp
 *.swo
+*.swn
+*.bak
+*~
 
 # ==============================
 # Deployment & Hosting
@@ -85,3 +135,20 @@ desktop.ini
 .vercel/
 .netlify/
 .serverless/
+.firebase/
+.wrangler/
+
+# ==============================
+# Docker
+# ==============================
+.dockerignore
+docker-compose.override.yml
+
+# ==============================
+# Misc
+# ==============================
+*.tgz
+*.tar.gz
+*.zip
+.node_repl_history
+.eslintrc-auto-import.json

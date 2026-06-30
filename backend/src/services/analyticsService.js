@@ -17,26 +17,31 @@ export const getDashboardAnalytics = async () => {
     recentBookings,
     monthlyRevenue,
     pendingVehicles,
+    vehiclesByCategory,
+    topVendorStats,
   ] = await Promise.all([
+    // 0: totalUsers
     User.countDocuments({ role: 'user', isActive: true }),
+    // 1: totalVendors
     User.countDocuments({ role: 'vendor', isActive: true }),
+    // 2: totalVehicles
     Vehicle.countDocuments({ isActive: true }),
+    // 3: totalBookings
     Booking.countDocuments({ isActive: true }),
-    Vehicle.countDocuments({ status: 'pending', isActive: true }),
 
-    // Total revenue
+    // 4: revenueStats
     Payment.aggregate([
       { $match: { status: 'captured' } },
       { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
     ]),
 
-    // Bookings by status
+    // 5: bookingsByStatus
     Booking.aggregate([
       { $match: { isActive: true } },
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]),
 
-    // Recent bookings
+    // 6: recentBookings
     Booking.find({ isActive: true })
       .sort('-createdAt')
       .limit(10)
@@ -44,7 +49,7 @@ export const getDashboardAnalytics = async () => {
       .populate('vehicle', 'name brand images')
       .lean(),
 
-    // Monthly revenue (last 12 months)
+    // 7: monthlyRevenue (last 12 months)
     Payment.aggregate([
       { $match: { status: 'captured' } },
       {
@@ -59,6 +64,46 @@ export const getDashboardAnalytics = async () => {
       },
       { $sort: { '_id.year': -1, '_id.month': -1 } },
       { $limit: 12 },
+    ]),
+
+    // 8: pendingVehicles
+    Vehicle.countDocuments({ status: 'pending', isActive: true }),
+
+    // 9: vehiclesByCategory (for class distribution)
+    Vehicle.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]),
+
+    // 10: topVendorStats (for top partners)
+    Booking.aggregate([
+      { $match: { isActive: true } },
+      {
+        $group: {
+          _id: '$vendor',
+          bookings: { $sum: 1 },
+          revenue: { $sum: '$totalAmount' },
+        },
+      },
+      { $sort: { revenue: -1 } },
+      { $limit: 4 },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'vendorInfo',
+        },
+      },
+      { $unwind: { path: '$vendorInfo', preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          name: { $ifNull: ['$vendorInfo.name', 'Unknown'] },
+          bookings: 1,
+          revenue: 1,
+        },
+      },
     ]),
   ]);
 
@@ -78,6 +123,15 @@ export const getDashboardAnalytics = async () => {
     }, {}),
     recentBookings,
     monthlyRevenue: monthlyRevenue.reverse(),
+    vehiclesByCategory: vehiclesByCategory.map(item => ({
+      name: (item._id || 'uncategorized').replace(/-/g, ' '),
+      count: item.count,
+    })),
+    topVendors: topVendorStats.map(v => ({
+      name: v.name,
+      bookings: v.bookings,
+      revenue: v.revenue,
+    })),
   };
 };
 
