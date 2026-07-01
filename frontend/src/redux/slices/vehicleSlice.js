@@ -55,25 +55,8 @@ export const fetchVehicles = createAsyncThunk(
         if (value) queryParams.append(key, value);
       });
 
-      try {
-        const response = await api.get(`/vehicles?${queryParams.toString()}`);
-        
-        // Fallback to mock data if the database is completely empty
-        if (response.data && response.data.data && response.data.data.length === 0) {
-          return {
-            data: FEATURED_VEHICLES,
-            pagination: { page: 1, limit: 12, total: FEATURED_VEHICLES.length, pages: 1 }
-          };
-        }
-        
-        return response.data;
-      } catch (err) {
-        console.warn('API fetch failed, falling back to mock data');
-        return {
-          data: FEATURED_VEHICLES,
-          pagination: { page: 1, limit: 12, total: FEATURED_VEHICLES.length, pages: 1 }
-        };
-      }
+      const response = await api.get(`/vehicles?${queryParams.toString()}`);
+      return response.data;
     } catch (error) {
       return rejectWithValue('Failed to fetch vehicles');
     }

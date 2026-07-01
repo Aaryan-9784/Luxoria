@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { staggerContainer, staggerItem, EASE_LUXE } from '@/lib/motion';
-import { SectionHeader } from '@/components/ui/Typography';
+import { staggerContainer, staggerItem } from '@/lib/motion';
 import LuxuryVehicleCard from '@/pages/vehicles/components/LuxuryVehicleCard';
+import { fetchFeaturedVehicles } from '@/redux/slices/vehicleSlice';
 
+// Fallback mock data — only used when the API is unavailable
 export const HOME_FEATURED_VEHICLES = [
   {
     id: 'feat-1',
@@ -23,8 +25,6 @@ export const HOME_FEATURED_VEHICLES = [
     engine: '6.75L V12 Twin-Turbo',
     location: 'Mumbai',
     isAvailable: true,
-    badge: 'Editors Choice',
-    features: ['Starlight Headliner', 'Bespoke Audio', 'Night Vision', 'Massage Seats', 'Champagne Cooler'],
   },
   {
     id: 'feat-2',
@@ -42,8 +42,6 @@ export const HOME_FEATURED_VEHICLES = [
     engine: '3.0L V6 Hybrid',
     location: 'Delhi',
     isAvailable: true,
-    badge: 'Most Popular',
-    features: ['Carbon Fiber Body', 'Fiorano Package', 'Racing Seats', 'Telemetry System', 'Track Mode'],
   },
   {
     id: 'feat-3',
@@ -61,8 +59,6 @@ export const HOME_FEATURED_VEHICLES = [
     engine: '8.0L W16 Quad-Turbo',
     location: 'Bangalore',
     isAvailable: true,
-    badge: 'Highest Rated',
-    features: ['Diamond Knurling', 'Rotating Display', 'Naim Audio', 'Handcrafted Interior', 'All-Wheel Drive'],
   },
   {
     id: 'feat-4',
@@ -80,8 +76,6 @@ export const HOME_FEATURED_VEHICLES = [
     engine: '5.2L V10',
     location: 'Mumbai',
     isAvailable: true,
-    badge: 'Supercar',
-    features: ['LDVI System', 'ALA Aero', 'Corsa Mode', 'Carbon Ceramics', 'Performante Kit'],
   },
   {
     id: 'feat-5',
@@ -99,8 +93,6 @@ export const HOME_FEATURED_VEHICLES = [
     engine: '3.8L Flat-6 Twin-Turbo',
     location: 'Delhi',
     isAvailable: false,
-    badge: 'Iconic',
-    features: ['Sport Chrono', 'PCCB Brakes', 'Active Aero', 'Sport Exhaust', 'PDK Transmission'],
   },
   {
     id: 'feat-6',
@@ -118,12 +110,46 @@ export const HOME_FEATURED_VEHICLES = [
     engine: '4.0L V8 Twin-Turbo',
     location: 'Hyderabad',
     isAvailable: true,
-    badge: 'Ultra Luxury',
-    features: ['Executive Rear Seats', 'Burmester 4D', 'Magic Body Control', 'Rear Entertainment', 'Fragrance System'],
-  }
+  },
 ];
 
+/**
+ * Normalise a DB vehicle document into the shape LuxuryVehicleCard expects.
+ */
+function normaliseVehicle(v) {
+  return {
+    id: v._id || v.id,
+    name: v.name,
+    brand: v.brand,
+    image: v.images?.[0]?.url || v.image || null,
+    pricePerDay: v.pricePerDay,
+    category: v.category,
+    rating: v.rating,
+    seats: v.seats,
+    transmission: v.transmission,
+    fuelType: v.fuelType,
+    topSpeed: v.topSpeed,
+    horsepower: v.horsepower,
+    location: v.location?.city || v.location || null,
+    isAvailable: v.availability === 'available' || v.isAvailable,
+  };
+}
+
 export default function FeaturedVehicles() {
+  const dispatch = useDispatch();
+  const { featuredVehicles, loading } = useSelector((state) => state.vehicle);
+
+  useEffect(() => {
+    // Only fetch if not already loaded
+    if (featuredVehicles.length === 0) {
+      dispatch(fetchFeaturedVehicles());
+    }
+  }, [dispatch, featuredVehicles.length]);
+
+  // Use live data if available, otherwise fall back to static mock data
+  const rawVehicles = featuredVehicles.length > 0 ? featuredVehicles : HOME_FEATURED_VEHICLES;
+  const vehicles = rawVehicles.slice(0, 6).map(normaliseVehicle);
+
   return (
     <section className="pt-24 md:pt-32 pb-8 md:pb-12 bg-surface">
       <div className="container-luxe">
@@ -170,19 +196,35 @@ export default function FeaturedVehicles() {
           </motion.div>
         </div>
 
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, margin: '-100px' }}
-          variants={staggerContainer}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8"
-        >
-          {HOME_FEATURED_VEHICLES.slice(0, 6).map((vehicle) => (
-            <motion.div key={vehicle.id} variants={staggerItem}>
-              <LuxuryVehicleCard vehicle={vehicle} />
-            </motion.div>
-          ))}
-        </motion.div>
+        {loading && featuredVehicles.length === 0 ? (
+          // Skeleton placeholders while loading
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl bg-surface border border-border/40 overflow-hidden animate-pulse">
+                <div className="aspect-[16/10] bg-border/20" />
+                <div className="p-5 space-y-3">
+                  <div className="h-3 bg-border/20 rounded w-1/3" />
+                  <div className="h-5 bg-border/20 rounded w-2/3" />
+                  <div className="h-3 bg-border/20 rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8"
+          >
+            {vehicles.map((vehicle) => (
+              <motion.div key={vehicle.id} variants={staggerItem}>
+                <LuxuryVehicleCard vehicle={vehicle} />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
     </section>
   );

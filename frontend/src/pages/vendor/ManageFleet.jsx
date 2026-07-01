@@ -32,9 +32,21 @@ export default function ManageFleet() {
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'approved': return <span className="bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/20 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm backdrop-blur-md"><CheckCircle2 className="w-3 h-3" /> Approved</span>;
-      case 'pending': return <span className="bg-[#C9A75D]/10 text-[#B59345] border border-[#C9A75D]/30 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm backdrop-blur-md"><Clock className="w-3 h-3" /> Under Review</span>;
-      case 'rejected': return <span className="bg-[#DC2626]/10 text-[#DC2626] border border-[#DC2626]/20 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm backdrop-blur-md"><AlertCircle className="w-3 h-3" /> Rejected</span>;
+      case 'approved': return (
+        <span className="bg-[#0a2e1a] text-[#22c55e] border border-[#22c55e]/50 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-lg backdrop-blur-md">
+          <CheckCircle2 className="w-3.5 h-3.5" /> Approved
+        </span>
+      );
+      case 'pending': return (
+        <span className="bg-[#2a1f00] text-[#C9A75D] border border-[#C9A75D]/50 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-lg backdrop-blur-md">
+          <Clock className="w-3.5 h-3.5" /> Under Review
+        </span>
+      );
+      case 'rejected': return (
+        <span className="bg-[#2e0a0a] text-[#f87171] border border-[#f87171]/50 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-lg backdrop-blur-md">
+          <AlertCircle className="w-3.5 h-3.5" /> Rejected
+        </span>
+      );
       default: return null;
     }
   };
