@@ -108,6 +108,25 @@ const vehicleSchema = new mongoose.Schema(
   }
 );
 
+// ── Pre-save: generate a unique slug from name ─────────────────────────────
+vehicleSchema.pre('save', async function (next) {
+  if (!this.isModified('name') && this.slug) return next();
+
+  // Build base slug: lowercase, replace spaces/special chars with hyphens
+  const base = this.name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+
+  // Append a short random suffix to guarantee uniqueness without a DB lookup loop
+  const suffix = Math.random().toString(36).slice(2, 7); // 5 alphanumeric chars
+  this.slug = `${base}-${suffix}`;
+
+  next();
+});
+
 // Compound indexes
 vehicleSchema.index({ brand: 1, category: 1 });
 vehicleSchema.index({ status: 1, isActive: 1 });

@@ -54,6 +54,15 @@ export const deleteVendorVehicle = createAsyncThunk('vendor/deleteVehicle', asyn
   }
 });
 
+export const updateVehicleImages = createAsyncThunk('vendor/updateVehicleImages', async ({ id, images }, { rejectWithValue }) => {
+  try {
+    const response = await api.put(`/vehicles/${id}`, { images });
+    return response.data.data.vehicle;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error?.message || 'Failed to update vehicle images');
+  }
+});
+
 export const vendorSlice = createSlice({
   name: 'vendor',
   initialState,
@@ -126,6 +135,14 @@ export const vendorSlice = createSlice({
         state.vehicles = state.vehicles.filter(v => v._id !== action.payload);
         if (state.stats) {
           state.stats.totalVehicles = Math.max(0, state.stats.totalVehicles - 1);
+        }
+      })
+
+      // Update Vehicle Images — sync updated vehicle back into Redux state
+      .addCase(updateVehicleImages.fulfilled, (state, action) => {
+        const idx = state.vehicles.findIndex(v => v._id === action.payload._id);
+        if (idx !== -1) {
+          state.vehicles[idx] = action.payload;
         }
       });
   }

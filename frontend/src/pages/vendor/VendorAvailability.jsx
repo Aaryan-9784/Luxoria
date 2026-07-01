@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchVendorVehicles, fetchVendorBookings } from '@/redux/slices/vendorSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
-import { Car, ChevronLeft, ChevronRight, Settings2, Plus, Calendar as CalendarIcon, ShieldAlert, X, Check, Clock, Wrench, Search } from 'lucide-react';
+import { Car, ChevronLeft, ChevronRight, Settings2, ShieldAlert, X, Check, Clock, Wrench, Search } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 
 // ── Status config ────────────────────────────────────────────────────────────
@@ -22,15 +22,48 @@ const MONTHS = ['January','February','March','April','May','June','July','August
 export default function VendorAvailability() {
   const dispatch = useDispatch();
   const { vehicles, bookings, loading } = useSelector(state => state.vendor);
-  const { accessToken } = useSelector(state => state.auth);
+  const { accessToken, user } = useSelector(state => state.auth);
+
+  // ── Blocked dates — persisted to localStorage per vendor ─────────────────
+  // Only use a real user ID — never fall back to a generic key, which causes
+  // data to be saved/loaded under the wrong key when the user object isn't
+  // hydrated yet on mount.
+  const vendorId = user?._id || user?.id || null;
+  const storageKey = vendorId ? `luxoria_blocked_dates_${vendorId}` : null;
 
   const [selectedVehicle, setSelectedVehicle] = useState('all');
   const [currentDate, setCurrentDate]         = useState(new Date());
-  const [blockedDates, setBlockedDates]        = useState([]); // [{ date: 'YYYY-MM-DD', vehicleId, note }]
+  const [blockedDates, setBlockedDates]        = useState([]);
+  const [blockedDatesLoaded, setBlockedDatesLoaded] = useState(false);
   const [showBlockModal, setShowBlockModal]    = useState(false);
   const [blockForm, setBlockForm]              = useState({ startDate: '', endDate: '', vehicleId: 'all', note: '' });
   const [selectedDay, setSelectedDay]          = useState(null); // for day detail popover
   const [jumpInput, setJumpInput]              = useState('');   // "MM/YYYY" search input
+
+  // Load blocked dates from localStorage once a real user ID is available
+  useEffect(() => {
+    if (!storageKey) return;
+    try {
+      const saved = localStorage.getItem(storageKey);
+      setBlockedDates(saved ? JSON.parse(saved) : []);
+    } catch {
+      setBlockedDates([]);
+    }
+    setBlockedDatesLoaded(true);
+  // Re-run only when the storage key (i.e. the user) changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey]);
+
+  // Persist blockedDates to localStorage whenever they change — but only after
+  // the initial load has completed so we never overwrite saved data with [].
+  useEffect(() => {
+    if (!storageKey || !blockedDatesLoaded) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(blockedDates));
+    } catch {
+      // ignore quota errors
+    }
+  }, [blockedDates, storageKey, blockedDatesLoaded]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -131,53 +164,6 @@ export default function VendorAvailability() {
   const handleRemoveBlock = (id) => {
     setBlockedDates(prev => prev.filter(b => b.id !== id));
   };
-
-  // ── Sync / Export .ics ────────────────────────────────────────────────────
-  const handleSyncCalendar = () => {
-    const upcoming = bookings.filter(b =>
-      (b.status === 'confirmed' || b.status === 'active') &&
-      new Date(b.startDate) >= new Date()
-    );
-    if (upcoming.length === 0) {
-      alert('No upcoming confirmed bookings to export.');
-      return;
-    }
-    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Luxoria//Fleet Calendar//EN'];
-    upcoming.forEach(b => {
-      const fmt = (d) => new Date(d).toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
-      lines.push('BEGIN:VEVENT');
-      lines.push(`UID:${b._id}@luxoria`);
-      lines.push(`DTSTART:${fmt(b.startDate)}`);
-      lines.push(`DTEND:${fmt(b.endDate)}`);
-      lines.push(`SUMMARY:${b.vehicle?.name || 'Vehicle'} – Booked`);
-      lines.push(`DESCRIPTION:Booking ${b.bookingId || b._id}`);
-      lines.push('END:VEVENT');
-    });
-    lines.push('END:VCALENDAR');
-    const blob    = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = 'luxoria-fleet-calendar.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 150);
-  };
-
-
-  // ── Up Next ────────────────────────────────────────────────────────────────
-  const upNext = bookings
-    .filter(b => {
-      if (b.status !== 'confirmed' && b.status !== 'active') return false;
-      if (selectedVehicle !== 'all') {
-        const vid = b.vehicle?._id?.toString() ?? b.vehicle?.toString() ?? '';
-        if (vid !== selectedVehicle) return false;
-      }
-      return new Date(b.startDate) >= new Date(new Date().setHours(0,0,0,0));
-    })
-    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
-    .slice(0, 4);
 
   if (loading && vehicles.length === 0 && bookings.length === 0) {
     return (
@@ -330,42 +316,6 @@ export default function VendorAvailability() {
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Up Next */}
-          <div className="bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm">
-            <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] mb-5 flex items-center gap-2">
-              <CalendarIcon className="w-4 h-4 text-[#C9A75D]" /> Up Next
-            </h3>
-            <div className="space-y-3">
-              {upNext.length === 0 ? (
-                <p className="text-[12px] font-bold text-[#9CA3AF] uppercase tracking-wider text-center py-4">No upcoming trips.</p>
-              ) : (
-                upNext.map((b, i) => (
-                  <div key={i} className="flex gap-3 items-start pb-3 border-b border-[#F5F5F5] last:border-0 last:pb-0">
-                    <div className="w-10 h-10 rounded-lg bg-[#F5F5F5] flex flex-col items-center justify-center shrink-0 border border-[#ECECEC]">
-                      <span className="text-[9px] font-bold text-[#9CA3AF] uppercase leading-none">{new Date(b.startDate).toLocaleDateString('en-US',{month:'short'})}</span>
-                      <span className="text-[14px] font-bold text-[#0F0F0F] leading-none mt-0.5">{new Date(b.startDate).getDate()}</span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-bold text-[13px] text-[#0F0F0F] truncate">{b.vehicle?.name || 'Vehicle'}</p>
-                      <p className="text-[10px] font-bold text-[#C9A75D] uppercase tracking-wide mt-0.5">
-                        {new Date(b.startDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})} – {new Date(b.endDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})}
-                      </p>
-                      <span className={`inline-block mt-1 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded border ${getStatus(b.status).bg} ${getStatus(b.status).text} ${getStatus(b.status).border}`}>
-                        {getStatus(b.status).label}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            <button
-              onClick={handleSyncCalendar}
-              className="w-full mt-5 py-2.5 bg-[#0F0F0F] text-[#C9A75D] rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#1A1A1A] transition-colors flex items-center justify-center gap-2"
-            >
-              <Plus className="w-3.5 h-3.5" /> Sync External Calendar
-            </button>
           </div>
 
           {/* Active Blocks */}

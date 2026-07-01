@@ -40,5 +40,12 @@ export const updateVehicleSchema = {
       address: Joi.string().trim().optional(),
     }).optional(),
     availability: Joi.string().valid('available', 'booked', 'maintenance').optional(),
+    // Allow image URL objects submitted from the wizard step 3
+    images: Joi.array().items(
+      Joi.object({
+        url: Joi.string().uri().required(),
+        publicId: Joi.string().required(),
+      })
+    ).optional(),
   }),
 };

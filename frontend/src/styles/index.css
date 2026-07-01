@@ -981,3 +981,15 @@
     background: var(--muted);
   }
 }
+
+
+/* ─── NO-SCROLLBAR alias (used in gallery thumbnail strips) ────────────────── */
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

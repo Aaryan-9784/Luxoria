@@ -1,374 +1,592 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { createVendorVehicle } from '@/redux/slices/vendorSlice';
-import api from '@/services/api';
+import { createVendorVehicle, updateVehicleImages } from '@/redux/slices/vendorSlice';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, ArrowRight, ArrowLeft, X, Link as LinkIcon } from 'lucide-react';
+import { staggerContainer, staggerItem } from '@/lib/motion';
+import {
+  CheckCircle2, ArrowRight, ArrowLeft, X,
+  Link as LinkIcon, Car, Settings2, ImagePlus,
+  AlertCircle, Loader2, Sparkles,
+} from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
 import CustomSelect from '@/components/ui/CustomSelect';
 
+// ── Step config ───────────────────────────────────────────────────────────────
 const STEPS = [
-  { id: 1, title: 'Basic Information' },
-  { id: 2, title: 'Specifications & Pricing' },
-  { id: 3, title: 'Images Upload' }
+  { id: 1, label: 'Basic Info',    icon: Car,        desc: 'Name, brand & story'   },
+  { id: 2, label: 'Specs & Price', icon: Settings2,  desc: 'Category, specs & rate' },
+  { id: 3, label: 'Images',        icon: ImagePlus,  desc: 'Gallery URLs'           },
 ];
 
+// ── Shared field primitives ───────────────────────────────────────────────────
+const FieldLabel = ({ children, required }) => (
+  <label className="block text-[10px] font-bold text-[#666666] uppercase tracking-[0.15em] mb-2">
+    {children}
+    {required && <span className="text-[#DC2626] ml-0.5">*</span>}
+  </label>
+);
+
+const FieldError = ({ message }) =>
+  message ? (
+    <p className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-[#DC2626]">
+      <AlertCircle className="w-3 h-3 shrink-0" /> {message}
+    </p>
+  ) : null;
+
+const inputCls = (hasError) =>
+  `w-full bg-[#F9FAFB] border ${
+    hasError ? 'border-[#DC2626] ring-1 ring-[#DC2626]/20' : 'border-[#E5E7EB]'
+  } text-[#0F0F0F] text-[13px] py-3 px-4 rounded-xl focus:outline-none focus:border-[#C9A75D] focus:ring-1 focus:ring-[#C9A75D]/30 transition-all placeholder:text-[#C0C0C0] font-medium`;
+
+// ── Main component ────────────────────────────────────────────────────────────
 export default function AddVehicleWizard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [createdVehicleId, setCreatedVehicleId] = useState(null);
-  
-  // Image URL State
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [currentUrl, setCurrentUrl] = useState('');
-  const [isUploadingImages, setIsUploadingImages] = useState(false);
-  const [uploadError, setUploadError] = useState('');
 
-  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm({
-    defaultValues: {
-      category: 'sports',
-      transmission: 'automatic',
-      fuelType: 'petrol'
-    }
+  const [step, setStep]                       = useState(1);
+  const [createdVehicleId, setCreatedVehicleId] = useState(null);
+  const [submitError, setSubmitError]         = useState('');
+  const [images, setImages]                   = useState([]);
+  const [urlInput, setUrlInput]               = useState('');
+  const [imageError, setImageError]           = useState('');
+  const [uploading, setUploading]             = useState(false);
+
+  const {
+    register, handleSubmit, control, trigger,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    mode: 'onTouched',
+    defaultValues: { category: '', transmission: '', fuelType: '', seats: '' },
   });
 
-  // Step 1 & 2 Submit (Creates Vehicle in DB)
-  const onFormSubmit = async (data) => {
-    try {
-      const vehicleData = {
-        name: data.name,
-        brand: data.brand,
-        model: data.model,
-        year: parseInt(data.year),
-        category: data.category,
-        transmission: data.transmission,
-        fuelType: data.fuelType,
-        seats: parseInt(data.seats),
-        pricePerDay: parseInt(data.pricePerDay),
-        description: data.description,
-        location: {
-          city: data.city,
-          state: data.state,
-          coordinates: [0, 0]
-        },
-        features: data.features.split(',').map(f => f.trim()).filter(Boolean)
-      };
+  // ── Step 1 → 2 ───────────────────────────────────────────────────────────
+  const goToStep2 = async () => {
+    const ok = await trigger(['name', 'brand', 'year', 'description']);
+    if (ok) setStep(2);
+  };
 
-      const result = await dispatch(createVendorVehicle(vehicleData)).unwrap();
+  // ── Step 2 → 1 (back — no data loss) ─────────────────────────────────────
+  const goToStep1 = () => setStep(1);
+
+  // ── Step 2: create vehicle ────────────────────────────────────────────────
+  const onFormSubmit = async (data) => {
+    setSubmitError('');
+    try {
+      const payload = {
+        name:         data.name.trim(),
+        brand:        data.brand.trim(),
+        model:        data.model?.trim()       || undefined,
+        year:         data.year  ? parseInt(data.year, 10)   : undefined,
+        category:     data.category     || 'sports',
+        transmission: data.transmission || 'automatic',
+        fuelType:     data.fuelType     || 'petrol',
+        seats:        parseInt(data.seats, 10) || 4,
+        pricePerDay:  parseFloat(data.pricePerDay),
+        description:  data.description?.trim() || undefined,
+        location: {
+          city:  data.city?.trim()  || undefined,
+          state: data.state?.trim() || undefined,
+        },
+        features: data.features
+          ? data.features.split(',').map((f) => f.trim()).filter(Boolean)
+          : [],
+      };
+      const result = await dispatch(createVendorVehicle(payload)).unwrap();
       setCreatedVehicleId(result._id);
-      setCurrentStep(3);
+      setStep(3);
     } catch (err) {
-      alert("Failed to create vehicle: " + err);
+      setSubmitError(String(err));
     }
   };
 
-  // Step 3 Submit (Updates vehicle with image URLs)
-  const handleImageUpload = async () => {
-    if (selectedImages.length === 0) {
-      setUploadError('Please add at least one image URL.');
-      return;
-    }
+  // ── Step 3: image URLs — no limit ─────────────────────────────────────────
+  const addImageUrl = () => {
+    const url = urlInput.trim();
+    if (!url) return;
+    if (!url.startsWith('http')) { setImageError('Please enter a valid URL (must start with http).'); return; }
+    setImages((prev) => [...prev, url]);
+    setUrlInput('');
+    setImageError('');
+  };
 
-    setIsUploadingImages(true);
-    setUploadError('');
-    
+  const handleFinalUpload = async () => {
+    if (images.length === 0) { setImageError('Add at least one image URL.'); return; }
+    setUploading(true);
+    setImageError('');
     try {
-      const imagesPayload = selectedImages.map((url, idx) => ({
-        url: url,
-        publicId: `external-url-${Date.now()}-${idx}`
+      const imagesPayload = images.map((url, idx) => ({
+        url,
+        publicId: `url-${Date.now()}-${idx}`,
       }));
-
-      await api.put(`/vehicles/${createdVehicleId}`, { images: imagesPayload });
+      await dispatch(updateVehicleImages({ id: createdVehicleId, images: imagesPayload })).unwrap();
       navigate('/vendor/vehicles');
     } catch (err) {
-      setUploadError(err.response?.data?.error?.message || 'Failed to save images.');
+      setImageError(typeof err === 'string' ? err : 'Failed to save images.');
     } finally {
-      setIsUploadingImages(false);
+      setUploading(false);
     }
   };
-
-  const handleAddUrl = () => {
-    if (currentUrl && selectedImages.length < 5) {
-      setSelectedImages(prev => [...prev, currentUrl]);
-      setCurrentUrl('');
-      setUploadError('');
-    } else if (selectedImages.length >= 5) {
-      setUploadError('Maximum 5 images allowed.');
-    }
-  };
-
-  const inputClasses = "w-full bg-[#F5F5F5]/50 border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3.5 px-4 rounded-xl focus:outline-none focus:border-[#C9A75D] focus:ring-1 focus:ring-[#C9A75D]/30 transition-all placeholder:text-[#9CA3AF]";
-  const labelClasses = "block text-[10px] font-bold text-[#666666] uppercase tracking-[0.15em] mb-2";
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10">
-      
-      {/* Wizard Header */}
-      <div className="text-center">
-        <h1 className="text-[32px] font-bold text-[#0F0F0F] tracking-tight mb-2" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Add New Vehicle</h1>
-        <p className="text-[#666666] text-[13px] font-medium tracking-wide">Expand your fleet and reach more luxury clients.</p>
-      </div>
+    <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-8 pb-12">
 
-      {/* Progress Bar */}
-      <div className="flex items-center justify-between relative mb-12 max-w-2xl mx-auto">
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-[#ECECEC] -z-10" />
-        <div 
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-[#C9A75D] -z-10 transition-all duration-500"
-          style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
-        />
-        
-        {STEPS.map((step) => (
-          <div key={step.id} className="flex flex-col items-center gap-3 bg-[#F8FAFC]">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
-              currentStep >= step.id 
-                ? 'bg-[#0F0F0F] text-[#C9A75D] shadow-[0_0_15px_rgba(201,167,93,0.3)] ring-4 ring-white' 
-                : 'bg-white border-2 border-[#ECECEC] text-[#9CA3AF] ring-4 ring-[#F8FAFC]'
-            }`}>
-              {currentStep > step.id ? <CheckCircle2 className="w-5 h-5 text-[#C9A75D]" /> : step.id}
+      {/* ── Page header ─────────────────────────────────────────────────── */}
+      <motion.div variants={staggerItem} className="mb-2">
+        <h1
+          className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5"
+          style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
+        >
+          Add New Vehicle
+        </h1>
+        <p className="text-[#666666] text-sm font-medium tracking-wide">
+          Expand your fleet and reach more luxury clients.
+        </p>
+      </motion.div>
+
+      {/* ── Step progress cards ──────────────────────────────────────────── */}
+      <motion.div variants={staggerItem} className="grid grid-cols-3 gap-4">
+        {STEPS.map((s) => {
+          const Icon   = s.icon;
+          const done   = step > s.id;
+          const active = step === s.id;
+          return (
+            <div
+              key={s.id}
+              className={`relative overflow-hidden group rounded-2xl border p-5 transition-all duration-300
+                ${active
+                  ? 'bg-[#0F0F0F] border-[#0F0F0F] shadow-xl'
+                  : done
+                  ? 'bg-white border-[#16A34A]/30'
+                  : 'bg-white border-[#ECECEC]'}`}
+            >
+              {/* gold shimmer on active */}
+              {active && (
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#C9A75D] to-transparent" />
+              )}
+              <div className="flex items-start justify-between mb-4">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
+                  ${active ? 'bg-[#C9A75D]/20 text-[#C9A75D]' : done ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#F5F5F5] text-[#9CA3AF]'}`}>
+                  {done
+                    ? <CheckCircle2 className="w-5 h-5" />
+                    : <Icon className="w-5 h-5" />}
+                </div>
+                <span className={`text-[10px] font-bold uppercase tracking-widest
+                  ${active ? 'text-[#C9A75D]' : done ? 'text-[#16A34A]' : 'text-[#9CA3AF]'}`}>
+                  {done ? 'Done' : `0${s.id}`}
+                </span>
+              </div>
+              <p className={`text-[13px] font-bold tracking-tight mb-0.5
+                ${active ? 'text-white' : done ? 'text-[#0F0F0F]' : 'text-[#9CA3AF]'}`}>
+                {s.label}
+              </p>
+              <p className={`text-[11px] font-medium ${active ? 'text-white/50' : 'text-[#BBBBBB]'}`}>
+                {s.desc}
+              </p>
             </div>
-            <span className={`text-[10px] font-bold uppercase tracking-[0.15em] ${currentStep >= step.id ? 'text-[#0F0F0F]' : 'text-[#9CA3AF]'}`}>
-              {step.title}
-            </span>
-          </div>
-        ))}
-      </div>
+          );
+        })}
+      </motion.div>
 
-      {/* Form Container */}
-      <div className="bg-white border border-[#ECECEC] rounded-2xl shadow-sm p-8 md:p-12 relative overflow-hidden">
-        
-        <form onSubmit={handleSubmit(onFormSubmit)}>
+      {/* ── Form card ────────────────────────────────────────────────────── */}
+      <motion.div
+        variants={staggerItem}
+        className="relative overflow-hidden bg-white border border-[#ECECEC] rounded-2xl shadow-sm"
+      >
+        {/* gold top line */}
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#C9A75D]/40 to-transparent" />
+
+        <form onSubmit={handleSubmit(onFormSubmit)} noValidate>
           <AnimatePresence mode="wait">
-            
-            {/* Step 1: Basic Info */}
-            {currentStep === 1 && (
-              <motion.div 
+
+            {/* ── STEP 1: Basic Info ────────────────────────────────────── */}
+            {step === 1 && (
+              <motion.div
                 key="step1"
-                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
+                initial={{ opacity: 0, x: 32 }} animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -32 }} transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="p-8 space-y-8"
               >
-                <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] border-b border-[#ECECEC] pb-4">Basic Information</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <label className={labelClasses}>Vehicle Title</label>
-                    <input {...register("name", { required: true })} className={inputClasses} placeholder="e.g. Porsche 911 GT3 RS" />
-                  </div>
-                  <div>
-                    <label className={labelClasses}>Brand</label>
-                    <input {...register("brand", { required: true })} className={inputClasses} placeholder="e.g. Porsche" />
-                  </div>
-                  <div>
-                    <label className={labelClasses}>Model</label>
-                    <input {...register("model", { required: true })} className={inputClasses} placeholder="e.g. 911 GT3 RS" />
-                  </div>
-                  <div>
-                    <label className={labelClasses}>Year</label>
-                    <input {...register("year", { required: true })} type="number" className={inputClasses} placeholder="e.g. 2024" />
-                  </div>
+                <SectionHeading icon={Car} label="Basic Information" />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
                   <div className="md:col-span-2">
-                    <label className={labelClasses}>Description (Cinematic Storytelling)</label>
-                    <textarea {...register("description", { required: true })} className={`${inputClasses} min-h-[140px] resize-y`} placeholder="Describe the luxury experience..." />
+                    <FieldLabel required>Vehicle Title</FieldLabel>
+                    <input
+                      {...register('name', { required: 'Vehicle title is required' })}
+                      className={inputCls(errors.name)}
+                      placeholder="e.g. Rolls-Royce Phantom VIII"
+                    />
+                    <FieldError message={errors.name?.message} />
                   </div>
+
+                  <div>
+                    <FieldLabel required>Brand</FieldLabel>
+                    <input
+                      {...register('brand', { required: 'Brand is required' })}
+                      className={inputCls(errors.brand)}
+                      placeholder="e.g. Rolls-Royce"
+                    />
+                    <FieldError message={errors.brand?.message} />
+                  </div>
+
+                  <div>
+                    <FieldLabel>Model</FieldLabel>
+                    <input
+                      {...register('model')}
+                      className={inputCls(false)}
+                      placeholder="e.g. Phantom VIII"
+                    />
+                  </div>
+
+                  <div>
+                    <FieldLabel>Year</FieldLabel>
+                    <input
+                      {...register('year', {
+                        min: { value: 1990, message: 'Year must be 1990 or later' },
+                        max: { value: new Date().getFullYear() + 1, message: 'Invalid year' },
+                      })}
+                      type="number"
+                      className={inputCls(errors.year)}
+                      placeholder={`e.g. ${new Date().getFullYear()}`}
+                    />
+                    <FieldError message={errors.year?.message} />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <FieldLabel>
+                      Description
+                      <span className="ml-2 normal-case font-normal text-[#9CA3AF] tracking-normal">
+                        — cinematic storytelling
+                      </span>
+                    </FieldLabel>
+                    <textarea
+                      {...register('description', {
+                        maxLength: { value: 2000, message: 'Max 2000 characters' },
+                      })}
+                      rows={4}
+                      className={`${inputCls(errors.description)} resize-y`}
+                      placeholder="Describe the luxury experience this vehicle delivers…"
+                    />
+                    <FieldError message={errors.description?.message} />
+                  </div>
+
                 </div>
 
-                <div className="flex justify-end pt-8">
-                  <button 
-                    type="button" 
-                    onClick={() => setCurrentStep(2)} 
-                    className="flex items-center gap-2 px-8 py-3.5 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all"
-                  >
-                    Next Step <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
+                <FormFooter>
+                  <div />
+                  <GoldButton type="button" onClick={goToStep2}>
+                    Specifications <ArrowRight className="w-4 h-4" />
+                  </GoldButton>
+                </FormFooter>
               </motion.div>
             )}
 
-            {/* Step 2: Specs & Pricing */}
-            {currentStep === 2 && (
-              <motion.div 
+            {/* ── STEP 2: Specs & Pricing ──────────────────────────────── */}
+            {step === 2 && (
+              <motion.div
                 key="step2"
-                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
+                initial={{ opacity: 0, x: 32 }} animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -32 }} transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="p-8 space-y-8"
               >
-                <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] border-b border-[#ECECEC] pb-4">Specifications & Pricing</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <SectionHeading icon={Settings2} label="Specifications & Pricing" />
+
+                {/* Backend error */}
+                {submitError && (
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-[#DC2626]/5 border border-[#DC2626]/20">
+                    <AlertCircle className="w-4 h-4 text-[#DC2626] mt-0.5 shrink-0" />
+                    <p className="text-[12px] font-semibold text-[#DC2626]">{submitError}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
                   <div>
-                    <label className={labelClasses}>Category</label>
+                    <FieldLabel required>Category</FieldLabel>
                     <Controller
-                      name="category"
-                      control={control}
-                      rules={{ required: true }}
+                      name="category" control={control} rules={{ required: true }}
                       render={({ field }) => (
                         <CustomSelect
-                          value={field.value}
-                          onChange={field.onChange}
+                          value={field.value} onChange={field.onChange} icon={null}
                           options={[
-                            { value: 'sports', label: 'Sports' },
-                            { value: 'luxury', label: 'Luxury' },
-                            { value: 'suv', label: 'SUV' },
-                            { value: 'sedan', label: 'Sedan' }
+                            { value: 'sedan',       label: 'Sedan' },
+                            { value: 'suv',         label: 'SUV' },
+                            { value: 'sports',      label: 'Sports' },
+                            { value: 'luxury',      label: 'Luxury' },
+                            { value: 'convertible', label: 'Convertible' },
+                            { value: 'limousine',   label: 'Limousine' },
+                            { value: 'electric',    label: 'Electric' },
                           ]}
-                          className={inputClasses + " p-0"}
-                          icon={null}
                         />
                       )}
                     />
                   </div>
+
                   <div>
-                    <label className={labelClasses}>Price Per Day ($)</label>
-                    <input {...register("pricePerDay", { required: true })} type="number" className={inputClasses} placeholder="e.g. 15000" />
+                    <FieldLabel required>Price Per Day (₹)</FieldLabel>
+                    <input
+                      {...register('pricePerDay', {
+                        required: 'Price is required',
+                        min: { value: 1, message: 'Price must be positive' },
+                      })}
+                      type="number"
+                      className={inputCls(errors.pricePerDay)}
+                      placeholder="e.g. 15000"
+                    />
+                    <FieldError message={errors.pricePerDay?.message} />
                   </div>
+
                   <div>
-                    <label className={labelClasses}>Transmission</label>
+                    <FieldLabel>Transmission</FieldLabel>
                     <Controller
-                      name="transmission"
-                      control={control}
+                      name="transmission" control={control}
                       render={({ field }) => (
                         <CustomSelect
-                          value={field.value}
-                          onChange={field.onChange}
+                          value={field.value} onChange={field.onChange} icon={null}
                           options={[
                             { value: 'automatic', label: 'Automatic' },
-                            { value: 'manual', label: 'Manual' }
+                            { value: 'manual',    label: 'Manual' },
                           ]}
-                          className={inputClasses + " p-0"}
-                          icon={null}
                         />
                       )}
                     />
                   </div>
+
                   <div>
-                    <label className={labelClasses}>Fuel Type</label>
+                    <FieldLabel>Fuel Type</FieldLabel>
                     <Controller
-                      name="fuelType"
-                      control={control}
+                      name="fuelType" control={control}
                       render={({ field }) => (
                         <CustomSelect
-                          value={field.value}
-                          onChange={field.onChange}
+                          value={field.value} onChange={field.onChange} icon={null}
                           options={[
-                            { value: 'petrol', label: 'Petrol' },
-                            { value: 'diesel', label: 'Diesel' },
+                            { value: 'petrol',   label: 'Petrol'   },
+                            { value: 'diesel',   label: 'Diesel'   },
                             { value: 'electric', label: 'Electric' },
-                            { value: 'hybrid', label: 'Hybrid' }
+                            { value: 'hybrid',   label: 'Hybrid'   },
                           ]}
-                          className={inputClasses + " p-0"}
-                          icon={null}
                         />
                       )}
                     />
                   </div>
+
                   <div>
-                    <label className={labelClasses}>Seats</label>
-                    <input {...register("seats")} type="number" className={inputClasses} placeholder="4" />
+                    <FieldLabel>Seats</FieldLabel>
+                    <input
+                      {...register('seats', {
+                        min: { value: 1, message: 'Min 1 seat'  },
+                        max: { value: 20, message: 'Max 20 seats' },
+                      })}
+                      type="number"
+                      className={inputCls(errors.seats)}
+                      placeholder="4"
+                    />
+                    <FieldError message={errors.seats?.message} />
                   </div>
+
                   <div>
-                    <label className={labelClasses}>City Location</label>
-                    <input {...register("city", { required: true })} className={inputClasses} placeholder="e.g. Mumbai" />
+                    <FieldLabel required>City</FieldLabel>
+                    <input
+                      {...register('city', { required: 'City is required' })}
+                      className={inputCls(errors.city)}
+                      placeholder="e.g. Mumbai"
+                    />
+                    <FieldError message={errors.city?.message} />
                   </div>
+
+                  <div>
+                    <FieldLabel>State</FieldLabel>
+                    <input
+                      {...register('state')}
+                      className={inputCls(false)}
+                      placeholder="e.g. Maharashtra"
+                    />
+                  </div>
+
                   <div className="md:col-span-2">
-                    <label className={labelClasses}>Features (Comma Separated)</label>
-                    <input {...register("features")} className={inputClasses} placeholder="e.g. Sunroof, Burmester Audio, Massaging Seats" />
+                    <FieldLabel>
+                      Features
+                      <span className="ml-2 normal-case font-normal text-[#9CA3AF] tracking-normal">
+                        (comma-separated)
+                      </span>
+                    </FieldLabel>
+                    <input
+                      {...register('features')}
+                      className={inputCls(false)}
+                      placeholder="e.g. Sunroof, Massaging Seats, Burmester Audio, 360° Camera"
+                    />
                   </div>
+
                 </div>
 
-                <div className="flex justify-between pt-8 border-t border-[#ECECEC]">
-                  <button 
-                    type="button" 
-                    onClick={() => setCurrentStep(1)} 
-                    className="flex items-center gap-2 px-6 py-3.5 bg-white border border-[#ECECEC] text-[#0F0F0F] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#F5F5F5] transition-all"
-                  >
+                <FormFooter>
+                  <GhostButton type="button" onClick={goToStep1}>
                     <ArrowLeft className="w-4 h-4" /> Back
-                  </button>
-                  <button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#C9A75D] to-[#B59345] text-[#0F0F0F] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:shadow-[0_0_20px_rgba(201,167,93,0.4)] disabled:opacity-50 transition-all"
-                  >
-                    {isSubmitting ? 'Processing...' : 'Create Vehicle Profile'} <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
+                  </GhostButton>
+                  <GoldButton type="submit" disabled={isSubmitting}>
+                    {isSubmitting
+                      ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
+                      : <>Create Vehicle <ArrowRight className="w-4 h-4" /></>
+                    }
+                  </GoldButton>
+                </FormFooter>
               </motion.div>
             )}
 
           </AnimatePresence>
         </form>
 
-        {/* Step 3: Images */}
+        {/* ── STEP 3: Images ───────────────────────────────────────────── */}
         <AnimatePresence>
-          {currentStep === 3 && (
-            <motion.div 
+          {step === 3 && (
+            <motion.div
               key="step3"
-              initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-              className="space-y-8"
+              initial={{ opacity: 0, x: 32 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="p-8 space-y-8"
             >
-              <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] border-b border-[#ECECEC] pb-4">Add Vehicle Images (URLs)</h3>
-              
-              <div className="bg-[#16A34A]/10 text-[#16A34A] p-5 rounded-xl border border-[#16A34A]/20 flex items-center gap-3">
-                <CheckCircle2 className="w-5 h-5 shrink-0" />
-                <p className="text-[13px] font-bold">Vehicle profile created successfully! Now add up to 5 image URLs.</p>
-              </div>
+              <SectionHeading icon={ImagePlus} label="Vehicle Images" />
 
-              {uploadError && <div className="text-[#DC2626] text-[13px] font-medium p-4 bg-[#DC2626]/10 rounded-xl">{uploadError}</div>}
-
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <LinkIcon className="w-4 h-4 text-[#9CA3AF]" />
-                  </div>
-                  <input 
-                    type="url" 
-                    value={currentUrl}
-                    onChange={(e) => setCurrentUrl(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleAddUrl()}
-                    placeholder="https://example.com/car-image.jpg"
-                    className={`${inputClasses} pl-10`}
-                  />
+              {/* Success banner */}
+              <div className="flex items-center gap-4 p-5 rounded-2xl bg-[#16A34A]/8 border border-[#16A34A]/20">
+                <div className="w-10 h-10 rounded-full bg-[#16A34A]/15 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-5 h-5 text-[#16A34A]" />
                 </div>
-                <button 
-                  type="button"
-                  onClick={handleAddUrl}
-                  disabled={!currentUrl || selectedImages.length >= 5}
-                  className="px-8 py-3.5 bg-white border border-[#ECECEC] text-[#0F0F0F] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#F5F5F5] disabled:opacity-50 transition-all whitespace-nowrap"
-                >
-                  Add Image URL
-                </button>
+                <div>
+                  <p className="text-[13px] font-bold text-[#0F0F0F]">Vehicle profile created successfully</p>
+                  <p className="text-[11px] text-[#666666] font-medium mt-0.5">Add up to 5 image URLs to complete your listing.</p>
+                </div>
               </div>
 
-              {selectedImages.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  {selectedImages.map((url, idx) => (
-                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-[#ECECEC] shadow-sm group bg-[#F5F5F5]">
-                      <img src={url} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      <button 
+              {imageError && (
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-[#DC2626]/5 border border-[#DC2626]/20">
+                  <AlertCircle className="w-4 h-4 text-[#DC2626] mt-0.5 shrink-0" />
+                  <p className="text-[12px] font-semibold text-[#DC2626]">{imageError}</p>
+                </div>
+              )}
+
+              {/* URL input */}
+              <div>
+                <FieldLabel>Image URL</FieldLabel>
+                <div className="flex gap-3">
+                  <div className="relative flex-1">
+                    <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
+                    <input
+                      type="url"
+                      value={urlInput}
+                      onChange={(e) => setUrlInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addImageUrl())}
+                      placeholder="https://example.com/car-photo.jpg"
+                      className={`${inputCls(false)} pl-11`}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addImageUrl}
+                    disabled={!urlInput}
+                    className="shrink-0 px-5 py-3 border border-[#ECECEC] rounded-xl text-[11px] font-bold uppercase tracking-wider text-[#0F0F0F] hover:bg-[#F5F5F5] hover:border-[#C9A75D]/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  >
+                    Add
+                  </button>
+                </div>
+                {images.length > 0 && (
+                  <p className="text-[11px] text-[#9CA3AF] font-medium mt-2">
+                    {images.length} image{images.length !== 1 ? 's' : ''} added
+                  </p>
+                )}
+              </div>
+
+              {/* Previews */}
+              {images.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                  {images.map((url, idx) => (
+                    <div
+                      key={idx}
+                      className="relative aspect-square rounded-xl overflow-hidden border border-[#ECECEC] bg-[#F9FAFB] group shadow-sm"
+                    >
+                      <img
+                        src={url}
+                        alt={`Preview ${idx + 1}`}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                      {/* remove button */}
+                      <button
                         type="button"
-                        onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== idx))}
-                        className="absolute top-2 right-2 bg-white/90 text-[#DC2626] p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
+                        onClick={() => setImages((prev) => prev.filter((_, i) => i !== idx))}
+                        className="absolute top-1.5 right-1.5 w-6 h-6 bg-white/95 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow hover:bg-white"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5 text-[#DC2626]" />
                       </button>
+                      {/* index badge */}
+                      <div className="absolute bottom-1.5 left-1.5 bg-black/55 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
+                        {idx + 1}
+                      </div>
                     </div>
                   ))}
                 </div>
               )}
 
-              <div className="flex justify-end pt-8 border-t border-[#ECECEC]">
-                <button 
-                  onClick={handleImageUpload} 
-                  disabled={selectedImages.length === 0 || isUploadingImages}
-                  className="flex items-center gap-2 px-8 py-3.5 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  {isUploadingImages ? 'Saving...' : 'Complete Upload'} <CheckCircle2 className="w-4 h-4" />
-                </button>
-              </div>
+              <FormFooter>
+                <div />
+                <GoldButton onClick={handleFinalUpload} disabled={images.length === 0 || uploading}>
+                  {uploading
+                    ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving…</>
+                    : <><Sparkles className="w-4 h-4" /> Complete Listing</>
+                  }
+                </GoldButton>
+              </FormFooter>
             </motion.div>
           )}
         </AnimatePresence>
 
+      </motion.div>
+
+    </motion.div>
+  );
+}
+
+// ── Micro sub-components ──────────────────────────────────────────────────────
+
+function SectionHeading({ icon: Icon, label }) {
+  return (
+    <div className="flex items-center gap-3 border-b border-[#ECECEC] pb-5">
+      <div className="w-8 h-8 rounded-full bg-[#0F0F0F] flex items-center justify-center shrink-0">
+        <Icon className="w-4 h-4 text-[#C9A75D]" />
       </div>
+      <h3 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F]">{label}</h3>
     </div>
+  );
+}
+
+function FormFooter({ children }) {
+  return (
+    <div className="flex items-center justify-between pt-6 mt-2 border-t border-[#ECECEC]">
+      {children}
+    </div>
+  );
+}
+
+function GoldButton({ children, ...props }) {
+  return (
+    <button
+      {...props}
+      className={`flex items-center gap-2 px-7 py-3 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all ${props.className ?? ''}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function GhostButton({ children, ...props }) {
+  return (
+    <button
+      {...props}
+      className="flex items-center gap-2 px-6 py-3 border border-[#ECECEC] rounded-xl text-[11px] font-bold uppercase tracking-wider text-[#666666] hover:bg-[#F5F5F5] hover:border-[#C9A75D]/30 transition-all"
+    >
+      {children}
+    </button>
   );
 }

@@ -55,8 +55,6 @@ export default function VendorRevenue() {
 
   // ── Export CSV ─────────────────────────────────────────────────────────────
   const handleExportCSV = () => {
-    if (allSortedBookings.length === 0) return;
-
     const headers = ['Booking ID', 'Vehicle', 'Customer', 'Rental Period', 'Days', 'Amount', 'Status', 'Date'];
     const rows = allSortedBookings.map(b => {
       const start = b.startDate ? new Date(b.startDate).toLocaleDateString('en-US') : '-';
@@ -140,8 +138,7 @@ export default function VendorRevenue() {
           </div>
           <button
             onClick={handleExportCSV}
-            disabled={allSortedBookings.length === 0}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all w-full sm:w-auto disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all w-full sm:w-auto shrink-0"
           >
             <Download className="w-4 h-4" /> Export CSV
           </button>

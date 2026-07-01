@@ -93,7 +93,12 @@ export default function ManageFleet() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {filteredVehicles.map((vehicle) => (
-            <motion.div variants={staggerItem} key={vehicle._id} className="bg-white border border-[#ECECEC] rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 group flex flex-col">
+            <motion.div
+              variants={staggerItem}
+              key={vehicle._id}
+              onClick={() => navigate(`/vehicles/${vehicle._id}`)}
+              className="bg-white border border-[#ECECEC] rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 group flex flex-col cursor-pointer"
+            >
               
               {/* Image & Status */}
               <div className="relative h-[240px] bg-[#F5F5F5] border-b border-[#ECECEC] overflow-hidden">
@@ -114,10 +119,18 @@ export default function ManageFleet() {
                 </div>
                 <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
                   <div className="flex flex-col gap-2">
-                    <button className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#C9A75D] shadow-lg transition-colors" title="Edit Vehicle" onClick={() => navigate(`/vendor/edit-vehicle/${vehicle._id}`)}>
+                    <button
+                      className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#C9A75D] shadow-lg transition-colors"
+                      title="Edit Vehicle"
+                      onClick={(e) => { e.stopPropagation(); navigate(`/vendor/edit-vehicle/${vehicle._id}`); }}
+                    >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
-                    <button className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#DC2626] shadow-lg transition-colors" title="Delete Vehicle" onClick={() => handleDelete(vehicle._id)}>
+                    <button
+                      className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#DC2626] shadow-lg transition-colors"
+                      title="Delete Vehicle"
+                      onClick={(e) => { e.stopPropagation(); handleDelete(vehicle._id); }}
+                    >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>

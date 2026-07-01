@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchVehicleById } from '@/redux/slices/vehicleSlice';
 import { motion } from 'framer-motion';
 import { pageTransition } from '@/lib/motion';
+import { ChevronLeft, ShieldCheck, MessageSquare, BadgeCheck, Crown } from 'lucide-react';
 
 import VehicleGallery from './components/VehicleGallery';
 import VehicleHeroInfo from './components/VehicleHeroInfo';
@@ -11,7 +12,6 @@ import VehicleSpecs from './components/VehicleSpecs';
 import FloatingBookingWidget from './components/FloatingBookingWidget';
 import ContactVendorModal from './components/ContactVendorModal';
 import Skeleton from '@/components/ui/Skeleton';
-import { ShieldCheck, MessageSquare, BadgeCheck, Crown } from 'lucide-react';
 
 export default function VehicleDetailsPage() {
   const { id } = useParams();
@@ -56,24 +56,36 @@ export default function VehicleDetailsPage() {
   }
 
   return (
-    <motion.div {...pageTransition} className="pt-28 pb-20 bg-background min-h-screen relative">
+    <motion.div {...pageTransition} className="pt-32 pb-20 bg-background min-h-screen relative">
       <div className="container-luxe">
-        {/* 1. Cinematic Gallery */}
+
+        {/* ── Back button ─────────────────────────────────────────────────── */}
+        <div className="py-4 mb-2">
+          <button
+            onClick={() => navigate(-1)}
+            className="group inline-flex items-center gap-2.5 text-[#666666] hover:text-[#0F0F0F] transition-colors duration-200"
+          >
+            <div className="w-9 h-9 rounded-full border border-[#ECECEC] group-hover:border-[#C9A75D]/50 group-hover:bg-[#F5F5F5] flex items-center justify-center transition-all duration-200 shadow-sm shrink-0">
+              <ChevronLeft className="w-4 h-4" />
+            </div>
+            <span className="text-[11px] font-bold uppercase tracking-[0.15em]">Back</span>
+          </button>
+        </div>
+
+        {/* ── Gallery ─────────────────────────────────────────────────────── */}
         <div className="mb-8">
           <VehicleGallery images={vehicle.images || (vehicle.image ? [{ url: vehicle.image }] : [])} />
         </div>
 
+        {/* ── Content + Booking widget ─────────────────────────────────── */}
         <div className="flex flex-col lg:flex-row gap-8 relative items-start">
-          
-          {/* ── Left Content ── */}
-          <div className="flex-1 min-w-0">
-            {/* 2. Hero Info */}
-            <VehicleHeroInfo vehicle={vehicle} />
 
-            {/* 3. Specifications */}
+          {/* Left content */}
+          <div className="flex-1 min-w-0">
+            <VehicleHeroInfo vehicle={vehicle} />
             <VehicleSpecs vehicle={vehicle} />
 
-            {/* 4. Vendor Info */}
+            {/* Vendor info */}
             <div className="mt-8 pt-8 border-t border-border">
               <h3 className="text-h5 font-semibold text-primary mb-5">Provided By</h3>
               <div className="flex items-center gap-4 p-5 rounded-2xl bg-surface border border-border">
@@ -82,12 +94,14 @@ export default function VehicleDetailsPage() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h4 className="text-base font-semibold text-primary">{vehicle.vendor?.name || 'Sovereign Elite Mobility'}</h4>
+                    <h4 className="text-base font-semibold text-primary">
+                      {vehicle.vendor?.name || 'Sovereign Elite Mobility'}
+                    </h4>
                     <BadgeCheck className="w-4 h-4 text-accent" />
                   </div>
                   <p className="text-caption text-secondary">Verified Luxury Partner</p>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsContactModalOpen(true)}
                   className="btn btn-outline btn-sm hidden md:flex"
                 >
@@ -96,7 +110,7 @@ export default function VehicleDetailsPage() {
               </div>
             </div>
 
-            {/* 5. Rental Policies (Accordion placeholder) */}
+            {/* Rental policies */}
             <div className="mt-8 pt-8 border-t border-border">
               <h3 className="text-h5 font-semibold text-primary mb-5">Rental Policies</h3>
               <div className="space-y-3 text-body-sm text-secondary">
@@ -114,21 +128,20 @@ export default function VehicleDetailsPage() {
                 </div>
               </div>
             </div>
-            
           </div>
 
-          {/* Right Rail: Sticky Booking Widget */}
+          {/* Right rail: sticky booking widget */}
           <div className="w-full lg:w-[420px] shrink-0">
             <FloatingBookingWidget vehicle={vehicle} />
           </div>
-
         </div>
+
       </div>
 
-      <ContactVendorModal 
-        isOpen={isContactModalOpen} 
-        onClose={() => setIsContactModalOpen(false)} 
-        vehicle={vehicle} 
+      <ContactVendorModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        vehicle={vehicle}
       />
     </motion.div>
   );
