@@ -544,7 +544,9 @@ export default function EditVehicleWizard() {
               )}
 
               <FormFooter>
-                <div />
+                <GhostButton type="button" onClick={() => setStep(2)}>
+                  <ArrowLeft className="w-4 h-4" /> Back
+                </GhostButton>
                 <GoldButton onClick={handleFinalUpload} disabled={images.length === 0 || uploading}>
                   {uploading
                     ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving…</>

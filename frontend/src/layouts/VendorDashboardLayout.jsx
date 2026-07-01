@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Car, PlusCircle, CalendarDays, 
   LineChart, UserCircle, LogOut, Menu, X,
-  ChevronLeft, ChevronRight, BarChart3, Clock, ShieldCheck, Heart, User, Bell, Globe, Wallet, HelpCircle
+  ChevronLeft, ChevronRight, BarChart3, Clock, ShieldCheck, User, Bell, Globe, Wallet, HelpCircle
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';

@@ -114,7 +114,8 @@ export default function Navbar() {
           <div className="flex items-center gap-5">
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
-                {/* Wishlist Dropdown */}
+                {/* Wishlist Dropdown — hidden for vendors and admins */}
+                {user?.role === 'user' && (
                 <Dropdown
                   align="right"
                   className="w-[320px] p-0"
@@ -173,6 +174,7 @@ export default function Navbar() {
                     </button>
                   </div>
                 </Dropdown>
+                )}
 
                 {/* User Profile Button */}
                 <div 

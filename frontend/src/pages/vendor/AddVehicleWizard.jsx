@@ -456,7 +456,9 @@ export default function AddVehicleWizard() {
                 </div>
                 <div>
                   <p className="text-[13px] font-bold text-[#0F0F0F]">Vehicle profile created successfully</p>
-                  <p className="text-[11px] text-[#666666] font-medium mt-0.5">Add up to 5 image URLs to complete your listing.</p>
+                  <p className="text-[11px] text-[#666666] font-medium mt-0.5">
+                    Add image URLs below, then click <span className="text-[#C9A75D] font-bold">Complete Listing</span> to publish your car.
+                  </p>
                 </div>
               </div>
 
@@ -529,8 +531,27 @@ export default function AddVehicleWizard() {
                 </div>
               )}
 
+              {/* Complete listing section — shown once at least one image is added */}
+              {images.length > 0 && (
+                <div className="p-5 rounded-2xl bg-[#F9FAFB] border border-[#ECECEC]">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-7 h-7 rounded-full bg-[#0F0F0F] flex items-center justify-center shrink-0">
+                      <Sparkles className="w-3.5 h-3.5 text-[#C9A75D]" />
+                    </div>
+                    <p className="text-[12px] font-bold uppercase tracking-widest text-[#0F0F0F]">
+                      Create Car Listing
+                    </p>
+                  </div>
+                  <p className="text-[11px] text-[#666666] font-medium pl-10">
+                    {images.length} image{images.length !== 1 ? 's' : ''} ready. Hit <span className="text-[#C9A75D] font-bold">Complete Listing</span> to publish your vehicle to the platform.
+                  </p>
+                </div>
+              )}
+
               <FormFooter>
-                <div />
+                <GhostButton type="button" onClick={() => setStep(2)}>
+                  <ArrowLeft className="w-4 h-4" /> Back
+                </GhostButton>
                 <GoldButton onClick={handleFinalUpload} disabled={images.length === 0 || uploading}>
                   {uploading
                     ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving…</>
