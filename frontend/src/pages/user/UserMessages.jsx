@@ -225,7 +225,7 @@ export default function UserMessages() {
               {/* Chat Input */}
               <div className="px-4 py-4 bg-white border-t border-[#ECECEC] shrink-0">
                 <div className="flex items-end gap-3 max-w-4xl mx-auto">
-                  <button className="p-3 text-[#999999] hover:text-[#0F0F0F] hover:bg-[#F5F5F5] rounded-xl transition-colors shrink-0 mb-0.5" title="Attach file">
+                  <button className="p-3 text-[#999999] hover:text-[#0F0F0F] hover:bg-[#F5F5F5] rounded-xl transition-colors shrink-0 mb-0.5">
                     <Paperclip className="w-5 h-5" />
                   </button>
                   <div className="flex-1 bg-[#FBFBFB] border border-[#ECECEC] rounded-2xl flex items-end focus-within:bg-white transition-all">
@@ -246,7 +246,6 @@ export default function UserMessages() {
                   <button 
                     disabled={!inputMessage.trim()}
                     className="p-3.5 rounded-xl bg-[#0F0F0F] text-white disabled:bg-[#F5F5F5] disabled:text-[#CCCCCC] hover:bg-[#C9A75D] hover:shadow-lg transition-all shrink-0 mb-0.5"
-                    title="Send message"
                   >
                     <Send className="w-5 h-5 ml-0.5" />
                   </button>

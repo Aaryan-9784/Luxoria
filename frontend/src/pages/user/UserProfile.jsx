@@ -257,6 +257,7 @@ export default function UserProfile() {
               <input
                 type="file"
                 accept="image/*"
+                title=""
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 rounded-full"
                 onChange={onAvatarChange}
               />
@@ -268,7 +269,6 @@ export default function UserProfile() {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setLightboxOpen(true); }}
                 className="absolute bottom-1 left-1 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg z-30 hover:bg-[#FDFBF7] border border-[#ECECEC] transition-colors"
-                title="View full photo"
               >
                 <ZoomIn className="w-3.5 h-3.5 text-[#666666]" />
               </button>
@@ -281,7 +281,6 @@ export default function UserProfile() {
                 onClick={(e) => { e.stopPropagation(); handleDeleteAvatar(); }}
                 disabled={avatarDeleting}
                 className="absolute bottom-1 right-1 w-8 h-8 bg-[#DC2626] rounded-full flex items-center justify-center shadow-lg z-30 hover:bg-[#B91C1C] transition-colors disabled:opacity-50"
-                title="Remove photo"
               >
                 {avatarDeleting
                   ? <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />

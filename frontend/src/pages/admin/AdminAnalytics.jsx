@@ -122,10 +122,10 @@ export default function AdminAnalytics() {
       {/* ── Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-1">
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
             Platform Analytics
           </h1>
-          <p className="text-[13px] text-[#666666] tracking-wide">
+          <p className="text-[#666666] text-sm font-medium tracking-wide">
             Enterprise performance metrics and global insights.
           </p>
         </div>

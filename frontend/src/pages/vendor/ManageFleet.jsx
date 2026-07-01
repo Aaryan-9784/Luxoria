@@ -133,14 +133,12 @@ export default function ManageFleet() {
                   <div className="flex flex-col gap-2">
                     <button
                       className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#C9A75D] shadow-lg transition-colors"
-                      title="Edit Vehicle"
                       onClick={(e) => { e.stopPropagation(); navigate(`/vendor/edit-vehicle/${vehicle._id}`); }}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       className="w-8 h-8 bg-white text-[#0F0F0F] rounded-full flex items-center justify-center hover:text-[#DC2626] shadow-lg transition-colors"
-                      title="Delete Vehicle"
                       onClick={(e) => { e.stopPropagation(); handleDelete(vehicle._id); }}
                     >
                       <Trash2 className="w-3.5 h-3.5" />

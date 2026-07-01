@@ -163,10 +163,10 @@ export default function UserReviews() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="p-1.5 rounded-lg text-[#666666] hover:text-[#0F0F0F] hover:bg-[#F5F5F5] transition-colors" title="Edit Review">
+                    <button className="p-1.5 rounded-lg text-[#666666] hover:text-[#0F0F0F] hover:bg-[#F5F5F5] transition-colors">
                       <Edit3 className="w-4 h-4" />
                     </button>
-                    <button onClick={() => handleDelete(review.id)} className="p-1.5 rounded-lg text-[#666666] hover:text-[#DC2626] hover:bg-[#F5F5F5] transition-colors" title="Delete Review">
+                    <button onClick={() => handleDelete(review.id)} className="p-1.5 rounded-lg text-[#666666] hover:text-[#DC2626] hover:bg-[#F5F5F5] transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>

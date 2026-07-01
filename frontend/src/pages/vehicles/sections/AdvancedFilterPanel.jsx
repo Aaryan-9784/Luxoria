@@ -108,7 +108,6 @@ export default function AdvancedFilterPanel({ mobileOpen, setMobileOpen }) {
           <button
             onClick={() => dispatch(saveCurrentFilters())}
             className="btn-icon btn-icon-sm text-muted hover:text-accent"
-            title="Save current filters"
           >
             <Save className="w-4 h-4" />
           </button>

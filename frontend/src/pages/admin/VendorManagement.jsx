@@ -67,8 +67,8 @@ export default function VendorManagement() {
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div>
-          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-2">Vendor Partners</h1>
-          <p className="text-[13px] text-[#666666] tracking-wide">Managing {totalVendors} automotive partners.</p>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Vendor Partners</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Managing {totalVendors} automotive partners.</p>
         </div>
         
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">

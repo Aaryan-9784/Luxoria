@@ -161,14 +161,12 @@ export default function VendorBookings() {
                           <button 
                             onClick={() => handleStatusUpdate(booking._id, 'confirmed')}
                             className="flex items-center justify-center w-9 h-9 rounded-full bg-[#16A34A]/10 text-[#16A34A] hover:bg-[#16A34A] hover:text-white transition-all shadow-sm"
-                            title="Accept Booking"
                           >
                             <Check className="w-4 h-4" />
                           </button>
                           <button 
                             onClick={() => handleStatusUpdate(booking._id, 'cancelled')}
                             className="flex items-center justify-center w-9 h-9 rounded-full bg-[#DC2626]/10 text-[#DC2626] hover:bg-[#DC2626] hover:text-white transition-all shadow-sm"
-                            title="Reject Booking"
                           >
                             <RejectIcon className="w-4 h-4" />
                           </button>

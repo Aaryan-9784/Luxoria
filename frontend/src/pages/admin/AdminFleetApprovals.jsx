@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminVehicles, approveVehicle, deleteAdminVehicle } from '@/redux/slices/adminSlice';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Clock, XCircle, CheckCircle2, ChevronRight, Car, AlertCircle, FileText, Image as ImageIcon, ArrowUpRight, ArrowDownRight, Trash2 } from 'lucide-react';
+import { ShieldCheck, Clock, XCircle, CheckCircle2, ChevronRight, Car, AlertCircle, FileText, Image as ImageIcon, ArrowUpRight, ArrowDownRight, Trash2, Download } from 'lucide-react';
 import CountUp from 'react-countup';
 
 export default function AdminFleetApprovals() {
@@ -10,6 +10,7 @@ export default function AdminFleetApprovals() {
   const { vehicles, loading } = useSelector(state => state.admin);
   const { accessToken } = useSelector(state => state.auth);
   const [filter, setFilter] = useState('pending');
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -38,15 +39,64 @@ export default function AdminFleetApprovals() {
     await dispatch(deleteAdminVehicle(id));
   };
 
+  const handleExportReport = () => {
+    setExporting(true);
+
+    try {
+      const headers = ['Vehicle ID', 'Brand', 'Model', 'Year', 'Category', 'Status', 'Price/Day ($)', 'Vendor', 'Submitted Date', 'Has Images'];
+      const rows = filteredVehicles.map(v => [
+        v._id,
+        v.brand || '',
+        v.model || v.name || '',
+        v.year || '',
+        v.category || '',
+        v.status || '',
+        v.pricePerDay || '',
+        v.vendor?.name || (typeof v.vendor === 'string' ? v.vendor : 'N/A'),
+        v.createdAt ? new Date(v.createdAt).toLocaleDateString('en-GB') : '',
+        v.images && v.images.length > 0 ? 'Yes' : 'No',
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const filterLabel = filter === 'all' ? 'all' : filter;
+      link.href = url;
+      link.download = `fleet-approvals-${filterLabel}-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-7xl mx-auto pb-12">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-2">Fleet Approvals</h1>
-          <p className="text-[13px] text-[#666666] tracking-wide">Review and curate incoming vehicle submissions to maintain fleet standards.</p>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Fleet Approvals</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Review and curate incoming vehicle submissions to maintain fleet standards.</p>
         </div>
+        <button
+          onClick={handleExportReport}
+          disabled={exporting}
+          className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-[#0F0F0F] text-white text-[11px] font-bold uppercase tracking-wider shadow-md hover:bg-[#C9A75D] transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed shrink-0 self-start md:self-auto"
+        >
+          {exporting ? (
+            <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+          ) : (
+            <Download className="w-4 h-4" />
+          )}
+          {exporting ? 'Exporting...' : 'Export Report'}
+        </button>
       </div>
 
       {/* KPI Grid (Matched to AdminOverview theme) */}

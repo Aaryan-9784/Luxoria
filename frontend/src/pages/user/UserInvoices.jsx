@@ -203,7 +203,6 @@ export default function UserInvoices() {
                         <button 
                           onClick={() => handleDownloadInvoice(tx)}
                           className="inline-flex items-center justify-center p-2 rounded-lg text-[#666666] hover:text-[#C9A75D] hover:bg-white border border-transparent hover:border-[#ECECEC] transition-all"
-                          title="Download Invoice"
                         >
                           <Download className="w-4 h-4" />
                         </button>

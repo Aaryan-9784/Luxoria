@@ -224,7 +224,6 @@ export default function VendorAvailability() {
                   type="month"
                   value={`${year}-${String(month + 1).padStart(2, '0')}`}
                   onChange={(e) => handleJumpDate(e.target.value)}
-                  title="Jump to month"
                   className="pl-8 pr-3 h-10 border border-[#ECECEC] rounded-full text-[12px] font-semibold text-[#0F0F0F] bg-white focus:outline-none focus:border-[#C9A75D] focus:ring-1 focus:ring-[#C9A75D]/30 cursor-pointer hover:border-[#C9A75D]/50 transition-colors"
                   style={{ colorScheme: 'light' }}
                 />

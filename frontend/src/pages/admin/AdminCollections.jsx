@@ -116,8 +116,8 @@ export default function AdminCollections() {
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-2">Financial Collections</h1>
-          <p className="text-[13px] text-[#666666] tracking-wide">Manage vendor payouts, client invoices, and payment processing.</p>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Financial Collections</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Manage vendor payouts, client invoices, and payment processing.</p>
         </div>
         <div className="flex items-center gap-3">
           <button 

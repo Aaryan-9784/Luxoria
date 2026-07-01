@@ -4,7 +4,7 @@ import { fetchConciergeRequests, updateConciergeStatus } from '@/redux/slices/ad
 import { motion, AnimatePresence } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import * as Icons from 'lucide-react';
-import { Headset, CheckCircle, Clock, AlertCircle, Phone, Search, MapPin } from 'lucide-react';
+import { Headset, CheckCircle, Clock, AlertCircle, Phone, Search, MapPin, Download } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function AdminConcierge() {
@@ -14,6 +14,7 @@ export default function AdminConcierge() {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -52,6 +53,41 @@ export default function AdminConcierge() {
     window.location.href = `mailto:contact@${formattedClient}.com?subject=Re: ${id} - ${type}`;
   };
 
+  const handleExportReport = () => {
+    setExporting(true);
+
+    try {
+      const headers = ['Request ID', 'Client Name', 'Type', 'Status', 'Priority', 'Location', 'Date', 'Description'];
+      const rows = filteredRequests.map(req => [
+        req.requestId || '',
+        req.clientName || '',
+        req.type || '',
+        req.status || '',
+        req.priority || 'normal',
+        req.location || '',
+        req.date ? new Date(req.date).toLocaleDateString('en-GB') : '',
+        req.description || '',
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const statusLabel = filterStatus === 'all' ? 'all' : filterStatus;
+      link.href = url;
+      link.download = `vip-concierge-${statusLabel}-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const renderIcon = (iconName) => {
     const IconComponent = Icons[iconName] || Icons.Sparkles;
     return <IconComponent className="w-6 h-6 text-[#C9A75D]" />;
@@ -63,11 +99,23 @@ export default function AdminConcierge() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-2">
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
             VIP Concierge
           </h1>
-          <p className="text-[13px] text-[#666666] tracking-wide">Manage bespoke requests and specialized services for high-net-worth clients.</p>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Manage bespoke requests and specialized services for high-net-worth clients.</p>
         </div>
+        <button
+          onClick={handleExportReport}
+          disabled={exporting}
+          className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-[#0F0F0F] text-white text-[11px] font-bold uppercase tracking-wider shadow-md hover:bg-[#C9A75D] transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed shrink-0 self-start md:self-auto"
+        >
+          {exporting ? (
+            <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+          ) : (
+            <Download className="w-4 h-4" />
+          )}
+          {exporting ? 'Exporting...' : 'Export Report'}
+        </button>
       </div>
 
       {/* Filters & Search */}

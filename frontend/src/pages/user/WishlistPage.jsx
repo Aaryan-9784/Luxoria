@@ -154,7 +154,6 @@ export default function WishlistPage() {
                   <button 
                     onClick={(e) => handleRemove(e, item.vehicle._id)}
                     className="w-10 h-10 bg-white/90 backdrop-blur-md border border-[#ECECEC] rounded-full flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626] hover:text-white transition-all shadow-lg transform hover:scale-110"
-                    title="Remove from collection"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

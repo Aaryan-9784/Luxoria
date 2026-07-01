@@ -74,11 +74,11 @@ export default function PaymentsDashboard() {
                   </div>
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     {!card.isDefault && (
-                      <button onClick={() => handleSetDefault(card.id)} className="p-1.5 rounded-lg text-[#666666] hover:text-[#16A34A] hover:bg-[#F5F5F5] transition-colors" title="Set as Default">
+                      <button onClick={() => handleSetDefault(card.id)} className="p-1.5 rounded-lg text-[#666666] hover:text-[#16A34A] hover:bg-[#F5F5F5] transition-colors">
                         <CheckCircle2 className="w-4 h-4" />
                       </button>
                     )}
-                    <button onClick={() => handleDelete(card.id)} className="p-1.5 rounded-lg text-[#666666] hover:text-[#DC2626] hover:bg-[#F5F5F5] transition-colors" title="Delete Card">
+                    <button onClick={() => handleDelete(card.id)} className="p-1.5 rounded-lg text-[#666666] hover:text-[#DC2626] hover:bg-[#F5F5F5] transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
