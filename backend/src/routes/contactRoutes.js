@@ -1,5 +1,6 @@
 import express from 'express';
-import { submitInquiry, contactVendor } from '../controllers/contactController.js';
+import { submitInquiry, contactVendor, submitSupportTicket } from '../controllers/contactController.js';
+import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -12,5 +13,10 @@ router.post('/', submitInquiry);
 // @desc    Submit a vendor contact request
 // @access  Public
 router.post('/vendor', contactVendor);
+
+// @route   POST /api/contact/support-ticket
+// @desc    Submit a partner/user support ticket — sends email to admin
+// @access  Private (authenticated users & vendors)
+router.post('/support-ticket', protect, submitSupportTicket);
 
 export default router;

@@ -6,7 +6,7 @@ import { fetchNotifications } from '@/redux/slices/notificationSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Car, PlusCircle, CalendarDays, 
-  LineChart, Settings, LogOut, Menu, X,
+  LineChart, UserCircle, LogOut, Menu, X,
   ChevronLeft, ChevronRight, BarChart3, Clock, ShieldCheck, Heart, User, Bell, Globe, Wallet, HelpCircle
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
@@ -34,7 +34,7 @@ const NAV_GROUPS = [
   {
     label: 'System',
     items: [
-      { path: '/vendor/profile', label: 'Account Settings', icon: Settings },
+      { path: '/vendor/profile', label: 'My Profile', icon: UserCircle },
       { path: '/vendor/support', label: 'Support', icon: HelpCircle },
     ]
   }

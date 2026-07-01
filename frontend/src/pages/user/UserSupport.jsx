@@ -5,6 +5,7 @@ import {
   MessageSquare, PhoneCall, Mail, ChevronDown, 
   Send, CheckCircle2, AlertCircle, FileText 
 } from 'lucide-react';
+import api from '@/services/api';
 
 const FAQS = [
   {
@@ -32,22 +33,35 @@ export default function UserSupport() {
   const [ticketMessage, setTicketMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  const handleSubmitTicket = (e) => {
+  const handleSubmitTicket = async (e) => {
     e.preventDefault();
     if (!ticketSubject || !ticketMessage) return;
-    
+
     setIsSubmitting(true);
-    // Simulate API Call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setSubmitError('');
+
+    try {
+      await api.post('/contact/support-ticket', {
+        subject: ticketSubject,
+        priority: ticketPriority,
+        message: ticketMessage,
+      });
+
       setSubmitSuccess(true);
       setTicketSubject('');
       setTicketMessage('');
       setTicketPriority('normal');
-      
+
       setTimeout(() => setSubmitSuccess(false), 5000);
-    }, 1500);
+    } catch (err) {
+      setSubmitError(
+        err?.response?.data?.message || 'Failed to send your request. Please try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -190,6 +204,9 @@ export default function UserSupport() {
                   >
                     {isSubmitting ? 'Submitting...' : 'Send Message'} <Send className="w-4 h-4 text-[#C9A75D]" />
                   </button>
+                  {submitError && (
+                    <p className="mt-3 text-[12px] text-red-500 font-medium text-center">{submitError}</p>
+                  )}
                   <div className="mt-4 p-3 bg-[#C9A75D]/10 border border-[#C9A75D]/20 rounded-lg flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-[#B59345] shrink-0 mt-0.5" />
                     <p className="text-[10px] font-bold text-[#B59345] uppercase tracking-wider">For urgent active booking issues, please call the VIP Concierge line directly.</p>

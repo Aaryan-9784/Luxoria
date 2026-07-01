@@ -315,6 +315,103 @@ class EmailService {
       message: `New vendor contact request from ${data.name} for vehicle ${data.vehicleName}.`
     });
   }
+  async sendSupportTicketToAdmin(data) {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@luxoria.com';
+
+    const priorityColors = {
+      urgent: '#DC2626',
+      high: '#D97706',
+      normal: '#16A34A',
+    };
+    const priorityLabels = {
+      urgent: 'URGENT — Active Booking Issue',
+      high: 'HIGH — Time Sensitive',
+      normal: 'NORMAL',
+    };
+    const priorityColor = priorityColors[data.priority] || priorityColors.normal;
+    const priorityLabel = priorityLabels[data.priority] || priorityLabels.normal;
+
+    const html = `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0F172A; border-bottom: 4px solid #D4AF37;">
+          <tr>
+            <td align="center" style="padding: 40px 30px;">
+              <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                <tr>
+                  <td align="center" valign="middle" style="padding-right: 15px;">
+                    <img src="https://api.iconify.design/lucide:car.svg?color=%23D4AF37&width=140&height=140" width="35" height="35" alt="Luxoria Logo" style="display:block;border:0;" />
+                  </td>
+                  <td align="center" valign="middle">
+                    <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:300;letter-spacing:6px;text-transform:uppercase;">Luxoria</h1>
+                  </td>
+                </tr>
+              </table>
+              <p style="color:#D4AF37;margin:15px 0 0 0;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:600;">New Partner Support Ticket</p>
+            </td>
+          </tr>
+        </table>
+
+        <div style="padding: 40px 30px;">
+          <p style="color:#4B5563;font-size:16px;line-height:1.6;margin-top:0;text-align:center;">A partner has opened a new support ticket from the Partner Workspace.</p>
+
+          <div style="background-color:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:25px;margin-top:35px;">
+            <h3 style="color:#0F172A;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px 0;border-bottom:1px solid #E5E7EB;padding-bottom:12px;font-weight:700;">Partner Details</h3>
+            <table style="width:100%;border-collapse:collapse;">
+              <tbody>
+                <tr><td style="padding:10px 0;color:#6B7280;font-size:14px;width:35%;"><strong>Partner Name:</strong></td><td style="padding:10px 0;color:#111827;font-size:15px;font-weight:600;">${data.senderName}</td></tr>
+                <tr><td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Email:</strong></td><td style="padding:10px 0;font-size:15px;"><a href="mailto:${data.senderEmail}" style="color:#D4AF37;text-decoration:none;font-weight:600;">${data.senderEmail}</a></td></tr>
+                <tr><td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Role:</strong></td><td style="padding:10px 0;color:#111827;font-size:15px;font-weight:600;text-transform:capitalize;">${data.senderRole}</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="background-color:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:25px;margin-top:25px;">
+            <h3 style="color:#0F172A;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px 0;border-bottom:1px solid #E5E7EB;padding-bottom:12px;font-weight:700;">Ticket Details</h3>
+            <table style="width:100%;border-collapse:collapse;">
+              <tbody>
+                <tr>
+                  <td style="padding:10px 0;color:#6B7280;font-size:14px;width:35%;"><strong>Subject:</strong></td>
+                  <td style="padding:10px 0;color:#111827;font-size:15px;font-weight:600;">${data.subject}</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Priority:</strong></td>
+                  <td style="padding:10px 0;">
+                    <span style="display:inline-block;background-color:${priorityColor};color:#ffffff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:1px;">${priorityLabel}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Submitted At:</strong></td>
+                  <td style="padding:10px 0;color:#111827;font-size:15px;font-weight:600;">${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top:35px;">
+            <h3 style="color:#0F172A;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin:0 0 15px 0;font-weight:700;">Message</h3>
+            <div style="background-color:#ffffff;border-left:4px solid #D4AF37;padding:25px;color:#374151;font-size:15px;line-height:1.7;box-shadow:0 2px 10px rgba(0,0,0,0.02);border-radius:0 8px 8px 0;border-top:1px solid #F3F4F6;border-right:1px solid #F3F4F6;border-bottom:1px solid #F3F4F6;">
+              ${data.message.replace(/\n/g, '<br>')}
+            </div>
+          </div>
+        </div>
+
+        <div style="background-color:#F8FAFC;padding:30px;text-align:center;border-top:1px solid #E5E7EB;">
+          <p style="color:#64748B;font-size:13px;line-height:1.6;margin:0;">
+            Please respond to the partner via <a href="mailto:${data.senderEmail}" style="color:#D4AF37;">${data.senderEmail}</a><br><br>
+            <strong style="color:#0F172A;">&copy; ${new Date().getFullYear()} Luxoria Premium Private Limited.</strong><br>All rights reserved.
+          </p>
+        </div>
+      </div>
+    `;
+
+    await this.sendEmail({
+      email: adminEmail,
+      replyTo: data.senderEmail,
+      subject: `[${data.priority.toUpperCase()}] Partner Ticket: ${data.subject}`,
+      html,
+      message: `New support ticket from ${data.senderName} (${data.senderEmail}). Priority: ${data.priority}. Subject: ${data.subject}`,
+    });
+  }
 }
 
 export default new EmailService();

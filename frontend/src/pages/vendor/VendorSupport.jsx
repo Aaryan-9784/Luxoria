@@ -6,6 +6,7 @@ import {
   Send, CheckCircle2, AlertCircle, FileText, Sparkles
 } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
+import api from '@/services/api';
 
 const FAQS = [
   {
@@ -29,25 +30,39 @@ const FAQS = [
 export default function VendorSupport() {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [ticketSubject, setTicketSubject] = useState('');
-  const [ticketPriority, setTicketPriority] = useState('normal');
+  const [ticketPriority, setTicketPriority] = useState('');
   const [ticketMessage, setTicketMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  const handleSubmitTicket = (e) => {
+  const handleSubmitTicket = async (e) => {
     e.preventDefault();
     if (!ticketSubject || !ticketMessage) return;
-    
+
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setSubmitError('');
+
+    try {
+      await api.post('/contact/support-ticket', {
+        subject: ticketSubject,
+        priority: ticketPriority,
+        message: ticketMessage,
+      });
+
       setSubmitSuccess(true);
       setTicketSubject('');
       setTicketMessage('');
-      setTicketPriority('normal');
-      
+      setTicketPriority('');
+
       setTimeout(() => setSubmitSuccess(false), 5000);
-    }, 1500);
+    } catch (err) {
+      setSubmitError(
+        err?.response?.data?.message || 'Failed to send your request. Please try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -68,29 +83,29 @@ export default function VendorSupport() {
           
           {/* Quick Contact Cards */}
           <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <a href="tel:+18005896742" className="relative overflow-hidden bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all duration-500 group cursor-pointer block">
+            <a href="tel:+918238012515" className="relative overflow-hidden bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all duration-500 group cursor-pointer block">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A75D]/5 rounded-full blur-3xl group-hover:bg-[#C9A75D]/10 transition-all duration-500"></div>
               <div className="relative z-10 flex items-start gap-5">
                 <div className="w-14 h-14 rounded-full bg-[#C9A75D]/10 border border-[#C9A75D]/20 text-[#C9A75D] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-500">
                   <PhoneCall className="w-6 h-6" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-[10px] font-bold text-[#C9A75D] uppercase tracking-[0.2em] mb-1.5">Priority Partners</p>
-                  <h4 className="text-[18px] font-bold text-[#0F0F0F] mb-2 tracking-wide">+1 (800) LUX-ORIA</h4>
+                  <h4 className="text-[18px] font-bold text-[#0F0F0F] mb-2 tracking-wide">+91 82380 12515</h4>
                   <p className="text-[12px] text-[#666666] leading-relaxed">Available 24/7 for urgent assistance.</p>
                 </div>
               </div>
             </a>
             
-            <a href="mailto:partners@luxoria.com" className="relative overflow-hidden bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all duration-500 group cursor-pointer block">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#0F0F0F]/5 rounded-full blur-3xl group-hover:bg-[#0F0F0F]/10 transition-all duration-500"></div>
+            <a href="mailto:aaryanpatel9784@gmail.com" className="relative overflow-hidden bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all duration-500 group cursor-pointer block">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A75D]/5 rounded-full blur-3xl group-hover:bg-[#C9A75D]/10 transition-all duration-500"></div>
               <div className="relative z-10 flex items-start gap-5">
-                <div className="w-14 h-14 rounded-full bg-[#0F0F0F]/5 border border-[#0F0F0F]/10 text-[#0F0F0F] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-500">
+                <div className="w-14 h-14 rounded-full bg-[#C9A75D]/10 border border-[#C9A75D]/20 text-[#C9A75D] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-500">
                   <Mail className="w-6 h-6" />
                 </div>
-                <div>
-                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.2em] mb-1.5">General Inquiries</p>
-                  <h4 className="text-[18px] font-bold text-[#0F0F0F] mb-2 tracking-wide">partners@luxoria.com</h4>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold text-[#C9A75D] uppercase tracking-[0.2em] mb-1.5">General Inquiries</p>
+                  <h4 className="text-[15px] font-bold text-[#0F0F0F] mb-2 tracking-wide truncate">aaryanpatel9784@gmail.com</h4>
                   <p className="text-[12px] text-[#666666] leading-relaxed">Expect a response within 4 hours.</p>
                 </div>
               </div>
@@ -175,20 +190,18 @@ export default function VendorSupport() {
 
                 <div>
                   <label className="block text-[10px] font-bold text-[#0F0F0F] uppercase tracking-[0.2em] mb-2.5">Priority Level</label>
-                  <div className="relative">
-                    <CustomSelect
-                      value={ticketPriority}
-                      onChange={setTicketPriority}
-                      options={[
-                        { value: 'normal', label: 'Normal' },
-                        { value: 'high', label: 'High (Time Sensitive)' },
-                        { value: 'urgent', label: 'Urgent (Active Booking Issue)' }
-                      ]}
-                      icon={null}
-                      className="w-full bg-[#F5F5F5] border border-[#ECECEC] py-3.5 px-4"
-                    />
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
-                  </div>
+                  <CustomSelect
+                    value={ticketPriority}
+                    onChange={setTicketPriority}
+                    options={[
+                      { value: 'normal', label: 'Normal' },
+                      { value: 'high', label: 'High (Time Sensitive)' },
+                      { value: 'urgent', label: 'Urgent (Active Booking Issue)' }
+                    ]}
+                    icon={null}
+                    placeholder="Select priority level"
+                    className="w-full bg-[#F5F5F5] border border-[#ECECEC] py-3.5 px-4"
+                  />
                 </div>
 
                 <div>
@@ -210,6 +223,9 @@ export default function VendorSupport() {
                   >
                     {isSubmitting ? 'Submitting Request...' : 'Send Message'} <Send className="w-4 h-4" />
                   </button>
+                  {submitError && (
+                    <p className="mt-3 text-[12px] text-red-500 font-medium text-center">{submitError}</p>
+                  )}
                   <div className="mt-5 p-4 bg-[#F5F5F5] border border-[#ECECEC] rounded-xl flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-[#666666] shrink-0" />
                     <p className="text-[10px] font-medium text-[#666666] uppercase tracking-wider leading-relaxed">Please do not share sensitive financial information.</p>

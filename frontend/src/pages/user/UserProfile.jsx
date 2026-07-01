@@ -1,25 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Check, ShieldCheck, KeyRound, User as UserIcon, ArrowRight } from 'lucide-react';
+import { Camera, Check, ShieldCheck, KeyRound, User as UserIcon, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import api from '@/services/api';
 import { updateUser } from '@/redux/slices/authSlice';
 
 export default function UserProfile() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const [activeSection, setActiveSection] = useState('profile'); // profile, security
+  // Derive active section from URL hash: #security → 'security', else 'profile'
+  const sectionFromHash = location.hash === '#security' ? 'security' : 'profile';
+  const [activeSection, setActiveSection] = useState(sectionFromHash);
+
+  // Keep activeSection in sync if user manually edits the URL hash
+  useEffect(() => {
+    setActiveSection(sectionFromHash);
+  }, [sectionFromHash]);
+
+  const handleSectionChange = (section) => {
+    navigate(section === 'security' ? '#security' : '#profile', { replace: true });
+    setActiveSection(section);
+  };
 
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    phone: user?.phone || '',
-    address: user?.address?.city || '',
+    name: '',
+    phone: '',
+    address: '',
   });
+
+  // Sync formData whenever user loads / changes (fixes post-refresh empty fields)
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        phone: user.phone || '',
+        address: user.address?.city || '',
+      });
+    }
+  }, [user]);
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
+  });
+
+  const [showPasswords, setShowPasswords] = useState({
+    currentPassword: false,
+    newPassword: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -39,18 +70,18 @@ export default function UserProfile() {
         phone: formData.phone,
         address: {
           ...user?.address,
-          city: formData.address
-        }
+          city: formData.address,
+        },
       };
       const res = await api.put('/users/me', payload);
       dispatch(updateUser(res.data.data));
       setSuccessMsg('Personal details updated successfully.');
-      
+
       if (avatarFile) {
         const fileData = new FormData();
         fileData.append('file', avatarFile);
         const avatarRes = await api.put('/users/me/avatar', fileData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
         dispatch(updateUser(avatarRes.data.data));
         setSuccessMsg('Profile and photo updated successfully.');
@@ -64,12 +95,22 @@ export default function UserProfile() {
 
   const handlePasswordUpdate = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setErrorMsg(''); setSuccessMsg('');
+
+    if (passwordData.newPassword.length < 6) {
+      setErrorMsg('New password must be at least 6 characters.');
+      return;
+    }
+
+    setLoading(true);
     try {
-      await api.put('/users/me/password', passwordData);
+      await api.put('/users/me/password', {
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
       setSuccessMsg('Security credentials updated successfully.');
       setPasswordData({ currentPassword: '', newPassword: '' });
+      setShowPasswords({ currentPassword: false, newPassword: false });
     } catch (err) {
       setErrorMsg(err.response?.data?.error?.message || 'Failed to update credentials.');
     } finally {
@@ -87,13 +128,12 @@ export default function UserProfile() {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      
+
       {/* Ultra-Luxury Hero Section */}
       <div className="relative w-full h-48 bg-[#FDFBF7] flex flex-col items-center justify-center overflow-hidden border-b border-[#ECECEC]">
-        {/* Abstract elegant background elements */}
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#C9A75D]/10 via-transparent to-transparent opacity-50" />
         <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-[#C9A75D]/5 via-transparent to-transparent opacity-50" />
-        
+
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 text-center mt-6">
           <h1 className="text-3xl md:text-4xl font-serif text-[#0F0F0F] tracking-tight mb-3">My Account</h1>
           <p className="text-[10px] md:text-[11px] text-[#666666] uppercase tracking-[0.3em] font-medium">Manage your personal dossier</p>
@@ -101,7 +141,7 @@ export default function UserProfile() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 -mt-12 relative z-20">
-        
+
         {/* Avatar Centerpiece */}
         <div className="flex flex-col items-center mb-10">
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative group cursor-pointer mb-4">
@@ -113,7 +153,6 @@ export default function UserProfile() {
                   <UserIcon className="w-12 h-12 stroke-[1.5]" />
                 </div>
               )}
-              {/* Hover state */}
               <div className="absolute inset-0 bg-[#0F0F0F]/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center">
                 <Camera className="w-6 h-6 text-white mb-2" />
                 <span className="text-[9px] text-white uppercase tracking-widest font-bold">Upload Photo</span>
@@ -148,8 +187,8 @@ export default function UserProfile() {
 
         {/* Minimalist Navigation */}
         <div className="flex items-center justify-center gap-8 md:gap-16 border-b border-[#ECECEC] mb-16">
-          <button 
-            onClick={() => setActiveSection('profile')}
+          <button
+            onClick={() => handleSectionChange('profile')}
             className={`pb-4 text-[12px] uppercase tracking-widest font-bold transition-all relative ${activeSection === 'profile' ? 'text-[#0F0F0F]' : 'text-[#999999] hover:text-[#666666]'}`}
           >
             Personal Details
@@ -157,8 +196,8 @@ export default function UserProfile() {
               <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 w-full h-[2px] bg-[#0F0F0F]" />
             )}
           </button>
-          <button 
-            onClick={() => setActiveSection('security')}
+          <button
+            onClick={() => handleSectionChange('security')}
             className={`pb-4 text-[12px] uppercase tracking-widest font-bold transition-all relative ${activeSection === 'security' ? 'text-[#0F0F0F]' : 'text-[#999999] hover:text-[#666666]'}`}
           >
             Security & Access
@@ -170,19 +209,19 @@ export default function UserProfile() {
 
         {/* Main Forms Section - Center Constrained */}
         <div className="max-w-2xl mx-auto">
-          
+
           <AnimatePresence mode="wait">
-            
+
             {/* Personal Details Form */}
             {activeSection === 'profile' && (
               <motion.form key="profile" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} onSubmit={handleProfileUpdate} className="space-y-10">
-                
+
                 <div className="space-y-8">
                   <div className="relative group">
                     <label className="block text-[10px] text-[#999999] uppercase tracking-widest font-bold mb-2 transition-colors group-focus-within:text-[#C9A75D]">Full Legal Name</label>
-                    <input 
-                      type="text" 
-                      value={formData.name} 
+                    <input
+                      type="text"
+                      value={formData.name}
                       onChange={e => setFormData({...formData, name: e.target.value})}
                       className="w-full bg-transparent border-b border-[#ECECEC] py-3 text-[16px] text-[#0F0F0F] placeholder-[#CCCCCC] focus:outline-none focus:border-[#C9A75D] transition-colors rounded-none"
                       placeholder="Enter your full name"
@@ -191,9 +230,9 @@ export default function UserProfile() {
 
                   <div className="relative group">
                     <label className="block text-[10px] text-[#999999] uppercase tracking-widest font-bold mb-2">Registered Email Address</label>
-                    <input 
-                      type="email" 
-                      value={user?.email || ''} 
+                    <input
+                      type="email"
+                      value={user?.email || ''}
                       disabled
                       className="w-full bg-transparent border-b border-[#ECECEC] py-3 text-[16px] text-[#999999] cursor-not-allowed rounded-none"
                     />
@@ -205,9 +244,9 @@ export default function UserProfile() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="relative group">
                       <label className="block text-[10px] text-[#999999] uppercase tracking-widest font-bold mb-2 transition-colors group-focus-within:text-[#C9A75D]">Contact Number</label>
-                      <input 
-                        type="tel" 
-                        value={formData.phone} 
+                      <input
+                        type="tel"
+                        value={formData.phone}
                         onChange={e => setFormData({...formData, phone: e.target.value})}
                         className="w-full bg-transparent border-b border-[#ECECEC] py-3 text-[16px] text-[#0F0F0F] placeholder-[#CCCCCC] focus:outline-none focus:border-[#C9A75D] transition-colors rounded-none"
                         placeholder="+1 (555) 000-0000"
@@ -216,9 +255,9 @@ export default function UserProfile() {
 
                     <div className="relative group">
                       <label className="block text-[10px] text-[#999999] uppercase tracking-widest font-bold mb-2 transition-colors group-focus-within:text-[#C9A75D]">Primary City / Address</label>
-                      <input 
-                        type="text" 
-                        value={formData.address} 
+                      <input
+                        type="text"
+                        value={formData.address}
                         onChange={e => setFormData({...formData, address: e.target.value})}
                         className="w-full bg-transparent border-b border-[#ECECEC] py-3 text-[16px] text-[#0F0F0F] placeholder-[#CCCCCC] focus:outline-none focus:border-[#C9A75D] transition-colors rounded-none"
                         placeholder="City, Country"
@@ -229,7 +268,7 @@ export default function UserProfile() {
 
                 <div className="pt-8 flex justify-center">
                   <button type="submit" disabled={loading} className="group relative inline-flex items-center justify-center gap-3 bg-[#0F0F0F] text-white px-10 py-4 text-[12px] font-bold uppercase tracking-[0.2em] hover:bg-[#C9A75D] transition-colors duration-300 rounded-none disabled:opacity-70 disabled:cursor-not-allowed">
-                    Update Profile
+                    {loading ? 'Updating...' : 'Update Profile'}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
@@ -240,36 +279,60 @@ export default function UserProfile() {
             {/* Security Form */}
             {activeSection === 'security' && (
               <motion.form key="security" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} onSubmit={handlePasswordUpdate} className="space-y-10">
-                
+
                 <div className="space-y-8">
+
+                  {/* Current Password */}
                   <div className="relative group">
                     <label className="block text-[10px] text-[#999999] uppercase tracking-widest font-bold mb-2 transition-colors group-focus-within:text-[#C9A75D]">Current Password</label>
-                    <input 
-                      type="password" 
-                      required
-                      value={passwordData.currentPassword} 
-                      onChange={e => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                      className="w-full bg-transparent border-b border-[#ECECEC] py-3 text-[16px] text-[#0F0F0F] placeholder-[#CCCCCC] focus:outline-none focus:border-[#C9A75D] transition-colors rounded-none"
-                      placeholder="••••••••"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPasswords.currentPassword ? 'text' : 'password'}
+                        required
+                        value={passwordData.currentPassword}
+                        onChange={e => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                        className="w-full bg-transparent border-b border-[#ECECEC] py-3 pr-10 text-[16px] text-[#0F0F0F] placeholder-[#CCCCCC] focus:outline-none focus:border-[#C9A75D] transition-colors rounded-none"
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasswords(prev => ({ ...prev, currentPassword: !prev.currentPassword }))}
+                        className="absolute right-0 bottom-3 text-[#999999] hover:text-[#0F0F0F] transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showPasswords.currentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                   </div>
 
+                  {/* New Password */}
                   <div className="relative group">
                     <label className="block text-[10px] text-[#999999] uppercase tracking-widest font-bold mb-2 transition-colors group-focus-within:text-[#C9A75D]">New Secure Password</label>
-                    <input 
-                      type="password" 
-                      required
-                      value={passwordData.newPassword} 
-                      onChange={e => setPasswordData({...passwordData, newPassword: e.target.value})}
-                      className="w-full bg-transparent border-b border-[#ECECEC] py-3 text-[16px] text-[#0F0F0F] placeholder-[#CCCCCC] focus:outline-none focus:border-[#C9A75D] transition-colors rounded-none"
-                      placeholder="Enter new password"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPasswords.newPassword ? 'text' : 'password'}
+                        required
+                        value={passwordData.newPassword}
+                        onChange={e => setPasswordData({...passwordData, newPassword: e.target.value})}
+                        className="w-full bg-transparent border-b border-[#ECECEC] py-3 pr-10 text-[16px] text-[#0F0F0F] placeholder-[#CCCCCC] focus:outline-none focus:border-[#C9A75D] transition-colors rounded-none"
+                        placeholder="Enter new password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasswords(prev => ({ ...prev, newPassword: !prev.newPassword }))}
+                        className="absolute right-0 bottom-3 text-[#999999] hover:text-[#0F0F0F] transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showPasswords.newPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                   </div>
+
                 </div>
 
                 <div className="pt-8 flex justify-center">
                   <button type="submit" disabled={loading} className="group relative inline-flex items-center justify-center gap-3 bg-white border border-[#0F0F0F] text-[#0F0F0F] px-10 py-4 text-[12px] font-bold uppercase tracking-[0.2em] hover:bg-[#0F0F0F] hover:text-white transition-colors duration-300 rounded-none disabled:opacity-70 disabled:cursor-not-allowed">
-                    Change Password
+                    {loading ? 'Updating...' : 'Change Password'}
                     <KeyRound className="w-4 h-4" />
                   </button>
                 </div>
