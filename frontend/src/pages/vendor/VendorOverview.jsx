@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchVendorVehicles, fetchVendorBookings } from '@/redux/slices/vendorSlice';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
-import { Car, Wallet, ArrowRight, AlertCircle, BarChart3, CalendarDays, PlusCircle, CheckCircle2, LayoutGrid, Clock } from 'lucide-react';
+import { Car, Wallet, ArrowRight, AlertCircle, BarChart3, CalendarDays, PlusCircle, CheckCircle2, LayoutGrid, Clock, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -20,7 +20,8 @@ export default function VendorOverview() {
     dispatch(fetchVendorBookings());
   }, [dispatch, accessToken]);
 
-  const recentRequests = bookings.filter(b => b.status === 'pending');
+  // Pending requests from real stats (or fall back to filtering locally)
+  const pendingRequestsCount = stats?.pendingRequests ?? bookings.filter(b => b.status === 'pending').length;
 
   if (loading) {
     return (
@@ -39,20 +40,50 @@ export default function VendorOverview() {
   ];
 
   const generateChartData = () => {
-    // Generate dummy data based on timeFilter for demonstration
-    const data = [];
-    const points = timeFilter === 'This Year' ? 12 : timeFilter === 'Last 3 Months' ? 12 : 30;
-    const labelPrefix = timeFilter === 'This Year' ? 'Month ' : timeFilter === 'Last 3 Months' ? 'Week ' : 'Day ';
-    
-    let baseValue = 500;
-    for (let i = 1; i <= points; i++) {
-      baseValue = Math.max(100, baseValue + (Math.random() * 400 - 150));
-      data.push({
-        name: `${labelPrefix}${i}`,
-        revenue: Math.floor(baseValue)
-      });
+    if (!bookings || bookings.length === 0) return [];
+
+    const now = new Date();
+
+    if (timeFilter === 'This Year') {
+      // Group completed bookings by month
+      const monthly = Array.from({ length: 12 }, (_, i) => ({ name: `Month ${i + 1}`, revenue: 0 }));
+      bookings
+        .filter(b => b.status === 'completed' && new Date(b.createdAt).getFullYear() === now.getFullYear())
+        .forEach(b => {
+          const month = new Date(b.createdAt).getMonth(); // 0-indexed
+          monthly[month].revenue += b.totalAmount || 0;
+        });
+      return monthly;
     }
-    return data;
+
+    if (timeFilter === 'Last 3 Months') {
+      // Group completed bookings into 12 weekly buckets (~3 months)
+      const weeks = Array.from({ length: 12 }, (_, i) => ({ name: `Week ${i + 1}`, revenue: 0 }));
+      const threeMonthsAgo = new Date(now);
+      threeMonthsAgo.setMonth(now.getMonth() - 3);
+      bookings
+        .filter(b => b.status === 'completed' && new Date(b.createdAt) >= threeMonthsAgo)
+        .forEach(b => {
+          const diffDays = Math.floor((now - new Date(b.createdAt)) / (1000 * 60 * 60 * 24));
+          const weekIndex = Math.min(11, Math.floor((90 - diffDays) / 7));
+          if (weekIndex >= 0) weeks[weekIndex].revenue += b.totalAmount || 0;
+        });
+      return weeks;
+    }
+
+    // Default: This Month — group by day (1–30/31)
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const daily = Array.from({ length: daysInMonth }, (_, i) => ({ name: `Day ${i + 1}`, revenue: 0 }));
+    bookings
+      .filter(b => {
+        const d = new Date(b.createdAt);
+        return b.status === 'completed' && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      })
+      .forEach(b => {
+        const day = new Date(b.createdAt).getDate() - 1; // 0-indexed
+        if (day >= 0 && day < daily.length) daily[day].revenue += b.totalAmount || 0;
+      });
+    return daily;
   };
   const chartData = generateChartData();
 
@@ -85,19 +116,19 @@ export default function VendorOverview() {
         ))}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
         {/* Action Center */}
-        <motion.div variants={staggerItem} className="lg:col-span-1 space-y-6">
-          <div className="bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm h-full">
-            <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] mb-6 flex items-center gap-2">
+        <motion.div variants={staggerItem} className="lg:col-span-1">
+          <div className="bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm">
+            <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] mb-5 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-[#C9A75D]" /> Action Items
             </h3>
             
             <div className="space-y-3">
               <div className="flex items-center justify-between p-4 rounded-xl border border-[#ECECEC] bg-[#F5F5F5]/50 transition-all hover:bg-white hover:border-[#C9A75D]/50 hover:shadow-md group">
                 <div>
-                  <p className="font-bold text-xl text-[#0F0F0F]">{recentRequests.length}</p>
+                  <p className="font-bold text-xl text-[#0F0F0F]">{pendingRequestsCount}</p>
                   <p className="text-[10px] text-[#666666] font-bold uppercase tracking-[0.1em] mt-1">Pending Requests</p>
                 </div>
                 <Link to="/vendor/bookings" className="text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider group-hover:text-[#B59345] transition-colors flex items-center gap-1">Review <span className="text-[14px] leading-none">&rarr;</span></Link>
@@ -114,25 +145,34 @@ export default function VendorOverview() {
           </div>
         </motion.div>
 
-        {/* Revenue Trends Placeholder */}
+        {/* Revenue Trends */}
         <motion.div variants={staggerItem} className="lg:col-span-2 bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F]">Revenue Trends</h3>
-            <CustomSelect
-              value={timeFilter}
-              onChange={setTimeFilter}
-              options={[
-                { value: 'This Month', label: 'This Month' },
-                { value: 'Last 3 Months', label: 'Last 3 Months' },
-                { value: 'This Year', label: 'This Year' }
-              ]}
-              icon={null}
-              className="bg-[#F5F5F5] py-2 px-3"
-            />
+            <div className="relative w-44">
+              <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
+              <CustomSelect
+                value={timeFilter}
+                onChange={setTimeFilter}
+                options={[
+                  { value: 'This Month', label: 'This Month' },
+                  { value: 'Last 3 Months', label: 'Last 3 Months' },
+                  { value: 'This Year', label: 'This Year' }
+                ]}
+                icon={null}
+                className="pl-10 py-3 text-[13px] shadow-sm"
+              />
+            </div>
           </div>
           
-          <div className="flex-1 min-h-[250px] w-full mt-4">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="w-full mt-2">
+            {chartData.length === 0 || chartData.every(d => d.revenue === 0) ? (
+              <div className="flex flex-col items-center justify-center text-center py-10">
+                <BarChart3 className="w-9 h-9 text-[#E5E5E5] mb-2.5" />
+                <p className="text-[11px] font-bold text-[#BBBBBB] uppercase tracking-widest">No revenue data for this period</p>
+              </div>
+            ) : (
+            <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -169,13 +209,14 @@ export default function VendorOverview() {
                 />
               </AreaChart>
             </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
 
       </div>
 
       {/* Row 3: Recent Activity & Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
         {/* Recent Bookings */}
         <motion.div variants={staggerItem} className="lg:col-span-2 bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm">
@@ -193,12 +234,12 @@ export default function VendorOverview() {
                       <CalendarDays className="w-4 h-4 text-[#C9A75D]" />
                     </div>
                     <div>
-                      <p className="font-bold text-[#0F0F0F] text-sm">{booking.vehicle?.make} {booking.vehicle?.model}</p>
+                      <p className="font-bold text-[#0F0F0F] text-sm">{booking.vehicle?.brand} {booking.vehicle?.name}</p>
                       <p className="text-[11px] font-bold text-[#666666] uppercase tracking-wider mt-0.5">{new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-[#0F0F0F]">${booking.totalPrice?.toLocaleString()}</p>
+                    <p className="font-bold text-[#0F0F0F]">${booking.totalAmount?.toLocaleString()}</p>
                     <p className={`text-[10px] font-bold uppercase tracking-wider mt-0.5 ${booking.status === 'completed' ? 'text-[#16A34A]' : booking.status === 'pending' ? 'text-[#C9A75D]' : 'text-[#666666]'}`}>{booking.status}</p>
                   </div>
                 </div>
@@ -212,8 +253,8 @@ export default function VendorOverview() {
         </motion.div>
 
         {/* Quick Actions */}
-        <motion.div variants={staggerItem} className="lg:col-span-1 space-y-6">
-          <div className="bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm h-full">
+        <motion.div variants={staggerItem} className="lg:col-span-1">
+          <div className="bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm">
             <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] mb-6">Quick Actions</h3>
             <div className="grid grid-cols-2 gap-3">
               <Link to="/vendor/add-vehicle" className="flex flex-col items-center justify-center p-5 rounded-xl border border-[#ECECEC] hover:border-[#C9A75D] hover:bg-[#F5F5F5] transition-all group text-center">

@@ -92,18 +92,23 @@ export const vendorSlice = createSlice({
         state.loading = false;
         state.bookings = action.payload;
         
-        // Compute revenue and active stats
+        // Revenue = only completed (paid) bookings
         const revenue = action.payload
-          .filter(b => b.status === 'completed' || b.status === 'confirmed')
-          .reduce((sum, b) => sum + b.totalAmount, 0);
+          .filter(b => b.status === 'completed')
+          .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
           
-        const active = action.payload.filter(b => ['pending', 'confirmed', 'active'].includes(b.status));
+        // Active rentals = confirmed + currently active (not pending, not completed/cancelled)
+        const active = action.payload.filter(b => ['confirmed', 'active'].includes(b.status));
+
+        // Pending requests = bookings awaiting vendor action
+        const pendingBookings = action.payload.filter(b => b.status === 'pending');
 
         state.stats = {
           ...state.stats,
           totalRevenue: revenue,
           activeRentals: active.length,
-          totalBookings: action.payload.length
+          totalBookings: action.payload.length,
+          pendingRequests: pendingBookings.length,
         };
       })
       .addCase(fetchVendorBookings.rejected, (state, action) => {
