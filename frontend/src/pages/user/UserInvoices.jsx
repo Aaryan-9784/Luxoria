@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import api from '@/services/api';
 import { Download, Receipt, AlertCircle, CreditCard, CalendarDays, Hash, ChevronLeft, ChevronRight, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function UserInvoices() {
   const [payments, setPayments] = useState([]);
@@ -91,17 +92,17 @@ export default function UserInvoices() {
         {payments.length > 0 && (
           <div className="flex items-center gap-4 w-full lg:w-auto">
             {/* Filter Timeline */}
-            <div className="relative w-full sm:w-auto">
-              <select 
+            <div className="w-full sm:w-48">
+              <CustomSelect
                 value={timeframe}
-                onChange={(e) => {setTimeframe(e.target.value); setCurrentPage(1);}}
-                className="w-full sm:w-auto bg-white border border-[#ECECEC] rounded-xl pl-4 pr-10 py-2.5 text-[13px] text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] transition-colors appearance-none cursor-pointer shadow-sm"
-              >
-                <option value="all">All Time</option>
-                <option value="month">This Month</option>
-                <option value="year">This Year</option>
-              </select>
-              <CalendarDays className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
+                onChange={(val) => { setTimeframe(val); setCurrentPage(1); }}
+                icon={CalendarDays}
+                options={[
+                  { value: 'all', label: 'All Time' },
+                  { value: 'month', label: 'This Month' },
+                  { value: 'year', label: 'This Year' },
+                ]}
+              />
             </div>
           </div>
         )}

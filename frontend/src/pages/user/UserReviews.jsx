@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Star, MessageSquare, Filter, Trash2, Edit3, CalendarDays } from 'lucide-react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 const MOCK_REVIEWS = [
   {
@@ -74,20 +75,20 @@ export default function UserReviews() {
             </div>
 
             {/* Filter */}
-            <div className="relative w-full sm:w-auto">
-              <select 
+            <div className="w-full sm:w-48">
+              <CustomSelect
                 value={filterRating}
-                onChange={(e) => setFilterRating(e.target.value)}
-                className="w-full sm:w-auto bg-white border border-[#ECECEC] rounded-xl pl-4 pr-10 py-2.5 text-[13px] text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] transition-colors appearance-none cursor-pointer shadow-sm"
-              >
-                <option value="all">All Ratings</option>
-                <option value="5">5 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="2">2 Stars</option>
-                <option value="1">1 Star</option>
-              </select>
-              <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
+                onChange={(val) => setFilterRating(val)}
+                icon={Filter}
+                options={[
+                  { value: 'all', label: 'All Ratings' },
+                  { value: '5', label: '5 Stars' },
+                  { value: '4', label: '4 Stars' },
+                  { value: '3', label: '3 Stars' },
+                  { value: '2', label: '2 Stars' },
+                  { value: '1', label: '1 Star' },
+                ]}
+              />
             </div>
           </div>
         )}

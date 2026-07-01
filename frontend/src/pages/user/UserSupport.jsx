@@ -6,6 +6,7 @@ import {
   Send, CheckCircle2, AlertCircle, FileText 
 } from 'lucide-react';
 import api from '@/services/api';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 const FAQS = [
   {
@@ -174,15 +175,15 @@ export default function UserSupport() {
 
                 <div>
                   <label className="block text-[10px] font-bold text-[#666666] uppercase tracking-[0.1em] mb-2">Inquiry Type</label>
-                  <select 
+                  <CustomSelect
                     value={ticketPriority}
-                    onChange={(e) => setTicketPriority(e.target.value)}
-                    className="w-full bg-[#F5F5F5]/50 border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3 px-4 rounded-xl focus:outline-none focus:border-[#C9A75D] focus:ring-1 focus:ring-[#C9A75D]/30 transition-all appearance-none cursor-pointer"
-                  >
-                    <option value="normal">General Question</option>
-                    <option value="high">Booking Modification</option>
-                    <option value="urgent">Urgent Assistance</option>
-                  </select>
+                    onChange={(val) => setTicketPriority(val)}
+                    options={[
+                      { value: 'normal', label: 'General Question' },
+                      { value: 'high', label: 'Booking Modification' },
+                      { value: 'urgent', label: 'Urgent Assistance' },
+                    ]}
+                  />
                 </div>
 
                 <div>

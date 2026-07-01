@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchMyBookings, cancelBooking } from '@/redux/slices/dashboardSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Hash, Download, Eye } from 'lucide-react';
+import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
 
 // Parse flexible date input like 3/3/2006, 03-03-2006, etc.
@@ -179,20 +180,20 @@ export default function MyBookings() {
           </div>
 
           {/* Filter Status */}
-          <div className="relative w-full sm:w-auto">
-            <select 
+          <div className="w-full sm:w-48">
+            <CustomSelect
               value={filterStatus}
-              onChange={(e) => {setFilterStatus(e.target.value); setCurrentPage(1);}}
-              className="w-full sm:w-auto bg-white border border-[#ECECEC] rounded-xl pl-4 pr-10 py-2.5 text-[13px] text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] transition-colors appearance-none cursor-pointer"
-            >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="active">Active</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
+              onChange={(val) => { setFilterStatus(val); setCurrentPage(1); }}
+              icon={Filter}
+              options={[
+                { value: 'all', label: 'All Statuses' },
+                { value: 'pending', label: 'Pending' },
+                { value: 'confirmed', label: 'Confirmed' },
+                { value: 'active', label: 'Active' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' },
+              ]}
+            />
           </div>
         </div>
       </div>

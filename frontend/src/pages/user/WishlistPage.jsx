@@ -5,6 +5,7 @@ import VehicleCard from '@/components/ui/VehicleCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HeartCrack, Search, SortDesc, Compass, Trash2, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function WishlistPage() {
   const dispatch = useDispatch();
@@ -79,17 +80,17 @@ export default function WishlistPage() {
             </div>
 
             {/* Sort */}
-            <div className="relative w-full sm:w-auto">
-              <select 
+            <div className="w-full sm:w-48">
+              <CustomSelect
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full sm:w-auto bg-white border border-[#ECECEC] rounded-xl pl-4 pr-10 py-2.5 text-[13px] text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] transition-colors appearance-none cursor-pointer shadow-sm"
-              >
-                <option value="recent">Recently Added</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
-              <SortDesc className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
+                onChange={(val) => setSortBy(val)}
+                icon={SortDesc}
+                options={[
+                  { value: 'recent', label: 'Recently Added' },
+                  { value: 'price-asc', label: 'Price: Low to High' },
+                  { value: 'price-desc', label: 'Price: High to Low' },
+                ]}
+              />
             </div>
           </div>
         )}
