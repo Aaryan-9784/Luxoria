@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchNotifications, markAsRead, markAllAsRead } from '@/redux/slices/notificationSlice';
-import { Bell, Check, Info, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { fetchNotifications, markAsRead, markAllAsRead, deleteNotification } from '@/redux/slices/notificationSlice';
+import { Bell, Check, Info, AlertTriangle, ShieldCheck, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -48,6 +48,11 @@ export default function NotificationBell() {
   const handleMarkAsRead = (e, id) => {
     e.stopPropagation();
     dispatch(markAsRead(id));
+  };
+
+  const handleDelete = (e, id) => {
+    e.stopPropagation();
+    dispatch(deleteNotification(id));
   };
 
   return (
@@ -97,7 +102,7 @@ export default function NotificationBell() {
                   {notifications.map((notif) => (
                     <div 
                       key={notif._id} 
-                      className={`p-4 hover:bg-surface/50 transition-colors flex gap-4 ${!notif.isRead ? 'bg-surface/30' : ''}`}
+                      className={`p-4 hover:bg-surface/50 transition-colors flex gap-4 group ${!notif.isRead ? 'bg-surface/30' : ''}`}
                     >
                       <div className="mt-1 shrink-0">
                         {getIcon(notif.type)}
@@ -115,15 +120,24 @@ export default function NotificationBell() {
                           {notif.message}
                         </p>
                       </div>
-                      {!notif.isRead && (
-                        <button 
-                          onClick={(e) => handleMarkAsRead(e, notif._id)}
-                          className="shrink-0 text-accent/50 hover:text-accent transition-colors"
-                          title="Mark as read"
+                      <div className="shrink-0 flex flex-col items-center gap-1 mt-1">
+                        {!notif.isRead && (
+                          <button 
+                            onClick={(e) => handleMarkAsRead(e, notif._id)}
+                            className="text-accent/50 hover:text-accent transition-colors"
+                            title="Mark as read"
+                          >
+                            <div className="w-2.5 h-2.5 rounded-full bg-accent" />
+                          </button>
+                        )}
+                        <button
+                          onClick={(e) => handleDelete(e, notif._id)}
+                          className="opacity-0 group-hover:opacity-100 text-muted hover:text-red-500 transition-all p-0.5 rounded"
+                          title="Delete notification"
                         >
-                          <div className="w-2.5 h-2.5 rounded-full bg-accent mt-2" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
-                      )}
+                      </div>
                     </div>
                   ))}
                 </div>

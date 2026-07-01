@@ -2,9 +2,46 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchVendorBookings, updateBookingStatus } from '@/redux/slices/vendorSlice';
 import { motion } from 'framer-motion';
-import { Search, CalendarDays, MapPin, Check, X as RejectIcon, User, Filter, AlertCircle, FileText } from 'lucide-react';
+import { Search, CalendarDays, MapPin, Check, X as RejectIcon, User, Filter, AlertCircle, FileText, X } from 'lucide-react';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import CustomSelect from '@/components/ui/CustomSelect';
+
+// Parse flexible date input like 3/3/2006, 03-03-2006, etc.
+function parseFlexDate(str) {
+  if (!str || !str.trim()) return null;
+  const d = new Date(str.trim());
+  if (!isNaN(d.getTime())) return d;
+  const parts = str.trim().split(/[\\/\-\.]/);
+  if (parts.length === 3) {
+    const [a, b, c] = parts.map(Number);
+    const attempt = new Date(c, b - 1, a);
+    if (!isNaN(attempt.getTime()) && attempt.getFullYear() === c) return attempt;
+  }
+  return null;
+}
+
+function dateMatchesQuery(bookingDate, query) {
+  const d = new Date(bookingDate);
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const parsed = parseFlexDate(q);
+  if (parsed) {
+    return (
+      d.getDate() === parsed.getDate() &&
+      d.getMonth() === parsed.getMonth() &&
+      d.getFullYear() === parsed.getFullYear()
+    );
+  }
+  const formats = [
+    d.toLocaleDateString(),
+    d.toLocaleDateString('en-GB'),
+    d.toLocaleDateString('en-US'),
+    `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`,
+    `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`,
+    d.toISOString().slice(0, 10),
+  ];
+  return formats.some(f => f.includes(q));
+}
 
 export default function VendorBookings() {
   const dispatch = useDispatch();
@@ -12,6 +49,7 @@ export default function VendorBookings() {
   const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [dateSearch, setDateSearch] = useState('');
 
   useEffect(() => {
     if (!accessToken) return;
@@ -19,11 +57,13 @@ export default function VendorBookings() {
   }, [dispatch, accessToken]);
 
   const filteredBookings = bookings.filter(b => {
-    const matchesSearch = b.vehicle?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const matchesSearch = b.vehicle?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           b.bookingId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           b.user?.name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || b.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesDate = !dateSearch.trim() ? true :
+      dateMatchesQuery(b.startDate, dateSearch) || dateMatchesQuery(b.endDate, dateSearch);
+    return matchesSearch && matchesStatus && matchesDate;
   });
 
   const getStatusBadge = (status) => {
@@ -60,7 +100,7 @@ export default function VendorBookings() {
           <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Booking Management</h1>
           <p className="text-[#666666] text-sm font-medium tracking-wide">Approve, reject, and manage your vehicle reservations.</p>
         </div>
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
             <input 
@@ -71,6 +111,24 @@ export default function VendorBookings() {
               className="w-full bg-white border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3 pl-11 pr-4 rounded-xl focus:outline-none focus:border-[#C9A75D] transition-all placeholder:text-[#9CA3AF] shadow-sm"
             />
           </div>
+
+          {/* Date Search */}
+          <div className="relative w-full sm:w-48">
+            <CalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Select a date"
+              value={dateSearch}
+              onChange={(e) => setDateSearch(e.target.value)}
+              className="w-full bg-white border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3 pl-10 pr-9 rounded-xl focus:outline-none focus:border-[#C9A75D] transition-all placeholder:text-[#BBBBBB] shadow-sm"
+            />
+            {dateSearch && (
+              <button onClick={() => setDateSearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#AAAAAA] hover:text-[#DC2626] transition-colors">
+                <RejectIcon className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
           <div className="relative w-full sm:w-48">
             <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
             <CustomSelect

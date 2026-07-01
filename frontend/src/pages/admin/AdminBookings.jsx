@@ -2,15 +2,57 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminBookings } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
-import { Search, CalendarDays, Download, Filter, ChevronLeft, ChevronRight, Hash, Eye } from 'lucide-react';
+import { Search, CalendarDays, Download, Filter, ChevronLeft, ChevronRight, Hash, Eye, X } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
+
+// Parse flexible date input like 3/3/2006, 03-03-2006, 3 Mar 2006, etc.
+function parseFlexDate(str) {
+  if (!str || !str.trim()) return null;
+  const d = new Date(str.trim());
+  if (!isNaN(d.getTime())) return d;
+  // try dd/mm/yyyy or d/m/yyyy
+  const parts = str.trim().split(/[\\/\-\.]/);
+  if (parts.length === 3) {
+    const [a, b, c] = parts.map(Number);
+    // try d/m/yyyy
+    const attempt = new Date(c, b - 1, a);
+    if (!isNaN(attempt.getTime()) && attempt.getFullYear() === c) return attempt;
+  }
+  return null;
+}
+
+function dateMatchesQuery(bookingDate, query) {
+  const d = new Date(bookingDate);
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  // Try to match as formatted date string (flexible)
+  const parsed = parseFlexDate(q);
+  if (parsed) {
+    return (
+      d.getDate() === parsed.getDate() &&
+      d.getMonth() === parsed.getMonth() &&
+      d.getFullYear() === parsed.getFullYear()
+    );
+  }
+  // Fallback: match against localeDateString representations
+  const formats = [
+    d.toLocaleDateString(),
+    d.toLocaleDateString('en-GB'),
+    d.toLocaleDateString('en-US'),
+    `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`,
+    `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`,
+    d.toISOString().slice(0, 10),
+  ];
+  return formats.some(f => f.includes(q));
+}
 
 export default function AdminBookings() {
   const dispatch = useDispatch();
   const { bookings, loading, totalBookings } = useSelector(state => state.admin);
   const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'confirmed', 'completed', 'cancelled'
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [dateSearch, setDateSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const bookingsPerPage = 10;
 
@@ -22,12 +64,14 @@ export default function AdminBookings() {
   // Filtering
   const filteredBookings = bookings.filter(b => {
     const term = searchTerm.toLowerCase();
-    const matchesSearch = 
+    const matchesSearch =
       (b.bookingId && b.bookingId.toLowerCase().includes(term)) ||
       (b.user?.name && b.user.name.toLowerCase().includes(term)) ||
       (b.vendor?.name && b.vendor.name.toLowerCase().includes(term));
     const matchesStatus = filterStatus === 'all' ? true : b.status === filterStatus;
-    return matchesSearch && matchesStatus;
+    const matchesDate = !dateSearch.trim() ? true :
+      dateMatchesQuery(b.startDate, dateSearch) || dateMatchesQuery(b.endDate, dateSearch);
+    return matchesSearch && matchesStatus && matchesDate;
   });
 
   // Pagination
@@ -99,9 +143,9 @@ export default function AdminBookings() {
           <p className="text-[#666666] text-sm font-medium tracking-wide">Master ledger of all {totalBookings} platform transactions.</p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
           {/* Search */}
-          <div className="relative w-full sm:w-96">
+          <div className="relative w-full sm:w-72">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999999]" />
             <input 
               type="text" 
@@ -112,7 +156,24 @@ export default function AdminBookings() {
             />
           </div>
 
-          {/* Filter */}
+          {/* Date Search */}
+          <div className="relative w-full sm:w-52">
+            <CalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999999] pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Select a date"
+              value={dateSearch}
+              onChange={(e) => { setDateSearch(e.target.value); setCurrentPage(1); }}
+              className="w-full bg-white border border-[#ECECEC] rounded-xl pl-10 pr-9 py-2.5 text-[13px] text-[#0F0F0F] placeholder-[#BBBBBB] focus:outline-none focus:border-[#C9A75D] focus:shadow-[0_0_0_3px_rgba(201,167,93,0.1)] transition-all"
+            />
+            {dateSearch && (
+              <button onClick={() => { setDateSearch(''); setCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#AAAAAA] hover:text-[#DC2626] transition-colors">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Status Filter */}
           <CustomSelect
             value={filterStatus}
             onChange={(val) => {setFilterStatus(val); setCurrentPage(1);}}
@@ -127,7 +188,7 @@ export default function AdminBookings() {
 
           {/* Export */}
           <button onClick={handleExport} className="flex items-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#C9A75D] transition-colors shadow-lg shadow-[#0F0F0F]/10 whitespace-nowrap">
-            <Download className="w-4 h-4" /> Export Report
+            <Download className="w-4 h-4" /> Export
           </button>
         </div>
       </div>

@@ -5,12 +5,50 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Hash, Download, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+// Parse flexible date input like 3/3/2006, 03-03-2006, etc.
+function parseFlexDate(str) {
+  if (!str || !str.trim()) return null;
+  const d = new Date(str.trim());
+  if (!isNaN(d.getTime())) return d;
+  const parts = str.trim().split(/[\\/\-\.]/);
+  if (parts.length === 3) {
+    const [a, b, c] = parts.map(Number);
+    const attempt = new Date(c, b - 1, a);
+    if (!isNaN(attempt.getTime()) && attempt.getFullYear() === c) return attempt;
+  }
+  return null;
+}
+
+function dateMatchesQuery(bookingDate, query) {
+  const d = new Date(bookingDate);
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const parsed = parseFlexDate(q);
+  if (parsed) {
+    return (
+      d.getDate() === parsed.getDate() &&
+      d.getMonth() === parsed.getMonth() &&
+      d.getFullYear() === parsed.getFullYear()
+    );
+  }
+  const formats = [
+    d.toLocaleDateString(),
+    d.toLocaleDateString('en-GB'),
+    d.toLocaleDateString('en-US'),
+    `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`,
+    `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`,
+    d.toISOString().slice(0, 10),
+  ];
+  return formats.some(f => f.includes(q));
+}
+
 export default function MyBookings() {
   const dispatch = useDispatch();
   const { bookings, loading } = useSelector(state => state.dashboard);
   const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [dateSearch, setDateSearch] = useState('');
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [bookingToCancel, setBookingToCancel] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,11 +62,13 @@ export default function MyBookings() {
   // Filtering
   const filteredBookings = bookings.filter(b => {
     const term = searchTerm.toLowerCase();
-    const matchesSearch = 
-      (b.vehicle?.name && b.vehicle.name.toLowerCase().includes(term)) || 
+    const matchesSearch =
+      (b.vehicle?.name && b.vehicle.name.toLowerCase().includes(term)) ||
       (b.bookingId && b.bookingId.toLowerCase().includes(term));
     const matchesStatus = filterStatus === 'all' ? true : b.status === filterStatus;
-    return matchesSearch && matchesStatus;
+    const matchesDate = !dateSearch.trim() ? true :
+      dateMatchesQuery(b.startDate, dateSearch) || dateMatchesQuery(b.endDate, dateSearch);
+    return matchesSearch && matchesStatus && matchesDate;
   });
 
   // Pagination
@@ -108,7 +148,7 @@ export default function MyBookings() {
           <p className="text-[13px] text-[#666666] tracking-wide">Manage your luxury reservations and past trips.</p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
           {/* Search */}
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
@@ -119,6 +159,23 @@ export default function MyBookings() {
               onChange={(e) => {setSearchTerm(e.target.value); setCurrentPage(1);}}
               className="w-full bg-white border border-[#ECECEC] rounded-xl pl-10 pr-4 py-2.5 text-[13px] text-[#0F0F0F] placeholder-[#999999] focus:outline-none focus:border-[#C9A75D] transition-colors"
             />
+          </div>
+
+          {/* Date Search */}
+          <div className="relative w-full sm:w-48">
+            <CalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999999] pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Select a date"
+              value={dateSearch}
+              onChange={(e) => { setDateSearch(e.target.value); setCurrentPage(1); }}
+              className="w-full bg-white border border-[#ECECEC] rounded-xl pl-10 pr-9 py-2.5 text-[13px] text-[#0F0F0F] placeholder-[#BBBBBB] focus:outline-none focus:border-[#C9A75D] transition-colors"
+            />
+            {dateSearch && (
+              <button onClick={() => { setDateSearch(''); setCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#AAAAAA] hover:text-[#DC2626] transition-colors">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           {/* Filter Status */}

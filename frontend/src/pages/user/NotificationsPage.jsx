@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Car, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Bell, Car, CheckCircle2, AlertCircle, Trash2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchNotifications, markAllAsRead, markAsRead } from '../../redux/slices/notificationSlice';
+import { fetchNotifications, markAllAsRead, markAsRead, deleteNotification, deleteAllNotifications } from '../../redux/slices/notificationSlice';
 
 const formatTimeAgo = (dateString) => {
   if (!dateString) return '';
@@ -60,6 +60,15 @@ export default function NotificationsPage() {
     }
   };
 
+  const handleDelete = (e, id) => {
+    e.stopPropagation();
+    dispatch(deleteNotification(id));
+  };
+
+  const handleDeleteAll = () => {
+    dispatch(deleteAllNotifications());
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
       
@@ -69,12 +78,21 @@ export default function NotificationsPage() {
           <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-2">Notifications</h1>
           <p className="text-[13px] text-[#666666] tracking-wide">Stay updated on your bookings and account activity.</p>
         </div>
-        <button 
-          onClick={handleMarkAllAsRead}
-          className="px-5 py-2.5 bg-white border border-[#ECECEC] text-[#0F0F0F] text-[12px] font-bold uppercase tracking-widest rounded-xl hover:bg-[#F5F5F5] transition-colors shadow-sm whitespace-nowrap cursor-pointer"
-        >
-          Mark all as read
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleMarkAllAsRead}
+            className="px-5 py-2.5 bg-white border border-[#ECECEC] text-[#0F0F0F] text-[12px] font-bold uppercase tracking-widest rounded-xl hover:bg-[#F5F5F5] transition-colors shadow-sm whitespace-nowrap cursor-pointer"
+          >
+            Mark all as read
+          </button>
+          <button 
+            onClick={handleDeleteAll}
+            className="px-5 py-2.5 bg-white border border-[#ECECEC] text-[#DC2626] text-[12px] font-bold uppercase tracking-widest rounded-xl hover:bg-[#FEF2F2] transition-colors shadow-sm whitespace-nowrap cursor-pointer flex items-center gap-2"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Delete all
+          </button>
+        </div>
       </div>
 
       <div className="bg-white border border-[#ECECEC] rounded-2xl shadow-sm overflow-hidden">
@@ -92,7 +110,7 @@ export default function NotificationsPage() {
                 <div 
                   key={notification._id} 
                   onClick={() => handleMarkAsRead(notification._id, isRead)}
-                  className={`p-6 flex items-start gap-5 transition-colors hover:bg-[#FBFBFB] cursor-pointer ${
+                  className={`p-6 flex items-start gap-5 transition-colors hover:bg-[#FBFBFB] cursor-pointer group ${
                     !isRead ? "bg-[#FBFBFB]/50" : "bg-white"
                   }`}
                 >
@@ -114,11 +132,18 @@ export default function NotificationsPage() {
                     </p>
                   </div>
                   
-                  {!isRead && (
-                    <div className="shrink-0 flex items-center justify-center pt-2">
+                  <div className="shrink-0 flex items-center gap-2 pt-1">
+                    {!isRead && (
                       <div className="w-2.5 h-2.5 rounded-full bg-[#C9A75D] shadow-[0_0_8px_rgba(201,167,93,0.5)]" />
-                    </div>
-                  )}
+                    )}
+                    <button
+                      onClick={(e) => handleDelete(e, notification._id)}
+                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-[#999999] hover:text-[#DC2626] hover:bg-[#FEF2F2] transition-all"
+                      title="Delete notification"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               );
             })}

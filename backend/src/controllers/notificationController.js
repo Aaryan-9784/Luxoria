@@ -47,3 +47,28 @@ export const markAllAsRead = asyncHandler(async (req, res) => {
 
   ApiResponse.success(res, null, 'All notifications marked as read');
 });
+
+/**
+ * @desc    Delete a single notification
+ * @route   DELETE /api/notifications/:id
+ * @access  Protected
+ */
+export const deleteNotification = asyncHandler(async (req, res) => {
+  await Notification.findOneAndDelete({
+    _id: req.params.id,
+    recipient: req.user._id,
+  });
+
+  ApiResponse.success(res, null, 'Notification deleted');
+});
+
+/**
+ * @desc    Delete all notifications for the current user
+ * @route   DELETE /api/notifications
+ * @access  Protected
+ */
+export const deleteAllNotifications = asyncHandler(async (req, res) => {
+  await Notification.deleteMany({ recipient: req.user._id });
+
+  ApiResponse.success(res, null, 'All notifications deleted');
+});

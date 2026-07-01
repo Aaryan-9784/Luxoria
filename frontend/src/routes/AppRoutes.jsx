@@ -38,6 +38,7 @@ const PaymentsDashboard = React.lazy(() => import('@/pages/user/PaymentsDashboar
 const UserProfile = React.lazy(() => import('@/pages/user/UserProfile'));
 const NotificationsPage = React.lazy(() => import('@/pages/user/NotificationsPage'));
 const UserReviews = React.lazy(() => import('@/pages/user/UserReviews'));
+
 const UserInvoices = React.lazy(() => import('@/pages/user/UserInvoices'));
 const UserMessages = React.lazy(() => import('@/pages/user/UserMessages'));
 const UserSupport = React.lazy(() => import('@/pages/user/UserSupport'));

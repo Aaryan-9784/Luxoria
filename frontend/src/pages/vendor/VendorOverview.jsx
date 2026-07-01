@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchVendorVehicles, fetchVendorBookings } from '@/redux/slices/vendorSlice';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
-import { Car, Wallet, ArrowRight, AlertCircle, BarChart3, CalendarDays, PlusCircle, CheckCircle2, LayoutGrid, Clock, Calendar } from 'lucide-react';
+import { Car, Wallet, ArrowRight, AlertCircle, BarChart3, PlusCircle, CheckCircle2, LayoutGrid, Clock, Calendar, CalendarDays } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -91,7 +91,7 @@ export default function VendorOverview() {
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">
       
       {/* Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+      <div>
         <div>
           <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Partner Overview</h1>
           <p className="text-[#666666] text-sm font-medium tracking-wide">Real-time fleet performance metrics and partner activity.</p>

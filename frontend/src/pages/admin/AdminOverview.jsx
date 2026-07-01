@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAnalytics, fetchAdminBookings } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
-import { Users, Building2, Car, Wallet, TrendingUp, AlertCircle, CalendarDays, ArrowRight, ShieldCheck, Activity, Database, Server } from 'lucide-react';
+import { Users, Building2, Car, Wallet, TrendingUp, AlertCircle, ArrowRight, ShieldCheck, Activity, Database, Server } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function AdminOverview() {
@@ -39,8 +39,10 @@ export default function AdminOverview() {
       
       {/* Header */}
       <div className="mb-2">
-        <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>System Overview</h1>
-        <p className="text-[#666666] text-sm font-medium tracking-wide">Real-time enterprise analytics and platform health.</p>
+        <div>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>System Overview</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Real-time enterprise analytics and platform health.</p>
+        </div>
       </div>
 
       {/* KPI Widgets */}

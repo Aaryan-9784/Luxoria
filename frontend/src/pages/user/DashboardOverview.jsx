@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchMyBookings, fetchWishlist } from '@/redux/slices/dashboardSlice';
 import { motion } from 'framer-motion';
 import { 
-  Car, MapPin, CalendarDays, Award, Wallet, ArrowRight, 
-  Heart, Compass, ShieldCheck, MessageSquare, Star 
+  Car, MapPin, Award, Wallet, ArrowRight, 
+  Heart, Compass, ShieldCheck, MessageSquare, Star
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { staggerContainer, staggerItem } from '@/lib/motion';
@@ -34,10 +34,12 @@ export default function DashboardOverview() {
       
       {/* Header */}
       <div className="mb-2">
-        <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
-          Welcome back, {user?.name?.split(' ')[0] || 'Client'}
-        </h1>
-        <p className="text-[#666666] text-sm font-medium tracking-wide">Manage your luxury rentals and explore new experiences.</p>
+        <div>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
+            Welcome back, {user?.name?.split(' ')[0] || 'Client'}
+          </h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Manage your luxury rentals and explore new experiences.</p>
+        </div>
       </div>
 
       {/* KPI Widgets */}
