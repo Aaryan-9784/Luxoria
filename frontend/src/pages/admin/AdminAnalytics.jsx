@@ -4,7 +4,7 @@ import { fetchAnalytics } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
 import {
   Users, Car, DollarSign, Calendar,
-  Activity, Download, ChevronDown, TrendingUp,
+  Activity, Download, TrendingUp,
 } from 'lucide-react';
 import CountUp from 'react-countup';
 import CustomSelect from '@/components/ui/CustomSelect';
@@ -133,7 +133,7 @@ export default function AdminAnalytics() {
           <CustomSelect
             value={dateRange}
             onChange={setDateRange}
-            icon={ChevronDown}
+            icon={null}
             options={[
               { value: 'year',  label: '2026 Fiscal Year' },
               { value: 'month', label: 'Last 30 Days' },

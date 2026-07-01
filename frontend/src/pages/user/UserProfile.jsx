@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Check, ShieldCheck, KeyRound, User as UserIcon, ArrowRight, Eye, EyeOff, Link as LinkIcon, Upload, X, ZoomIn, Trash2 } from 'lucide-react';
+import { Check, ShieldCheck, KeyRound, User as UserIcon, ArrowRight, Eye, EyeOff, Link as LinkIcon, Upload, X, ZoomIn, Trash2 } from 'lucide-react';
 import api from '@/services/api';
 import { updateUser } from '@/redux/slices/authSlice';
 
@@ -210,11 +210,11 @@ export default function UserProfile() {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="relative mb-6"
+            className="relative mb-6 group"
           >
             {/* Outer gold gradient ring */}
             <div className="w-36 h-36 rounded-full p-[3px] bg-gradient-to-tr from-[#C9A75D] via-[#E8D090] to-[#C9A75D] shadow-xl">
-              <div className="w-full h-full rounded-full overflow-hidden bg-[#F5F5F5] relative group">
+              <div className="w-full h-full rounded-full overflow-hidden bg-[#F5F5F5] relative">
 
                 {avatarPreview ? (
                   <img
@@ -231,11 +231,11 @@ export default function UserProfile() {
                   </div>
                 )}
 
-                {/* Upload hover overlay */}
+                {/* Upload hover overlay — sits above image, below file input (z-10) */}
                 {avatarMode === 'upload' && (
-                  <div className="absolute inset-0 bg-[#0F0F0F]/55 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 cursor-pointer">
-                    <Camera className="w-7 h-7 text-[#C9A75D]" />
-                    <span className="text-[9px] text-white uppercase tracking-[0.2em] font-bold">Change Photo</span>
+                  <div className="absolute inset-0 z-10 bg-[#0F0F0F]/55 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-1.5 pointer-events-none">
+                    <Upload className="w-6 h-6 text-[#C9A75D]" />
+                    <span className="text-[9px] text-white uppercase tracking-[0.2em] font-bold">Upload Image</span>
                   </div>
                 )}
 
@@ -243,7 +243,7 @@ export default function UserProfile() {
                 {avatarMode === 'url' && avatarPreview && (
                   <div
                     onClick={() => setLightboxOpen(true)}
-                    className="absolute inset-0 bg-[#0F0F0F]/55 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 cursor-pointer"
+                    className="absolute inset-0 z-10 bg-[#0F0F0F]/55 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 cursor-pointer"
                   >
                     <ZoomIn className="w-7 h-7 text-[#C9A75D]" />
                     <span className="text-[9px] text-white uppercase tracking-[0.2em] font-bold">View Photo</span>
@@ -252,7 +252,7 @@ export default function UserProfile() {
               </div>
             </div>
 
-            {/* File input (upload mode) */}
+            {/* File input (upload mode) — z-20 sits above overlay, triggers on click anywhere over avatar */}
             {avatarMode === 'upload' && (
               <input
                 type="file"

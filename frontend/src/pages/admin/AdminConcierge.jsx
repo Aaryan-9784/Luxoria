@@ -107,7 +107,7 @@ export default function AdminConcierge() {
         <button
           onClick={handleExportReport}
           disabled={exporting}
-          className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-[#0F0F0F] text-white text-[11px] font-bold uppercase tracking-wider shadow-md hover:bg-[#C9A75D] transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed shrink-0 self-start md:self-auto"
+          className="flex items-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#C9A75D] transition-colors shadow-lg shadow-[#0F0F0F]/10 whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {exporting ? (
             <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
