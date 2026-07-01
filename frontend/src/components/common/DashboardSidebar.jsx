@@ -8,7 +8,7 @@ import Avatar from '@/components/ui/Avatar';
 import {
   LayoutDashboard, Car, CalendarDays, Users, BarChart3,
   Settings, LogOut, ChevronLeft, ChevronRight, Bell,
-  ShieldCheck, FileText, CreditCard, Star, Package
+  ShieldCheck, FileText, CreditCard, Star, Package, UserCircle
 } from 'lucide-react';
 
 const USER_LINKS = [
@@ -35,7 +35,7 @@ const ADMIN_LINKS = [
   { label: 'Bookings', path: '/admin/bookings', icon: CalendarDays },
   { label: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
   { label: 'Master Data', path: '/admin/master-data', icon: Package },
-  { label: 'Settings', path: '/admin/settings', icon: Settings },
+  { label: 'My Profile', path: '/admin/settings', icon: UserCircle },
 ];
 
 export default function DashboardSidebar() {

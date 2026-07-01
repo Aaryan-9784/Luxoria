@@ -73,14 +73,14 @@ export default function VendorManagement() {
         
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
           {/* Search */}
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
+          <div className="relative w-full sm:w-96">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999999]" />
             <input 
               type="text" 
               placeholder="Search partners..." 
               value={searchTerm}
               onChange={(e) => {setSearchTerm(e.target.value); setCurrentPage(1);}}
-              className="w-full bg-white border border-[#ECECEC] rounded-xl pl-10 pr-4 py-2.5 text-[13px] text-[#0F0F0F] placeholder-[#999999] focus:outline-none focus:border-[#C9A75D] transition-colors"
+              className="w-full bg-white border border-[#ECECEC] rounded-xl pl-11 pr-4 py-2.5 text-[13px] text-[#0F0F0F] placeholder-[#999999] focus:outline-none focus:border-[#C9A75D] focus:shadow-[0_0_0_3px_rgba(201,167,93,0.1)] transition-all"
             />
           </div>
 
@@ -96,8 +96,8 @@ export default function VendorManagement() {
           />
 
           {/* Export */}
-          <button onClick={handleExport} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#1A1A1A] transition-colors shadow-lg shadow-[#0F0F0F]/10">
-            <Download className="w-4 h-4 text-[#C9A75D]" /> Export
+          <button onClick={handleExport} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0F0F0F] text-white px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#C9A75D] transition-colors shadow-lg shadow-[#0F0F0F]/10 whitespace-nowrap">
+            <Download className="w-4 h-4" /> Export Report
           </button>
         </div>
       </div>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAdminVehicles, approveVehicle } from '@/redux/slices/adminSlice';
+import { fetchAdminVehicles, approveVehicle, deleteAdminVehicle } from '@/redux/slices/adminSlice';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Clock, XCircle, CheckCircle2, ChevronRight, Car, AlertCircle, FileText, Image as ImageIcon, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ShieldCheck, Clock, XCircle, CheckCircle2, ChevronRight, Car, AlertCircle, FileText, Image as ImageIcon, ArrowUpRight, ArrowDownRight, Trash2 } from 'lucide-react';
 import CountUp from 'react-countup';
 
 export default function AdminFleetApprovals() {
@@ -31,6 +31,11 @@ export default function AdminFleetApprovals() {
 
   const handleReject = async (id) => {
     await dispatch(approveVehicle({ id, status: 'rejected' }));
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Permanently delete this vehicle? This cannot be undone.')) return;
+    await dispatch(deleteAdminVehicle(id));
   };
 
   return (
@@ -168,6 +173,14 @@ export default function AdminFleetApprovals() {
                       className="w-full sm:w-auto lg:w-40 flex items-center justify-center gap-2 bg-white text-[#DC2626] px-5 py-2.5 rounded-xl border border-[#ECECEC] text-[11px] font-bold uppercase tracking-wider hover:bg-[#DC2626]/10 hover:border-[#DC2626]/10 transition-colors"
                     >
                       <XCircle className="w-4 h-4" /> Reject
+                    </button>
+                  )}
+                  {req.status === 'rejected' && (
+                    <button
+                      onClick={() => handleDelete(req._id)}
+                      className="w-full sm:w-auto lg:w-40 flex items-center justify-center gap-2 bg-[#DC2626] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#B91C1C] transition-colors shadow-md"
+                    >
+                      <Trash2 className="w-4 h-4" /> Delete
                     </button>
                   )}
                 </div>

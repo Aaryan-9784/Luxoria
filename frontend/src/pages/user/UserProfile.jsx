@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Check, ShieldCheck, KeyRound, User as UserIcon, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Camera, Check, ShieldCheck, KeyRound, User as UserIcon, ArrowRight, Eye, EyeOff, Link as LinkIcon, Upload, X, ZoomIn, Trash2 } from 'lucide-react';
 import api from '@/services/api';
 import { updateUser } from '@/redux/slices/authSlice';
 
@@ -57,8 +57,20 @@ export default function UserProfile() {
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const [avatarPreview, setAvatarPreview] = useState(user?.avatar?.url);
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar?.url || '');
   const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarMode, setAvatarMode] = useState('upload'); // 'upload' | 'url'
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [urlSaving, setUrlSaving] = useState(false);
+  const [avatarDeleting, setAvatarDeleting] = useState(false);
+
+  // Keep preview in sync with Redux (e.g. after delete from another tab or re-login)
+  useEffect(() => {
+    if (!avatarFile && !avatarUrl) {
+      setAvatarPreview(user?.avatar?.url || '');
+    }
+  }, [user?.avatar?.url]);
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
@@ -83,6 +95,12 @@ export default function UserProfile() {
         const avatarRes = await api.put('/users/me/avatar', fileData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
+        dispatch(updateUser(avatarRes.data.data));
+        setSuccessMsg('Profile and photo updated successfully.');
+      }
+
+      if (avatarMode === 'url' && avatarUrl.trim()) {
+        const avatarRes = await api.put('/users/me/avatar-url', { url: avatarUrl.trim() });
         dispatch(updateUser(avatarRes.data.data));
         setSuccessMsg('Profile and photo updated successfully.');
       }
@@ -126,7 +144,50 @@ export default function UserProfile() {
     }
   };
 
+  const onAvatarUrlChange = (e) => {
+    const url = e.target.value;
+    setAvatarUrl(url);
+    if (url.trim()) setAvatarPreview(url.trim());
+    else setAvatarPreview(user?.avatar?.url || '');
+  };
+
+  const handleSaveAvatarUrl = async () => {
+    if (!avatarUrl.trim()) return;
+    setUrlSaving(true);
+    setErrorMsg(''); setSuccessMsg('');
+    try {
+      const avatarRes = await api.put('/users/me/avatar-url', { url: avatarUrl.trim() });
+      dispatch(updateUser(avatarRes.data.data));
+      setAvatarPreview(avatarUrl.trim());
+      setSuccessMsg('Profile photo updated successfully.');
+    } catch (err) {
+      setErrorMsg(err.response?.data?.error?.message || 'Failed to update photo.');
+      setAvatarPreview(user?.avatar?.url || '');
+    } finally {
+      setUrlSaving(false);
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    setAvatarDeleting(true);
+    setErrorMsg(''); setSuccessMsg('');
+    try {
+      const res = await api.delete('/users/me/avatar');
+      dispatch(updateUser(res.data.data));
+      setAvatarPreview('');
+      setAvatarFile(null);
+      setAvatarUrl('');
+      setLightboxOpen(false);
+      setSuccessMsg('Profile photo removed.');
+    } catch (err) {
+      setErrorMsg(err.response?.data?.error?.message || 'Failed to remove photo.');
+    } finally {
+      setAvatarDeleting(false);
+    }
+  };
+
   return (
+    <>
     <div className="min-h-screen bg-white pb-24">
 
       {/* Ultra-Luxury Hero Section */}
@@ -142,23 +203,172 @@ export default function UserProfile() {
 
       <div className="max-w-5xl mx-auto px-6 -mt-12 relative z-20">
 
-        {/* Avatar Centerpiece */}
+        {/* ── Avatar Card ─────────────────────────────────────────── */}
         <div className="flex flex-col items-center mb-10">
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative group cursor-pointer mb-4">
-            <div className="w-24 h-24 rounded-full border-4 border-white bg-white shadow-lg overflow-hidden relative z-10">
-              {avatarPreview ? (
-                <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full bg-[#F5F5F5] flex items-center justify-center text-[#999999]">
-                  <UserIcon className="w-12 h-12 stroke-[1.5]" />
-                </div>
-              )}
-              <div className="absolute inset-0 bg-[#0F0F0F]/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center">
-                <Camera className="w-6 h-6 text-white mb-2" />
-                <span className="text-[9px] text-white uppercase tracking-widest font-bold">Upload Photo</span>
+
+          {/* Gold ring + avatar circle */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="relative mb-6"
+          >
+            {/* Outer gold gradient ring */}
+            <div className="w-36 h-36 rounded-full p-[3px] bg-gradient-to-tr from-[#C9A75D] via-[#E8D090] to-[#C9A75D] shadow-xl">
+              <div className="w-full h-full rounded-full overflow-hidden bg-[#F5F5F5] relative group">
+
+                {avatarPreview ? (
+                  <img
+                    src={avatarPreview}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                    onError={() => setAvatarPreview(user?.avatar?.url || '')}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#0F0F0F] to-[#1A1A1A]">
+                    <span className="text-4xl font-bold text-[#C9A75D] leading-none select-none tracking-tight">
+                      {user?.name ? user.name.charAt(0).toUpperCase() : <UserIcon className="w-12 h-12 text-[#C9A75D] stroke-[1.2]" />}
+                    </span>
+                  </div>
+                )}
+
+                {/* Upload hover overlay */}
+                {avatarMode === 'upload' && (
+                  <div className="absolute inset-0 bg-[#0F0F0F]/55 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 cursor-pointer">
+                    <Camera className="w-7 h-7 text-[#C9A75D]" />
+                    <span className="text-[9px] text-white uppercase tracking-[0.2em] font-bold">Change Photo</span>
+                  </div>
+                )}
+
+                {/* View hover overlay (URL mode) */}
+                {avatarMode === 'url' && avatarPreview && (
+                  <div
+                    onClick={() => setLightboxOpen(true)}
+                    className="absolute inset-0 bg-[#0F0F0F]/55 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <ZoomIn className="w-7 h-7 text-[#C9A75D]" />
+                    <span className="text-[9px] text-white uppercase tracking-[0.2em] font-bold">View Photo</span>
+                  </div>
+                )}
               </div>
             </div>
-            <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" onChange={onAvatarChange} />
+
+            {/* File input (upload mode) */}
+            {avatarMode === 'upload' && (
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 rounded-full"
+                onChange={onAvatarChange}
+              />
+            )}
+
+            {/* Zoom badge (upload mode, photo present) */}
+            {avatarMode === 'upload' && avatarPreview && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setLightboxOpen(true); }}
+                className="absolute bottom-1 left-1 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg z-30 hover:bg-[#FDFBF7] border border-[#ECECEC] transition-colors"
+                title="View full photo"
+              >
+                <ZoomIn className="w-3.5 h-3.5 text-[#666666]" />
+              </button>
+            )}
+
+            {/* Delete badge (whenever photo present) */}
+            {avatarPreview && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handleDeleteAvatar(); }}
+                disabled={avatarDeleting}
+                className="absolute bottom-1 right-1 w-8 h-8 bg-[#DC2626] rounded-full flex items-center justify-center shadow-lg z-30 hover:bg-[#B91C1C] transition-colors disabled:opacity-50"
+                title="Remove photo"
+              >
+                {avatarDeleting
+                  ? <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />
+                  : <Trash2 className="w-3.5 h-3.5 text-white" />
+                }
+              </button>
+            )}
+          </motion.div>
+
+          {/* Upload method card */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="w-full max-w-xs bg-[#FDFBF7] border border-[#ECECEC] rounded-2xl p-4 mb-6 shadow-sm"
+          >
+            {/* Tab switcher */}
+            <div className="flex items-center gap-1 bg-white border border-[#ECECEC] rounded-xl p-1 mb-3 shadow-inner">
+              <button
+                type="button"
+                onClick={() => { setAvatarMode('upload'); setAvatarUrl(''); setAvatarPreview(user?.avatar?.url || ''); }}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] transition-all duration-200 ${
+                  avatarMode === 'upload'
+                    ? 'bg-[#0F0F0F] text-white shadow-md'
+                    : 'text-[#999999] hover:text-[#666666]'
+                }`}
+              >
+                <Upload className="w-3 h-3" /> Upload File
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAvatarMode('url'); setAvatarFile(null); }}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] transition-all duration-200 ${
+                  avatarMode === 'url'
+                    ? 'bg-[#0F0F0F] text-white shadow-md'
+                    : 'text-[#999999] hover:text-[#666666]'
+                }`}
+              >
+                <LinkIcon className="w-3 h-3" /> Paste URL
+              </button>
+            </div>
+
+            {/* Upload mode hint */}
+            {avatarMode === 'upload' && (
+              <motion.p
+                key="upload-hint"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center text-[10px] text-[#999999] uppercase tracking-widest"
+              >
+                Click the photo above to select a file
+              </motion.p>
+            )}
+
+            {/* URL mode input + save */}
+            {avatarMode === 'url' && (
+              <motion.div
+                key="url-input"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-2"
+              >
+                <div className="relative">
+                  <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#C9A75D]" />
+                  <input
+                    type="url"
+                    value={avatarUrl}
+                    onChange={onAvatarUrlChange}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSaveAvatarUrl()}
+                    placeholder="https://example.com/photo.jpg"
+                    className="w-full pl-9 pr-3 py-2.5 border border-[#ECECEC] rounded-xl text-[11px] text-[#0F0F0F] placeholder-[#CCCCCC] focus:outline-none focus:border-[#C9A75D] bg-white transition-colors"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSaveAvatarUrl}
+                  disabled={!avatarUrl.trim() || urlSaving}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-[#C9A75D] to-[#A8843A] text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+                >
+                  {urlSaving
+                    ? <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />
+                    : <Check className="w-3.5 h-3.5" />
+                  }
+                  {urlSaving ? 'Saving...' : 'Save Photo'}
+                </button>
+              </motion.div>
+            )}
           </motion.div>
 
           <h2 className="text-lg font-serif text-[#0F0F0F] mb-1">{user?.name || 'Valued Client'}</h2>
@@ -345,5 +555,57 @@ export default function UserProfile() {
 
       </div>
     </div>
+
+      {/* Lightbox — full-screen image viewer */}
+      <AnimatePresence>
+        {lightboxOpen && avatarPreview && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setLightboxOpen(false)}
+            className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6"
+          >
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-lg w-full"
+            >
+              <img
+                src={avatarPreview}
+                alt="Profile"
+                className="w-full h-auto rounded-2xl shadow-2xl object-contain max-h-[80vh]"
+                onError={() => setLightboxOpen(false)}
+              />
+              <button
+                onClick={() => setLightboxOpen(false)}
+                className="absolute -top-3 -right-3 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-[#F5F5F5] transition-colors"
+              >
+                <X className="w-4 h-4 text-[#0F0F0F]" />
+              </button>
+
+              {/* Delete from lightbox */}
+              <div className="mt-4 flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleDeleteAvatar}
+                  disabled={avatarDeleting}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#DC2626] text-white rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#B91C1C] transition-colors disabled:opacity-50"
+                >
+                  {avatarDeleting
+                    ? <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    : <Trash2 className="w-3.5 h-3.5" />
+                  }
+                  Remove Photo
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

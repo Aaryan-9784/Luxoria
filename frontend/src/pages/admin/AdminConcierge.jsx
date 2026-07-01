@@ -73,14 +73,14 @@ export default function AdminConcierge() {
       {/* Filters & Search */}
       <motion.div variants={staggerItem} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-20 relative">
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999999]" />
+          <div className="relative w-full sm:w-96">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999999]" />
             <input
               type="text"
               placeholder="Search request or client..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white border border-[#ECECEC] rounded-xl pl-10 pr-4 py-2.5 text-[13px] text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] transition-colors placeholder:text-[#999999]"
+              className="w-full bg-white border border-[#ECECEC] rounded-xl pl-11 pr-4 py-2.5 text-[13px] text-[#0F0F0F] focus:outline-none focus:border-[#C9A75D] focus:shadow-[0_0_0_3px_rgba(201,167,93,0.1)] transition-all placeholder:text-[#999999]"
             />
           </div>
           <CustomSelect

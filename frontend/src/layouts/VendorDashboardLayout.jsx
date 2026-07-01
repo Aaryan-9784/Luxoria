@@ -281,7 +281,9 @@ export default function VendorDashboardLayout() {
                       onError={() => setAvatarError(true)}
                     />
                   ) : (
-                    <span className="w-full h-full flex items-center justify-center text-xs font-bold text-[#C9A75D]">{user?.name?.charAt(0) || 'V'}</span>
+                    <span className="w-full h-full flex items-center justify-center text-sm font-bold tracking-tight text-[#C9A75D]">
+                      {user?.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4 text-[#C9A75D]" />}
+                    </span>
                   )}
                 </div>
                 <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#16A34A] border-2 border-white rounded-full"></div>

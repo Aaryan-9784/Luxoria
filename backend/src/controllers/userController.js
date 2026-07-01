@@ -63,6 +63,49 @@ export const updateAvatar = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc    Set avatar from URL (no file upload required)
+ * @route   PUT /api/users/me/avatar-url
+ * @access  Protected
+ */
+export const updateAvatarUrl = asyncHandler(async (req, res) => {
+  const { url } = req.body;
+
+  if (!url || typeof url !== 'string' || !url.startsWith('http')) {
+    throw ApiError.badRequest('Please provide a valid image URL');
+  }
+
+  const user = await User.findById(req.user._id);
+
+  // Delete old Cloudinary avatar if it exists (URL-based avatars have no publicId)
+  if (user.avatar?.publicId) {
+    await deleteFromCloudinary(user.avatar.publicId);
+  }
+
+  user.avatar = { url, publicId: null };
+  await user.save({ validateBeforeSave: false });
+
+  ApiResponse.success(res, { user }, 'Avatar updated successfully');
+});
+
+/**
+ * @desc    Delete avatar
+ * @route   DELETE /api/users/me/avatar
+ * @access  Protected
+ */
+export const deleteAvatar = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user.avatar?.publicId) {
+    await deleteFromCloudinary(user.avatar.publicId);
+  }
+
+  user.avatar = { url: null, publicId: null };
+  await user.save({ validateBeforeSave: false });
+
+  ApiResponse.success(res, { user }, 'Avatar removed successfully');
+});
+
+/**
  * @desc    Change password
  * @route   PUT /api/users/me/password
  * @access  Protected

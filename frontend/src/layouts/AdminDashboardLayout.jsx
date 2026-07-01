@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Users, Building2, Car, ShieldCheck, 
   CalendarDays, Settings, LogOut, Menu, X, Command,
-  ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell, Globe, Headset
+  ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell, Globe, Headset, UserCircle
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';
@@ -35,7 +35,7 @@ const NAV_GROUPS = [
   {
     label: 'System',
     items: [
-      { path: '/admin/settings', label: 'Settings', icon: Settings },
+      { path: '/admin/settings', label: 'My Profile', icon: UserCircle },
     ]
   }
 ];
@@ -281,7 +281,9 @@ export default function AdminDashboardLayout() {
                       onError={() => setAvatarError(true)}
                     />
                   ) : (
-                    <span className="w-full h-full flex items-center justify-center text-xs font-bold text-[#C9A75D]">{user?.name?.charAt(0) || 'A'}</span>
+                    <span className="w-full h-full flex items-center justify-center text-sm font-bold tracking-tight text-[#C9A75D]">
+                      {user?.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4 text-[#C9A75D]" />}
+                    </span>
                   )}
                 </div>
                 <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#16A34A] border-2 border-white rounded-full"></div>
