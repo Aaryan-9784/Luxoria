@@ -55,8 +55,8 @@ export default function UserReviews() {
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div>
-          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-2">My Reviews</h1>
-          <p className="text-[13px] text-[#666666] tracking-wide">Manage your feedback and experiences.</p>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>My Reviews</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Manage your feedback and experiences.</p>
         </div>
         
         {reviews.length > 0 && (

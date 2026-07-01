@@ -56,8 +56,8 @@ export default function UserMessages() {
       {/* Header */}
       <div className="shrink-0 flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] font-serif text-[#0F0F0F] tracking-tight mb-1">Inbox</h1>
-          <p className="text-[12px] text-[#666666] tracking-wide">Secure communication with vendors and your concierge.</p>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Inbox</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Secure communication with vendors and your concierge.</p>
         </div>
       </div>
 

@@ -75,8 +75,8 @@ export default function NotificationsPage() {
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div>
-          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-2">Notifications</h1>
-          <p className="text-[13px] text-[#666666] tracking-wide">Stay updated on your bookings and account activity.</p>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Notifications</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Stay updated on your bookings and account activity.</p>
         </div>
         <div className="flex items-center gap-3">
           <button 

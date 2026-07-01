@@ -24,8 +24,8 @@ export default function PaymentsDashboard() {
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-serif text-[#0F0F0F] tracking-tight mb-2">Payment Methods</h1>
-          <p className="text-[13px] text-[#666666] tracking-wide">Manage your saved cards and payment preferences securely.</p>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Payment Methods</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Manage your saved cards and payment preferences securely.</p>
         </div>
         
         <button className="flex items-center gap-2 bg-[#0F0F0F] text-white px-6 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-widest hover:bg-[#C9A75D] transition-colors shadow-sm group">

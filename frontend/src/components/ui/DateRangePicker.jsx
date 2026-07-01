@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarDays, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, X, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const MONTH_NAMES = [
@@ -52,6 +52,9 @@ export default function DateRangePicker({
   // internal selection state
   const [selecting, setSelecting] = useState(null); // null | Date (first click awaiting end)
   const ref = useRef(null);
+  const searchInputRef = useRef(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchError, setSearchError] = useState(false);
 
   // Close on outside click
   useEffect(() => {
@@ -117,6 +120,92 @@ export default function DateRangePicker({
     const inRange = isInRange(d, effectiveStart, effectiveEnd);
     const isToday = isSameDay(d, today);
     return { isStart, isEnd, inRange, isToday };
+  };
+
+  // Robust multi-format date parser
+  const parseAnyDate = (raw) => {
+    const s = raw.trim();
+    if (!s) return null;
+
+    const MONTHS_FULL = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+    const MONTHS_SHORT = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+
+    const monthIndex = (str) => {
+      const lower = str.toLowerCase();
+      let i = MONTHS_FULL.indexOf(lower);
+      if (i !== -1) return i;
+      i = MONTHS_SHORT.indexOf(lower.slice(0, 3));
+      return i;
+    };
+
+    // YYYY-MM-DD or YYYY/MM/DD
+    let m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
+    if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+
+    // DD-MM-YYYY or DD/MM/YYYY
+    m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+    if (m) return new Date(+m[3], +m[2] - 1, +m[1]);
+
+    // DD MMM YYYY  e.g. "15 Aug 2025" or "15 August 2025"
+    m = s.match(/^(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})$/);
+    if (m) {
+      const mi = monthIndex(m[2]);
+      if (mi !== -1) return new Date(+m[3], mi, +m[1]);
+    }
+
+    // MMM DD YYYY  e.g. "Aug 15 2025"
+    m = s.match(/^([a-zA-Z]+)\s+(\d{1,2})\s+(\d{4})$/);
+    if (m) {
+      const mi = monthIndex(m[1]);
+      if (mi !== -1) return new Date(+m[3], mi, +m[2]);
+    }
+
+    // MMM DD, YYYY  e.g. "Aug 15, 2025"
+    m = s.match(/^([a-zA-Z]+)\s+(\d{1,2}),\s*(\d{4})$/);
+    if (m) {
+      const mi = monthIndex(m[1]);
+      if (mi !== -1) return new Date(+m[3], mi, +m[2]);
+    }
+
+    // DD MMM  e.g. "15 Aug" (uses current year)
+    m = s.match(/^(\d{1,2})\s+([a-zA-Z]+)$/);
+    if (m) {
+      const mi = monthIndex(m[2]);
+      if (mi !== -1) return new Date(new Date().getFullYear(), mi, +m[1]);
+    }
+
+    // YYYY-MM (month navigation only)
+    m = s.match(/^(\d{4})[-\/](\d{1,2})$/);
+    if (m) return new Date(+m[1], +m[2] - 1, 1);
+
+    // "Month YYYY" e.g. "August 2025"
+    m = s.match(/^([a-zA-Z]+)\s+(\d{4})$/);
+    if (m) {
+      const mi = monthIndex(m[1]);
+      if (mi !== -1) return new Date(+m[2], mi, 1);
+    }
+
+    // Fallback to native parser
+    const native = new Date(s);
+    if (!isNaN(native.getTime())) return native;
+
+    return null;
+  };
+
+  // Jump to a typed date and set it as the start (or end if already selecting)
+  const handleDateSearch = (e) => {
+    e.preventDefault();
+    const raw = searchInput.trim();
+    if (!raw) return;
+    const parsed = parseAnyDate(raw);
+    if (parsed && !isNaN(parsed.getTime())) {
+      setSearchError(false);
+      setViewDate(new Date(parsed.getFullYear(), parsed.getMonth(), 1));
+      setSearchInput('');
+    } else {
+      setSearchError(true);
+      searchInputRef.current?.select();
+    }
   };
 
   return (
@@ -230,8 +319,42 @@ export default function DateRangePicker({
               })}
             </div>
 
+            {/* Date jump search bar */}
+            <form onSubmit={handleDateSearch} className="mt-4">
+              <div className={cn(
+                'flex items-center gap-2 px-3 py-2 rounded-xl border transition-all duration-150',
+                searchError
+                  ? 'border-red-400 bg-red-50'
+                  : 'border-[#ECECEC] bg-[#F9F9F9] focus-within:border-[#C9A75D]/60 focus-within:bg-white'
+              )}>
+                <Search className={cn('w-3.5 h-3.5 shrink-0', searchError ? 'text-red-400' : 'text-[#BBBBBB]')} />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchInput}
+                  onChange={(e) => { setSearchInput(e.target.value); setSearchError(false); }}
+                  placeholder="Jump to any date..."
+                  className="flex-1 bg-transparent text-[11.5px] text-[#333333] placeholder-[#BBBBBB] outline-none font-medium"
+                />
+                {searchInput && (
+                  <button
+                    type="button"
+                    onClick={() => { setSearchInput(''); setSearchError(false); }}
+                    className="text-[#BBBBBB] hover:text-[#666666] transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+              {searchError && (
+                <p className="mt-1 text-[10px] text-red-400 font-medium px-1">
+                  Try "25 Dec 2025" or "2025-12-25".
+                </p>
+              )}
+            </form>
+
             {/* Footer hint */}
-            <div className="mt-4 pt-3 border-t border-[#F5F5F5]">
+            <div className="mt-3 pt-3 border-t border-[#F5F5F5]">
               {selecting ? (
                 <p className="text-[11px] text-[#C9A75D] font-bold uppercase tracking-widest text-center">
                   Select end date

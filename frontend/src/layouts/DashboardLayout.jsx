@@ -95,7 +95,7 @@ export default function DashboardLayout() {
               LUXORIA
             </span>
             <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">
-              My Account
+              My Workspace
             </span>
           </motion.div>
         )}
@@ -299,7 +299,7 @@ export default function DashboardLayout() {
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F7F7] border border-[#EBEBEB]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C9A75D]" />
                 <span className="text-[10px] font-bold text-[#555555] tracking-[0.18em] uppercase">
-                  My Account
+                  My Workspace
                 </span>
               </span>
 

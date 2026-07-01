@@ -70,8 +70,8 @@ export default function UserSupport() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
         <div>
-          <h1 className="text-[32px] font-bold text-[#0F0F0F] tracking-tight mb-2" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Client Support Center</h1>
-          <p className="text-[#666666] text-[13px] font-medium tracking-wide">Get assistance with your bookings, account, and personalized requests.</p>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Client Support Center</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Get assistance with your bookings, account, and personalized requests.</p>
         </div>
       </div>
 
