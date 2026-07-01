@@ -91,6 +91,7 @@ export const authSlice = createSlice({
       state.user = null;
       state.accessToken = null;
       state.isAuthenticated = false;
+      state.loading = false;
       // Use raw axios to prevent interceptor from triggering a refresh token flow if access token is already expired during logout
       const baseURL = import.meta.env.VITE_API_URL || '/api';
       axios.post(`${baseURL}/auth/logout`, {}, { withCredentials: true }).catch(() => {});

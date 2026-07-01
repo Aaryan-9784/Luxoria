@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setCredentials, setLoading } from '@/redux/slices/authSlice';
-import axios from 'axios';
 import api from '@/services/api';
 
 // Route Guards
@@ -80,19 +79,16 @@ export default function AppRoutes() {
     const restoreSession = async () => {
       try {
         // Try to refresh the access token from the refresh cookie
-        const refreshRes = await axios.post(
-          `${import.meta.env.VITE_API_URL || '/api'}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
-        
+        // Use api instance (respects Vite proxy, avoids CORS issues in dev)
+        const refreshRes = await api.post('/auth/refresh');
+
         const accessToken = refreshRes.data.data.accessToken;
 
         // Now fetch the profile with the new access token
         const profileRes = await api.get('/auth/me', {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
-        
+
         dispatch(setCredentials({
           user: profileRes.data.data.user,
           accessToken,
