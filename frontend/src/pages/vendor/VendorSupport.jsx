@@ -69,9 +69,11 @@ export default function VendorSupport() {
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">
       
       {/* Header */}
-      <div className="mb-2">
-        <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Partner Support Center</h1>
-        <p className="text-[#666666] text-sm font-medium tracking-wide">Premium assistance for your fleet, bookings, and platform tools.</p>
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+        <div>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Partner Support Center</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Premium assistance for your fleet, bookings, and platform tools.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

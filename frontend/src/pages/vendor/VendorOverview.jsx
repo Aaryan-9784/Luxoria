@@ -91,9 +91,11 @@ export default function VendorOverview() {
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">
       
       {/* Header */}
-      <div className="mb-2">
-        <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Performance Overview</h1>
-        <p className="text-[#666666] text-sm font-medium tracking-wide">Monitor your fleet performance and incoming reservations.</p>
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+        <div>
+          <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Partner Overview</h1>
+          <p className="text-[#666666] text-sm font-medium tracking-wide">Real-time fleet performance metrics and partner activity.</p>
+        </div>
       </div>
 
       {/* KPI Widgets */}

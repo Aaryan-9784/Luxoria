@@ -170,16 +170,20 @@ export default function EditVehicleWizard() {
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-8 pb-12">
 
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <motion.div variants={staggerItem} className="mb-2">
-        <h1
-          className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5"
-          style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
-        >
-          Edit Vehicle
-        </h1>
-        <p className="text-[#666666] text-sm font-medium tracking-wide">
-          Update your vehicle details, pricing, and gallery.
-        </p>
+      <motion.div variants={staggerItem}>
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+          <div>
+            <h1
+              className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5"
+              style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
+            >
+              Edit Vehicle
+            </h1>
+            <p className="text-[#666666] text-sm font-medium tracking-wide">
+              Update your vehicle details, pricing, and gallery.
+            </p>
+          </div>
+        </div>
       </motion.div>
 
       {/* ── Step cards ─────────────────────────────────────────────────── */}

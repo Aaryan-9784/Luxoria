@@ -55,7 +55,7 @@ export default function VendorBookings() {
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-8 pb-10">
       
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-2">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div>
           <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Booking Management</h1>
           <p className="text-[#666666] text-sm font-medium tracking-wide">Approve, reject, and manage your vehicle reservations.</p>
