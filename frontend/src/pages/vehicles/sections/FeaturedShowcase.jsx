@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { setQuickView, toggleWishlist, addToCompare } from '@/redux/slices/vehicleSlice';
+import { setQuickView, addToCompare } from '@/redux/slices/vehicleSlice';
+import { toggleWishlist, fetchWishlist } from '@/redux/slices/dashboardSlice';
 import { FEATURED_VEHICLES } from '../data/vehiclesPageData';
 import { EASE_LUXE, staggerContainer, staggerItem, revealOnScroll } from '@/lib/motion';
 import { Heart, Eye, GitCompareArrows, ArrowRight, Star, MapPin, Zap } from 'lucide-react';
@@ -30,7 +31,7 @@ function FeaturedCard({ vehicle, isWishlisted, onQuickView, onWishlist, onCompar
           {/* Floating Actions */}
           <div className="absolute top-5 right-5 flex flex-col gap-2 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 z-10">
             <button
-              onClick={(e) => { e.preventDefault(); onWishlist(vehicle.id); }}
+              onClick={(e) => { e.preventDefault(); onWishlist && onWishlist(vehicle.id); }}
               className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 border border-white/10 shadow-lg ${
                 isWishlisted ? 'bg-accent text-white' : 'bg-black/40 text-white/80 hover:text-white'
               }`}
@@ -117,7 +118,29 @@ function FeaturedCard({ vehicle, isWishlisted, onQuickView, onWishlist, onCompar
 
 export default function FeaturedShowcase() {
   const dispatch = useDispatch();
-  const wishlist = useSelector(state => state.vehicle.wishlist);
+  const { wishlist: dashboardWishlist } = useSelector(state => state.dashboard);
+  const { isAuthenticated } = useSelector(state => state.auth);
+
+  const wishlistedIds = React.useMemo(() => {
+    return new Set(
+      dashboardWishlist.map(w => w.vehicle?._id || w.vehicle?.id || w.vehicleId).filter(Boolean)
+    );
+  }, [dashboardWishlist]);
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchWishlist());
+    }
+  }, [dispatch, isAuthenticated]);
+
+  const handleWishlist = (vehicleId) => {
+    if (!isAuthenticated) return;
+    dispatch(toggleWishlist(vehicleId)).then((result) => {
+      if (toggleWishlist.fulfilled.match(result) && result.payload.action === 'added') {
+        dispatch(fetchWishlist());
+      }
+    });
+  };
 
   return (
     <motion.section {...revealOnScroll} className="py-16 md:py-24">
@@ -149,9 +172,9 @@ export default function FeaturedShowcase() {
             <FeaturedCard
               key={vehicle.id}
               vehicle={vehicle}
-              isWishlisted={wishlist.includes(vehicle.id)}
+              isWishlisted={wishlistedIds.has(vehicle.id)}
               onQuickView={(v) => dispatch(setQuickView(v))}
-              onWishlist={(id) => dispatch(toggleWishlist(id))}
+              onWishlist={isAuthenticated ? handleWishlist : undefined}
               onCompare={(v) => dispatch(addToCompare(v))}
             />
           ))}

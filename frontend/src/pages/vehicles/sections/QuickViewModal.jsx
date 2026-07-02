@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearQuickView, toggleWishlist, addToCompare } from '@/redux/slices/vehicleSlice';
+import { clearQuickView, addToCompare } from '@/redux/slices/vehicleSlice';
+import { toggleWishlist, fetchWishlist } from '@/redux/slices/dashboardSlice';
 import { Link } from 'react-router-dom';
 import {
   X, Star, MapPin, Zap, Gauge, Fuel, Settings, Users, Heart,
@@ -12,11 +13,23 @@ import { EASE_LUXE, modalOverlay } from '@/lib/motion';
 export default function QuickViewModal() {
   const dispatch = useDispatch();
   const vehicle = useSelector(state => state.vehicle.quickViewVehicle);
-  const wishlist = useSelector(state => state.vehicle.wishlist);
+  const { wishlist: dashboardWishlist } = useSelector(state => state.dashboard);
+  const { isAuthenticated } = useSelector(state => state.auth);
   const [activeImage, setActiveImage] = useState(0);
 
   const isOpen = !!vehicle;
-  const isWishlisted = vehicle ? wishlist.includes(vehicle.id) : false;
+  const isWishlisted = vehicle
+    ? dashboardWishlist.some(w => w.vehicle?._id === vehicle.id || w.vehicle?.id === vehicle.id)
+    : false;
+
+  const handleWishlistToggle = () => {
+    if (!isAuthenticated || !vehicle) return;
+    dispatch(toggleWishlist(vehicle.id)).then((result) => {
+      if (toggleWishlist.fulfilled.match(result) && result.payload.action === 'added') {
+        dispatch(fetchWishlist());
+      }
+    });
+  };
 
   // Close on Escape
   React.useEffect(() => {
@@ -198,10 +211,11 @@ export default function QuickViewModal() {
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                     <button
-                      onClick={() => dispatch(toggleWishlist(vehicle.id))}
+                      onClick={handleWishlistToggle}
                       className={`btn btn-lg rounded-xl ${
                         isWishlisted ? 'btn-accent' : 'btn-outline'
                       }`}
+                      title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
                     >
                       <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current' : ''}`} />
                     </button>

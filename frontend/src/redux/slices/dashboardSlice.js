@@ -7,6 +7,7 @@ const initialState = {
   payments: [],
   stats: null,
   loading: false,
+  wishlistLoading: false,
   error: null,
 };
 
@@ -28,23 +29,32 @@ export const fetchWishlist = createAsyncThunk('dashboard/fetchWishlist', async (
   }
 });
 
-export const toggleWishlist = createAsyncThunk('dashboard/toggleWishlist', async (vehicleId, { rejectWithValue }) => {
+export const toggleWishlist = createAsyncThunk('dashboard/toggleWishlist', async (vehicleId, { getState, rejectWithValue }) => {
   try {
-    // Attempt to add. If it conflicts (409), the backend might throw, so we catch and remove.
-    // For a cleaner approach, the component should know if it's adding or removing.
-    // But we'll try adding, and if 409, we remove.
-    try {
+    // Check if already in wishlist to decide add or remove
+    const { wishlist } = getState().dashboard;
+    const alreadySaved = wishlist.some(
+      w => w.vehicle?._id === vehicleId || w.vehicle?.id === vehicleId
+    );
+
+    if (alreadySaved) {
+      await api.delete(`/wishlist/${vehicleId}`);
+      return { vehicleId, action: 'removed' };
+    } else {
       await api.post(`/wishlist/${vehicleId}`);
       return { vehicleId, action: 'added' };
-    } catch (err) {
-      if (err.response?.status === 409) {
+    }
+  } catch (err) {
+    // Fallback: if 409 conflict on add, remove instead
+    if (err.response?.status === 409) {
+      try {
         await api.delete(`/wishlist/${vehicleId}`);
         return { vehicleId, action: 'removed' };
+      } catch (removeErr) {
+        return rejectWithValue('Failed to update wishlist');
       }
-      throw err;
     }
-  } catch (error) {
-    return rejectWithValue('Failed to update wishlist');
+    return rejectWithValue(err.response?.data?.error?.message || 'Failed to update wishlist');
   }
 });
 
@@ -94,16 +104,27 @@ export const dashboardSlice = createSlice({
       })
       
       // Wishlist
+      .addCase(fetchWishlist.pending, (state) => { state.wishlistLoading = true; })
       .addCase(fetchWishlist.fulfilled, (state, action) => {
+        state.wishlistLoading = false;
         state.wishlist = action.payload;
       })
+      .addCase(fetchWishlist.rejected, (state) => { state.wishlistLoading = false; })
+
       .addCase(toggleWishlist.fulfilled, (state, action) => {
         if (action.payload.action === 'removed') {
-          state.wishlist = state.wishlist.filter(w => w.vehicle._id !== action.payload.vehicleId);
+          state.wishlist = state.wishlist.filter(
+            w => w.vehicle?._id !== action.payload.vehicleId && w.vehicle?.id !== action.payload.vehicleId
+          );
         }
+        // 'added' case: the full wishlist item (with populated vehicle) is fetched
+        // lazily — we insert a minimal placeholder and let the next fetchWishlist fill it in.
+        // The isWishlisted check in UI will use vehicleId directly.
       })
       .addCase(removeFromWishlist.fulfilled, (state, action) => {
-        state.wishlist = state.wishlist.filter(w => w.vehicle?._id !== action.payload.vehicleId);
+        state.wishlist = state.wishlist.filter(
+          w => w.vehicle?._id !== action.payload.vehicleId && w.vehicle?.id !== action.payload.vehicleId
+        );
       })
       
       // Cancel Booking

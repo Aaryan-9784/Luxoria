@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFilter, clearFilters, fetchVehicles, setSortBy, setViewMode, toggleWishlist, setQuickView, addToCompare } from '@/redux/slices/vehicleSlice';
+import { setFilter, clearFilters, fetchVehicles, setSortBy, setViewMode, setQuickView, addToCompare } from '@/redux/slices/vehicleSlice';
+import { toggleWishlist, fetchWishlist } from '@/redux/slices/dashboardSlice';
 import LuxuryVehicleCard from '../components/LuxuryVehicleCard';
 import Skeleton from '@/components/ui/Skeleton';
 import { LayoutGrid, List, SearchX, X, AlertCircle, SlidersHorizontal } from 'lucide-react';
@@ -10,7 +11,35 @@ import { SORT_OPTIONS } from '../data/vehiclesPageData';
 
 export default function PremiumVehicleGrid({ onOpenFilters }) {
   const dispatch = useDispatch();
-  const { vehicles, loading, error, filters, sortBy, viewMode, pagination, wishlist } = useSelector(state => state.vehicle);
+  const { vehicles, loading, error, filters, sortBy, viewMode, pagination } = useSelector(state => state.vehicle);
+  const { wishlist: dashboardWishlist } = useSelector(state => state.dashboard);
+  const { isAuthenticated } = useSelector(state => state.auth);
+
+  // Build a Set of wishlisted vehicle IDs for O(1) lookup
+  const wishlistedIds = React.useMemo(() => {
+    return new Set(
+      dashboardWishlist.map(w => w.vehicle?._id || w.vehicle?.id || w.vehicleId).filter(Boolean)
+    );
+  }, [dashboardWishlist]);
+
+  // Load wishlist from API when user is authenticated
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchWishlist());
+    }
+  }, [dispatch, isAuthenticated]);
+
+  const handleWishlistToggle = (vehicleId) => {
+    if (!isAuthenticated) {
+      return;
+    }
+    dispatch(toggleWishlist(vehicleId)).then((result) => {
+      // After adding, refetch to get the populated vehicle data for the wishlist page
+      if (toggleWishlist.fulfilled.match(result) && result.payload.action === 'added') {
+        dispatch(fetchWishlist());
+      }
+    });
+  };
 
   const handleSort = (e) => {
     dispatch(setSortBy(e.target.value));
@@ -205,8 +234,8 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
                   horsepower: vehicle.horsepower || '—',
                   isAvailable: vehicle.isAvailable !== undefined ? vehicle.isAvailable : true,
                 }}
-                isWishlisted={wishlist.includes(vehicle.id || vehicle._id)}
-                onWishlist={(id) => dispatch(toggleWishlist(id))}
+                isWishlisted={wishlistedIds.has(vehicle.id || vehicle._id)}
+                onWishlist={isAuthenticated ? handleWishlistToggle : undefined}
                 onQuickView={(v) => dispatch(setQuickView(v))}
                 onCompare={(v) => dispatch(addToCompare(v))}
                 onShare={handleShare}

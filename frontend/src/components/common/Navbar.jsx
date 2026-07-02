@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/redux/slices/authSlice';
-import { fetchWishlist, toggleWishlist } from '@/redux/slices/dashboardSlice';
+import { fetchWishlist, removeFromWishlist } from '@/redux/slices/dashboardSlice';
 import Avatar from '@/components/ui/Avatar';
 import Dropdown, { DropdownItem, DropdownDivider } from '@/components/ui/Dropdown';
 import { preloadAuthImages } from '@/lib/preloadAuthImages';
@@ -42,7 +42,7 @@ export default function Navbar() {
 
   const handleRemoveWishlist = async (e, vehicleId) => {
     e.stopPropagation();
-    await dispatch(toggleWishlist(vehicleId));
+    await dispatch(removeFromWishlist(vehicleId));
   };
 
   const handleLogout = () => {
