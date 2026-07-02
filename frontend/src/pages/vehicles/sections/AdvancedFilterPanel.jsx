@@ -128,15 +128,13 @@ export default function AdvancedFilterPanel({ mobileOpen, setMobileOpen }) {
       {/* Sort */}
       <div className="mb-5">
         <label className="text-[10px] font-bold uppercase tracking-wider text-muted block mb-2">Sort By</label>
-        <select
+        <CustomSelect
           value={sortBy}
-          onChange={(e) => handleSort(e.target.value)}
-          className="w-full bg-surface border border-border text-sm text-primary rounded-xl px-3 py-2.5 outline-none focus:border-accent appearance-none cursor-pointer font-medium"
-        >
-          {SORT_OPTIONS.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+          onChange={handleSort}
+          options={SORT_OPTIONS}
+          placeholder="Select sort order"
+          className="w-full"
+        />
       </div>
 
       {/* Scrollable Filters */}

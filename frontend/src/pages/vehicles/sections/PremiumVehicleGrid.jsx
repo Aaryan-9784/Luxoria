@@ -5,6 +5,7 @@ import { setFilter, clearFilters, fetchVehicles, setSortBy, setViewMode, setQuic
 import { toggleWishlist, fetchWishlist } from '@/redux/slices/dashboardSlice';
 import LuxuryVehicleCard from '../components/LuxuryVehicleCard';
 import Skeleton from '@/components/ui/Skeleton';
+import CustomSelect from '@/components/ui/CustomSelect';
 import { LayoutGrid, List, SearchX, X, AlertCircle, SlidersHorizontal } from 'lucide-react';
 import { staggerContainer, revealOnScroll } from '@/lib/motion';
 import { SORT_OPTIONS } from '../data/vehiclesPageData';
@@ -41,8 +42,8 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
     });
   };
 
-  const handleSort = (e) => {
-    dispatch(setSortBy(e.target.value));
+  const handleSort = (value) => {
+    dispatch(setSortBy(value));
     dispatch(fetchVehicles());
   };
 
@@ -87,16 +88,13 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
           </button>
 
           {/* Sort — visible on desktop, hidden on mobile (handled by filter panel) */}
-          <div className="hidden lg:block">
-            <select
+          <div className="hidden lg:block min-w-[180px]">
+            <CustomSelect
               value={sortBy}
               onChange={handleSort}
-              className="bg-surface border border-border text-sm text-primary rounded-xl px-3 py-2.5 outline-none focus:border-accent appearance-none cursor-pointer font-medium min-w-[180px]"
-            >
-              {SORT_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+              options={SORT_OPTIONS}
+              className="min-w-[180px]"
+            />
           </div>
 
           {/* View Toggles */}

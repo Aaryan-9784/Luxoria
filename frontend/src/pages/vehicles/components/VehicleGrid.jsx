@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSortBy, setViewMode, setFilter, fetchVehicles, clearFilters } from '@/redux/slices/vehicleSlice';
+import { SORT_OPTIONS } from '../data/vehiclesPageData';
 import VehicleCard from '@/components/ui/VehicleCard';
 import Skeleton from '@/components/ui/Skeleton';
 import EmptyState from '@/components/ui/EmptyState';
@@ -38,15 +39,16 @@ export default function VehicleGrid() {
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
           {/* Sort Dropdown */}
-          <select 
-            value={sortBy} 
+          <select
+            value={sortBy}
             onChange={handleSort}
-            className="bg-surface border border-border text-body-sm text-primary rounded-lg px-3 py-2 outline-none focus:border-accent appearance-none cursor-pointer"
+            className="bg-surface border border-border text-sm text-primary rounded-xl px-3 py-2.5 outline-none focus:border-accent appearance-none cursor-pointer font-medium min-w-[180px]"
           >
-            <option value="-createdAt">Newest Arrivals</option>
-            <option value="pricePerDay">Price: Low to High</option>
-            <option value="-pricePerDay">Price: High to Low</option>
-            <option value="-rating.average">Highest Rated</option>
+            {SORT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
 
           {/* View Toggles */}
