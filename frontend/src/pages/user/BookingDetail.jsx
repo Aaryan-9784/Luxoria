@@ -48,7 +48,8 @@ export default function BookingDetail() {
     setCancelling(true);
     const result = await dispatch(cancelBooking({ id: booking._id, reason: 'User requested cancellation' }));
     if (cancelBooking.fulfilled.match(result)) {
-      setBooking(result.payload);
+      // Merge the updated booking fields (status, cancellationReason) with existing populated data
+      setBooking(prev => ({ ...prev, ...result.payload }));
     }
     setCancelling(false);
     setCancelModalOpen(false);

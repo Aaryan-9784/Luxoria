@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMyBookings, cancelBooking } from '@/redux/slices/dashboardSlice';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Hash, Download, Eye } from 'lucide-react';
+import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Hash, Download, Eye, Car, AlertTriangle } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
 
@@ -17,7 +17,7 @@ function dateMatchesQuery(bookingDate, query) {
 
 export default function MyBookings() {
   const dispatch = useDispatch();
-  const { bookings, loading } = useSelector(state => state.dashboard);
+  const { bookings, loading, error } = useSelector(state => state.dashboard);
   const { accessToken } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -190,6 +190,18 @@ export default function MyBookings() {
              <div className="w-8 h-8 border-4 border-[#C9A75D] border-t-transparent rounded-full animate-spin mb-4" />
              <p className="text-[11px] font-bold text-[#666666] uppercase tracking-wider animate-pulse">Loading Reservations...</p>
           </div>
+        ) : error && bookings.length === 0 ? (
+          <div className="py-16 text-center flex flex-col items-center">
+            <AlertTriangle className="w-10 h-10 text-[#DC2626] mb-4" />
+            <p className="text-[14px] font-bold text-[#0F0F0F] mb-1">Failed to load bookings</p>
+            <p className="text-[13px] text-[#666666] mb-4">{error}</p>
+            <button
+              onClick={() => dispatch(fetchMyBookings())}
+              className="px-5 py-2.5 bg-[#0F0F0F] text-white rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#C9A75D] transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
         ) : filteredBookings.length === 0 ? (
           <div className="py-16 text-center flex flex-col items-center">
             <Search className="w-10 h-10 text-[#ECECEC] mb-4" />
@@ -213,7 +225,13 @@ export default function MyBookings() {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-12 rounded-lg overflow-hidden shrink-0 bg-[#F5F5F5]">
-                          <img src={booking.vehicle?.images?.[0]?.url} alt={booking.vehicle?.name} className="w-full h-full object-cover" />
+                          {booking.vehicle?.images?.[0]?.url ? (
+                            <img src={booking.vehicle.images[0].url} alt={booking.vehicle?.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Car className="w-5 h-5 text-[#CCCCCC]" />
+                            </div>
+                          )}
                         </div>
                         <div>
                           <p className="text-[13px] font-bold text-[#0F0F0F] whitespace-nowrap">{booking.vehicle?.name || 'Unknown Vehicle'}</p>
@@ -244,7 +262,7 @@ export default function MyBookings() {
                         <Link to={`/bookings/${booking._id}`} className="p-2 rounded-lg text-[#666666] hover:text-[#0F0F0F] hover:bg-white border border-transparent hover:border-[#ECECEC] transition-all" title="View Details">
                           <Eye className="w-4 h-4" />
                         </Link>
-                        {['completed', 'confirmed'].includes(booking.status) && (
+                        {['completed', 'confirmed', 'active'].includes(booking.status) && (
                           <button onClick={() => handleDownloadReceipt(booking)} className="p-2 rounded-lg text-[#666666] hover:text-[#C9A75D] hover:bg-white border border-transparent hover:border-[#ECECEC] transition-all" title="Download Receipt">
                             <Download className="w-4 h-4" />
                           </button>

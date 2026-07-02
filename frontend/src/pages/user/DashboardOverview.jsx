@@ -84,7 +84,13 @@ export default function DashboardOverview() {
                 {activeBookings.map((booking) => (
                   <div key={booking._id} className="flex flex-col sm:flex-row gap-5 p-4 rounded-xl border border-[#ECECEC] hover:border-[#C9A75D]/50 transition-all bg-white group hover:shadow-md">
                     <div className="w-full sm:w-32 h-24 rounded-lg overflow-hidden shrink-0 bg-[#F5F5F5]">
-                      <img src={booking.vehicle.images[0]?.url} alt={booking.vehicle.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      {booking.vehicle?.images?.[0]?.url ? (
+                        <img src={booking.vehicle.images[0].url} alt={booking.vehicle.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Car className="w-8 h-8 text-[#CCCCCC]" />
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
                       <div className="flex justify-between items-start mb-1.5">
@@ -133,9 +139,9 @@ export default function DashboardOverview() {
                 <Star className="w-5 h-5 text-[#666666] group-hover:text-[#C9A75D] mb-2 transition-colors" />
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#0F0F0F]">Leave Review</span>
               </Link>
-              <Link to="/verification" className="flex flex-col items-center justify-center p-4 rounded-xl border border-[#ECECEC] hover:border-[#C9A75D] hover:bg-[#F5F5F5] transition-all group text-center">
+              <Link to="/profile#security" className="flex flex-col items-center justify-center p-4 rounded-xl border border-[#ECECEC] hover:border-[#C9A75D] hover:bg-[#F5F5F5] transition-all group text-center">
                 <ShieldCheck className="w-5 h-5 text-[#666666] group-hover:text-[#C9A75D] mb-2 transition-colors" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#0F0F0F]">Verify ID</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#0F0F0F]">Security</span>
               </Link>
             </div>
           </div>

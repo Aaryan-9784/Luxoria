@@ -60,6 +60,8 @@ export default function DashboardLayout() {
       const activeItem = group.items.find((item) => item.path === location.pathname);
       if (activeItem) return activeItem.label;
     }
+    // Handle sub-routes
+    if (location.pathname.startsWith('/bookings/')) return 'Booking Details';
     return 'Dashboard';
   };
 

@@ -284,7 +284,7 @@ export default function UserInvoices() {
         <div className="flex-1 mt-0.5">
           <h4 className="text-[14px] font-bold text-[#0F0F0F] mb-1">Official Invoicing</h4>
           <p className="text-[13px] text-[#666666] leading-relaxed">
-            Invoices are generated automatically after a successful payment capture. For any billing discrepancies, please contact <span className="text-[#C9A75D] font-medium cursor-pointer hover:underline">Luxoria Premium Support</span> within 7 days of the transaction.
+            Invoices are generated automatically after a successful payment capture. For any billing discrepancies, please contact <Link to="/support" className="text-[#C9A75D] font-medium hover:underline">Luxoria Premium Support</Link> within 7 days of the transaction.
           </p>
         </div>
       </div>
