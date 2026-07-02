@@ -48,6 +48,15 @@ export const toggleWishlist = createAsyncThunk('dashboard/toggleWishlist', async
   }
 });
 
+export const removeFromWishlist = createAsyncThunk('dashboard/removeFromWishlist', async (vehicleId, { rejectWithValue }) => {
+  try {
+    await api.delete(`/wishlist/${vehicleId}`);
+    return { vehicleId };
+  } catch (error) {
+    return rejectWithValue('Failed to remove from wishlist');
+  }
+});
+
 export const cancelBooking = createAsyncThunk('dashboard/cancelBooking', async ({ id, reason }, { rejectWithValue }) => {
   try {
     const response = await api.put(`/bookings/${id}/cancel`, { cancellationReason: reason });
@@ -91,10 +100,10 @@ export const dashboardSlice = createSlice({
       .addCase(toggleWishlist.fulfilled, (state, action) => {
         if (action.payload.action === 'removed') {
           state.wishlist = state.wishlist.filter(w => w.vehicle._id !== action.payload.vehicleId);
-        } else {
-          // If added, we might need a refetch to get the populated vehicle object
-          // For now, it will be added on next fetch or handled by component
         }
+      })
+      .addCase(removeFromWishlist.fulfilled, (state, action) => {
+        state.wishlist = state.wishlist.filter(w => w.vehicle?._id !== action.payload.vehicleId);
       })
       
       // Cancel Booking

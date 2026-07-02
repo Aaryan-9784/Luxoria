@@ -4,7 +4,7 @@ import { fetchMyBookings, fetchWishlist } from '@/redux/slices/dashboardSlice';
 import { motion } from 'framer-motion';
 import { 
   Car, MapPin, Award, Wallet, ArrowRight, 
-  Heart, Compass, ShieldCheck, MessageSquare, Star
+  Heart, Compass, ShieldCheck, MessageSquare, Star, CalendarDays
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { staggerContainer, staggerItem } from '@/lib/motion';

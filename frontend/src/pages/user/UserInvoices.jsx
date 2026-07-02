@@ -18,17 +18,25 @@ export default function UserInvoices() {
     if (!accessToken) return;
     const fetchPayments = async () => {
       try {
-        const res = await api.get('/bookings/my?status=confirmed,completed');
-        const bookings = res.data.data;
-        const ledger = bookings.map(b => ({
-          id: b._id,
-          bookingId: b.bookingId,
-          date: b.createdAt,
-          amount: b.totalAmount,
-          vehicle: b.vehicle?.name,
-          status: 'captured',
-          method: 'Razorpay'
-        }));
+        const res = await api.get('/bookings/my?limit=100');
+        const bookings = Array.isArray(res.data.data) ? res.data.data : [];
+        // Only show bookings that have been paid (confirmed, active, completed)
+        const ledger = bookings
+          .filter(b => ['confirmed', 'active', 'completed'].includes(b.status))
+          .map(b => ({
+            id: b._id,
+            bookingId: b.bookingId,
+            date: b.createdAt,
+            startDate: b.startDate,
+            endDate: b.endDate,
+            totalDays: b.totalDays,
+            amount: b.totalAmount,
+            vehicle: b.vehicle?.name || 'N/A',
+            vehicleImage: b.vehicle?.images?.[0]?.url || null,
+            status: b.status,
+            method: 'Razorpay',
+            pickupLocation: b.pickupLocation || 'N/A',
+          }));
         setPayments(ledger);
       } catch (err) {
         console.error(err);
@@ -60,23 +68,38 @@ export default function UserInvoices() {
   const paginatedPayments = filteredPayments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleDownloadInvoice = (tx) => {
-    const receiptContent = "data:text/plain;charset=utf-8," 
-      + `LUXORIA FINANCIAL INVOICE\n\n`
-      + `Transaction ID: ${tx.id}\n`
-      + `Reference: ${tx.bookingId}\n`
-      + `Date: ${new Date(tx.date).toLocaleDateString()}\n`
-      + `Description: Booking - ${tx.vehicle}\n`
-      + `Payment Method: ${tx.method}\n`
-      + `Status: ${tx.status.toUpperCase()}\n\n`
-      + `TOTAL CHARGED: $${tx.amount.toLocaleString('en-US')}\n\n`
-      + `Thank you for choosing Luxoria.`;
-    const encodedUri = encodeURI(receiptContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `invoice_${tx.bookingId}.txt`);
+    const lines = [
+      '================================================',
+      '         LUXORIA — OFFICIAL INVOICE             ',
+      '================================================',
+      '',
+      `Invoice Ref  : ${tx.bookingId}`,
+      `Date Issued  : ${new Date(tx.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
+      '',
+      `Description  : Vehicle Rental — ${tx.vehicle}`,
+      `Period       : ${new Date(tx.startDate).toLocaleDateString('en-GB')} – ${new Date(tx.endDate).toLocaleDateString('en-GB')}`,
+      `Duration     : ${tx.totalDays} day(s)`,
+      `Pickup       : ${tx.pickupLocation}`,
+      `Payment Via  : ${tx.method}`,
+      `Status       : ${tx.status?.toUpperCase()}`,
+      '',
+      '------------------------------------------------',
+      `TOTAL CHARGED: $${tx.amount?.toLocaleString('en-US')}`,
+      '------------------------------------------------',
+      '',
+      '================================================',
+      '       Thank you for choosing Luxoria.          ',
+      '================================================',
+    ].join('\n');
+    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href  = url;
+    link.download = `Luxoria_Invoice_${tx.bookingId}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (

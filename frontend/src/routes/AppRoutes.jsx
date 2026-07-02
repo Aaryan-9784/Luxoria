@@ -33,6 +33,7 @@ const WatchExperiencePage = React.lazy(() => import('@/pages/public/WatchExperie
 
 const DashboardOverview = React.lazy(() => import('@/pages/user/DashboardOverview'));
 const MyBookings = React.lazy(() => import('@/pages/user/MyBookings'));
+const BookingDetail = React.lazy(() => import('@/pages/user/BookingDetail'));
 const WishlistPage = React.lazy(() => import('@/pages/user/WishlistPage'));
 const PaymentsDashboard = React.lazy(() => import('@/pages/user/PaymentsDashboard'));
 const UserProfile = React.lazy(() => import('@/pages/user/UserProfile'));
@@ -146,6 +147,7 @@ export default function AppRoutes() {
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<DashboardOverview />} />
             <Route path="/bookings" element={<MyBookings />} />
+            <Route path="/bookings/:id" element={<BookingDetail />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/reviews" element={<UserReviews />} />
             <Route path="/notifications" element={<NotificationsPage />} />

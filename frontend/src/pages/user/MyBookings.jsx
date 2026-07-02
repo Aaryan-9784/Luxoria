@@ -6,41 +6,13 @@ import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Has
 import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
 
-// Parse flexible date input like 3/3/2006, 03-03-2006, etc.
-function parseFlexDate(str) {
-  if (!str || !str.trim()) return null;
-  const d = new Date(str.trim());
-  if (!isNaN(d.getTime())) return d;
-  const parts = str.trim().split(/[\\/\-\.]/);
-  if (parts.length === 3) {
-    const [a, b, c] = parts.map(Number);
-    const attempt = new Date(c, b - 1, a);
-    if (!isNaN(attempt.getTime()) && attempt.getFullYear() === c) return attempt;
-  }
-  return null;
-}
-
+// Match booking date against a typed string (partial match on formatted date)
 function dateMatchesQuery(bookingDate, query) {
+  if (!query.trim()) return true;
   const d = new Date(bookingDate);
-  const q = query.trim().toLowerCase();
-  if (!q) return true;
-  const parsed = parseFlexDate(q);
-  if (parsed) {
-    return (
-      d.getDate() === parsed.getDate() &&
-      d.getMonth() === parsed.getMonth() &&
-      d.getFullYear() === parsed.getFullYear()
-    );
-  }
-  const formats = [
-    d.toLocaleDateString(),
-    d.toLocaleDateString('en-GB'),
-    d.toLocaleDateString('en-US'),
-    `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`,
-    `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`,
-    d.toISOString().slice(0, 10),
-  ];
-  return formats.some(f => f.includes(q));
+  const formatted = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toLowerCase();
+  const iso = d.toISOString().slice(0, 10);
+  return formatted.includes(query.trim().toLowerCase()) || iso.includes(query.trim());
 }
 
 export default function MyBookings() {
@@ -85,22 +57,35 @@ export default function MyBookings() {
   };
 
   const handleDownloadReceipt = (booking) => {
-    const receiptContent = "data:text/plain;charset=utf-8," 
-      + `LUXORIA RENTAL RECEIPT\n\n`
-      + `Booking ID: ${booking.bookingId}\n`
-      + `Vehicle: ${booking.vehicle?.name}\n`
-      + `Dates: ${new Date(booking.startDate).toLocaleDateString()} to ${new Date(booking.endDate).toLocaleDateString()}\n`
-      + `Location: ${booking.pickupLocation}\n`
-      + `Status: ${booking.status.toUpperCase()}\n`
-      + `Total Amount: $${booking.totalAmount?.toLocaleString('en-US')}\n\n`
-      + `Thank you for choosing Luxoria.`;
-    const encodedUri = encodeURI(receiptContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `receipt_${booking.bookingId}.txt`);
+    const lines = [
+      '================================================',
+      '           LUXORIA — RENTAL RECEIPT             ',
+      '================================================',
+      '',
+      `Booking ID    : ${booking.bookingId}`,
+      `Vehicle       : ${booking.vehicle?.name || 'N/A'}`,
+      '',
+      `Pick-up       : ${new Date(booking.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
+      `Drop-off      : ${new Date(booking.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
+      `Total Days    : ${booking.totalDays}`,
+      '',
+      `Location      : ${booking.pickupLocation || 'N/A'}`,
+      `Status        : ${booking.status?.toUpperCase()}`,
+      `Total Amount  : $${booking.totalAmount?.toLocaleString('en-US')}`,
+      '',
+      '================================================',
+      '     Thank you for choosing Luxoria.            ',
+      '================================================',
+    ].join('\n');
+    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Luxoria_Receipt_${booking.bookingId}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const renderStatusBadge = (status) => {
@@ -167,10 +152,10 @@ export default function MyBookings() {
             <CalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#999999] pointer-events-none" />
             <input
               type="text"
-              placeholder="Select a date"
+              placeholder="Search date..."
               value={dateSearch}
               onChange={(e) => { setDateSearch(e.target.value); setCurrentPage(1); }}
-              className="w-full bg-white border border-[#ECECEC] rounded-xl pl-10 pr-9 py-2.5 text-[13px] text-[#0F0F0F] placeholder-[#BBBBBB] focus:outline-none focus:border-[#C9A75D] transition-colors"
+              className="w-full bg-white border border-[#ECECEC] rounded-xl pl-10 pr-9 py-2.5 text-[13px] text-[#0F0F0F] placeholder-[#999999] focus:outline-none focus:border-[#C9A75D] transition-colors"
             />
             {dateSearch && (
               <button onClick={() => { setDateSearch(''); setCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#AAAAAA] hover:text-[#DC2626] transition-colors">

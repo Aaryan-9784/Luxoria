@@ -7,6 +7,7 @@ import dashboardReducer from '../redux/slices/dashboardSlice';
 import vendorReducer from '../redux/slices/vendorSlice';
 import adminReducer from '../redux/slices/adminSlice';
 import notificationReducer from '../redux/slices/notificationSlice';
+import reviewReducer from '../redux/slices/reviewSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     vendor: vendorReducer,
     admin: adminReducer,
     notifications: notificationReducer,
+    reviews: reviewReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

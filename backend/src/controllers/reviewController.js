@@ -6,6 +6,20 @@ import ApiFeatures from '../utils/apiFeatures.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 
 /**
+ * @desc    Get my reviews
+ * @route   GET /api/reviews/my
+ * @access  User
+ */
+export const getMyReviews = asyncHandler(async (req, res) => {
+  const reviews = await Review.find({ user: req.user._id, isActive: true })
+    .populate('vehicle', 'name brand images category')
+    .populate('booking', 'startDate endDate')
+    .sort('-createdAt');
+
+  ApiResponse.success(res, { reviews });
+});
+
+/**
  * @desc    Create review
  * @route   POST /api/reviews/:vehicleId
  * @access  User
