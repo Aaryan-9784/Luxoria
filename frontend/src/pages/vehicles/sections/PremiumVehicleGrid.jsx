@@ -7,8 +7,8 @@ import LuxuryVehicleCard from '../components/LuxuryVehicleCard';
 import Skeleton from '@/components/ui/Skeleton';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { LayoutGrid, List, SearchX, X, AlertCircle, SlidersHorizontal } from 'lucide-react';
-import { staggerContainer, revealOnScroll } from '@/lib/motion';
-import { SORT_OPTIONS } from '../data/vehiclesPageData';
+import { staggerContainer, staggerItem, revealOnScroll } from '@/lib/motion';
+import { SORT_OPTIONS, FEATURED_VEHICLES } from '../data/vehiclesPageData';
 
 export default function PremiumVehicleGrid({ onOpenFilters }) {
   const dispatch = useDispatch();
@@ -192,22 +192,56 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
           </button>
         </div>
       ) : vehicles.length === 0 ? (
-        /* Empty State */
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-20 h-20 rounded-3xl bg-surface flex items-center justify-center mb-6 shadow-inner">
-            <SearchX className="w-8 h-8 text-muted" />
-          </div>
-          <h3 className="text-h4 text-primary mb-2">No Vehicles Found</h3>
-          <p className="text-body-sm text-secondary max-w-md mb-6">
-            We couldn't find any vehicles matching your exquisite taste. Try adjusting your filters or exploring our full collection.
-          </p>
-          <button
-            onClick={() => { dispatch(clearFilters()); dispatch(fetchVehicles()); }}
-            className="btn btn-accent rounded-full px-6"
+        /* Fallback to featured vehicles if backend has no results and no active filters */
+        activeFilters.length === 0 ? (
+          <motion.div
+            initial="initial"
+            animate="animate"
+            variants={staggerContainer}
+            layout
+            className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           >
-            Clear Filters & Explore
-          </button>
-        </div>
+            <AnimatePresence>
+              {FEATURED_VEHICLES.slice(0, 6).map((vehicle) => (
+                <motion.div
+                  key={vehicle.id}
+                  variants={staggerItem}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className={viewMode === 'list' ? 'flex gap-6 items-center' : ''}>
+                    <LuxuryVehicleCard
+                      vehicle={vehicle}
+                      isWishlisted={false}
+                      onQuickView={(v) => dispatch(setQuickView(v))}
+                      onCompare={(v) => dispatch(addToCompare(v))}
+                      onShare={handleShare}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-20 h-20 rounded-3xl bg-surface flex items-center justify-center mb-6 shadow-inner">
+              <SearchX className="w-8 h-8 text-muted" />
+            </div>
+            <h3 className="text-h4 text-primary mb-2">No Vehicles Found</h3>
+            <p className="text-body-sm text-secondary max-w-md mb-6">
+              We couldn't find any vehicles matching your exquisite taste. Try adjusting your filters or exploring our full collection.
+            </p>
+            <button
+              onClick={() => { dispatch(clearFilters()); dispatch(fetchVehicles()); }}
+              className="btn btn-accent rounded-full px-6"
+            >
+              Clear Filters & Explore
+            </button>
+          </div>
+        )
       ) : (
         /* Vehicle Grid */
         <motion.div
