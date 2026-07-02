@@ -4,7 +4,7 @@ import { fetchMyReviews, updateReview, deleteReview } from '@/redux/slices/revie
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Star, MessageSquare, Filter, Trash2, Edit3,
-  CalendarDays, X, AlertTriangle, Check, Car
+  CalendarDays, X, AlertTriangle, Check, Car, RefreshCw
 } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
@@ -38,7 +38,7 @@ function StarRating({ value, onChange, size = 'md' }) {
 
 export default function UserReviews() {
   const dispatch = useDispatch();
-  const { reviews, loading } = useSelector(state => state.reviews);
+  const { reviews, loading, error } = useSelector(state => state.reviews);
   const { accessToken } = useSelector(state => state.auth);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -125,6 +125,25 @@ export default function UserReviews() {
             <div key={i} className="h-52 rounded-2xl bg-[#F5F5F5] animate-pulse" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  // ── Error state ──────────────────────────────────────────────
+  if (error && reviews.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="w-16 h-16 rounded-full bg-[#DC2626]/10 flex items-center justify-center mb-5">
+          <AlertTriangle className="w-8 h-8 text-[#DC2626]" />
+        </div>
+        <h2 className="text-[18px] font-bold text-[#0F0F0F] mb-2">Failed to Load Reviews</h2>
+        <p className="text-[13px] text-[#666666] mb-6 max-w-sm">{error}</p>
+        <button
+          onClick={() => dispatch(fetchMyReviews())}
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0F0F0F] text-white text-[12px] font-bold uppercase tracking-widest hover:bg-[#C9A75D] transition-all"
+        >
+          <RefreshCw className="w-4 h-4" /> Try Again
+        </button>
       </div>
     );
   }

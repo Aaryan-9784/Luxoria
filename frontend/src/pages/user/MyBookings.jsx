@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMyBookings, cancelBooking } from '@/redux/slices/dashboardSlice';
+import { createReview, fetchMyReviews } from '@/redux/slices/reviewSlice';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Hash, Download, Eye, Car, AlertTriangle } from 'lucide-react';
+import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Hash, Download, Eye, Car, AlertTriangle, Star, Check, MessageSquare } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
 
@@ -19,6 +20,7 @@ export default function MyBookings() {
   const dispatch = useDispatch();
   const { bookings, loading, error } = useSelector(state => state.dashboard);
   const { accessToken } = useSelector(state => state.auth);
+  const { reviews } = useSelector(state => state.reviews);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [dateSearch, setDateSearch] = useState('');
@@ -27,9 +29,19 @@ export default function MyBookings() {
   const [currentPage, setCurrentPage] = useState(1);
   const bookingsPerPage = 8;
 
+  // Review modal state
+  const [reviewModal, setReviewModal] = useState(false);
+  const [reviewBooking, setReviewBooking] = useState(null);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewSaving, setReviewSaving] = useState(false);
+  const [reviewError, setReviewError] = useState('');
+  const [reviewedIds, setReviewedIds] = useState(new Set()); // track just-submitted in this session
+
   useEffect(() => {
     if (!accessToken) return;
     dispatch(fetchMyBookings());
+    dispatch(fetchMyReviews());
   }, [dispatch, accessToken]);
 
   // Filtering
@@ -47,6 +59,42 @@ export default function MyBookings() {
   // Pagination
   const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
   const paginatedBookings = filteredBookings.slice((currentPage - 1) * bookingsPerPage, currentPage * bookingsPerPage);
+
+  // Check if a booking already has a review
+  const bookingHasReview = (bookingId) =>
+    reviewedIds.has(bookingId) ||
+    reviews.some(r => r.booking === bookingId || r.booking?._id === bookingId);
+
+  const openReviewModal = (booking) => {
+    setReviewBooking(booking);
+    setReviewRating(5);
+    setReviewComment('');
+    setReviewError('');
+    setReviewModal(true);
+  };
+
+  const handleReviewSubmit = async () => {
+    if (!reviewComment.trim()) { setReviewError('Please write a comment.'); return; }
+    setReviewSaving(true);
+    setReviewError('');
+    const result = await dispatch(
+      createReview({
+        vehicleId: reviewBooking.vehicle._id,
+        bookingId: reviewBooking._id,
+        rating: reviewRating,
+        comment: reviewComment.trim(),
+      })
+    );
+    setReviewSaving(false);
+    if (createReview.fulfilled.match(result)) {
+      setReviewedIds(prev => new Set([...prev, reviewBooking._id]));
+      setReviewModal(false);
+      setReviewBooking(null);
+      dispatch(fetchMyReviews());
+    } else {
+      setReviewError(result.payload || 'Failed to submit review.');
+    }
+  };
 
   const handleCancel = async () => {
     if (bookingToCancel) {
@@ -267,6 +315,24 @@ export default function MyBookings() {
                             <Download className="w-4 h-4" />
                           </button>
                         )}
+                        {booking.status === 'completed' && !bookingHasReview(booking._id) && (
+                          <button
+                            onClick={() => openReviewModal(booking)}
+                            className="p-2 rounded-lg text-[#666666] hover:text-[#C9A75D] hover:bg-white border border-transparent hover:border-[#ECECEC] transition-all"
+                            title="Leave a Review"
+                          >
+                            <Star className="w-4 h-4" />
+                          </button>
+                        )}
+                        {booking.status === 'completed' && bookingHasReview(booking._id) && (
+                          <Link
+                            to="/reviews"
+                            className="p-2 rounded-lg text-[#16A34A] hover:bg-white border border-transparent hover:border-[#ECECEC] transition-all"
+                            title="View Review"
+                          >
+                            <Check className="w-4 h-4" />
+                          </Link>
+                        )}
                         {['pending', 'confirmed'].includes(booking.status) && (
                           <button 
                             onClick={() => { setBookingToCancel(booking._id); setCancelModalOpen(true); }}
@@ -321,6 +387,89 @@ export default function MyBookings() {
           </div>
         )}
       </div>
+
+      {/* Review Modal */}
+      <AnimatePresence>
+        {reviewModal && reviewBooking && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#08152E]/40 backdrop-blur-sm">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl border border-[#ECECEC] relative"
+            >
+              <button
+                onClick={() => setReviewModal(false)}
+                className="absolute top-4 right-4 p-1.5 rounded-full bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors"
+              >
+                <X className="w-4 h-4 text-[#666666]" />
+              </button>
+
+              <div className="w-12 h-12 rounded-full bg-[#C9A75D]/10 flex items-center justify-center mb-4">
+                <MessageSquare className="w-6 h-6 text-[#C9A75D]" />
+              </div>
+              <h3 className="text-[18px] font-bold text-[#0F0F0F] mb-1">Leave a Review</h3>
+              <p className="text-[13px] text-[#666666] mb-6">{reviewBooking.vehicle?.name}</p>
+
+              {/* Star rating */}
+              <div className="mb-5">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#666666] block mb-2">Your Rating</label>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star)}
+                      className="cursor-pointer hover:scale-110 transition-transform"
+                    >
+                      <Star
+                        className={`w-7 h-7 transition-colors ${
+                          star <= reviewRating ? 'text-[#C9A75D] fill-[#C9A75D]' : 'text-[#ECECEC] fill-[#ECECEC]'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Comment */}
+              <div className="mb-5">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#666666] block mb-2">
+                  Your Review <span className="text-[#999999] normal-case font-normal">({reviewComment.length}/1000)</span>
+                </label>
+                <textarea
+                  value={reviewComment}
+                  onChange={(e) => { setReviewComment(e.target.value.slice(0, 1000)); setReviewError(''); }}
+                  rows={4}
+                  placeholder="Share your experience with this vehicle..."
+                  className="w-full bg-[#F9F9F9] border border-[#ECECEC] rounded-xl px-4 py-3 text-[13px] text-[#0F0F0F] placeholder-[#999999] focus:outline-none focus:border-[#C9A75D] transition-colors resize-none"
+                />
+                {reviewError && <p className="mt-1.5 text-[12px] text-[#DC2626] font-medium">{reviewError}</p>}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setReviewModal(false)}
+                  className="flex-1 py-3 rounded-xl border border-[#ECECEC] text-[#4B5563] font-bold text-[13px] hover:bg-[#F3F4F6] transition-colors"
+                >
+                  CANCEL
+                </button>
+                <button
+                  onClick={handleReviewSubmit}
+                  disabled={reviewSaving}
+                  className="flex-1 py-3 rounded-xl bg-[#0F0F0F] text-white font-bold text-[13px] hover:bg-[#C9A75D] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {reviewSaving ? (
+                    <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Submitting...</>
+                  ) : (
+                    <><Check className="w-4 h-4" /> SUBMIT REVIEW</>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Cancellation Modal */}
       <AnimatePresence>

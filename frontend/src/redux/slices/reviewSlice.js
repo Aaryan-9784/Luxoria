@@ -10,6 +10,18 @@ export const fetchMyReviews = createAsyncThunk('reviews/fetchMy', async (_, { re
   }
 });
 
+export const createReview = createAsyncThunk(
+  'reviews/create',
+  async ({ vehicleId, bookingId, rating, comment }, { rejectWithValue }) => {
+    try {
+      const res = await api.post(`/reviews/${vehicleId}`, { bookingId, rating, comment });
+      return res.data.data.review;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.error?.message || 'Failed to submit review');
+    }
+  }
+);
+
 export const updateReview = createAsyncThunk('reviews/update', async ({ id, rating, comment }, { rejectWithValue }) => {
   try {
     const res = await api.put(`/reviews/${id}`, { rating, comment });
@@ -35,12 +47,20 @@ const reviewSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    clearReviewError(state) {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMyReviews.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchMyReviews.fulfilled, (state, action) => { state.loading = false; state.reviews = action.payload; })
       .addCase(fetchMyReviews.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+      .addCase(createReview.fulfilled, (state, action) => {
+        // Re-fetch will populate vehicle details; insert a placeholder so UI updates immediately
+        state.reviews.unshift(action.payload);
+      })
       .addCase(updateReview.fulfilled, (state, action) => {
         const idx = state.reviews.findIndex(r => r._id === action.payload._id);
         if (idx !== -1) state.reviews[idx] = { ...state.reviews[idx], ...action.payload };
@@ -51,4 +71,5 @@ const reviewSlice = createSlice({
   },
 });
 
+export const { clearReviewError } = reviewSlice.actions;
 export default reviewSlice.reducer;
