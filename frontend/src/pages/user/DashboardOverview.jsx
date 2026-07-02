@@ -153,7 +153,7 @@ export default function DashboardOverview() {
                   </div>
                   <div>
                     <span className="text-[12px] font-bold uppercase tracking-wider text-[#0F0F0F] block">Gold Tier</span>
-                    <span className="text-[10px] text-[#666666]">Premium Member</span>
+                    <span className="text-[10px] text-[#666666]">Premium Client</span>
                   </div>
                 </div>
                 <span className="text-[11px] font-bold text-[#C9A75D]">Active</span>

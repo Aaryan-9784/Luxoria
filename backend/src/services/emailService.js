@@ -318,18 +318,58 @@ class EmailService {
   async sendSupportTicketToAdmin(data) {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@luxoria.com';
 
+    const isVendor = data.senderRole === 'vendor';
+    const senderLabel = isVendor ? 'Partner' : 'Client';
+    const ticketSource = isVendor ? 'Partner Workspace' : 'Client Support Center';
+    const headerSubtitle = isVendor ? 'New Partner Support Ticket' : 'New Client Support Ticket';
+    const emailSubjectPrefix = isVendor ? 'Partner Ticket' : 'Client Ticket';
+
     const priorityColors = {
       urgent: '#DC2626',
       high: '#D97706',
       normal: '#16A34A',
     };
+
+    // For vendors: show priority badge. For clients: show inquiry type label.
+    const inquiryTypeLabels = {
+      general_question:     'General Question',
+      booking_modification: 'Booking Modification',
+      booking_cancellation: 'Booking Cancellation',
+      payment_billing:      'Payment & Billing',
+      vehicle_inquiry:      'Vehicle Inquiry',
+      chauffeur_service:    'Chauffeur Service',
+      urgent_assistance:    'Urgent Assistance',
+    };
+
     const priorityLabels = {
       urgent: 'URGENT — Active Booking Issue',
       high: 'HIGH — Time Sensitive',
       normal: 'NORMAL',
     };
-    const priorityColor = priorityColors[data.priority] || priorityColors.normal;
-    const priorityLabel = priorityLabels[data.priority] || priorityLabels.normal;
+
+    // Determine badge for the ticket details row
+    let ticketTypeBadge;
+    if (isVendor) {
+      const priorityColor = priorityColors[data.priority] || priorityColors.normal;
+      const priorityLabel = priorityLabels[data.priority] || priorityLabels.normal;
+      ticketTypeBadge = `
+        <tr>
+          <td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Priority:</strong></td>
+          <td style="padding:10px 0;">
+            <span style="display:inline-block;background-color:${priorityColor};color:#ffffff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:1px;">${priorityLabel}</span>
+          </td>
+        </tr>`;
+    } else {
+      const inquiryLabel = inquiryTypeLabels[data.inquiryType] || 'General Question';
+      const urgentColor = data.inquiryType === 'urgent_assistance' ? '#DC2626' : '#D4AF37';
+      ticketTypeBadge = `
+        <tr>
+          <td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Inquiry Type:</strong></td>
+          <td style="padding:10px 0;">
+            <span style="display:inline-block;background-color:${urgentColor};color:#ffffff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:1px;">${inquiryLabel.toUpperCase()}</span>
+          </td>
+        </tr>`;
+    }
 
     const html = `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
@@ -346,19 +386,19 @@ class EmailService {
                   </td>
                 </tr>
               </table>
-              <p style="color:#D4AF37;margin:15px 0 0 0;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:600;">New Partner Support Ticket</p>
+              <p style="color:#D4AF37;margin:15px 0 0 0;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:600;">${headerSubtitle}</p>
             </td>
           </tr>
         </table>
 
         <div style="padding: 40px 30px;">
-          <p style="color:#4B5563;font-size:16px;line-height:1.6;margin-top:0;text-align:center;">A partner has opened a new support ticket from the Partner Workspace.</p>
+          <p style="color:#4B5563;font-size:16px;line-height:1.6;margin-top:0;text-align:center;">A ${senderLabel.toLowerCase()} has opened a new support ticket from the ${ticketSource}.</p>
 
           <div style="background-color:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:25px;margin-top:35px;">
-            <h3 style="color:#0F172A;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px 0;border-bottom:1px solid #E5E7EB;padding-bottom:12px;font-weight:700;">Partner Details</h3>
+            <h3 style="color:#0F172A;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px 0;border-bottom:1px solid #E5E7EB;padding-bottom:12px;font-weight:700;">${senderLabel} Details</h3>
             <table style="width:100%;border-collapse:collapse;">
               <tbody>
-                <tr><td style="padding:10px 0;color:#6B7280;font-size:14px;width:35%;"><strong>Partner Name:</strong></td><td style="padding:10px 0;color:#111827;font-size:15px;font-weight:600;">${data.senderName}</td></tr>
+                <tr><td style="padding:10px 0;color:#6B7280;font-size:14px;width:35%;"><strong>${senderLabel} Name:</strong></td><td style="padding:10px 0;color:#111827;font-size:15px;font-weight:600;">${data.senderName}</td></tr>
                 <tr><td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Email:</strong></td><td style="padding:10px 0;font-size:15px;"><a href="mailto:${data.senderEmail}" style="color:#D4AF37;text-decoration:none;font-weight:600;">${data.senderEmail}</a></td></tr>
                 <tr><td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Role:</strong></td><td style="padding:10px 0;color:#111827;font-size:15px;font-weight:600;text-transform:capitalize;">${data.senderRole}</td></tr>
               </tbody>
@@ -373,12 +413,7 @@ class EmailService {
                   <td style="padding:10px 0;color:#6B7280;font-size:14px;width:35%;"><strong>Subject:</strong></td>
                   <td style="padding:10px 0;color:#111827;font-size:15px;font-weight:600;">${data.subject}</td>
                 </tr>
-                <tr>
-                  <td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Priority:</strong></td>
-                  <td style="padding:10px 0;">
-                    <span style="display:inline-block;background-color:${priorityColor};color:#ffffff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:1px;">${priorityLabel}</span>
-                  </td>
-                </tr>
+                ${ticketTypeBadge}
                 <tr>
                   <td style="padding:10px 0;color:#6B7280;font-size:14px;"><strong>Submitted At:</strong></td>
                   <td style="padding:10px 0;color:#111827;font-size:15px;font-weight:600;">${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST</td>
@@ -397,19 +432,23 @@ class EmailService {
 
         <div style="background-color:#F8FAFC;padding:30px;text-align:center;border-top:1px solid #E5E7EB;">
           <p style="color:#64748B;font-size:13px;line-height:1.6;margin:0;">
-            Please respond to the partner via <a href="mailto:${data.senderEmail}" style="color:#D4AF37;">${data.senderEmail}</a><br><br>
+            Please respond to the ${senderLabel.toLowerCase()} via <a href="mailto:${data.senderEmail}" style="color:#D4AF37;">${data.senderEmail}</a><br><br>
             <strong style="color:#0F172A;">&copy; ${new Date().getFullYear()} Luxoria Premium Private Limited.</strong><br>All rights reserved.
           </p>
         </div>
       </div>
     `;
 
+    const subjectLine = isVendor
+      ? `[${data.priority.toUpperCase()}] Partner Ticket: ${data.subject}`
+      : `[CLIENT] ${data.inquiryType ? inquiryTypeLabels[data.inquiryType] || 'Support' : 'Support'}: ${data.subject}`;
+
     await this.sendEmail({
       email: adminEmail,
       replyTo: data.senderEmail,
-      subject: `[${data.priority.toUpperCase()}] Partner Ticket: ${data.subject}`,
+      subject: subjectLine,
       html,
-      message: `New support ticket from ${data.senderName} (${data.senderEmail}). Priority: ${data.priority}. Subject: ${data.subject}`,
+      message: `New support ticket from ${data.senderName} (${data.senderEmail}). Subject: ${data.subject}`,
     });
   }
 }

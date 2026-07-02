@@ -117,7 +117,7 @@ export default function DashboardSidebar() {
         {!collapsed ? (
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface transition-colors cursor-pointer"
                onClick={() => navigate('/profile')}>
-            <Avatar src={user?.avatar?.url} name={user?.name} size="sm" />
+            <Avatar src={user?.avatar?.url} name={user?.name} size="sm" variant="luxury" showOnline />
             <div className="flex-1 min-w-0">
               <p className="text-body-sm font-semibold text-primary truncate">{user?.name}</p>
               <p className="text-caption text-muted truncate capitalize">
@@ -126,7 +126,7 @@ export default function DashboardSidebar() {
             </div>
           </div>
         ) : (
-          <Avatar src={user?.avatar?.url} name={user?.name} size="sm" className="mb-2" />
+          <Avatar src={user?.avatar?.url} name={user?.name} size="sm" variant="luxury" showOnline className="mb-2" />
         )}
 
         <button

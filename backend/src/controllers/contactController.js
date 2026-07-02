@@ -43,7 +43,7 @@ export const contactVendor = async (req, res, next) => {
 
 export const submitSupportTicket = async (req, res, next) => {
   try {
-    const { subject, priority, message } = req.body;
+    const { subject, priority, inquiryType, message } = req.body;
 
     if (!subject || !message) {
       throw ApiError.badRequest('Subject and message are required.');
@@ -53,13 +53,14 @@ export const submitSupportTicket = async (req, res, next) => {
     const resolvedPriority = validPriorities.includes(priority) ? priority : 'normal';
 
     // Build sender info from authenticated user (req.user set by protect middleware)
-    const senderName = req.user.name || req.user.businessName || 'Unknown Partner';
+    const senderName = req.user.name || req.user.businessName || 'Unknown User';
     const senderEmail = req.user.email;
     const senderRole = req.user.role;
 
     await emailService.sendSupportTicketToAdmin({
       subject,
       priority: resolvedPriority,
+      inquiryType: inquiryType || null,
       message,
       senderName,
       senderEmail,

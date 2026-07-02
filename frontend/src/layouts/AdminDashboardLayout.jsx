@@ -12,6 +12,7 @@ import {
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';
 import NotificationBell from '@/components/ui/NotificationBell';
+import Avatar from '@/components/ui/Avatar';
 
 const NAV_GROUPS = [
   {
@@ -50,7 +51,6 @@ export default function AdminDashboardLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [avatarError, setAvatarError] = useState(false);
 
   useEffect(() => {
     dispatch(fetchNotifications());
@@ -271,23 +271,13 @@ export default function AdminDashboardLayout() {
               className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-white border border-[#ECECEC] shadow-sm hover:shadow-md transition-all group focus:outline-none focus:ring-2 focus:ring-[#C9A75D]/30"
               title="Profile menu"
             >
-              <div className="relative shrink-0 w-8 h-8 rounded-full p-[2px] bg-gradient-to-tr from-[#C9A75D] to-[#E8D090]">
-                <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-[#0F0F0F]">
-                  {user?.avatar?.url && !avatarError ? (
-                    <img 
-                      src={user.avatar.url} 
-                      alt="Admin" 
-                      className="w-full h-full object-cover" 
-                      onError={() => setAvatarError(true)}
-                    />
-                  ) : (
-                    <span className="w-full h-full flex items-center justify-center text-sm font-bold tracking-tight text-[#C9A75D]">
-                      {user?.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4 text-[#C9A75D]" />}
-                    </span>
-                  )}
-                </div>
-                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#16A34A] border-2 border-white rounded-full"></div>
-              </div>
+              <Avatar
+                src={user?.avatar?.url}
+                name={user?.name || ''}
+                size="sm"
+                variant="luxury"
+                showOnline
+              />
               
               <div className="text-left hidden sm:block">
                 <p className="text-[13px] font-bold text-[#0F0F0F] leading-tight group-hover:text-[#C9A75D] transition-colors">{user?.name || 'Administrator'}</p>

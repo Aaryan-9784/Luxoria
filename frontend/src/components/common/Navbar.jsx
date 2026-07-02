@@ -185,6 +185,8 @@ export default function Navbar() {
                     src={user?.avatar?.url}
                     name={user?.name}
                     size="sm"
+                    variant="luxury"
+                    showOnline
                   />
                   <div className="hidden xl:flex flex-col text-left">
                     <span className="text-body-sm font-medium text-primary group-hover:text-accent transition-colors leading-tight">
