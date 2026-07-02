@@ -6,7 +6,7 @@ import { fetchNotifications } from '@/redux/slices/notificationSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Car, Heart, CreditCard, FileText,
-  MessageSquare, User, Bell, HelpCircle, Star,
+  User, Bell, HelpCircle, Star,
   LogOut, Menu, X, ChevronLeft, ChevronRight, UserCircle,
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
@@ -34,7 +34,6 @@ const NAV_GROUPS = [
     label: 'Account',
     items: [
       { path: '/notifications', label: 'Notifications', icon: Bell },
-      { path: '/messages', label: 'Messages', icon: MessageSquare },
       { path: '/profile', label: 'My Profile', icon: UserCircle },
       { path: '/support', label: 'Support', icon: HelpCircle },
     ],

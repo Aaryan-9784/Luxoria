@@ -57,8 +57,8 @@ const paymentSchema = new mongoose.Schema(
 );
 
 // Indexes
-paymentSchema.index({ razorpayOrderId: 1 });
 paymentSchema.index({ status: 1 });
+// Note: razorpayOrderId index is already created by unique:true on the field definition
 
 const Payment = mongoose.model('Payment', paymentSchema);
 

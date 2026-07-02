@@ -75,8 +75,8 @@ const bookingSchema = new mongoose.Schema(
 // Indexes
 bookingSchema.index({ user: 1, status: 1 });
 bookingSchema.index({ vendor: 1, status: 1 });
-bookingSchema.index({ bookingId: 1 });
 bookingSchema.index({ startDate: 1, endDate: 1 });
+// Note: bookingId index is already created by unique:true on the field definition
 
 // Generate booking ID before save
 bookingSchema.pre('save', function (next) {
