@@ -22,6 +22,7 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const WISHLIST_SEEN_KEY = 'luxoria_wishlist_seen_count';
   const [wishlistSeen, setWishlistSeen] = useState(false);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.dashboard);
@@ -41,6 +42,20 @@ export default function Navbar() {
     }
   }, [dispatch, isAuthenticated]);
 
+  // Persist & restore whether the user has "seen" the wishlist.
+  // We store the wishlist count at the time the user viewed it and
+  // consider it seen if the stored count is >= current count.
+  useEffect(() => {
+    try {
+      const stored = parseInt(localStorage.getItem(WISHLIST_SEEN_KEY), 10);
+      if (!Number.isNaN(stored) && stored >= (wishlist?.filter(w => w.vehicle)?.length || 0)) {
+        setWishlistSeen(true);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [wishlist]);
+
   // Reset "seen" when new items are added
   const wishlistCount = wishlist?.filter(w => w.vehicle)?.length || 0;
   const prevCountRef = React.useRef(wishlistCount);
@@ -53,6 +68,9 @@ export default function Navbar() {
 
   const handleWishlistOpen = () => {
     setWishlistSeen(true); // mark as seen when dropdown opens
+    try {
+      localStorage.setItem(WISHLIST_SEEN_KEY, String(wishlistCount));
+    } catch (e) {}
   };
 
   const handleRemoveWishlist = async (e, vehicleId) => {
@@ -64,6 +82,8 @@ export default function Navbar() {
   const handleViewFullWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    setWishlistSeen(true);
+    try { localStorage.setItem(WISHLIST_SEEN_KEY, String(wishlistCount)); } catch (e) {}
     navigate('/wishlist');
   };
 

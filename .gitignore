@@ -1,10 +1,16 @@
 # ==============================
-# Dependencies
+# Node.js & Package Managers
 # ==============================
 node_modules/
 .pnpm-store/
+.pnpm-lock.yaml
 .yarn/
+.yarn-cache/
+.yarn-integrity
 jspm_packages/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
 
 # ==============================
 # Environment Variables
@@ -24,7 +30,7 @@ jspm_packages/
 !.env.sample
 
 # ==============================
-# Build Output
+# Build Output & Distribution
 # ==============================
 dist/
 build/
@@ -34,18 +40,20 @@ frontend/dist/
 frontend/build/
 backend/dist/
 backend/build/
-
-# ==============================
-# TypeScript
-# ==============================
 *.tsbuildinfo
 .tscache/
+.rollup.cache/
 
 # ==============================
 # Vite / Bundler Cache
 # ==============================
 .vite/
-.rollup.cache/
+.eslintcache
+.stylelintcache
+.parcel-cache/
+.next/
+.nuxt/
+out/
 
 # ==============================
 # Testing & Coverage
@@ -55,9 +63,52 @@ coverage/
 *.lcov
 test-results/
 playwright-report/
+cypress/screenshots/
+cypress/videos/
+.jest-cache/
 
 # ==============================
-# Logs
+# IDE & Editor Configuration
+# ==============================
+.vscode/
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+.code-workspace
+*.code-workspace
+.sublime-project
+.sublime-workspace
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+*.iml
+*.iws
+
+# ==============================
+# OS-Specific Files
+# ==============================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.AppleDouble
+.AppleDB
+
+# Windows-specific
+*.lnk
+*.bat
+desktop.ini
+
+# ==============================
+# Logs & Debug Output
 # ==============================
 logs/
 *.log
@@ -66,28 +117,34 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+debug.log
+.npm/
+.yarn-error-log
 
 # ==============================
 # Cache & Temporary Files
 # ==============================
 .cache/
-.npm/
-.eslintcache
-.stylelintcache
-.parcel-cache/
 .temp/
 .tmp/
 tmp/
+tempfiles/
+*.cache
+.eslintignore
 
 # ==============================
 # Uploads & Generated Media
 # ==============================
 backend/uploads/
 backend/public/uploads/
+backend/temp/
 frontend/public/uploads/
+*.tmp
+*.bak
+*.backup
 
 # ==============================
-# Secrets & Keys
+# Database & Secrets
 # ==============================
 *.pem
 *.key
@@ -97,6 +154,64 @@ frontend/public/uploads/
 serviceAccountKey.json
 google-credentials.json
 firebase-adminsdk*.json
+*.p8
+private_key.pem
+public_key.pem
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+data/
+database/
+db/
+
+# ==============================
+# IDE Plugins & Extensions
+# ==============================
+.vscode-test/
+.vscode-download/
+
+# ==============================
+# Docker
+# ==============================
+.dockerignore
+docker-compose.override.yml
+.docker/
+
+# ==============================
+# CI/CD
+# ==============================
+.github/workflows/*.log
+.gitlab-ci.local.yml
+.travis.yml.local
+
+# ==============================
+# Project-Specific
+# ==============================
+backend/src/scripts/test-*.js
+frontend/src/test-*.jsx
+.vercel/
+.render-build-log
+render-build.log
+*.todo
+notes.md
+todo.md
+
+# ==============================
+# Dependencies Lock Files (optional - uncomment if using)
+# ==============================
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ==============================
+# Misc
+# ==============================
+.turbo/
+.env.local.example
+.env.test.local.example
+vitest.config.ts.bak
 
 # ==============================
 # OS Files

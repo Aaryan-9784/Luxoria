@@ -1,4 +1,4 @@
-# LUXORIA — Ultra-Premium Luxury Car Rental Platform
+# 🚗 LUXORIA — Ultra-Premium Luxury Car Rental Platform
 
 <div align="center">
 
@@ -17,8 +17,9 @@
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
+- [Quick Start](#quick-start)
 - [Overview](#overview)
 - [Feature Highlights](#feature-highlights)
 - [Tech Stack](#tech-stack)
@@ -29,10 +30,49 @@
 - [API Reference](#api-reference)
 - [Environment Variables](#environment-variables)
 - [Local Setup](#local-setup)
+- [Development Scripts](#development-scripts)
 - [Architecture Highlights](#architecture-highlights)
+- [Performance Optimization](#performance-optimization)
 - [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
+
+---
+
+## 🚀 Quick Start
+
+Get LUXORIA running locally in 5 minutes:
+
+```bash
+# 1. Clone repository
+git clone https://github.com/yourusername/luxoria.git
+cd luxoria
+
+# 2. Setup backend
+cd backend
+npm install
+cp .env.example .env
+# ⚙️ Edit .env with your credentials
+npm run dev
+
+# 3. Setup frontend (new terminal)
+cd frontend
+npm install
+cp .env.example .env
+# ⚙️ Set VITE_API_URL=http://localhost:5000/api
+npm run dev
+
+# 4. Open browser
+# 👉 http://localhost:5173
+```
+
+**Test Account Credentials:**
+- Email: `admin@luxoria.com` | Password: `Demo@123` (Admin)
+- Email: `vendor@luxoria.com` | Password: `Demo@123` (Vendor)
+- Email: `user@luxoria.com` | Password: `Demo@123` (User)
+
+For detailed setup instructions, see [Local Setup](#local-setup).
 
 ---
 
@@ -508,6 +548,57 @@ The app will be available at `http://localhost:5173`.
 
 ---
 
+## 📝 Development Scripts
+
+### Backend Scripts
+```bash
+cd backend
+
+# Development
+npm run dev              # Start dev server with auto-reload (nodemon)
+npm start               # Start production server
+
+# Database
+node src/scripts/seed.js           # Seed vehicles + master data
+node seed_admin.js                 # Create default admin account (admin@luxoria.com)
+node seedConcierge.js              # Seed sample concierge requests
+node check_db.js                   # Verify MongoDB connection
+
+# Testing & Debugging
+npm run test            # Run test suite
+node check_bookings.js  # Check all bookings status
+node test_auth_flow.js  # Test authentication flow
+node test_oauth.js      # Test Google OAuth integration
+node test_filter.js     # Test vehicle filtering
+```
+
+### Frontend Scripts
+```bash
+cd frontend
+
+# Development
+npm run dev             # Start Vite dev server (HMR enabled)
+npm run build          # Build for production
+npm run preview        # Preview production build locally
+npm run lint           # Run ESLint
+npm run format         # Format code with Prettier
+```
+
+### Useful Commands
+```bash
+# Clear all node_modules and reinstall
+rm -r node_modules package-lock.json
+npm install
+
+# Reset MongoDB (deletes all data - USE WITH CAUTION)
+cd backend && node scripts/seed.js
+
+# Check environment setup
+cd backend && node check_db.js
+```
+
+---
+
 ## Architecture Highlights
 
 **Refresh Token Rotation with Reuse Detection**
@@ -536,6 +627,33 @@ MongoDB's native TTL index on `Notification.createdAt` handles 90-day auto-delet
 
 ---
 
+## ⚡ Performance Optimization
+
+### Backend Optimizations
+- **Connection Pooling**: Mongoose pool size set to 10 (configurable in `config/db.js`)
+- **Indexed Queries**: Compound indexes on `User.email`, `Vehicle.slug`, `Booking.bookingId`
+- **Aggregation Pipeline**: Analytics use MongoDB aggregations (no client-side filtering)
+- **TTL Indexes**: Automatic 90-day cleanup for `Notification` records
+- **Rate Limiting**: 3-tier system (general, auth, upload) to prevent abuse
+
+### Frontend Optimizations
+- **Code Splitting**: Vite automatically chunks components by route
+- **Lazy Loading**: All page components use React.lazy() with Suspense
+- **Redux Selectors**: Use Reselect for memoized selectors (prevents unnecessary re-renders)
+- **Image Optimization**: Cloudinary URLs with transformations (w_300,q_80)
+- **CSS-in-JS**: Tailwind's PurgeCSS removes unused styles in production
+
+### Database Optimization
+```javascript
+// Recommended indexes beyond defaults:
+db.vehicles.createIndex({ location: "2dsphere" })
+db.vehicles.createIndex({ "location.city": 1 })
+db.bookings.createIndex({ user: 1, status: 1 })
+db.bookings.createIndex({ vehicle: 1, startDate: 1, endDate: 1 })
+```
+
+---
+
 ## Deployment
 
 ### Frontend — Vercel / Netlify
@@ -557,6 +675,78 @@ For other providers (Railway, Fly.io, etc.):
 cd backend
 npm start         # production start command
 ```
+
+---
+
+## 🐛 Troubleshooting
+
+### Backend Issues
+
+**"connect ECONNREFUSED 127.0.0.1:27017"**
+- MongoDB is not running or not accessible
+- **Solution**: Check MongoDB connection string in `.env`. Use `node check_db.js` to verify.
+
+**"MongoError: authentication failed"**
+- Invalid MongoDB credentials
+- **Solution**: Verify username, password, and connection string in `MONGO_URI`
+
+**"Port 5000 is already in use"**
+- Another process is listening on port 5000
+- **Solution**: `lsof -i :5000` (macOS/Linux) or `netstat -ano | findstr :5000` (Windows), then kill the process
+
+**"PaymentError: Invalid Razorpay credentials"**
+- Razorpay keys are incorrect or expired
+- **Solution**: Regenerate keys from [Razorpay Dashboard](https://dashboard.razorpay.com) and update `.env`
+
+**"Cloudinary upload fails silently"**
+- Missing or incorrect Cloudinary API credentials
+- **Solution**: Verify `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`
+
+**"Google OAuth not working"**
+- OAuth callback URL mismatch or expired credentials
+- **Solution**: Verify `GOOGLE_CALLBACK_URL` matches exactly in Google Cloud Console and `.env`
+
+### Frontend Issues
+
+**"Vite HMR connection error"**
+- Vite dev server is not running or not accessible
+- **Solution**: Ensure `npm run dev` is running in the frontend directory and check if port 5173 is available
+
+**"CORS error when calling API"**
+- Backend CORS configuration is too restrictive
+- **Solution**: Verify `CLIENT_URL` in backend `.env` includes frontend port (e.g., `http://localhost:5173`)
+
+**"Token refresh loop / infinite 401 errors"**
+- Refresh token is expired or corrupted
+- **Solution**: Clear browser cookies, clear Redux state, and log in again. Use `node check_db.js` to verify MongoDB connectivity.
+
+**"Redux state not persisting after refresh"**
+- Session restore endpoint is failing
+- **Solution**: Check that `POST /api/auth/refresh` and `GET /api/auth/me` are working using Postman
+
+**"Tailwind styles not applying in production build**
+- PurgeCSS is removing used classes
+- **Solution**: Check `vite.config.js` safelist configuration for dynamic classes
+
+### Common Setup Mistakes
+
+| Issue | Cause | Fix |
+|---|---|---|
+| Env variables undefined | .env file not created or incorrect path | Copy `.env.example` → `.env` and fill values |
+| Auth fails | JWT secrets too short | Use 32+ character random strings for JWT secrets |
+| Booking validation fails | Date format mismatch | Ensure dates are in `YYYY-MM-DD` format (ISO 8601) |
+| Email not sending | SMTP credentials wrong | Test using `node -e "require('./src/config/mail.js')"` |
+| Images not uploading | Cloudinary rate limit exceeded | Wait 1 hour or upgrade Cloudinary plan |
+
+---
+
+## 💡 Tips for Development
+
+- **Use Postman**: Import API collection from `backend/postman-collection.json` (create if needed)
+- **Browser DevTools**: Redux DevTools extension helps debug state changes
+- **VS Code Extensions**: Install ESLint, Prettier, and Thunder Client for API testing
+- **MongoDB Compass**: Visual tool to inspect documents and create indexes
+- **Nodemon**: Auto-restarts backend on file changes (included in `npm run dev`)
 
 ---
 
