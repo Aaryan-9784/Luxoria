@@ -103,7 +103,7 @@ export default function Navbar() {
               </span>
               {isAuthenticated && user?.role && (
                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-accent mt-1">
-                  {user.role === 'admin' ? 'Admin' : user.role === 'vendor' ? 'Partner' : 'Client'}
+                  {user.role === 'admin' ? 'Admin Workspace' : user.role === 'vendor' ? 'Partner Workspace' : 'Client Workspace'}
                 </span>
               )}
             </div>

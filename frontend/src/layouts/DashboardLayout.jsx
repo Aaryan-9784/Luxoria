@@ -96,7 +96,7 @@ export default function DashboardLayout() {
               LUXORIA
             </span>
             <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">
-              Client
+              Client Workspace
             </span>
           </motion.div>
         )}

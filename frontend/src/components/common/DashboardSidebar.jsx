@@ -72,7 +72,7 @@ export default function DashboardSidebar() {
             <div className="flex flex-col justify-center items-start overflow-hidden whitespace-nowrap">
               <span className="text-[20px] font-serif tracking-[0.12em] text-primary leading-none font-bold">LUXORIA</span>
               <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-accent mt-1">
-                {user?.role === 'admin' ? 'Admin' : user?.role === 'vendor' ? 'Partner' : 'Client'}
+                {user?.role === 'admin' ? 'Admin Workspace' : user?.role === 'vendor' ? 'Partner Workspace' : 'Client Workspace'}
               </span>
             </div>
           </NavLink>
@@ -121,7 +121,7 @@ export default function DashboardSidebar() {
             <div className="flex-1 min-w-0">
               <p className="text-body-sm font-semibold text-primary truncate">{user?.name}</p>
               <p className="text-caption text-muted truncate capitalize">
-                {user?.role === 'admin' ? 'Admin' : user?.role === 'vendor' ? 'Partner' : 'Client'}
+                {user?.role === 'admin' ? 'Admin Workspace' : user?.role === 'vendor' ? 'Partner Workspace' : 'Client Workspace'}
               </p>
             </div>
           </div>

@@ -81,7 +81,7 @@ export default function VendorDashboardLayout() {
         {!collapsed && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col justify-center items-start overflow-hidden whitespace-nowrap">
             <span className="text-[22px] font-serif tracking-[0.12em] text-[#000000] leading-none font-bold" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>LUXORIA</span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">Partner</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">Partner Workspace</span>
           </motion.div>
         )}
       </Link>
