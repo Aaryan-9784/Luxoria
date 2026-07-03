@@ -135,7 +135,8 @@ export default function FeaturedShowcase() {
 
   const handleWishlist = (vehicleId) => {
     if (!isAuthenticated) return;
-    dispatch(toggleWishlist(vehicleId)).then((result) => {
+    const vehicleObj = FEATURED_VEHICLES.find(v => String(v.id) === String(vehicleId));
+    dispatch(toggleWishlist({ vehicleId, vehicle: vehicleObj })).then((result) => {
       if (toggleWishlist.fulfilled.match(result) && result.payload.action === 'added') {
         dispatch(fetchWishlist());
       }

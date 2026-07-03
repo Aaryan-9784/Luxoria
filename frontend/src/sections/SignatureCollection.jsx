@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import LuxuryVehicleCard from '@/pages/vehicles/components/LuxuryVehicleCard';
-import { fetchFeaturedVehicles } from '@/redux/slices/vehicleSlice';
+import { fetchFeaturedVehicles, setQuickView, addToCompare } from '@/redux/slices/vehicleSlice';
+import { toggleWishlist, fetchWishlist } from '@/redux/slices/dashboardSlice';
 import { HOME_FEATURED_VEHICLES } from './FeaturedVehicles';
 
 /**
@@ -31,7 +32,19 @@ function normaliseVehicle(v) {
 
 export default function SignatureCollection() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { featuredVehicles, loading } = useSelector((state) => state.vehicle);
+  const { wishlist: dashboardWishlist } = useSelector((state) => state.dashboard);
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  // Build a Set of wishlisted vehicle IDs for O(1) lookup
+  const wishlistedIds = React.useMemo(() => {
+    return new Set(
+      dashboardWishlist
+        .map(w => w.vehicle?._id || w.vehicle?.id || w.vehicleId)
+        .filter(Boolean)
+    );
+  }, [dashboardWishlist]);
 
   useEffect(() => {
     if (featuredVehicles.length === 0) {
@@ -39,9 +52,41 @@ export default function SignatureCollection() {
     }
   }, [dispatch, featuredVehicles.length]);
 
+  // Load wishlist from API when user is authenticated
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchWishlist());
+    }
+  }, [dispatch, isAuthenticated]);
+
   // Use live data if available, otherwise fall back to static mock data
   const rawVehicles = featuredVehicles.length > 0 ? featuredVehicles : HOME_FEATURED_VEHICLES;
   const vehicles = rawVehicles.slice(0, 6).map(normaliseVehicle);
+
+  /* ── Handlers ── */
+  const handleWishlistToggle = (vehicleId) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    const vehicleObj = vehicles.find(v => v.id === vehicleId);
+    dispatch(toggleWishlist({ vehicleId, vehicle: vehicleObj })).then((result) => {
+      if (toggleWishlist.fulfilled.match(result) && result.payload.action === 'added') {
+        dispatch(fetchWishlist());
+      }
+    });
+  };
+
+  const handleShare = async (vehicle) => {
+    const url = `${window.location.origin}/vehicles/${vehicle.id}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `${vehicle.brand} ${vehicle.name}`, text: `Check out this ${vehicle.brand} ${vehicle.name} on Luxoria!`, url });
+      } catch {}
+    } else {
+      navigator.clipboard?.writeText(url);
+    }
+  };
 
   return (
     <section className="py-[140px] bg-background">
@@ -106,7 +151,14 @@ export default function SignatureCollection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
               >
-                <LuxuryVehicleCard vehicle={vehicle} />
+                <LuxuryVehicleCard
+                  vehicle={vehicle}
+                  isWishlisted={wishlistedIds.has(vehicle.id)}
+                  onWishlist={handleWishlistToggle}
+                  onQuickView={(v) => dispatch(setQuickView(v))}
+                  onCompare={(v) => dispatch(addToCompare(v))}
+                  onShare={handleShare}
+                />
               </motion.div>
             ))}
           </div>

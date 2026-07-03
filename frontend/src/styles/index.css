@@ -150,6 +150,12 @@
     overflow-x: hidden;
   }
 
+  /* Ensure the app root has a non-static position so Framer Motion
+     can correctly calculate viewport/scroll offsets for whileInView */
+  #root {
+    position: relative;
+  }
+
   ::selection {
     background-color: var(--accent);
     color: white;

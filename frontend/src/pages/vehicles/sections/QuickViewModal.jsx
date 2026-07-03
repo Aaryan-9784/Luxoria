@@ -24,7 +24,7 @@ export default function QuickViewModal() {
 
   const handleWishlistToggle = () => {
     if (!isAuthenticated || !vehicle) return;
-    dispatch(toggleWishlist(vehicle.id)).then((result) => {
+    dispatch(toggleWishlist({ vehicleId: vehicle.id, vehicle })).then((result) => {
       if (toggleWishlist.fulfilled.match(result) && result.payload.action === 'added') {
         dispatch(fetchWishlist());
       }

@@ -8,6 +8,8 @@ import LuxuryWhyChooseUs from '@/sections/LuxuryWhyChooseUs';
 import LuxuryStorytelling from '@/sections/LuxuryStorytelling';
 import LuxuryTestimonials from '@/sections/LuxuryTestimonials';
 import FinalCTA from '@/sections/FinalCTA';
+import QuickViewModal from '@/pages/vehicles/sections/QuickViewModal';
+import CompareVehicles from '@/pages/vehicles/sections/CompareVehicles';
 
 export default function HomePage() {
   return (
@@ -29,6 +31,10 @@ export default function HomePage() {
 
       {/* 6. Final CTA */}
       <FinalCTA />
+
+      {/* Home page overlays for signature fleet actions */}
+      <QuickViewModal />
+      <CompareVehicles />
     </motion.div>
   );
 }

@@ -7,7 +7,28 @@ const WISHLIST_KEY = 'luxoria_wishlist_items';
 const loadWishlistFromStorage = () => {
   try {
     const raw = localStorage.getItem(WISHLIST_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (raw) return JSON.parse(raw);
+
+    // Migrate legacy simple ID list stored by `vehicleSlice` under 'luxoria_wishlist'
+    const legacy = localStorage.getItem('luxoria_wishlist');
+    if (legacy) {
+      try {
+        const ids = JSON.parse(legacy);
+        if (Array.isArray(ids)) {
+          const migrated = ids.map(id => ({
+            _id: `wishlist-${id}`,
+            vehicleId: String(id),
+            vehicle: { _id: String(id), id: String(id), name: '', brand: '', pricePerDay: 0 },
+            user: null,
+            createdAt: new Date().toISOString(),
+          }));
+          // persist migrated format
+          localStorage.setItem(WISHLIST_KEY, JSON.stringify(migrated));
+          return migrated;
+        }
+      } catch {}
+    }
+    return [];
   } catch {
     return [];
   }
@@ -58,8 +79,10 @@ export const fetchWishlist = createAsyncThunk('dashboard/fetchWishlist', async (
 
 export const toggleWishlist = createAsyncThunk('dashboard/toggleWishlist', async (payload, { getState, rejectWithValue }) => {
   try {
-    const vehicleId = typeof payload === 'string' ? payload : payload.vehicleId;
-    const vehicleObj = typeof payload === 'object' ? payload.vehicle : null;
+    const vehicleId = (typeof payload === 'string' || typeof payload === 'number')
+      ? String(payload)
+      : (payload && (payload.vehicleId || payload.vehicle?._id || payload.vehicle?.id)) || null;
+    const vehicleObj = payload && typeof payload === 'object' ? payload.vehicle || null : null;
 
     const { wishlist } = getState().dashboard;
     const alreadySaved = wishlist.some(

@@ -85,15 +85,15 @@ export default function LuxuryVehicleCard({
         <img
           src={image || (vehicle.images?.length > 0 ? vehicle.images[0].url : 'https://images.unsplash.com/photo-1503376760367-11ea234057a6?auto=format&fit=crop&q=80&w=800')}
           alt={`${brand} ${name}`}
-          className="w-full h-full object-cover transition-transform duration-[1s] ease-out group-hover:scale-[1.06]"
+          className="w-full h-full object-cover transition-transform duration-[1s] ease-out group-hover:scale-[1.06] pointer-events-none"
           loading="lazy"
         />
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
 
         {/* Top Badges */}
-        <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
+        <div className="absolute top-4 left-4 flex items-center gap-2 z-10 pointer-events-none">
 
           {category && (
             <span className="px-3 py-1 bg-black/50 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-[0.12em] rounded-full border border-white/10 capitalize">
@@ -103,7 +103,7 @@ export default function LuxuryVehicleCard({
         </div>
 
         {/* Floating Actions (reveal on hover) */}
-        <div className="absolute top-4 right-4 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out z-20">
+        <div className="absolute top-4 right-4 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out z-20 pointer-events-auto">
           {/* Wishlist — always shown */}
           <button
             onClick={handleWishlist}
@@ -155,7 +155,7 @@ export default function LuxuryVehicleCard({
         </div>
 
         {/* Bottom Image Info */}
-        <div className="absolute bottom-4 left-4 right-4 z-10">
+        <div className="absolute bottom-4 left-4 right-4 z-10 pointer-events-none">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 text-[10px] text-white/70 font-medium">
               {horsepower && (

@@ -37,19 +37,19 @@ export default function VehicleCard({
         <img
           src={image || 'https://images.unsplash.com/photo-1503376760367-11ea234057a6?auto=format&fit=crop&q=80&w=800'}
           alt={name}
-          className="w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-[1.05]"
+          className="w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-[1.05] pointer-events-none"
           loading="lazy"
         />
 
         {/* Premium Vignette / Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
         {/* Top Row — Category Badge (Left) & Premium Badge (Right) */}
         {/* We can hide category badge if not needed, but keeping it top-left as in original or removed. Image doesn't show left badge, only right badge. Let's keep right badge. */}
 
 
         {/* Top Right — Floating Actions (Hover Reveal - keep below badge or left) */}
-        <div className="absolute top-16 right-5 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out z-30">
+        <div className="absolute top-16 right-5 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out z-30 pointer-events-auto">
           {onToggleFavorite && (
             <button
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite(id); }}
@@ -64,7 +64,7 @@ export default function VehicleCard({
         </div>
 
         {/* Bottom Content within Image */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 flex flex-col z-20">
+        <div className="absolute bottom-0 left-0 right-0 p-8 flex flex-col z-20 pointer-events-auto">
           
           <div className="mb-4">
             <span className="text-accent text-[11px] font-bold tracking-[0.2em] uppercase block mb-1 drop-shadow-md">
