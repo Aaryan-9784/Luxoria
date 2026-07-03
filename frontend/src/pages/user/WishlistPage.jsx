@@ -21,6 +21,7 @@ export default function WishlistPage() {
 
   useEffect(() => {
     if (!accessToken) return;
+    // Only fetch from API — the slice will merge with local mock items automatically
     dispatch(fetchWishlist());
   }, [dispatch, accessToken]);
 
@@ -32,7 +33,8 @@ export default function WishlistPage() {
   };
 
   const processedWishlist = useMemo(() => {
-    let result = wishlist.filter(item => item.vehicle !== null);
+    // Include items that have a vehicle object OR a vehicleId (local mock items)
+    let result = wishlist.filter(item => item.vehicle || item.vehicleId);
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       result = result.filter(item =>
@@ -84,7 +86,7 @@ export default function WishlistPage() {
             Saved Vehicles
           </h1>
           <p className="text-[#666666] text-sm font-medium tracking-wide">
-            Your curated collection of {wishlist.filter(w => w.vehicle).length} luxury experience{wishlist.filter(w => w.vehicle).length !== 1 ? 's' : ''}.
+            Your curated collection of {wishlist.filter(w => w.vehicle || w.vehicleId).length} luxury experience{wishlist.filter(w => w.vehicle || w.vehicleId).length !== 1 ? 's' : ''}.
           </p>
         </div>
 
@@ -122,7 +124,7 @@ export default function WishlistPage() {
       </div>
 
       {/* Stats Bar */}
-      {wishlist.filter(w => w.vehicle).length > 0 && (
+      {wishlist.filter(w => w.vehicle || w.vehicleId).length > 0 && (
         <div className="flex flex-wrap items-center gap-6 px-6 py-4 bg-white border border-[#ECECEC] rounded-2xl shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#0F0F0F] flex items-center justify-center shrink-0">
@@ -147,7 +149,7 @@ export default function WishlistPage() {
       )}
 
       {/* Empty State */}
-      {wishlist.filter(w => w.vehicle).length === 0 ? (
+      {wishlist.filter(w => w.vehicle || w.vehicleId).length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-4 bg-white border border-dashed border-[#ECECEC] rounded-2xl text-center">
           <div className="w-20 h-20 rounded-full bg-[#F5F5F5] flex items-center justify-center mb-6">
             <HeartOff className="w-9 h-9 text-[#C9A75D] opacity-60" />
@@ -176,11 +178,14 @@ export default function WishlistPage() {
           <AnimatePresence mode="popLayout">
             {processedWishlist.map((item) => {
               const v = item.vehicle;
-              const imageUrl = v?.images?.[0]?.url || v?.images?.[0] || null;
-              const isRemoving = removingId === v?._id;
+              const vehicleId = v?._id || v?.id || item.vehicleId;
+              // Support both images array (backend) and single image string (mock data)
+              const imageUrl = v?.images?.[0]?.url || v?.images?.[0] || v?.image || null;
+              const isRemoving = removingId === vehicleId;
+              const displayRating = typeof v?.rating === 'object' ? v?.rating?.average : v?.rating;
               return (
                 <motion.div
-                  key={item._id}
+                  key={item._id || vehicleId}
                   layout
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: isRemoving ? 0.4 : 1, scale: 1 }}
@@ -207,7 +212,7 @@ export default function WishlistPage() {
                     {/* Remove button — top right */}
                     <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button
-                        onClick={() => setConfirmId(v?._id)}
+                        onClick={() => setConfirmId(vehicleId)}
                         disabled={isRemoving}
                         className="w-10 h-10 bg-white/90 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626] hover:text-white transition-all shadow-lg hover:scale-110 disabled:opacity-50"
                         title="Remove from wishlist"
@@ -221,10 +226,12 @@ export default function WishlistPage() {
                     </div>
 
                     {/* Rating badge — top left */}
-                    {v?.rating > 0 && (
+                    {displayRating > 0 && (
                       <div className="absolute top-4 left-4 z-10 flex items-center gap-1 px-2.5 py-1 bg-black/50 backdrop-blur-md rounded-full border border-white/10">
                         <Star className="w-3 h-3 text-[#C9A75D] fill-[#C9A75D]" />
-                        <span className="text-[11px] font-bold text-white">{v.rating.toFixed(1)}</span>
+                        <span className="text-[11px] font-bold text-white">
+                          {typeof displayRating === 'number' ? displayRating.toFixed(1) : displayRating}
+                        </span>
                       </div>
                     )}
 
@@ -246,7 +253,7 @@ export default function WishlistPage() {
 
                         {/* Book Now arrow */}
                         <button
-                          onClick={() => navigate(`/vehicles/${v?._id}`)}
+                          onClick={() => navigate(`/vehicles/${vehicleId}`)}
                           className="w-12 h-12 rounded-full bg-[#C9A75D] flex items-center justify-center hover:bg-[#b8963e] hover:scale-110 transition-all shadow-[0_0_20px_rgba(201,167,93,0.4)] opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 duration-300"
                           title="View & Book"
                         >

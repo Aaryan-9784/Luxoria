@@ -19,14 +19,13 @@ import LuxuryCTA from './sections/LuxuryCTA';
 // Overlays
 import QuickViewModal from './sections/QuickViewModal';
 import CompareVehicles from './sections/CompareVehicles';
-import { SlidersHorizontal } from 'lucide-react';
 
 export default function VehicleListPage() {
   const dispatch = useDispatch();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  // Scroll Progress
-  const { scrollYProgress } = useScroll();
+  // Scroll Progress — track the window, not a container div
+  const { scrollYProgress } = useScroll({ layoutEffect: false });
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   useEffect(() => {
@@ -43,7 +42,7 @@ export default function VehicleListPage() {
   }, [dispatch]);
 
   return (
-    <motion.div {...pageTransition} className="min-h-screen bg-background pb-0 relative">
+    <motion.div {...pageTransition} className="min-h-screen bg-background pb-0 relative" style={{ position: 'relative' }}>
       {/* Top scroll progress bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-accent origin-left z-[100]"
@@ -60,27 +59,16 @@ export default function VehicleListPage() {
 
       {/* Main Content Area Container */}
       <div className="bg-surface/30 border-t border-border/50 pb-20">
-        
-        {/* Mobile Filter Toggle Button (Sticky) */}
-        <div className="lg:hidden sticky top-[72px] z-40 bg-background/90 backdrop-blur-md border-b border-border/50 py-3 px-6 shadow-sm">
-          <button 
-            onClick={() => setMobileFilterOpen(true)}
-            className="w-full flex items-center justify-center gap-2 btn btn-outline rounded-xl py-3 border-border/80 bg-background shadow-sm hover:shadow-md hover:border-primary transition-all"
-          >
-            <SlidersHorizontal className="w-4 h-4" /> 
-            <span className="text-sm font-bold">Filters & Sort</span>
-          </button>
-        </div>
 
         <div className="container-luxe py-12 lg:py-16">
-          <div className="flex flex-col relative items-start w-full">
-            {/* 4. Filter Panel */}
+          <div className="flex flex-row relative items-start w-full">
+            {/* 4. Filter Panel (renders its own desktop sidebar + mobile drawer) */}
             <AdvancedFilterPanel mobileOpen={mobileFilterOpen} setMobileOpen={setMobileFilterOpen} />
 
             {/* Main Grid Area */}
             <div className="flex-1 min-w-0 flex flex-col w-full">
               {/* 5. Grid */}
-              <PremiumVehicleGrid onOpenFilters={() => setMobileFilterOpen(true)} />
+              <PremiumVehicleGrid />
               
               {/* 6. Pagination */}
               <VehiclePaginationNew />

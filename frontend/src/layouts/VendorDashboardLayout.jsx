@@ -81,7 +81,7 @@ export default function VendorDashboardLayout() {
         {!collapsed && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col justify-center items-start overflow-hidden whitespace-nowrap">
             <span className="text-[22px] font-serif tracking-[0.12em] text-[#000000] leading-none font-bold" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>LUXORIA</span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">Partner Workspace</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">Partner</span>
           </motion.div>
         )}
       </Link>
@@ -250,7 +250,7 @@ export default function VendorDashboardLayout() {
               {/* Workspace badge */}
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F7F7] border border-[#EBEBEB]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C9A75D]" />
-                <span className="text-[10px] font-bold text-[#555555] tracking-[0.18em] uppercase">Partner Workspace</span>
+                <span className="text-[10px] font-bold text-[#555555] tracking-[0.18em] uppercase">Partner</span>
               </span>
 
               {/* Separator */}
@@ -279,9 +279,9 @@ export default function VendorDashboardLayout() {
                 showOnline
               />
               
-              <div className="text-left hidden sm:block">
+              <div className="text-center hidden sm:block">
                 <p className="text-[13px] font-bold text-[#0F0F0F] leading-tight group-hover:text-[#C9A75D] transition-colors">{user?.name || 'Partner Name'}</p>
-                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5 text-center">Partner</p>
+                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5">Partner</p>
               </div>
             </button>
 

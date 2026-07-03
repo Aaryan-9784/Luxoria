@@ -279,9 +279,9 @@ export default function AdminDashboardLayout() {
                 showOnline
               />
               
-              <div className="text-left hidden sm:block">
+              <div className="text-center hidden sm:block">
                 <p className="text-[13px] font-bold text-[#0F0F0F] leading-tight group-hover:text-[#C9A75D] transition-colors">{user?.name || 'Administrator'}</p>
-                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5 text-center">Admin</p>
+                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5">Admin</p>
               </div>
             </button>
 

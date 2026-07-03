@@ -27,7 +27,7 @@ const initialState = {
     maxPrice: '',
     seats: '',
   },
-  sortBy: '-createdAt', // Default sorting
+  sortBy: 'featured', // Default sorting
   viewMode: 'grid', // 'grid' | 'list'
 
   // ── New: Vehicles Page Enhanced State ──
@@ -205,8 +205,111 @@ export const vehicleSlice = createSlice({
       })
       .addCase(fetchVehicles.fulfilled, (state, action) => {
         state.loading = false;
-        state.vehicles = action.payload.data;
-        state.pagination = action.payload.pagination;
+        // Check if backend returned real data
+        const backendVehicles = action.payload.data || [];
+        const backendPagination = action.payload.pagination || { page: 1, limit: 12, total: 0, pages: 0 };
+        
+        if (backendVehicles.length > 0) {
+          // Use real backend data
+          state.vehicles = backendVehicles;
+          state.pagination = backendPagination;
+        } else {
+          // Fallback to filtered mock data when backend is empty
+          let filteredVehicles = [...FEATURED_VEHICLES];
+          const { filters } = state;
+          
+          // Client-side filtering for mock data
+          if (filters.search) {
+            const searchLower = filters.search.toLowerCase();
+            filteredVehicles = filteredVehicles.filter(v =>
+              v.name?.toLowerCase().includes(searchLower) ||
+              v.brand?.toLowerCase().includes(searchLower) ||
+              v.model?.toLowerCase().includes(searchLower)
+            );
+          }
+          
+          if (filters.brand) {
+            filteredVehicles = filteredVehicles.filter(v =>
+              v.brand?.toLowerCase() === filters.brand.toLowerCase()
+            );
+          }
+          
+          if (filters.category) {
+            filteredVehicles = filteredVehicles.filter(v =>
+              v.category?.toLowerCase() === filters.category.toLowerCase()
+            );
+          }
+          
+          if (filters.city) {
+            filteredVehicles = filteredVehicles.filter(v =>
+              v.location?.toLowerCase().includes(filters.city.toLowerCase()) ||
+              v.city?.toLowerCase().includes(filters.city.toLowerCase())
+            );
+          }
+          
+          if (filters.transmission) {
+            filteredVehicles = filteredVehicles.filter(v =>
+              v.transmission?.toLowerCase() === filters.transmission.toLowerCase()
+            );
+          }
+          
+          if (filters.fuelType) {
+            filteredVehicles = filteredVehicles.filter(v =>
+              v.fuelType?.toLowerCase() === filters.fuelType.toLowerCase()
+            );
+          }
+          
+          if (filters.seats) {
+            filteredVehicles = filteredVehicles.filter(v =>
+              Number(v.seats) >= Number(filters.seats)
+            );
+          }
+          
+          if (filters.minPrice) {
+            filteredVehicles = filteredVehicles.filter(v =>
+              Number(v.pricePerDay) >= Number(filters.minPrice)
+            );
+          }
+          
+          if (filters.maxPrice) {
+            filteredVehicles = filteredVehicles.filter(v =>
+              Number(v.pricePerDay) <= Number(filters.maxPrice)
+            );
+          }
+          
+          // Client-side sorting
+          const sortBy = state.sortBy;
+          if (sortBy === 'featured') {
+            // Keep default order for featured
+          } else if (sortBy === '-createdAt') {
+            // Sort by newest first (descending date)
+            filteredVehicles.sort((a, b) => {
+              const dateA = new Date(a.createdAt || 0);
+              const dateB = new Date(b.createdAt || 0);
+              return dateB - dateA;
+            });
+          } else if (sortBy === '-bookingCount') {
+            // Sort by most popular (highest booking count)
+            filteredVehicles.sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0));
+          } else if (sortBy === '-rating.average') {
+            // Sort by highest rated
+            filteredVehicles.sort((a, b) => (b.rating?.average || b.rating || 0) - (a.rating?.average || a.rating || 0));
+          } else if (sortBy === 'pricePerDay') {
+            // Sort by price low to high
+            filteredVehicles.sort((a, b) => (a.pricePerDay || 0) - (b.pricePerDay || 0));
+          } else if (sortBy === '-pricePerDay') {
+            // Sort by price high to low
+            filteredVehicles.sort((a, b) => (b.pricePerDay || 0) - (a.pricePerDay || 0));
+          }
+          
+          state.vehicles = filteredVehicles;
+          state.pagination = {
+            page: 1,
+            limit: filteredVehicles.length,
+            total: filteredVehicles.length,
+            pages: 1,
+          };
+        }
       })
       .addCase(fetchVehicles.rejected, (state, action) => {
         state.loading = false;

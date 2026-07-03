@@ -6,11 +6,11 @@ import { toggleWishlist, fetchWishlist } from '@/redux/slices/dashboardSlice';
 import LuxuryVehicleCard from '../components/LuxuryVehicleCard';
 import Skeleton from '@/components/ui/Skeleton';
 import CustomSelect from '@/components/ui/CustomSelect';
-import { LayoutGrid, List, SearchX, X, AlertCircle, SlidersHorizontal } from 'lucide-react';
+import { LayoutGrid, List, SearchX, X, AlertCircle } from 'lucide-react';
 import { staggerContainer, staggerItem, revealOnScroll } from '@/lib/motion';
 import { SORT_OPTIONS, FEATURED_VEHICLES } from '../data/vehiclesPageData';
 
-export default function PremiumVehicleGrid({ onOpenFilters }) {
+export default function PremiumVehicleGrid() {
   const dispatch = useDispatch();
   const { vehicles, loading, error, filters, sortBy, viewMode, pagination } = useSelector(state => state.vehicle);
   const { wishlist: dashboardWishlist } = useSelector(state => state.dashboard);
@@ -19,7 +19,9 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
   // Build a Set of wishlisted vehicle IDs for O(1) lookup
   const wishlistedIds = React.useMemo(() => {
     return new Set(
-      dashboardWishlist.map(w => w.vehicle?._id || w.vehicle?.id || w.vehicleId).filter(Boolean)
+      dashboardWishlist
+        .map(w => w.vehicle?._id || w.vehicle?.id || w.vehicleId)
+        .filter(Boolean)
     );
   }, [dashboardWishlist]);
 
@@ -34,9 +36,15 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
     if (!isAuthenticated) {
       return;
     }
-    dispatch(toggleWishlist(vehicleId)).then((result) => {
-      // After adding, refetch to get the populated vehicle data for the wishlist page
-      if (toggleWishlist.fulfilled.match(result) && result.payload.action === 'added') {
+    // Find the full vehicle object
+    const vehicleObj = vehicles.find(v => (v.id || v._id) === vehicleId) || 
+                       FEATURED_VEHICLES.find(v => v.id === vehicleId);
+    
+    dispatch(toggleWishlist({ vehicleId, vehicle: vehicleObj })).then((result) => {
+      // After adding real backend vehicles, refetch to get the populated data
+      if (toggleWishlist.fulfilled.match(result) && 
+          result.payload.action === 'added' && 
+          !result.payload.mock) {
         dispatch(fetchWishlist());
       }
     });
@@ -73,51 +81,49 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
         <div>
           <h3 className="text-h3 text-primary mb-1">Vehicle Collection</h3>
           <p className="text-body-sm text-secondary">
-            Showing <span className="font-bold text-accent">{pagination.total || 0}</span> extraordinary vehicles
+            Showing <span className="font-bold text-accent">{pagination.total || vehicles.length || 0}</span> extraordinary vehicles
           </p>
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          {/* Filters Button (Desktop) */}
-          <button
-            onClick={onOpenFilters}
-            className="hidden lg:flex items-center gap-2 bg-surface border border-border text-primary hover:border-primary px-4 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm hover:shadow-md"
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-            Filters
-          </button>
-
           {/* Sort — visible on desktop, hidden on mobile (handled by filter panel) */}
-          <div className="hidden lg:block min-w-[180px]">
+          <div className="hidden lg:block min-w-[220px]">
             <CustomSelect
               value={sortBy}
               onChange={handleSort}
               options={SORT_OPTIONS}
-              className="min-w-[180px]"
+              placeholder="Sort vehicles"
+              className="min-w-[220px]"
             />
           </div>
 
           {/* View Toggles */}
-          <div className="flex bg-surface border border-border rounded-xl p-1">
+          <div className="flex bg-surface border border-border rounded-xl p-1 gap-1">
             <button
+              type="button"
               onClick={() => dispatch(setViewMode('grid'))}
-              className={`p-2 rounded-lg transition-all duration-300 ${
+              aria-label="Grid view"
+              aria-pressed={viewMode === 'grid'}
+              className={`p-2.5 rounded-lg transition-all duration-300 ${
                 viewMode === 'grid'
-                  ? 'bg-background shadow-sm text-primary'
-                  : 'text-muted hover:text-primary'
+                  ? 'bg-primary text-white shadow-md'
+                  : 'text-muted hover:text-primary hover:bg-background'
               }`}
             >
-              <LayoutGrid className="w-4 h-4" />
+              <LayoutGrid className="w-4.5 h-4.5" />
             </button>
             <button
+              type="button"
               onClick={() => dispatch(setViewMode('list'))}
-              className={`p-2 rounded-lg transition-all duration-300 ${
+              aria-label="List view"
+              aria-pressed={viewMode === 'list'}
+              className={`p-2.5 rounded-lg transition-all duration-300 ${
                 viewMode === 'list'
-                  ? 'bg-background shadow-sm text-primary'
-                  : 'text-muted hover:text-primary'
+                  ? 'bg-primary text-white shadow-md'
+                  : 'text-muted hover:text-primary hover:bg-background'
               }`}
             >
-              <List className="w-4 h-4" />
+              <List className="w-4.5 h-4.5" />
             </button>
           </div>
         </div>
@@ -199,7 +205,7 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
             animate="animate"
             variants={staggerContainer}
             layout
-            className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 relative"
           >
             <AnimatePresence>
               {FEATURED_VEHICLES.slice(0, 6).map((vehicle) => (
@@ -211,11 +217,13 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
+                  className="relative"
                 >
                   <div className={viewMode === 'list' ? 'flex gap-6 items-center' : ''}>
                     <LuxuryVehicleCard
                       vehicle={vehicle}
-                      isWishlisted={false}
+                      isWishlisted={wishlistedIds.has(vehicle.id)}
+                      onWishlist={isAuthenticated ? handleWishlistToggle : undefined}
                       onQuickView={(v) => dispatch(setQuickView(v))}
                       onCompare={(v) => dispatch(addToCompare(v))}
                       onShare={handleShare}
@@ -249,7 +257,7 @@ export default function PremiumVehicleGrid({ onOpenFilters }) {
           animate="animate"
           variants={staggerContainer}
           layout
-          className={`grid gap-6 ${
+          className={`grid gap-6 relative ${
             viewMode === 'grid'
               ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
               : 'grid-cols-1 max-w-4xl'

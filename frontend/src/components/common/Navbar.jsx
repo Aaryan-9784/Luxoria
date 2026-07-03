@@ -22,6 +22,7 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [wishlistSeen, setWishlistSeen] = useState(false);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.dashboard);
   const dispatch = useDispatch();
@@ -40,9 +41,30 @@ export default function Navbar() {
     }
   }, [dispatch, isAuthenticated]);
 
+  // Reset "seen" when new items are added
+  const wishlistCount = wishlist?.filter(w => w.vehicle)?.length || 0;
+  const prevCountRef = React.useRef(wishlistCount);
+  useEffect(() => {
+    if (wishlistCount > prevCountRef.current) {
+      setWishlistSeen(false); // new item added — show dot again
+    }
+    prevCountRef.current = wishlistCount;
+  }, [wishlistCount]);
+
+  const handleWishlistOpen = () => {
+    setWishlistSeen(true); // mark as seen when dropdown opens
+  };
+
   const handleRemoveWishlist = async (e, vehicleId) => {
+    e.preventDefault();
     e.stopPropagation();
     await dispatch(removeFromWishlist(vehicleId));
+  };
+
+  const handleViewFullWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate('/wishlist');
   };
 
   const handleLogout = () => {
@@ -81,7 +103,7 @@ export default function Navbar() {
               </span>
               {isAuthenticated && user?.role && (
                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-accent mt-1">
-                  {user.role === 'admin' ? 'Admin Workspace' : user.role === 'vendor' ? 'Partner Workspace' : 'User Workspace'}
+                  {user.role === 'admin' ? 'Admin' : user.role === 'vendor' ? 'Partner' : 'Client'}
                 </span>
               )}
             </div>
@@ -119,10 +141,11 @@ export default function Navbar() {
                 <Dropdown
                   align="right"
                   className="w-[320px] p-0"
+                  onOpen={handleWishlistOpen}
                   trigger={
                     <button className="btn-icon relative text-secondary hover:text-error transition-colors hover:bg-surface/50 group">
                       <Heart className="w-5 h-5 group-hover:fill-error/20" />
-                      {wishlist?.filter(w => w.vehicle)?.length > 0 && (
+                      {wishlistCount > 0 && !wishlistSeen && (
                         <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-white shadow-sm" />
                       )}
                     </button>
@@ -131,29 +154,39 @@ export default function Navbar() {
                   <div className="flex items-center justify-between px-4 py-3 border-b border-border" onClick={(e) => e.stopPropagation()}>
                     <h3 className="font-semibold text-primary">My Wishlist</h3>
                     <span className="text-caption bg-surface px-2 py-0.5 rounded-full font-medium text-secondary">
-                      {wishlist?.filter(w => w.vehicle)?.length || 0} Items
+                      {wishlistCount} Items
                     </span>
                   </div>
                   <div className="max-h-[340px] overflow-y-auto">
-                    {wishlist?.filter(item => item.vehicle).length > 0 ? (
+                    {wishlistCount > 0 ? (
                       wishlist.filter(item => item.vehicle).slice(0, 5).map((item) => {
                         const v = item.vehicle;
-                        const name = v.name || `${v.brand || v.make} ${v.model}`;
+                        const vehicleId = v._id || v.id;
+                        const name = v.name || `${v.brand || ''} ${v.model || ''}`.trim();
+                        const imageUrl = v.images?.[0]?.url || v.images?.[0] || v.image || null;
                         return (
-                          <div key={v._id || v.id} className="px-4 py-3 hover:bg-surface/50 cursor-pointer border-b border-border/50 transition-colors flex items-center gap-4" onClick={() => navigate(`/vehicles/${v._id || v.id}`)}>
-                            <div className="w-12 h-10 rounded-lg bg-surface flex-shrink-0 overflow-hidden relative flex items-center justify-center">
-                              {v.images?.[0] ? (
-                                <img src={v.images[0].url || v.images[0]} alt={name} className="w-full h-full object-cover" />
+                          <div
+                            key={vehicleId}
+                            className="px-4 py-3 hover:bg-surface/50 cursor-pointer border-b border-border/50 transition-colors flex items-center gap-4"
+                            onClick={() => navigate(`/vehicles/${vehicleId}`)}
+                          >
+                            <div className="w-12 h-10 rounded-lg bg-surface flex-shrink-0 overflow-hidden flex items-center justify-center">
+                              {imageUrl ? (
+                                <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
                               ) : (
                                 <Car className="w-5 h-5 text-muted" />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-body-sm font-semibold text-primary truncate">{name}</p>
-                              <p className="text-caption text-muted">${v.pricePerDay?.toLocaleString() || v.price?.toLocaleString()} / day</p>
+                              <p className="text-caption text-muted">${v.pricePerDay?.toLocaleString() || v.price?.toLocaleString() || '—'} / day</p>
                             </div>
-                            <button className="text-secondary hover:text-error transition-colors p-1" onClick={(e) => handleRemoveWishlist(e, v._id || v.id)} title="Remove">
-                               <X className="w-4 h-4" />
+                            <button
+                              className="text-secondary hover:text-error transition-colors p-1 shrink-0"
+                              onClick={(e) => handleRemoveWishlist(e, vehicleId)}
+                              title="Remove"
+                            >
+                              <X className="w-4 h-4" />
                             </button>
                           </div>
                         );
@@ -166,12 +199,13 @@ export default function Navbar() {
                     )}
                   </div>
                   <div className="p-2 border-t border-border bg-surface/30">
-                    <button 
-                      onClick={() => navigate('/wishlist')}
-                      className="w-full text-center text-body-sm font-medium text-primary hover:text-accent py-1.5 transition-colors"
+                    <Link
+                      to="/wishlist"
+                      onClick={handleViewFullWishlist}
+                      className="block w-full text-center text-body-sm font-medium text-primary hover:text-accent py-1.5 transition-colors"
                     >
                       View full wishlist
-                    </button>
+                    </Link>
                   </div>
                 </Dropdown>
                 )}
@@ -188,12 +222,12 @@ export default function Navbar() {
                     variant="luxury"
                     showOnline
                   />
-                  <div className="hidden xl:flex flex-col text-left">
+                  <div className="hidden xl:flex flex-col items-center">
                     <span className="text-body-sm font-medium text-primary group-hover:text-accent transition-colors leading-tight">
                       {user?.name}
                     </span>
                     <span className="text-[10px] font-medium text-secondary mt-0.5 uppercase tracking-wider">
-                      {user?.role === 'admin' ? 'Admin Workspace' : user?.role === 'vendor' ? 'Partner Workspace' : 'User Workspace'}
+                      {user?.role === 'admin' ? 'Admin' : user?.role === 'vendor' ? 'Partner' : 'Client'}
                     </span>
                   </div>
                 </div>

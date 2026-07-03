@@ -199,6 +199,8 @@ export const FEATURED_VEHICLES = [
     isAvailable: true,
     badge: 'Editors Choice',
     features: ['Starlight Headliner', 'Bespoke Audio', 'Night Vision', 'Massage Seats', 'Champagne Cooler'],
+    bookingCount: 156,
+    createdAt: '2024-01-15T10:30:00Z',
   },
   {
     id: 'feat-2',
@@ -218,6 +220,8 @@ export const FEATURED_VEHICLES = [
     isAvailable: true,
     badge: 'Most Popular',
     features: ['Carbon Fiber Body', 'Fiorano Package', 'Racing Seats', 'Telemetry System', 'Track Mode'],
+    bookingCount: 284,
+    createdAt: '2024-03-22T14:20:00Z',
   },
   {
     id: 'feat-3',
@@ -237,6 +241,8 @@ export const FEATURED_VEHICLES = [
     isAvailable: true,
     badge: 'Highest Rated',
     features: ['Diamond Knurling', 'Rotating Display', 'Naim Audio', 'Handcrafted Interior', 'All-Wheel Drive'],
+    bookingCount: 47,
+    createdAt: '2024-06-10T09:15:00Z',
   },
   {
     id: 'feat-4',
@@ -256,6 +262,8 @@ export const FEATURED_VEHICLES = [
     isAvailable: true,
     badge: 'Supercar',
     features: ['LDVI System', 'ALA Aero', 'Corsa Mode', 'Carbon Ceramics', 'Performante Kit'],
+    bookingCount: 198,
+    createdAt: '2024-02-08T11:45:00Z',
   },
   {
     id: 'feat-5',
@@ -275,6 +283,8 @@ export const FEATURED_VEHICLES = [
     isAvailable: false,
     badge: 'Iconic',
     features: ['Sport Chrono', 'PCCB Brakes', 'Active Aero', 'Sport Exhaust', 'PDK Transmission'],
+    bookingCount: 312,
+    createdAt: '2023-11-20T16:30:00Z',
   },
   {
     id: 'feat-6',
@@ -294,6 +304,8 @@ export const FEATURED_VEHICLES = [
     isAvailable: true,
     badge: 'Ultra Luxury',
     features: ['Executive Rear Seats', 'Burmester 4D', 'Magic Body Control', 'Rear Entertainment', 'Fragrance System'],
+    bookingCount: 223,
+    createdAt: '2024-04-05T13:00:00Z',
   },
 ];
 

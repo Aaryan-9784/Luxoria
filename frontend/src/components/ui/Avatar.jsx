@@ -83,9 +83,13 @@ export default function Avatar({
     '2xl': '-bottom-1 -right-1',
   };
 
-  const initials = name
-    ? name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
-    : '?';
+  // Show only the first letter of the first word, always uppercase
+  const initials = React.useMemo(() => {
+    if (!name || typeof name !== 'string') return '?';
+    const trimmed = name.trim();
+    if (!trimmed) return '?';
+    return trimmed[0].toUpperCase();
+  }, [name]);
 
   /* ─── LUXURY VARIANT ─────────────────────────────────────── */
   if (variant === 'luxury') {

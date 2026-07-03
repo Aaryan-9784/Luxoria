@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Eye, GitCompareArrows, ArrowRight, Star, MapPin, Zap, Gauge, Share2, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
- * Premium Luxury Vehicle Card — Redesigned for the vehicles page grid.
- * Features image zoom, floating actions, specs bar, and multiple CTAs.
+ * Premium Luxury Vehicle Card
  */
 export default function LuxuryVehicleCard({
   vehicle,
@@ -17,6 +16,9 @@ export default function LuxuryVehicleCard({
   onShare,
   className,
 }) {
+  const [shareToast, setShareToast] = useState(false);
+  const navigate = useNavigate();
+
   const {
     id, name, brand, image, pricePerDay, category, rating,
     seats, transmission, fuelType, topSpeed, horsepower,
@@ -24,7 +26,47 @@ export default function LuxuryVehicleCard({
   } = vehicle;
 
   const displayRating = typeof rating === 'object' ? rating.average : rating;
-  const reviewCount = typeof rating === 'object' ? rating.count : null;
+  const reviewCount  = typeof rating === 'object' ? rating.count : null;
+
+  /* ── Handlers ── */
+  const handleWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onWishlist) {
+      onWishlist(id);
+    } else {
+      // Not logged in — go to login
+      navigate('/login');
+    }
+  };
+
+  const handleQuickView = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onQuickView) onQuickView(vehicle);
+  };
+
+  const handleCompare = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onCompare) onCompare(vehicle);
+  };
+
+  const handleShare = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}/vehicles/${id}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `${brand} ${name}`, text: `Check out this ${brand} ${name} on Luxoria!`, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setShareToast(true);
+        setTimeout(() => setShareToast(false), 2000);
+      }
+    } catch {}
+    if (onShare) onShare(vehicle);
+  };
 
   return (
     <motion.div
@@ -62,41 +104,54 @@ export default function LuxuryVehicleCard({
 
         {/* Floating Actions (reveal on hover) */}
         <div className="absolute top-4 right-4 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out z-20">
-          {onWishlist && (
-            <button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onWishlist(id); }}
-              className={cn(
-                'w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 border border-white/10 shadow-md',
-                isWishlisted ? 'bg-accent text-white' : 'bg-black/40 backdrop-blur-md text-white/80 hover:text-white'
-              )}
-            >
-              <Heart className={cn('w-3.5 h-3.5', isWishlisted && 'fill-current')} />
-            </button>
-          )}
-          {onQuickView && (
-            <button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView(vehicle); }}
-              className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md text-white/80 hover:text-white flex items-center justify-center hover:scale-110 transition-all border border-white/10 shadow-md"
-            >
-              <Eye className="w-3.5 h-3.5" />
-            </button>
-          )}
-          {onCompare && (
-            <button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCompare(vehicle); }}
-              className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md text-white/80 hover:text-white flex items-center justify-center hover:scale-110 transition-all border border-white/10 shadow-md"
-            >
-              <GitCompareArrows className="w-3.5 h-3.5" />
-            </button>
-          )}
-          {onShare && (
-            <button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(vehicle); }}
-              className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md text-white/80 hover:text-white flex items-center justify-center hover:scale-110 transition-all border border-white/10 shadow-md"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-            </button>
-          )}
+          {/* Wishlist — always shown */}
+          <button
+            onClick={handleWishlist}
+            title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+            className={cn(
+              'w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 border border-white/10 shadow-md',
+              isWishlisted ? 'bg-accent text-white' : 'bg-black/40 backdrop-blur-md text-white/80 hover:text-white'
+            )}
+          >
+            <Heart className={cn('w-3.5 h-3.5', isWishlisted && 'fill-current')} />
+          </button>
+
+          {/* Quick View — always shown */}
+          <button
+            onClick={handleQuickView}
+            title="Quick view"
+            className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md text-white/80 hover:text-white flex items-center justify-center hover:scale-110 transition-all border border-white/10 shadow-md"
+          >
+            <Eye className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Compare — always shown */}
+          <button
+            onClick={handleCompare}
+            title="Add to compare"
+            className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md text-white/80 hover:text-white flex items-center justify-center hover:scale-110 transition-all border border-white/10 shadow-md"
+          >
+            <GitCompareArrows className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Share — always shown */}
+          <button
+            onClick={handleShare}
+            title="Share vehicle"
+            className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md text-white/80 hover:text-white flex items-center justify-center hover:scale-110 transition-all border border-white/10 shadow-md relative"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            {shareToast && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                className="absolute right-full mr-2 px-2 py-1 bg-black/80 text-white text-[10px] rounded-md whitespace-nowrap"
+              >
+                Link copied!
+              </motion.div>
+            )}
+          </button>
         </div>
 
         {/* Bottom Image Info */}

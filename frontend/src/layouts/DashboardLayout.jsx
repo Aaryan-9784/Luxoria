@@ -96,7 +96,7 @@ export default function DashboardLayout() {
               LUXORIA
             </span>
             <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A75D] mt-1">
-              Client Workspace
+              Client
             </span>
           </motion.div>
         )}
@@ -333,11 +333,11 @@ export default function DashboardLayout() {
                 showOnline
               />
 
-              <div className="text-left hidden sm:block">
+              <div className="text-center hidden sm:block">
                 <p className="text-[13px] font-bold text-[#0F0F0F] leading-tight group-hover:text-[#C9A75D] transition-colors">
                   {user?.name || 'My Account'}
                 </p>
-                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5 text-center">
+                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5">
                   Client
                 </p>
               </div>

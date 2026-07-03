@@ -11,6 +11,7 @@ export default function Dropdown({
   children,
   align = 'right',
   className,
+  onOpen,
 }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const ref = React.useRef(null);
@@ -26,9 +27,15 @@ export default function Dropdown({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleToggle = () => {
+    const opening = !isOpen;
+    setIsOpen(opening);
+    if (opening && onOpen) onOpen();
+  };
+
   return (
     <div ref={ref} className="relative inline-flex">
-      <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
+      <div onClick={handleToggle} className="cursor-pointer">
         {trigger}
       </div>
 
@@ -48,7 +55,6 @@ export default function Dropdown({
               align === 'center' && 'left-1/2 -translate-x-1/2',
               className
             )}
-            onClick={() => setIsOpen(false)}
           >
             {children}
           </motion.div>

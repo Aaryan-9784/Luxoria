@@ -11,7 +11,9 @@ export default function CinematicHero() {
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
+    container: undefined, // use the window (default), not a div
     offset: ['start start', 'end start'],
+    layoutEffect: false, // avoids the static-position warning
   });
 
   const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
@@ -26,7 +28,7 @@ export default function CinematicHero() {
   };
 
   return (
-    <section ref={heroRef} className="relative h-screen min-h-[700px] overflow-hidden flex items-center justify-center">
+    <section ref={heroRef} className="relative h-screen min-h-[700px] overflow-hidden flex items-center justify-center" style={{ position: 'relative' }}>
       {/* Background Image with Parallax */}
       <motion.div style={{ scale }} className="absolute inset-0 z-0">
         <motion.img
