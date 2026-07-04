@@ -1,16 +1,8 @@
 # ==============================
-# Node.js & Package Managers
+# Dependencies
 # ==============================
 node_modules/
-.pnpm-store/
-.pnpm-lock.yaml
-.yarn/
-.yarn-cache/
-.yarn-integrity
 jspm_packages/
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
 
 # ==============================
 # Environment Variables
@@ -25,35 +17,49 @@ yarn.lock
 .env.production
 .env.production.local
 *.env
-# Allow example/template files
+# Keep example/template files
 !.env.example
 !.env.sample
 
 # ==============================
-# Build Output & Distribution
+# Build Output
 # ==============================
 dist/
 build/
 out/
 dist-ssr/
-frontend/dist/
-frontend/build/
-backend/dist/
-backend/build/
 *.tsbuildinfo
 .tscache/
 .rollup.cache/
 
 # ==============================
-# Vite / Bundler Cache
+# Bundler & Tool Cache
 # ==============================
 .vite/
 .eslintcache
 .stylelintcache
 .parcel-cache/
+.turbo/
 .next/
 .nuxt/
-out/
+
+# ==============================
+# Lock Files
+# (Uncomment to ignore lock files — not recommended for shared projects)
+# ==============================
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ==============================
+# Logs
+# ==============================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # ==============================
 # Testing & Coverage
@@ -68,72 +74,7 @@ cypress/videos/
 .jest-cache/
 
 # ==============================
-# IDE & Editor Configuration
-# ==============================
-.vscode/
-!.vscode/settings.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.idea/
-.code-workspace
-*.code-workspace
-.sublime-project
-.sublime-workspace
-*.swp
-*.swo
-*~
-.DS_Store
-.DS_Store?
-*.iml
-*.iws
-
-# ==============================
-# OS-Specific Files
-# ==============================
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-.AppleDouble
-.AppleDB
-
-# Windows-specific
-*.lnk
-*.bat
-desktop.ini
-
-# ==============================
-# Logs & Debug Output
-# ==============================
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-debug.log
-.npm/
-.yarn-error-log
-
-# ==============================
-# Cache & Temporary Files
-# ==============================
-.cache/
-.temp/
-.tmp/
-tmp/
-tempfiles/
-*.cache
-.eslintignore
-
-# ==============================
-# Uploads & Generated Media
+# Uploads & Temp Files
 # ==============================
 backend/uploads/
 backend/public/uploads/
@@ -144,95 +85,49 @@ frontend/public/uploads/
 *.backup
 
 # ==============================
-# Database & Secrets
+# Secrets & Certificates
 # ==============================
 *.pem
 *.key
 *.cert
 *.p12
 *.pfx
-serviceAccountKey.json
-google-credentials.json
-firebase-adminsdk*.json
 *.p8
 private_key.pem
 public_key.pem
+serviceAccountKey.json
+google-credentials.json
+firebase-adminsdk*.json
 
-# Database files
+# ==============================
+# Database Files
+# ==============================
 *.db
 *.sqlite
 *.sqlite3
-data/
-database/
-db/
 
 # ==============================
-# IDE Plugins & Extensions
+# OS-Specific Files
 # ==============================
-.vscode-test/
-.vscode-download/
-
-# ==============================
-# Docker
-# ==============================
-.dockerignore
-docker-compose.override.yml
-.docker/
-
-# ==============================
-# CI/CD
-# ==============================
-.github/workflows/*.log
-.gitlab-ci.local.yml
-.travis.yml.local
-
-# ==============================
-# Project-Specific
-# ==============================
-backend/src/scripts/test-*.js
-frontend/src/test-*.jsx
-.vercel/
-.render-build-log
-render-build.log
-*.todo
-notes.md
-todo.md
-
-# ==============================
-# Dependencies Lock Files (optional - uncomment if using)
-# ==============================
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
-
-# ==============================
-# Misc
-# ==============================
-.turbo/
-.env.local.example
-.env.test.local.example
-vitest.config.ts.bak
-
-# ==============================
-# OS Files
-# ==============================
+# macOS
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
+.AppleDouble
+.AppleDB
+
+# Windows
 Thumbs.db
-desktop.ini
+Desktop.ini
+ehthumbs.db
 $RECYCLE.BIN/
+*.lnk
 
 # ==============================
-# IDEs & Editors
+# IDE & Editor Files
 # ==============================
-.vscode/
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/launch.json
 .idea/
 *.suo
 *.ntvs*
@@ -241,8 +136,12 @@ $RECYCLE.BIN/
 *.swp
 *.swo
 *.swn
-*.bak
 *~
+# Allow shared VS Code settings
+.vscode/
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
 # ==============================
 # Deployment & Hosting
@@ -252,18 +151,21 @@ $RECYCLE.BIN/
 .serverless/
 .firebase/
 .wrangler/
+.render-build-log
+render-build.log
 
 # ==============================
 # Docker
 # ==============================
-.dockerignore
 docker-compose.override.yml
 
 # ==============================
-# Misc
+# Miscellaneous
 # ==============================
 *.tgz
 *.tar.gz
 *.zip
 .node_repl_history
-.eslintrc-auto-import.json
+notes.md
+todo.md
+*.todo

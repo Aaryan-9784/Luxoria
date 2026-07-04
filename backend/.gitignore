@@ -1,32 +1,53 @@
+# ==============================
 # Dependencies
+# ==============================
 node_modules/
 
-# Environment
+# ==============================
+# Environment Variables
+# ==============================
 .env
 .env.*
 !.env.example
 
-# Build output
+# ==============================
+# Build Output
+# ==============================
 dist/
 build/
 
-# Uploads
+# ==============================
+# Uploads & Temp Files
+# ==============================
 uploads/
 public/uploads/
+temp/
 
+# ==============================
 # Logs
+# ==============================
 logs/
 *.log
 npm-debug.log*
 
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.idea/
-.vscode/
-
-# Coverage
+# ==============================
+# Testing & Coverage
+# ==============================
 coverage/
 .nyc_output/
+
+# ==============================
+# OS-Specific Files
+# ==============================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ==============================
+# IDE & Editor Files
+# ==============================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

@@ -2,16 +2,17 @@
 
 <div align="center">
 
-  [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black&style=for-the-badge)](https://react.dev)
-  [![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white&style=for-the-badge)](https://vitejs.dev)
-  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-06B6D4?logo=tailwind-css&logoColor=white&style=for-the-badge)](https://tailwindcss.com)
-  [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white&style=for-the-badge)](https://nodejs.org)
-  [![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white&style=for-the-badge)](https://expressjs.com)
-  [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white&style=for-the-badge)](https://mongodb.com)
-  [![Redux Toolkit](https://img.shields.io/badge/Redux_Toolkit-2.x-764ABC?logo=redux&logoColor=white&style=for-the-badge)](https://redux-toolkit.js.org)
-  [![Razorpay](https://img.shields.io/badge/Razorpay-Payments-02042B?logo=razorpay&logoColor=white&style=for-the-badge)](https://razorpay.com)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black&style=for-the-badge)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white&style=for-the-badge)](https://vitejs.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-06B6D4?logo=tailwind-css&logoColor=white&style=for-the-badge)](https://tailwindcss.com)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white&style=for-the-badge)](https://nodejs.org)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white&style=for-the-badge)](https://expressjs.com)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white&style=for-the-badge)](https://mongodb.com)
+[![Redux Toolkit](https://img.shields.io/badge/Redux_Toolkit-2.x-764ABC?logo=redux&logoColor=white&style=for-the-badge)](https://redux-toolkit.js.org)
+[![Razorpay](https://img.shields.io/badge/Razorpay-Payments-02042B?logo=razorpay&logoColor=white&style=for-the-badge)](https://razorpay.com)
 
-  <p><b>A production-ready MERN stack platform connecting elite clientele with premium automotive partners. Features three role-based portals, Razorpay payments, Google OAuth, and enterprise-grade analytics.</b></p>
+**A production-ready full-stack MERN platform for luxury car rentals.**
+Three role-based portals · Razorpay payments · Google OAuth · Enterprise analytics
 
 </div>
 
@@ -19,444 +20,210 @@
 
 ## 📋 Table of Contents
 
-- [Quick Start](#quick-start)
-- [Overview](#overview)
-- [Feature Highlights](#feature-highlights)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Database Schema](#database-schema)
-- [Authentication Flow](#authentication-flow)
-- [Payment Flow](#payment-flow)
-- [API Reference](#api-reference)
-- [Environment Variables](#environment-variables)
-- [Local Setup](#local-setup)
-- [Development Scripts](#development-scripts)
-- [Architecture Highlights](#architecture-highlights)
-- [Performance Optimization](#performance-optimization)
-- [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
+1. [Overview](#-overview)
+2. [Features](#-features)
+3. [Tech Stack](#-tech-stack)
+4. [Project Structure](#-project-structure)
+5. [Quick Start](#-quick-start)
+6. [Environment Variables](#-environment-variables)
+7. [Database Schema](#-database-schema)
+8. [Authentication Flow](#-authentication-flow)
+9. [Payment Flow](#-payment-flow)
+10. [API Reference](#-api-reference)
+11. [Development Scripts](#-development-scripts)
+12. [Deployment](#-deployment)
+13. [Troubleshooting](#-troubleshooting)
+14. [Contributing](#-contributing)
+15. [License](#-license)
+
+---
+
+## 🌟 Overview
+
+LUXORIA connects high-end car rental vendors with elite customers through a single, unified platform. It features **three completely separate portals** built on one codebase:
+
+| Portal | Who Uses It | What They Can Do |
+|---|---|---|
+| **User Portal** | Customers | Browse vehicles, create wishlists, book & pay online |
+| **Vendor Dashboard** | Fleet owners | List vehicles, manage bookings, view earnings & analytics |
+| **Admin Panel** | Platform operators | Approve vendors/vehicles, manage users, monitor platform health |
+
+---
+
+## ✨ Features
+
+### 🔐 Authentication & Security
+- Dual JWT token system — 15-min access token + 7-day refresh token with automatic rotation
+- Refresh token **reuse detection** — replaying a rotated token immediately wipes all active sessions
+- Google OAuth 2.0 via Passport.js with account linking support
+- Separate login portals for users, vendors, and admins
+- 3-tier rate limiting, Helmet headers, HPP protection, and NoSQL injection prevention
+
+### 📅 Booking Engine
+- Real-time date overlap validation to prevent double bookings
+- Server-side price calculation: `totalDays × pricePerDay`
+- Full booking lifecycle: `pending → confirmed → active → completed → cancelled`
+- Automatic notifications to both vendor and user at every status change
+
+### 💳 Payments (Razorpay)
+- 3-step flow: create order → frontend checkout → HMAC-SHA256 signature verification
+- Refund support via `initiateRefund()` helper
+- Full audit trail with Payment records linked to Bookings
+
+### 🖼️ Media Management
+- Cloudinary v2 integration with **stream-based uploads** (no temp files on disk)
+- Multi-image support for vehicle listings and review photos
+
+### 📊 Analytics
+- **Admin**: 11 parallel MongoDB aggregations — revenue, booking trends, top vendors, fleet distribution
+- **Vendor**: 5 parallel aggregations scoped to their own fleet
+
+### 🛠️ Additional Modules
+- Wishlists, Reviews (with auto-recalculated vehicle ratings)
+- Notifications with 90-day auto-expiry (MongoDB TTL index)
+- Concierge requests, Newsletter subscriptions, Contact form
+- Master data CMS for brands, cities, and vehicle features
+
+---
+
+## 🏗️ Tech Stack
+
+### Backend
+
+| Category | Technology |
+|---|---|
+| Framework | Express 4 (ESM modules) |
+| Database | MongoDB + Mongoose 8 |
+| Authentication | JWT 9, bcryptjs, Passport + Google OAuth 2.0 |
+| Payments | Razorpay 2.9 |
+| File Storage | Cloudinary 2, Multer, Streamifier |
+| Email | Nodemailer 6 |
+| Validation | Joi 17 |
+| Security | Helmet 7, HPP, express-mongo-sanitize, express-rate-limit 7 |
+| Logging | Morgan |
+| Deployment | Render (render.yaml) |
+
+### Frontend
+
+| Category | Technology |
+|---|---|
+| Framework | React 19 + Vite 6 |
+| State Management | Redux Toolkit 2 + React-Redux 9 |
+| Routing | React Router DOM 7 |
+| Forms | React Hook Form 7 |
+| HTTP Client | Axios 1.7 with custom interceptors |
+| UI Components | shadcn/ui (New York theme) + Tailwind CSS 4 |
+| Icons | Lucide React |
+| Animations | Framer Motion 11 |
+| Charts | Recharts 3 |
+| Payments | Razorpay checkout.js (loaded via CDN) |
+
+---
+
+## 📁 Project Structure
+
+```
+LUXORIA/
+├── backend/
+│   └── src/
+│       ├── config/             # DB, Cloudinary, Nodemailer, Passport, Razorpay setup
+│       ├── constants/          # App-wide constants
+│       ├── controllers/        # Route handler logic (12 controllers)
+│       ├── middleware/         # Auth, error handler, rate limiter, upload, validator
+│       ├── models/             # Mongoose models (10 schemas)
+│       ├── routes/             # Express route definitions (12 modules)
+│       ├── scripts/            # Seed scripts and DB utilities
+│       ├── services/           # Business logic (auth, email, payment, upload, analytics)
+│       ├── utils/              # ApiError, ApiResponse, ApiFeatures, generateId
+│       ├── validations/        # Joi schemas for all major inputs
+│       ├── app.js              # Express app factory (routes, middleware, error handler)
+│       └── server.js           # HTTP server startup + graceful shutdown
+│
+└── frontend/
+    └── src/
+        ├── components/
+        │   ├── common/         # Navbar, Footer, Sidebar, ScrollToTop
+        │   ├── sections/       # 40+ reusable page sections
+        │   └── ui/             # Button, Modal, Badge, DataTable, Alert, etc.
+        ├── layouts/            # Main, Dashboard, Vendor, and Admin layout wrappers
+        ├── pages/
+        │   ├── admin/          # AdminOverview, UserManagement, Analytics, etc.
+        │   ├── public/         # HomePage, Login, Register, Vehicle Collection
+        │   ├── user/           # Dashboard, Bookings, Wishlist, Payments
+        │   ├── vehicles/       # VehicleList, VehicleDetails
+        │   └── vendor/         # VendorOverview, ManageFleet, AddVehicleWizard
+        ├── redux/
+        │   ├── store.js
+        │   └── slices/         # auth, booking, vehicle, vendor, admin, notification, ui
+        ├── routes/             # AppRoutes, ProtectedRoute, GuestRoute, RoleRoute
+        ├── services/           # Axios instance with token refresh interceptor
+        ├── hooks/              # Custom React hooks
+        └── lib/                # Utility helpers
+```
 
 ---
 
 ## 🚀 Quick Start
 
-Get LUXORIA running locally in 5 minutes:
+> **Prerequisites:** Node.js v18+, a MongoDB Atlas cluster, Cloudinary account, Razorpay account (test mode works)
+
+### 1. Clone the repository
 
 ```bash
-# 1. Clone repository
 git clone https://github.com/yourusername/luxoria.git
 cd luxoria
+```
 
-# 2. Setup backend
+### 2. Set up the backend
+
+```bash
 cd backend
 npm install
 cp .env.example .env
-# ⚙️ Edit .env with your credentials
+# Open .env and fill in your credentials
 npm run dev
+# API runs at http://localhost:5000
+```
 
-# 3. Setup frontend (new terminal)
+### 3. Set up the frontend
+
+```bash
+# Open a new terminal tab
 cd frontend
 npm install
 cp .env.example .env
-# ⚙️ Set VITE_API_URL=http://localhost:5000/api
+# Set VITE_API_URL=http://localhost:5000/api
 npm run dev
-
-# 4. Open browser
-# 👉 http://localhost:5173
+# App runs at http://localhost:5173
 ```
 
-**Test Account Credentials:**
-- Email: `admin@luxoria.com` | Password: `Demo@123` (Admin)
-- Email: `vendor@luxoria.com` | Password: `Demo@123` (Vendor)
-- Email: `user@luxoria.com` | Password: `Demo@123` (User)
+### 4. Seed sample data (optional)
 
-For detailed setup instructions, see [Local Setup](#local-setup).
+```bash
+cd backend
+node src/scripts/seed.js    # Seed vehicles and master data
+node seed_admin.js           # Create default admin account
+node seedConcierge.js        # Seed sample concierge requests
+```
 
----
+### 5. Open the app
 
-## Overview
+Visit [http://localhost:5173](http://localhost:5173)
 
-LUXORIA is a full-stack luxury car rental SaaS with three distinct portals built on a single codebase:
+**Default test accounts:**
 
-| Portal | Audience | Key Capability |
+| Role | Email | Password |
 |---|---|---|
-| **User Portal** | Customers | Browse, wishlist, book, and pay for luxury vehicles |
-| **Vendor Dashboard** | Fleet owners | Manage vehicles, track bookings and revenue, view analytics |
-| **Admin Panel** | Platform operators | Approve vendors/vehicles, manage users, monitor platform analytics |
+| Admin | admin@luxoria.com | Demo@123 |
+| Vendor | vendor@luxoria.com | Demo@123 |
+| User | user@luxoria.com | Demo@123 |
 
 ---
 
-## Feature Highlights
+## 🔑 Environment Variables
 
-**Authentication & Security**
-- JWT dual-token system: 15-min access token + 7-day refresh token with automatic rotation
-- Refresh token reuse detection — compromised sessions are invalidated platform-wide
-- Google OAuth 2.0 via Passport.js with account linking
-- Separate login portals for users, vendors, and admins
-- Rate limiting (3 tiers), Helmet, HPP, and NoSQL injection prevention
+### `backend/.env`
 
-**Booking Engine**
-- Real-time date overlap validation to prevent double bookings
-- Server-side pricing: `totalDays × pricePerDay`
-- Booking lifecycle: `pending → confirmed → active → completed → cancelled`
-- Vendor and user notifications at every status change
-
-**Payments (Razorpay)**
-- Three-step flow: create order → frontend checkout → HMAC-SHA256 signature verification
-- Refund support via `initiateRefund()` helper
-- Payment records linked to bookings with full audit trail
-
-**Media Management**
-- Cloudinary v2 with stream-based uploads (no temp files via `streamifier`)
-- Multi-image support for vehicles and reviews
-
-**Analytics**
-- Admin: 11 parallel MongoDB aggregations (revenue, bookings by status, monthly trends, top vendors, fleet distribution)
-- Vendor: 5 parallel aggregations scoped to their fleet
-
-**Additional Modules**
-- Wishlists, Reviews (with auto-recalculated vehicle ratings), Notifications (90-day TTL), Concierge requests, Newsletter, Contact form, Master data CMS
-
----
-
-## Tech Stack
-
-### Backend
-| Concern | Library / Version |
-|---|---|
-| Framework | Express 4 (ESM modules) |
-| Database | MongoDB + Mongoose 8 |
-| Auth | jsonwebtoken 9, bcryptjs 2, passport-google-oauth20 2 |
-| Payments | razorpay 2.9 |
-| File Storage | cloudinary 2, multer 1, streamifier |
-| Email | nodemailer 6 |
-| Validation | joi 17 |
-| Security | helmet 7, hpp, express-mongo-sanitize, express-rate-limit 7 |
-| Logging | morgan |
-| Deployment | Render (render.yaml) |
-
-### Frontend
-| Concern | Library / Version |
-|---|---|
-| Framework | React 19 + Vite 6 |
-| State | Redux Toolkit 2 + React-Redux 9 |
-| Routing | React Router DOM 7 |
-| Forms | React Hook Form 7 |
-| HTTP | Axios 1.7 (custom interceptors) |
-| UI System | shadcn/ui (New York) + Tailwind CSS 4 |
-| Icons | Lucide React |
-| Animation | Framer Motion 11 |
-| Charts | Recharts 3 |
-| Payments | Razorpay checkout.js (CDN) |
-
----
-
-## Project Structure
-
-```
-LUXORIA/
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   ├── cloudinary.js       # Cloudinary SDK setup
-│   │   │   ├── db.js               # Mongoose connect (pool size 10)
-│   │   │   ├── mail.js             # Nodemailer transporter
-│   │   │   ├── passport.js         # Google OAuth strategy
-│   │   │   └── razorpay.js         # Razorpay SDK instance
-│   │   ├── constants/
-│   │   │   └── index.js
-│   │   ├── controllers/
-│   │   │   ├── adminController.js
-│   │   │   ├── authController.js
-│   │   │   ├── bookingController.js
-│   │   │   ├── contactController.js
-│   │   │   ├── masterDataController.js
-│   │   │   ├── newsletterController.js
-│   │   │   ├── notificationController.js
-│   │   │   ├── paymentController.js
-│   │   │   ├── reviewController.js
-│   │   │   ├── userController.js
-│   │   │   ├── vehicleController.js
-│   │   │   └── wishlistController.js
-│   │   ├── middleware/
-│   │   │   ├── asyncHandler.js     # Async error wrapper
-│   │   │   ├── auth.js             # protect, optionalAuth, authorize
-│   │   │   ├── errorHandler.js     # Global error handler
-│   │   │   ├── rateLimiter.js      # general / auth / upload tiers
-│   │   │   ├── upload.js           # Multer (memory storage)
-│   │   │   └── validate.js         # Joi schema middleware
-│   │   ├── models/
-│   │   │   ├── Booking.js
-│   │   │   ├── ConciergeRequest.js
-│   │   │   ├── MasterData.js
-│   │   │   ├── Newsletter.js
-│   │   │   ├── Notification.js     # TTL index (90 days)
-│   │   │   ├── Payment.js
-│   │   │   ├── Review.js
-│   │   │   ├── User.js
-│   │   │   ├── Vehicle.js          # 2dsphere + text indexes
-│   │   │   └── Wishlist.js
-│   │   ├── routes/                 # 12 route modules
-│   │   ├── scripts/
-│   │   │   ├── seed.js
-│   │   │   └── updateVendor.js
-│   │   ├── services/
-│   │   │   ├── analyticsService.js # Parallel aggregation pipelines
-│   │   │   ├── authService.js      # JWT helpers, cookie utils
-│   │   │   ├── emailService.js     # Transactional email templates
-│   │   │   ├── paymentService.js   # Razorpay order/verify/refund
-│   │   │   └── uploadService.js    # Cloudinary stream upload
-│   │   ├── utils/
-│   │   │   ├── ApiError.js         # Custom error class with static factories
-│   │   │   ├── ApiFeatures.js      # Chainable Mongoose query builder
-│   │   │   ├── ApiResponse.js      # Consistent response formatters
-│   │   │   └── generateId.js       # LUX-XXXXXXXX booking ID generator
-│   │   ├── validations/            # Joi schemas (auth, booking, payment, vehicle)
-│   │   ├── app.js                  # Express app factory
-│   │   └── server.js               # HTTP server + DB connect + graceful shutdown
-│   ├── .env.example
-│   ├── package.json
-│   └── render.yaml
-│
-└── frontend/
-    ├── src/
-    │   ├── components/
-    │   │   ├── common/             # Navbar, Footer, Sidebar, ScrollToTop
-    │   │   ├── sections/           # 40+ page sections
-    │   │   └── ui/                 # Alert, Badge, Button, DataTable, Modal, etc.
-    │   ├── layouts/
-    │   │   ├── MainLayout.jsx
-    │   │   ├── DashboardLayout.jsx
-    │   │   ├── VendorDashboardLayout.jsx
-    │   │   └── AdminDashboardLayout.jsx
-    │   ├── pages/
-    │   │   ├── admin/              # AdminOverview, UserManagement, Analytics, etc.
-    │   │   ├── public/             # HomePage, LoginPage, Collection, etc.
-    │   │   ├── user/               # Dashboard, Bookings, Wishlist, Payments, etc.
-    │   │   ├── vehicles/           # VehicleListPage, VehicleDetailsPage
-    │   │   └── vendor/             # VendorOverview, ManageFleet, AddVehicleWizard, etc.
-    │   ├── redux/
-    │   │   ├── store.js
-    │   │   └── slices/
-    │   │       ├── adminSlice.js
-    │   │       ├── authSlice.js
-    │   │       ├── bookingSlice.js
-    │   │       ├── dashboardSlice.js
-    │   │       ├── notificationSlice.js
-    │   │       ├── uiSlice.js
-    │   │       ├── vehicleSlice.js
-    │   │       └── vendorSlice.js
-    │   ├── routes/
-    │   │   ├── AppRoutes.jsx       # All routes + session restore on mount
-    │   │   ├── GuestRoute.jsx
-    │   │   ├── ProtectedRoute.jsx
-    │   │   └── RoleRoute.jsx
-    │   ├── services/
-    │   │   └── api.js              # Axios instance with refresh token interceptor
-    │   ├── hooks/                  # Custom React hooks
-    │   └── lib/                    # Utility helpers
-    ├── public/
-    ├── index.html                  # Razorpay checkout.js CDN loaded here
-    ├── .env.example
-    └── package.json
-```
-
----
-
-## Database Schema
-
-### User
-```
-name, email (unique), password (bcrypt, hidden), phone
-avatar: { url, publicId }
-role: 'user' | 'vendor' | 'admin'
-googleId (sparse unique)
-isVerified, isActive
-refreshTokens: [{ token, expiresAt, createdAt }]
-address: { street, city, state, zip, country }
-passwordResetToken, passwordResetExpires
-```
-
-### Vehicle
-```
-vendor → User, name, slug (sparse unique), brand, model, year
-category: sedan | suv | sports | luxury | convertible | limousine | electric
-transmission: automatic | manual
-fuelType: petrol | diesel | electric | hybrid
-seats, pricePerDay
-images: [{ url, publicId }]
-features: [String], description
-location: { city, state, address, coordinates (2dsphere) }
-availability: available | booked | maintenance
-status: pending | approved | rejected
-rating: { average, count }
-isActive
-```
-
-### Booking
-```
-user → User, vehicle → Vehicle, vendor → User
-bookingId: "LUX-XXXXXXXX" (auto-generated)
-startDate, endDate, totalDays (auto-calculated), totalAmount
-status: pending | confirmed | active | completed | cancelled
-pickupLocation, dropoffLocation, notes, cancellationReason
-isActive
-```
-
-### Payment
-```
-booking → Booking, user → User
-razorpayOrderId (unique), razorpayPaymentId (sparse unique), razorpaySignature
-amount, currency (INR)
-status: created | authorized | captured | refunded | failed
-method, refundId, refundAmount
-```
-
-### Other Models
-| Model | Key Fields |
-|---|---|
-| Review | user, vehicle, booking, rating (1–5), comment, images[] |
-| Wishlist | user + vehicle (unique compound) |
-| Notification | recipient, type, title, message, isRead — TTL 90 days |
-| ConciergeRequest | clientName, requestId, type, status, priority (low/medium/high) |
-| MasterData | category (brand/city/feature/vehicleType/faq), label, value, icon |
-| Newsletter | email (unique), subscribedAt, isActive |
-
----
-
-## Authentication Flow
-
-```
-Register / Login
-  ├── Returns accessToken (15 min) in response body
-  └── Sets refreshToken (7 days) as httpOnly cookie
-         └── Also persisted in User.refreshTokens[] in MongoDB
-
-Authenticated Request
-  └── Axios attaches Authorization: Bearer <accessToken>
-
-Token Expiry (401)
-  ├── Axios interceptor calls POST /api/auth/refresh
-  ├── Backend does atomic token rotation via findOneAndUpdate
-  │     └── If old token not found → reuse detected → all sessions wiped
-  ├── Concurrent failed requests are queued and replayed on success
-  └── On refresh failure → Redux logout dispatched
-
-Session Restore (page load)
-  └── AppRoutes calls POST /auth/refresh → GET /auth/me → sets Redux state
-
-Google OAuth
-  └── GET /api/auth/google → callback → redirect to /oauth-callback
-        └── OAuthCallback component exchanges cookie for accessToken
-
-Password Reset
-  └── 32-byte crypto token, SHA-256 hashed in DB, 10-min expiry
-        └── On reset → all sessions invalidated (refreshTokens cleared)
-```
-
----
-
-## Payment Flow
-
-```
-1. POST /api/payments/create-order
-   └── Creates Razorpay order (amount × 100 paise, auto-capture)
-       Creates Payment record with status "created"
-       Returns { orderId, amount, currency, key }
-
-2. Frontend opens Razorpay modal (checkout.js)
-   └── User completes payment
-       Razorpay returns { razorpay_order_id, razorpay_payment_id, razorpay_signature }
-
-3. POST /api/payments/verify
-   └── HMAC-SHA256: sha256(orderId + "|" + paymentId, RAZORPAY_KEY_SECRET)
-       On valid signature:
-         Payment.status → "captured"
-         Booking.status → "confirmed"
-         Sends booking confirmation email (non-blocking)
-```
-
----
-
-## API Reference
-
-All endpoints are prefixed with `/api`. Protected routes require `Authorization: Bearer <accessToken>`.
-
-### Auth — `/api/auth`
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| POST | `/register` | Public | Register new user |
-| POST | `/login` | Public | User login |
-| POST | `/vendor/login` | Public | Vendor login |
-| POST | `/admin/login` | Public | Admin login |
-| POST | `/refresh` | Public | Rotate refresh token |
-| POST | `/logout` | Public | Clear session |
-| GET | `/me` | Protected | Get current user |
-| POST | `/forgot-password` | Public | Send reset email |
-| PUT | `/reset-password/:token` | Public | Reset password |
-| GET | `/google` | Public | Google OAuth redirect |
-| GET | `/google/callback` | Public | Google OAuth callback |
-
-### Vehicles — `/api/vehicles`
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| GET | `/` | Public | List vehicles (filter, search, paginate) |
-| GET | `/:id` | Public | Vehicle details |
-| POST | `/` | Vendor | Create vehicle listing |
-| PUT | `/:id` | Vendor | Update vehicle |
-| DELETE | `/:id` | Vendor | Delete vehicle |
-| POST | `/:id/images` | Vendor | Upload vehicle images |
-
-### Bookings — `/api/bookings`
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| POST | `/` | User | Create booking |
-| GET | `/my` | User | User's bookings |
-| GET | `/vendor` | Vendor | Vendor's bookings |
-| GET | `/:id` | Protected | Booking details |
-| PUT | `/:id/status` | Vendor/Admin | Update booking status |
-| PUT | `/:id/cancel` | User | Cancel booking |
-
-### Payments — `/api/payments`
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| POST | `/create-order` | User | Create Razorpay order |
-| POST | `/verify` | User | Verify payment signature |
-| GET | `/:bookingId` | Protected | Payment details |
-
-### Admin — `/api/admin`
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| GET | `/users` | Admin | List all users |
-| PUT | `/users/:id/status` | Admin | Activate/deactivate user |
-| GET | `/vendors` | Admin | List all vendors |
-| PUT | `/vendors/:id/approve` | Admin | Approve/reject vendor |
-| GET | `/vehicles` | Admin | List all vehicles |
-| PUT | `/vehicles/:id/approve` | Admin | Approve/reject vehicle |
-| DELETE | `/vehicles/:id` | Admin | Delete vehicle |
-| GET | `/bookings` | Admin | List all bookings |
-| GET | `/analytics` | Admin | Dashboard analytics |
-| GET | `/concierge` | Admin | Concierge requests |
-| PUT | `/concierge/:id/status` | Admin | Update concierge status |
-
-### Other Routes
-| Prefix | Purpose |
-|---|---|
-| `/api/users` | Profile management, avatar upload, password change |
-| `/api/wishlist` | Add/remove/list wishlist items |
-| `/api/reviews` | Create/read/delete reviews |
-| `/api/notifications` | List, mark read, clear notifications |
-| `/api/master-data` | Reference data (brands, cities, features) |
-| `/api/contact` | Contact form submission |
-| `/api/newsletter` | Subscribe/unsubscribe |
-
----
-
-## Environment Variables
-
-### Backend — `backend/.env`
 ```env
 # Server
 NODE_ENV=development
@@ -466,7 +233,7 @@ CLIENT_URL=http://localhost:5173
 # MongoDB
 MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/luxoria
 
-# JWT
+# JWT Secrets (use 32+ character random strings)
 JWT_ACCESS_SECRET=your_access_secret_min_32_chars
 JWT_REFRESH_SECRET=your_refresh_secret_min_32_chars
 JWT_ACCESS_EXPIRES_IN=15m
@@ -486,7 +253,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
 RAZORPAY_KEY_SECRET=your_razorpay_secret
 
-# Email (SMTP / Mailtrap)
+# Email (SMTP — Mailtrap works for development)
 SMTP_HOST=smtp.mailtrap.io
 SMTP_PORT=587
 SMTP_USER=your_smtp_user
@@ -494,7 +261,8 @@ SMTP_PASS=your_smtp_password
 SMTP_FROM=noreply@luxoria.com
 ```
 
-### Frontend — `frontend/.env`
+### `frontend/.env`
+
 ```env
 VITE_API_URL=http://localhost:5000/api
 VITE_RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
@@ -502,272 +270,343 @@ VITE_RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
 
 ---
 
-## Local Setup
+## 🗄️ Database Schema
 
-### Prerequisites
-- Node.js v18+
-- MongoDB Atlas cluster (or local MongoDB)
-- Cloudinary account
-- Razorpay account (test mode works)
-- Google Cloud project with OAuth 2.0 credentials (optional)
-
-### 1. Clone
-```bash
-git clone https://github.com/yourusername/luxoria.git
-cd luxoria
+### User
+```
+name, email (unique), password (bcrypt, hidden in responses), phone
+avatar: { url, publicId }
+role: 'user' | 'vendor' | 'admin'
+googleId (sparse unique index)
+isVerified, isActive
+refreshTokens: [{ token, expiresAt, createdAt }]
+address: { street, city, state, zip, country }
+passwordResetToken, passwordResetExpires
 ```
 
-### 2. Backend
-```bash
-cd backend
-npm install
-cp .env.example .env
-# Fill in all values in .env
-npm run dev        # starts on port 5000
+### Vehicle
+```
+vendor → User, name, slug (sparse unique), brand, model, year
+category: sedan | suv | sports | luxury | convertible | limousine | electric
+transmission: automatic | manual
+fuelType: petrol | diesel | electric | hybrid
+seats, pricePerDay
+images: [{ url, publicId }]
+features: [String], description
+location: { city, state, address, coordinates }  ← 2dsphere indexed
+availability: available | booked | maintenance
+status: pending | approved | rejected
+rating: { average, count }
+isActive
 ```
 
-### 3. Frontend
-```bash
-# New terminal
-cd frontend
-npm install
-cp .env.example .env
-# Set VITE_API_URL and VITE_RAZORPAY_KEY_ID
-npm run dev        # starts on port 5173
+### Booking
+```
+user → User, vehicle → Vehicle, vendor → User
+bookingId: "LUX-XXXXXXXX" (auto-generated)
+startDate, endDate, totalDays (auto-calculated), totalAmount
+status: pending | confirmed | active | completed | cancelled
+pickupLocation, dropoffLocation, notes, cancellationReason
 ```
 
-### 4. Seed Data (optional)
-```bash
-cd backend
-node src/scripts/seed.js          # seed vehicles + master data
-node seed_admin.js                 # create default admin account
-node seedConcierge.js              # seed concierge requests
+### Payment
+```
+booking → Booking, user → User
+razorpayOrderId (unique), razorpayPaymentId (sparse unique), razorpaySignature
+amount, currency (INR)
+status: created | authorized | captured | refunded | failed
+method, refundId, refundAmount
 ```
 
-The app will be available at `http://localhost:5173`.
+### Other Models
+
+| Model | Key Fields |
+|---|---|
+| Review | user, vehicle, booking, rating (1–5), comment, images[] |
+| Wishlist | user + vehicle (unique compound index) |
+| Notification | recipient, type, title, message, isRead — TTL 90 days |
+| ConciergeRequest | clientName, requestId, type, status, priority (low/medium/high) |
+| MasterData | category (brand/city/feature/vehicleType/faq), label, value, icon |
+| Newsletter | email (unique), subscribedAt, isActive |
 
 ---
 
-## 📝 Development Scripts
+## 🔐 Authentication Flow
 
-### Backend Scripts
+```
+Register / Login
+  ├── Returns accessToken (15 min) in response body
+  └── Sets refreshToken (7 days) as httpOnly cookie
+        └── Also stored in User.refreshTokens[] in MongoDB
+
+Authenticated Request
+  └── Axios attaches:  Authorization: Bearer <accessToken>
+
+Token Expires (401 received)
+  ├── Axios interceptor calls POST /api/auth/refresh
+  ├── Backend does atomic token rotation via findOneAndUpdate
+  │     └── Old token not found? → reuse detected → all sessions wiped
+  ├── Concurrent 401s are queued and replayed after refresh
+  └── Refresh fails? → Redux logout dispatched automatically
+
+Page Load / Session Restore
+  └── AppRoutes calls POST /auth/refresh → GET /auth/me → hydrates Redux state
+
+Google OAuth Flow
+  └── GET /api/auth/google → callback → redirect to /oauth-callback
+        └── OAuthCallback component exchanges cookie for accessToken
+
+Password Reset
+  └── 32-byte crypto token, SHA-256 hashed in DB, 10-min expiry
+        └── On successful reset → all refresh tokens cleared
+```
+
+---
+
+## 💳 Payment Flow
+
+```
+Step 1 — Create Order
+  POST /api/payments/create-order
+  └── Creates a Razorpay order (amount in paise)
+      Creates a Payment record with status "created"
+      Returns { orderId, amount, currency, key }
+
+Step 2 — User Pays
+  Frontend opens Razorpay modal (checkout.js from CDN)
+  └── User completes payment
+      Razorpay returns { razorpay_order_id, razorpay_payment_id, razorpay_signature }
+
+Step 3 — Verify Signature
+  POST /api/payments/verify
+  └── HMAC-SHA256 check: sha256(orderId + "|" + paymentId, RAZORPAY_KEY_SECRET)
+      Valid? → Payment.status = "captured", Booking.status = "confirmed"
+              → Sends booking confirmation email (non-blocking)
+```
+
+---
+
+## 📡 API Reference
+
+All endpoints are prefixed with `/api`. Protected routes require `Authorization: Bearer <accessToken>`.
+
+### Auth — `/api/auth`
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | `/register` | Public | Register new user |
+| POST | `/login` | Public | User login |
+| POST | `/vendor/login` | Public | Vendor login |
+| POST | `/admin/login` | Public | Admin login |
+| POST | `/refresh` | Public | Rotate refresh token |
+| POST | `/logout` | Public | Clear session |
+| GET | `/me` | Protected | Get current user |
+| POST | `/forgot-password` | Public | Send password reset email |
+| PUT | `/reset-password/:token` | Public | Reset password with token |
+| GET | `/google` | Public | Initiate Google OAuth |
+| GET | `/google/callback` | Public | Google OAuth callback |
+
+### Vehicles — `/api/vehicles`
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | `/` | Public | List vehicles (with filter, search, pagination) |
+| GET | `/:id` | Public | Get vehicle details |
+| POST | `/` | Vendor | Create a vehicle listing |
+| PUT | `/:id` | Vendor | Update vehicle details |
+| DELETE | `/:id` | Vendor | Delete vehicle |
+| POST | `/:id/images` | Vendor | Upload vehicle images |
+
+### Bookings — `/api/bookings`
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | `/` | User | Create a booking |
+| GET | `/my` | User | Get current user's bookings |
+| GET | `/vendor` | Vendor | Get all bookings for vendor's fleet |
+| GET | `/:id` | Protected | Get booking details |
+| PUT | `/:id/status` | Vendor/Admin | Update booking status |
+| PUT | `/:id/cancel` | User | Cancel a booking |
+
+### Payments — `/api/payments`
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | `/create-order` | User | Create Razorpay order |
+| POST | `/verify` | User | Verify payment signature |
+| GET | `/:bookingId` | Protected | Get payment details |
+
+### Admin — `/api/admin`
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | `/users` | Admin | List all users |
+| PUT | `/users/:id/status` | Admin | Activate or deactivate user |
+| GET | `/vendors` | Admin | List all vendors |
+| PUT | `/vendors/:id/approve` | Admin | Approve or reject vendor |
+| GET | `/vehicles` | Admin | List all vehicles |
+| PUT | `/vehicles/:id/approve` | Admin | Approve or reject vehicle |
+| DELETE | `/vehicles/:id` | Admin | Delete a vehicle |
+| GET | `/bookings` | Admin | List all bookings |
+| GET | `/analytics` | Admin | Get dashboard analytics |
+| GET | `/concierge` | Admin | List concierge requests |
+| PUT | `/concierge/:id/status` | Admin | Update concierge request status |
+
+### Other Routes
+
+| Prefix | Purpose |
+|---|---|
+| `/api/users` | Profile management, avatar upload, password change |
+| `/api/wishlist` | Add, remove, and list wishlist items |
+| `/api/reviews` | Create, read, and delete reviews |
+| `/api/notifications` | List, mark as read, and clear notifications |
+| `/api/master-data` | Reference data (brands, cities, vehicle features) |
+| `/api/contact` | Submit a contact form message |
+| `/api/newsletter` | Subscribe and unsubscribe |
+
+---
+
+## 🧰 Development Scripts
+
+### Backend
+
 ```bash
 cd backend
 
-# Development
 npm run dev              # Start dev server with auto-reload (nodemon)
-npm start               # Start production server
+npm start                # Start production server
 
-# Database
+# Seed database
 node src/scripts/seed.js           # Seed vehicles + master data
-node seed_admin.js                 # Create default admin account (admin@luxoria.com)
+node seed_admin.js                 # Create default admin (admin@luxoria.com / Demo@123)
 node seedConcierge.js              # Seed sample concierge requests
-node check_db.js                   # Verify MongoDB connection
 
-# Testing & Debugging
-npm run test            # Run test suite
-node check_bookings.js  # Check all bookings status
-node test_auth_flow.js  # Test authentication flow
-node test_oauth.js      # Test Google OAuth integration
-node test_filter.js     # Test vehicle filtering
+# Debug & verify
+node check_db.js                   # Verify MongoDB connection
+node check_bookings.js             # Inspect current booking states
+node test_auth_flow.js             # Test the full auth flow
+node test_oauth.js                 # Test Google OAuth
+node test_filter.js                # Test vehicle filtering logic
 ```
 
-### Frontend Scripts
+### Frontend
+
 ```bash
 cd frontend
 
-# Development
-npm run dev             # Start Vite dev server (HMR enabled)
-npm run build          # Build for production
-npm run preview        # Preview production build locally
-npm run lint           # Run ESLint
-npm run format         # Format code with Prettier
-```
-
-### Useful Commands
-```bash
-# Clear all node_modules and reinstall
-rm -r node_modules package-lock.json
-npm install
-
-# Reset MongoDB (deletes all data - USE WITH CAUTION)
-cd backend && node scripts/seed.js
-
-# Check environment setup
-cd backend && node check_db.js
+npm run dev              # Start Vite dev server with HMR
+npm run build            # Build for production (outputs to dist/)
+npm run preview          # Preview the production build locally
+npm run lint             # Run ESLint
 ```
 
 ---
 
-## Architecture Highlights
+## 🚢 Deployment
 
-**Refresh Token Rotation with Reuse Detection**
-Token rotation is atomic — `findOneAndUpdate` matches the specific token in `User.refreshTokens[]`. If a rotated token is replayed (attacker reuse scenario), the entire user's session array is wiped immediately.
+### Frontend — Vercel / Netlify
+
+```bash
+cd frontend
+npm run build            # Builds to frontend/dist/
+```
+
+Set `VITE_API_URL` and `VITE_RAZORPAY_KEY_ID` in your hosting dashboard. Both Vercel and Netlify handle SPA routing automatically.
+
+### Backend — Render
+
+A `render.yaml` Blueprint is included for zero-config deployment:
+
+1. Push to GitHub
+2. Connect your repo in the [Render Dashboard](https://dashboard.render.com)
+3. Add all backend `.env` variables in the Render environment settings
+4. Render reads `render.yaml` and deploys automatically
+
+For other providers (Railway, Fly.io):
+
+```bash
+cd backend
+npm start                # Use this as your start command
+```
+
+---
+
+## 🏛️ Architecture Notes
+
+**Refresh Token Rotation**
+Token rotation uses `findOneAndUpdate` to atomically match the specific token in `User.refreshTokens[]`. If a rotated token is replayed (e.g., stolen token scenario), all sessions for that user are immediately wiped.
 
 **`injectStore()` Pattern**
-The Axios instance reads the access token from Redux state. To avoid a circular dependency between `store.js` and `api.js`, the store is injected post-initialization via `injectStore()`.
+The Axios instance reads the access token from Redux store. To avoid a circular dependency between `store.js` and `api.js`, the store is injected post-initialization via `injectStore()`.
 
 **`ApiFeatures` Query Builder**
-A chainable Mongoose query wrapper used across all list endpoints: `.search().filter().sort().selectFields().paginate()`. Keeps controllers thin and consistent.
+A chainable Mongoose wrapper used across all list endpoints: `.search().filter().sort().selectFields().paginate()`. Keeps controllers lean and the behavior consistent.
 
-**Parallel Analytics Aggregations**
-All admin and vendor analytics run via `Promise.all()` with MongoDB aggregation pipelines — no N+1 queries, no client-side computation.
+**Parallel Analytics**
+Admin and vendor analytics run via `Promise.all()` with MongoDB aggregation pipelines — no N+1 queries, no client-side computation.
 
 **Non-Blocking Emails**
 All `emailService` calls use `.catch(() => {})` so SMTP failures never interrupt booking or payment flows.
 
-**Global Error Handler**
-One handler covers all error types: Mongoose `ValidationError`, `CastError`, duplicate key `11000`, JWT `JsonWebTokenError`/`TokenExpiredError`, and custom `ApiError` instances — all returning a consistent JSON shape.
-
 **Notification TTL**
-MongoDB's native TTL index on `Notification.createdAt` handles 90-day auto-deletion. No cron jobs, no manual cleanup.
+MongoDB's native TTL index on `Notification.createdAt` handles 90-day auto-deletion. No cron jobs needed.
 
 **Geospatial Ready**
-`2dsphere` index on `Vehicle.location.coordinates` is in place for nearest-vehicle and radius searches when that feature ships.
-
----
-
-## ⚡ Performance Optimization
-
-### Backend Optimizations
-- **Connection Pooling**: Mongoose pool size set to 10 (configurable in `config/db.js`)
-- **Indexed Queries**: Compound indexes on `User.email`, `Vehicle.slug`, `Booking.bookingId`
-- **Aggregation Pipeline**: Analytics use MongoDB aggregations (no client-side filtering)
-- **TTL Indexes**: Automatic 90-day cleanup for `Notification` records
-- **Rate Limiting**: 3-tier system (general, auth, upload) to prevent abuse
-
-### Frontend Optimizations
-- **Code Splitting**: Vite automatically chunks components by route
-- **Lazy Loading**: All page components use React.lazy() with Suspense
-- **Redux Selectors**: Use Reselect for memoized selectors (prevents unnecessary re-renders)
-- **Image Optimization**: Cloudinary URLs with transformations (w_300,q_80)
-- **CSS-in-JS**: Tailwind's PurgeCSS removes unused styles in production
-
-### Database Optimization
-```javascript
-// Recommended indexes beyond defaults:
-db.vehicles.createIndex({ location: "2dsphere" })
-db.vehicles.createIndex({ "location.city": 1 })
-db.bookings.createIndex({ user: 1, status: 1 })
-db.bookings.createIndex({ vehicle: 1, startDate: 1, endDate: 1 })
-```
-
----
-
-## Deployment
-
-### Frontend — Vercel / Netlify
-```bash
-cd frontend
-npm run build     # outputs to frontend/dist/
-```
-Set environment variables in your hosting dashboard. Both Vercel and Netlify handle SPA routing automatically with their default configs.
-
-### Backend — Render
-A `render.yaml` Blueprint is included for zero-config deployment:
-```bash
-# Render reads render.yaml on push — no manual setup needed
-# Set all backend .env variables in Render's environment dashboard
-```
-
-For other providers (Railway, Fly.io, etc.):
-```bash
-cd backend
-npm start         # production start command
-```
+`2dsphere` index on `Vehicle.location.coordinates` is set up for future radius and nearest-vehicle search features.
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Backend Issues
+### Backend
 
-**"connect ECONNREFUSED 127.0.0.1:27017"**
-- MongoDB is not running or not accessible
-- **Solution**: Check MongoDB connection string in `.env`. Use `node check_db.js` to verify.
+| Error | Likely Cause | Fix |
+|---|---|---|
+| `connect ECONNREFUSED 127.0.0.1:27017` | MongoDB not running | Check `MONGO_URI` in `.env`, run `node check_db.js` |
+| `MongoError: authentication failed` | Wrong DB credentials | Verify username, password, and cluster in `MONGO_URI` |
+| `Port 5000 already in use` | Another process on port 5000 | Run `netstat -ano \| findstr :5000` (Windows) and kill the process |
+| `Invalid Razorpay credentials` | Wrong or expired API keys | Regenerate keys in [Razorpay Dashboard](https://dashboard.razorpay.com) |
+| `Cloudinary upload fails` | Wrong Cloudinary credentials | Verify all three Cloudinary env vars |
+| `Google OAuth not working` | Callback URL mismatch | Make sure `GOOGLE_CALLBACK_URL` in `.env` exactly matches Google Cloud Console |
 
-**"MongoError: authentication failed"**
-- Invalid MongoDB credentials
-- **Solution**: Verify username, password, and connection string in `MONGO_URI`
+### Frontend
 
-**"Port 5000 is already in use"**
-- Another process is listening on port 5000
-- **Solution**: `lsof -i :5000` (macOS/Linux) or `netstat -ano | findstr :5000` (Windows), then kill the process
-
-**"PaymentError: Invalid Razorpay credentials"**
-- Razorpay keys are incorrect or expired
-- **Solution**: Regenerate keys from [Razorpay Dashboard](https://dashboard.razorpay.com) and update `.env`
-
-**"Cloudinary upload fails silently"**
-- Missing or incorrect Cloudinary API credentials
-- **Solution**: Verify `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`
-
-**"Google OAuth not working"**
-- OAuth callback URL mismatch or expired credentials
-- **Solution**: Verify `GOOGLE_CALLBACK_URL` matches exactly in Google Cloud Console and `.env`
-
-### Frontend Issues
-
-**"Vite HMR connection error"**
-- Vite dev server is not running or not accessible
-- **Solution**: Ensure `npm run dev` is running in the frontend directory and check if port 5173 is available
-
-**"CORS error when calling API"**
-- Backend CORS configuration is too restrictive
-- **Solution**: Verify `CLIENT_URL` in backend `.env` includes frontend port (e.g., `http://localhost:5173`)
-
-**"Token refresh loop / infinite 401 errors"**
-- Refresh token is expired or corrupted
-- **Solution**: Clear browser cookies, clear Redux state, and log in again. Use `node check_db.js` to verify MongoDB connectivity.
-
-**"Redux state not persisting after refresh"**
-- Session restore endpoint is failing
-- **Solution**: Check that `POST /api/auth/refresh` and `GET /api/auth/me` are working using Postman
-
-**"Tailwind styles not applying in production build**
-- PurgeCSS is removing used classes
-- **Solution**: Check `vite.config.js` safelist configuration for dynamic classes
+| Error | Likely Cause | Fix |
+|---|---|---|
+| `CORS error` | `CLIENT_URL` mismatch | Set `CLIENT_URL=http://localhost:5173` in backend `.env` |
+| Infinite 401 / token refresh loop | Expired or corrupt refresh token | Clear browser cookies, log in again |
+| Redux state lost on refresh | Session restore failing | Test `POST /api/auth/refresh` and `GET /api/auth/me` in Postman |
+| Tailwind styles missing in production | PurgeCSS removing dynamic classes | Add dynamic class names to Tailwind safelist in `vite.config.js` |
 
 ### Common Setup Mistakes
 
-| Issue | Cause | Fix |
+| Symptom | Root Cause | Fix |
 |---|---|---|
-| Env variables undefined | .env file not created or incorrect path | Copy `.env.example` → `.env` and fill values |
-| Auth fails | JWT secrets too short | Use 32+ character random strings for JWT secrets |
-| Booking validation fails | Date format mismatch | Ensure dates are in `YYYY-MM-DD` format (ISO 8601) |
-| Email not sending | SMTP credentials wrong | Test using `node -e "require('./src/config/mail.js')"` |
-| Images not uploading | Cloudinary rate limit exceeded | Wait 1 hour or upgrade Cloudinary plan |
+| `.env` variables are `undefined` | `.env` file not created | Copy `.env.example` → `.env` and fill in all values |
+| Auth fails consistently | JWT secrets too short | Use 32+ character random strings |
+| Booking creation fails | Wrong date format | Dates must be in `YYYY-MM-DD` format |
+| Emails not sending | Wrong SMTP config | Use [Mailtrap](https://mailtrap.io) for local testing |
 
 ---
 
-## 💡 Tips for Development
+## 🤝 Contributing
 
-- **Use Postman**: Import API collection from `backend/postman-collection.json` (create if needed)
-- **Browser DevTools**: Redux DevTools extension helps debug state changes
-- **VS Code Extensions**: Install ESLint, Prettier, and Thunder Client for API testing
-- **MongoDB Compass**: Visual tool to inspect documents and create indexes
-- **Nodemon**: Auto-restarts backend on file changes (included in `npm run dev`)
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch — `git checkout -b feature/your-feature`
-3. Commit with a clear message — `git commit -m 'feat: add your feature'`
-4. Push — `git push origin feature/your-feature`
+1. Fork this repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit with a clear message: `git commit -m 'feat: add your feature'`
+4. Push your branch: `git push origin feature/your-feature`
 5. Open a Pull Request against `main`
 
-Please follow the existing code style (ESM imports, async/await, `ApiError`/`ApiResponse` patterns).
+Please follow the existing code style — ESM imports, async/await throughout, and use `ApiError` / `ApiResponse` for all API responses.
 
 ---
 
-## License
+## 📄 License
 
 Distributed under the MIT License.
 
 ---
 
 <div align="center">
-  <p>Built with the MERN stack &nbsp;·&nbsp; Deployed on Render &nbsp;·&nbsp; © 2026 LUXORIA</p>
+  Built with the MERN stack &nbsp;·&nbsp; Deployed on Render &nbsp;·&nbsp; © 2026 LUXORIA
 </div>
