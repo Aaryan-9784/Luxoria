@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  createBooking, getMyBookings, getVendorBookings,
+  createBooking, getBookings, getMyBookings, getVendorBookings,
   getBooking, updateBookingStatus, cancelBooking,
 } from '../controllers/bookingController.js';
 import { protect, authorize } from '../middleware/auth.js';
@@ -11,6 +11,7 @@ const router = Router();
 
 router.use(protect);
 
+router.get('/', getBookings);
 router.post('/', authorize('user'), validate(createBookingSchema), createBooking);
 router.get('/my', authorize('user'), getMyBookings);
 router.get('/vendor', authorize('vendor'), getVendorBookings);

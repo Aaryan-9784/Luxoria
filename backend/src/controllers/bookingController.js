@@ -73,6 +73,37 @@ export const createBooking = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc    Get authenticated user's or vendor's bookings
+ * @route   GET /api/bookings
+ * @access  Protected
+ */
+export const getBookings = asyncHandler(async (req, res) => {
+  const filter = { isActive: true };
+
+  if (req.user.role === 'vendor') {
+    filter.vendor = req.user._id;
+  } else if (req.user.role === 'user') {
+    filter.user = req.user._id;
+  }
+
+  if (req.query.status) filter.status = req.query.status;
+
+  const totalCount = await Booking.countDocuments(filter);
+
+  const features = new ApiFeatures(Booking.find(filter), req.query)
+    .sort()
+    .paginate();
+  features.totalCount = totalCount;
+
+  const bookings = await features.query
+    .populate('vehicle', 'name brand images pricePerDay category')
+    .populate('vendor', 'name avatar')
+    .populate('user', 'name email avatar phone');
+
+  ApiResponse.paginated(res, bookings, features.getPagination());
+});
+
+/**
  * @desc    Get user's bookings
  * @route   GET /api/bookings/my
  * @access  User

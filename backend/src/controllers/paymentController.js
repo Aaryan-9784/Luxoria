@@ -95,6 +95,22 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     throw ApiError.notFound('Payment record not found');
   }
 
+  if (payment.status === 'captured') {
+    const booking = await Booking.findById(payment.booking)
+      .populate('vehicle', 'name brand images category transmission')
+      .populate('user', 'name email');
+
+    if (booking.status !== 'confirmed') {
+      booking.status = 'confirmed';
+      await booking.save();
+    }
+
+    return ApiResponse.success(res, {
+      payment,
+      booking,
+    }, 'Payment already verified');
+  }
+
   payment.razorpayPaymentId = razorpay_payment_id;
   payment.razorpaySignature = razorpay_signature;
   payment.status = 'captured';
