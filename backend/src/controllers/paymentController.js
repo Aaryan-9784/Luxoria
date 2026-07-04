@@ -102,7 +102,7 @@ export const verifyPayment = asyncHandler(async (req, res) => {
 
   // Update booking status
   const booking = await Booking.findById(payment.booking)
-    .populate('vehicle', 'name brand')
+    .populate('vehicle', 'name brand images category transmission')
     .populate('user', 'name email');
 
   booking.status = 'confirmed';

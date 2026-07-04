@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { EASE_LUXE } from '@/lib/motion';
 import { ArrowRight, Play, Star, CalendarCheck, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function ExperienceShowcase() {
-  const { scrollYProgress } = useScroll();
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
   // Simple parallax for the main image
   const yImage = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
   return (
-    <section className="py-24 bg-background relative overflow-hidden">
+    <section ref={sectionRef} className="py-24 bg-background relative overflow-hidden">
       <div className="container-luxe">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
           

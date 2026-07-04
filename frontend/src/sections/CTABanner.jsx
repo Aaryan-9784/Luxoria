@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { EASE_LUXE } from '@/lib/motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function CTABanner() {
-  const { scrollYProgress } = useScroll();
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
   const yImage1 = useTransform(scrollYProgress, [0, 1], [50, -50]);
   const yImage2 = useTransform(scrollYProgress, [0, 1], [-30, 30]);
 
   return (
-    <section className="py-32 bg-background relative overflow-hidden">
+    <section ref={sectionRef} className="py-32 bg-background relative overflow-hidden">
       {/* Deep cinematic glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[800px] bg-gradient-to-r from-accent/20 via-transparent to-accent/20 rounded-full blur-[200px] opacity-[0.15] pointer-events-none" />
       
