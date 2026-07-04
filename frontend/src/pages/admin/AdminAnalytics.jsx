@@ -15,17 +15,17 @@ import {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-const fmtINR = (val) =>
-  new Intl.NumberFormat('en-IN', {
+const fmtUSD = (val) =>
+  new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'INR',
+    currency: 'USD',
     maximumFractionDigits: 0,
   }).format(val);
 
-const fmtINRShort = (val) => {
-  if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
-  if (val >= 1000)   return `₹${(val / 1000).toFixed(0)}K`;
-  return `₹${val}`;
+const fmtUSDShort = (val) => {
+  if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`;
+  if (val >= 1000)    return `$${(val / 1000).toFixed(0)}K`;
+  return `$${val}`;
 };
 
 // Month labels for an empty-state skeleton (Jan → Dec of current year)
@@ -41,7 +41,7 @@ const RevenueTooltip = ({ active, payload, label }) => {
   return (
     <div className="bg-[#0F0F0F] text-white rounded-xl px-4 py-3 shadow-2xl border border-white/10 min-w-[130px]">
       <p className="text-[10px] font-bold text-[#C9A75D] uppercase tracking-widest mb-1">{label}</p>
-      <p className="text-[16px] font-bold">{fmtINR(payload[0].value)}</p>
+      <p className="text-[16px] font-bold">{fmtUSD(payload[0].value)}</p>
     </div>
   );
 };
@@ -152,7 +152,7 @@ export default function AdminAnalytics() {
       {/* ── KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { title: 'Total Revenue',   value: kpis.revenue,     icon: DollarSign, prefix: '₹' },
+          { title: 'Total Revenue',   value: kpis.revenue,     icon: DollarSign, prefix: '$' },
           { title: 'Global Bookings', value: kpis.bookings,    icon: Calendar,   prefix: ''  },
           { title: 'Active Clients',  value: kpis.activeUsers, icon: Users,      prefix: ''  },
           { title: 'Vendor Partners', value: kpis.vendors,     icon: Car,        prefix: ''  },
@@ -190,7 +190,7 @@ export default function AdminAnalytics() {
               <h3 className="text-lg font-serif text-[#0F0F0F]">Revenue Growth</h3>
               <p className="text-[11px] text-[#888888] mt-0.5">
                 {hasRevenueData
-                  ? `Peak month: ${fmtINR(maxRevenue)}`
+                  ? `Peak month: ${fmtUSD(maxRevenue)}`
                   : 'No revenue recorded yet — chart shows full-year frame'}
               </p>
             </div>
@@ -243,7 +243,7 @@ export default function AdminAnalytics() {
                   />
 
                   <YAxis
-                    tickFormatter={fmtINRShort}
+                    tickFormatter={fmtUSDShort}
                     tick={{ fontSize: 10, fill: '#AAAAAA', fontWeight: 600 }}
                     tickLine={false}
                     axisLine={false}
@@ -348,7 +348,7 @@ export default function AdminAnalytics() {
                         </span>
                         <div className="flex items-center gap-2 shrink-0">
                           <span className="text-[11px] font-bold text-[#0F0F0F]">
-                            {fmtINR(vendor.revenue)}
+                            {fmtUSD(vendor.revenue)}
                           </span>
                           <span className="text-[10px] text-[#888888]">
                             {vendor.bookings} {vendor.bookings === 1 ? 'booking' : 'bookings'}

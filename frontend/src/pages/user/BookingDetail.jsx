@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { formatDisplayAmount } from '@/utils/currency';
 import { cancelBooking } from '@/redux/slices/dashboardSlice';
 import { createReview, fetchMyReviews } from '@/redux/slices/reviewSlice';
 import api from '@/services/api';
@@ -143,7 +144,7 @@ export default function BookingDetail() {
       `Dropoff Loc.  : ${booking.dropoffLocation || 'N/A'}`,
       '',
       `Status        : ${booking.status?.toUpperCase()}`,
-      `Total Amount  : $${booking.totalAmount?.toLocaleString('en-US')}`,
+      `Total Amount  : ${formatDisplayAmount(booking.totalAmount)}`,
       '',
       booking.notes ? `Notes         : ${booking.notes}` : '',
       '',

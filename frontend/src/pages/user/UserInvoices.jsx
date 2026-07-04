@@ -5,6 +5,7 @@ import api from '@/services/api';
 import { Download, Receipt, AlertCircle, CreditCard, CalendarDays, Hash, ChevronLeft, ChevronRight, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CustomSelect from '@/components/ui/CustomSelect';
+import { formatDisplayAmount } from '@/utils/currency';
 
 export default function UserInvoices() {
   const [payments, setPayments] = useState([]);
@@ -84,7 +85,7 @@ export default function UserInvoices() {
       `Status       : ${tx.status?.toUpperCase()}`,
       '',
       '------------------------------------------------',
-      `TOTAL CHARGED: $${tx.amount?.toLocaleString('en-US')}`,
+      `TOTAL CHARGED: ${formatDisplayAmount(tx.amount)}`,
       '------------------------------------------------',
       '',
       '================================================',

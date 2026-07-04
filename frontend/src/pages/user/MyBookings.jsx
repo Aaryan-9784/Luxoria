@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { formatDisplayAmount } from '@/utils/currency';
 import { fetchMyBookings, cancelBooking } from '@/redux/slices/dashboardSlice';
 import { createReview, fetchMyReviews } from '@/redux/slices/reviewSlice';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -119,7 +120,7 @@ export default function MyBookings() {
       '',
       `Location      : ${booking.pickupLocation || 'N/A'}`,
       `Status        : ${booking.status?.toUpperCase()}`,
-      `Total Amount  : $${booking.totalAmount?.toLocaleString('en-US')}`,
+      `Total Amount  : ${formatDisplayAmount(booking.totalAmount)}`,
       '',
       '================================================',
       '     Thank you for choosing Luxoria.            ',

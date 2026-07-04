@@ -8,6 +8,7 @@ import {
   verifyRazorpaySignature,
 } from '../services/paymentService.js';
 import emailService from '../services/emailService.js';
+import { convertUsdToInr } from '../utils/currency.js';
 
 /**
  * @desc    Create Razorpay order
@@ -41,8 +42,10 @@ export const createOrder = asyncHandler(async (req, res) => {
     throw ApiError.conflict('Payment already completed for this booking');
   }
 
+  const amountInInr = convertUsdToInr(booking.totalAmount);
+
   const order = await createRazorpayOrder(
-    booking.totalAmount,
+    amountInInr,
     'INR',
     booking.bookingId
   );
@@ -52,7 +55,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     booking: bookingId,
     user: req.user._id,
     razorpayOrderId: order.id,
-    amount: booking.totalAmount,
+    amount: amountInInr,
     currency: 'INR',
   });
 

@@ -358,7 +358,7 @@ export default function EditVehicleWizard() {
                   </div>
 
                   <div>
-                    <FieldLabel required>Price Per Day (₹)</FieldLabel>
+                    <FieldLabel required>Price Per Day ($)</FieldLabel>
                     <input
                       {...register('pricePerDay', {
                         required: 'Price is required',

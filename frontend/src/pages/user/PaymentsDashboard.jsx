@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 import { createPaymentOrder } from '@/redux/slices/bookingSlice';
+import { formatDisplayAmount } from '@/utils/currency';
 import {
   CreditCard, ShieldCheck, Download, Hash,
   CalendarDays, DollarSign, ChevronLeft, ChevronRight,
@@ -113,7 +114,7 @@ export default function PaymentsDashboard() {
       `Period       : ${new Date(b.startDate).toLocaleDateString('en-GB')} – ${new Date(b.endDate).toLocaleDateString('en-GB')}`,
       `Duration     : ${b.totalDays} day(s)`,
       `Status       : ${b.status?.toUpperCase()}`,
-      `Amount Paid  : $${b.totalAmount?.toLocaleString('en-US')}`,
+      `Amount Paid  : ${formatDisplayAmount(b.totalAmount)}`,
       '',
       '================================================',
       '       Thank you for choosing Luxoria.          ',

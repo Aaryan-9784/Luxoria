@@ -7,8 +7,9 @@ import ApiError from '../utils/ApiError.js';
  */
 export const createRazorpayOrder = async (amount, currency = 'INR', receipt) => {
   try {
+    const normalizedAmount = Math.max(1, Math.round(Number(amount || 0)));
     const options = {
-      amount: Math.round(amount * 100), // Convert to paise
+      amount: normalizedAmount * 100, // Convert to paise
       currency,
       receipt,
       payment_capture: 1, // Auto-capture
