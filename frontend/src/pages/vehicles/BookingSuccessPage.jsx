@@ -46,7 +46,7 @@ export default function BookingSuccessPage() {
   const bookingRef     = booking?.bookingId   || bookingId || '—';
   const payStatus      = booking?.status?.toUpperCase() || 'CONFIRMED';
   const tripDays       = booking?.totalDays ?? '—';
-  const upgradeDetails = booking?.notes?.trim() || 'No upgrades selected';
+
 
   /* ── PDF download — browser print ── */
   const downloadReceipt = () => {
@@ -636,17 +636,6 @@ export default function BookingSuccessPage() {
                 </div>
                 <p className="text-base font-bold text-[#0F0F0F]">
                   {booking?.pickupLocation || 'To be confirmed'}
-                </p>
-              </div>
-
-              {/* Upgrade details */}
-              <div className="bg-[#FAFAFA] border border-[#ECECEC] rounded-2xl p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <Package className="w-3.5 h-3.5 text-[#C9A75D]" />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#666666]">Upgrade Details</p>
-                </div>
-                <p className="text-base font-bold text-[#0F0F0F]">
-                  {upgradeDetails}
                 </p>
               </div>
             </div>

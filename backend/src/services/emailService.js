@@ -84,8 +84,6 @@ class EmailService {
       maximumFractionDigits: 0,
     }).format(booking.totalAmount || 0);
 
-    const upgradeDetails = booking.notes?.trim() || 'No upgrades selected.';
-
     const html = `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
         <!-- Redesigned Header with Logo -->
@@ -118,7 +116,6 @@ class EmailService {
                 <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px; width: 35%;"><strong>Dates:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${new Date(booking.startDate).toLocaleDateString()} - ${new Date(booking.endDate).toLocaleDateString()}</td></tr>
                 <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Location:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${booking.pickupLocation}</td></tr>
                 <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Total Paid:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${formattedTotalPaid}</td></tr>
-                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Upgrade Details:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${upgradeDetails}</td></tr>
               </tbody>
             </table>
           </div>
