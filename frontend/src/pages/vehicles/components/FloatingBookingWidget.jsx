@@ -96,7 +96,6 @@ export default function FloatingBookingWidget({ vehicle }) {
           amount: orderResult.payload.amount,
           currency: orderResult.payload.currency,
           name: "LUXORIA",
-          image: `${window.location.origin}/luxoria-logo.svg`,
           description: `Booking: ${orderResult.payload.vehicleName}`,
           order_id: orderResult.payload.orderId,
           handler: function (response) {

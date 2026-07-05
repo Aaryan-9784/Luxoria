@@ -152,7 +152,6 @@ export default function PaymentsDashboard() {
         amount,
         currency,
         name: 'LUXORIA',
-        image: `${window.location.origin}/luxoria-logo.svg`,
         description: `Booking: ${vehicleName}`,
         order_id: orderId,
         handler: (response) => {

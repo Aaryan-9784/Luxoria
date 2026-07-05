@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, AlertCircle, CheckCircle2 } from 'lucide-react';
+import api from '@/services/api';
 
 export default function ContactVendorModal({ isOpen, onClose, vehicle }) {
   const [formData, setFormData] = useState({
@@ -25,23 +26,15 @@ export default function ContactVendorModal({ isOpen, onClose, vehicle }) {
 
     try {
       // Use the new endpoint we created in the backend
-      const response = await fetch('http://localhost:5000/api/contact/vendor', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          vehicleId: vehicle?._id || vehicle?.id,
-          vehicleName: vehicle?.brand ? `${vehicle.brand} ${vehicle.model || vehicle.name}` : vehicle?.name,
-          vendorName: vehicle?.vendor?.name,
-        }),
+      const response = await api.post('/contact/vendor', {
+        ...formData,
+        vehicleId: vehicle?._id || vehicle?.id,
+        vehicleName: vehicle?.brand ? `${vehicle.brand} ${vehicle.model || vehicle.name}` : vehicle?.name,
+        vendorName: vehicle?.vendor?.name,
       });
 
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Failed to send inquiry');
+      if (response.status !== 200 && response.status !== 201) {
+        throw new Error(response.data?.message || 'Failed to send inquiry');
       }
 
       setSuccess(true);
