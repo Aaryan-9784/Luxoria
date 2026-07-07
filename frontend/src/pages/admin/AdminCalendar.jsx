@@ -187,17 +187,16 @@ export default function AdminCalendar() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-          <div className="w-full sm:w-64">
-            <CustomSelect
-              value={selectedVehicle}
-              onChange={setSelectedVehicle}
-              options={[
-                { value: 'all', label: 'All Vehicles' },
-                ...activeVehicles.map((vehicle) => ({ value: vehicle._id, label: vehicle.name || vehicle.model || 'Unnamed Vehicle' })),
-              ]}
-              className="w-full rounded-full py-3 pl-4 text-[13px] font-semibold"
-            />
-          </div>
+          <CustomSelect
+            value={selectedVehicle}
+            onChange={setSelectedVehicle}
+            options={[
+              { value: 'all', label: 'All Vehicles' },
+              ...activeVehicles.map((vehicle) => ({ value: vehicle._id, label: vehicle.name || vehicle.model || 'Unnamed Vehicle' })),
+            ]}
+            icon={Car}
+            className="w-full sm:w-64"
+          />
 
           <button
             type="button"

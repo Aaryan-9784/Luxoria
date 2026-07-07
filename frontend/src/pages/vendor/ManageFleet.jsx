@@ -64,27 +64,25 @@ export default function ManageFleet() {
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-8">
       
       {/* Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
           <h1 className="text-[28px] font-bold text-[#0F0F0F] tracking-tight mb-1.5" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>Fleet Management</h1>
           <p className="text-[#666666] text-sm font-medium tracking-wide">Manage your vehicles, pricing, and availability.</p>
         </div>
-        <Link to="/vendor/add-vehicle" className="flex items-center gap-2 px-6 py-3 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all shrink-0">
-          <PlusCircle className="w-4 h-4" /> Add Vehicle
-        </Link>
-      </div>
-
-      {/* Toolbar */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
-          <input 
-            type="text" 
-            placeholder="Search fleet by name or brand..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3.5 pl-11 pr-4 rounded-xl focus:outline-none focus:border-[#C9A75D] focus:ring-1 focus:ring-[#C9A75D]/30 transition-all placeholder:text-[#9CA3AF] shadow-sm"
-          />
+        <div className="flex items-center gap-3 w-full lg:w-auto">
+          <div className="relative flex-1 lg:w-64">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
+            <input
+              type="text"
+              placeholder="Search fleet by name or brand..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-white border border-[#ECECEC] text-[#0F0F0F] text-[13px] py-3 pl-11 pr-4 rounded-xl focus:outline-none focus:border-[#C9A75D] focus:ring-1 focus:ring-[#C9A75D]/30 transition-all placeholder:text-[#9CA3AF] shadow-sm"
+            />
+          </div>
+          <Link to="/vendor/add-vehicle" className="flex items-center gap-2 px-6 py-3 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all shrink-0">
+            <PlusCircle className="w-4 h-4" /> Add Vehicle
+          </Link>
         </div>
       </div>
 

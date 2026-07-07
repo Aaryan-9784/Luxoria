@@ -200,7 +200,8 @@ export default function VendorSupport() {
                     ]}
                     icon={null}
                     placeholder="Select priority level"
-                    className="w-full bg-[#F5F5F5] border border-[#ECECEC] py-3.5 px-4"
+                    variant="field"
+                    className="w-full"
                   />
                 </div>
 

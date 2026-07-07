@@ -129,22 +129,19 @@ export default function VendorBookings() {
             )}
           </div>
 
-          <div className="relative w-full sm:w-48">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
-            <CustomSelect
-              value={statusFilter}
-              onChange={setStatusFilter}
-              options={[
-                { value: 'all', label: 'All Statuses' },
-                { value: 'pending', label: 'Pending' },
-                { value: 'confirmed', label: 'Confirmed' },
-                { value: 'completed', label: 'Completed' },
-                { value: 'cancelled', label: 'Cancelled' }
-              ]}
-              icon={null}
-              className="w-full text-[13px] py-3 pl-11 shadow-sm"
-            />
-          </div>
+          <CustomSelect
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={[
+              { value: 'all',       label: 'All Statuses' },
+              { value: 'pending',   label: 'Pending' },
+              { value: 'confirmed', label: 'Confirmed' },
+              { value: 'completed', label: 'Completed' },
+              { value: 'cancelled', label: 'Cancelled' },
+            ]}
+            icon={Filter}
+            className="w-full sm:w-48"
+          />
         </div>
       </div>
 

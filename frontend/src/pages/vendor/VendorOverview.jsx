@@ -151,20 +151,17 @@ export default function VendorOverview() {
         <motion.div variants={staggerItem} className="lg:col-span-2 bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F]">Revenue Trends</h3>
-            <div className="relative w-44">
-              <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
-              <CustomSelect
-                value={timeFilter}
-                onChange={setTimeFilter}
-                options={[
-                  { value: 'This Month', label: 'This Month' },
-                  { value: 'Last 3 Months', label: 'Last 3 Months' },
-                  { value: 'This Year', label: 'This Year' }
-                ]}
-                icon={null}
-                className="pl-10 py-3 text-[13px] shadow-sm"
-              />
-            </div>
+            <CustomSelect
+              value={timeFilter}
+              onChange={setTimeFilter}
+              options={[
+                { value: 'This Month', label: 'This Month' },
+                { value: 'Last 3 Months', label: 'Last 3 Months' },
+                { value: 'This Year', label: 'This Year' }
+              ]}
+              icon={Calendar}
+              className="w-44"
+            />
           </div>
           
           <div className="w-full mt-2">

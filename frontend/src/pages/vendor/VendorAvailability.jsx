@@ -185,19 +185,16 @@ export default function VendorAvailability() {
           <p className="text-[#666666] text-sm font-medium tracking-wide">Manage vehicle availability, view upcoming bookings, and schedule maintenance blocks.</p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-          <div className="relative w-full sm:w-64">
-            <Car className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
-            <CustomSelect
+          <CustomSelect
               value={selectedVehicle}
               onChange={setSelectedVehicle}
               options={[
                 { value: 'all', label: 'All Vehicles' },
                 ...activeVehicles.map(v => ({ value: v._id, label: v.name }))
               ]}
-              icon={null}
-              className="w-full text-[13px] py-3 pl-11 shadow-sm"
+              icon={Car}
+              className="w-full sm:w-64"
             />
-          </div>
           <button
             onClick={() => setShowBlockModal(true)}
             className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all w-full sm:w-auto shrink-0"

@@ -235,7 +235,30 @@ export default function AdminDashboardLayout() {
             <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 rounded-lg text-[#0F0F0F] hover:bg-[#F5F5F5]">
               <Menu className="w-6 h-6" />
             </button>
+            <div className="hidden lg:flex items-center gap-2.5">
+              {/* Home icon */}
+              <Link to="/" className="group/home flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-[#C9A75D] to-[#A8843A] shadow-md hover:shadow-[0_0_12px_rgba(201,167,93,0.5)] hover:scale-105 active:scale-95 transition-all duration-200" title="Back to Home">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 9.5L12 3L21 9.5V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9.5Z" fill="white" fillOpacity="0.95"/>
+                  <path d="M9 22V12H15V22" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+                </svg>
+              </Link>
 
+              {/* Separator */}
+              <svg width="6" height="14" viewBox="0 0 6 14" fill="none" className="opacity-25"><path d="M5 1L1 13" stroke="#0F0F0F" strokeWidth="1.5" strokeLinecap="round"/></svg>
+
+              {/* Workspace badge */}
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F7F7] border border-[#EBEBEB]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#C9A75D]" />
+                <span className="text-[10px] font-bold text-[#555555] tracking-[0.18em] uppercase">Admin</span>
+              </span>
+
+              {/* Separator */}
+              <svg width="6" height="14" viewBox="0 0 6 14" fill="none" className="opacity-25"><path d="M5 1L1 13" stroke="#0F0F0F" strokeWidth="1.5" strokeLinecap="round"/></svg>
+
+              {/* Active page */}
+              <span className="text-[11px] font-bold text-[#C9A75D] tracking-[0.18em] uppercase">{activePageName}</span>
+            </div>
           </div>
           
           <div className="flex items-center gap-4 lg:gap-6 relative">

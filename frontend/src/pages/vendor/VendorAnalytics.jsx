@@ -146,20 +146,17 @@ export default function VendorAnalytics() {
           <p className="text-[#666666] text-sm font-medium tracking-wide">In-depth insights into your fleet's performance and market demand.</p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-          <div className="relative w-full sm:w-48">
-            <Activity className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none z-10" />
-            <CustomSelect
-              value={timeFilter}
-              onChange={setTimeFilter}
-              options={[
-                { value: 'this_year', label: 'This Year' },
-                { value: 'last_year', label: 'Last Year' },
-                { value: 'all_time', label: 'All Time' },
-              ]}
-              icon={null}
-              className="w-full text-[13px] py-3 pl-11 shadow-sm"
-            />
-          </div>
+          <CustomSelect
+            value={timeFilter}
+            onChange={setTimeFilter}
+            options={[
+              { value: 'this_year', label: 'This Year' },
+              { value: 'last_year', label: 'Last Year' },
+              { value: 'all_time', label: 'All Time' },
+            ]}
+            icon={Activity}
+            className="w-full sm:w-48"
+          />
           <button
             onClick={handleDownloadReport}
             className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0F0F0F] text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg transition-all w-full sm:w-auto shrink-0"
