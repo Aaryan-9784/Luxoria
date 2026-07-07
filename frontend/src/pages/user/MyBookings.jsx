@@ -5,7 +5,7 @@ import { openLuxoriaReceipt } from '@/utils/generateReceipt';
 import { fetchMyBookings, cancelBooking } from '@/redux/slices/dashboardSlice';
 import { createReview, fetchMyReviews } from '@/redux/slices/reviewSlice';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Hash, Download, Eye, Car, AlertTriangle, Star, Check, MessageSquare } from 'lucide-react';
+import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Hash, Download, Eye, Car, AlertTriangle, Star, Check, MessageSquare, ThumbsUp } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
 
@@ -62,10 +62,14 @@ export default function MyBookings() {
   const totalPages = Math.ceil(filteredBookings.length / bookingsPerPage);
   const paginatedBookings = filteredBookings.slice((currentPage - 1) * bookingsPerPage, currentPage * bookingsPerPage);
 
-  // Check if a booking already has a review
+  // Check if a booking already has a review/feedback
   const bookingHasReview = (bookingId) =>
     reviewedIds.has(bookingId) ||
     reviews.some(r => r.booking === bookingId || r.booking?._id === bookingId);
+
+  // Bookings eligible for feedback (confirmed, active, completed)
+  const canLeaveFeedback = (booking) =>
+    ['confirmed', 'active', 'completed'].includes(booking.status);
 
   const openReviewModal = (booking) => {
     setReviewBooking(booking);
@@ -308,22 +312,24 @@ export default function MyBookings() {
                             <Download className="w-4 h-4" />
                           </button>
                         )}
-                        {booking.status === 'completed' && !bookingHasReview(booking._id) && (
+                        {/* Feedback button — visible for confirmed, active, completed */}
+                        {canLeaveFeedback(booking) && !bookingHasReview(booking._id) && (
                           <button
                             onClick={() => openReviewModal(booking)}
-                            className="p-2 rounded-lg text-[#666666] hover:text-[#C9A75D] hover:bg-white border border-transparent hover:border-[#ECECEC] transition-all"
-                            title="Leave a Review"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#C9A75D]/10 border border-[#C9A75D]/30 text-[#C9A75D] hover:bg-[#C9A75D]/20 transition-all text-[11px] font-bold uppercase tracking-wide whitespace-nowrap"
+                            title="Send Feedback"
                           >
-                            <Star className="w-4 h-4" />
+                            <ThumbsUp className="w-3.5 h-3.5" /> Feedback
                           </button>
                         )}
-                        {booking.status === 'completed' && bookingHasReview(booking._id) && (
+                        {/* Already reviewed — link to reviews page */}
+                        {canLeaveFeedback(booking) && bookingHasReview(booking._id) && (
                           <Link
                             to="/reviews"
-                            className="p-2 rounded-lg text-[#16A34A] hover:bg-white border border-transparent hover:border-[#ECECEC] transition-all"
-                            title="View Review"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#16A34A]/10 border border-[#16A34A]/20 text-[#16A34A] hover:bg-[#16A34A]/20 transition-all text-[11px] font-bold uppercase tracking-wide whitespace-nowrap"
+                            title="View Feedback"
                           >
-                            <Check className="w-4 h-4" />
+                            <Check className="w-3.5 h-3.5" /> Reviewed
                           </Link>
                         )}
                         {['pending', 'confirmed'].includes(booking.status) && (
@@ -401,8 +407,9 @@ export default function MyBookings() {
               <div className="w-12 h-12 rounded-full bg-[#C9A75D]/10 flex items-center justify-center mb-4">
                 <MessageSquare className="w-6 h-6 text-[#C9A75D]" />
               </div>
-              <h3 className="text-[18px] font-bold text-[#0F0F0F] mb-1">Leave a Review</h3>
-              <p className="text-[13px] text-[#666666] mb-6">{reviewBooking.vehicle?.name}</p>
+              <h3 className="text-[18px] font-bold text-[#0F0F0F] mb-1">Send Feedback</h3>
+              <p className="text-[13px] text-[#666666] mb-1">{reviewBooking.vehicle?.name}</p>
+              <p className="text-[11px] text-[#999999] mb-6">Your feedback will appear on your My Reviews page.</p>
 
               {/* Star rating */}
               <div className="mb-5">
@@ -455,7 +462,7 @@ export default function MyBookings() {
                   {reviewSaving ? (
                     <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Submitting...</>
                   ) : (
-                    <><Check className="w-4 h-4" /> SUBMIT REVIEW</>
+                    <><ThumbsUp className="w-4 h-4" /> SEND FEEDBACK</>
                   )}
                 </button>
               </div>

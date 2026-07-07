@@ -20,7 +20,7 @@ export const getMyReviews = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc    Create review
+ * @desc    Create review / feedback
  * @route   POST /api/reviews/:vehicleId
  * @access  User
  */
@@ -28,16 +28,16 @@ export const createReview = asyncHandler(async (req, res) => {
   const { vehicleId } = req.params;
   const { rating, comment, bookingId } = req.body;
 
-  // Verify user has a completed booking for this vehicle
+  // Verify user has a valid booking for this vehicle (any non-cancelled status)
   const booking = await Booking.findOne({
     _id: bookingId,
     user: req.user._id,
     vehicle: vehicleId,
-    status: 'completed',
+    status: { $in: ['confirmed', 'active', 'completed'] },
   });
 
   if (!booking) {
-    throw ApiError.badRequest('You can only review vehicles from completed bookings');
+    throw ApiError.badRequest('You can only leave feedback for confirmed, active, or completed bookings');
   }
 
   const review = await Review.create({
