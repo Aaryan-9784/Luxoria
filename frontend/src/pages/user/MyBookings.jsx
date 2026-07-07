@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { formatDisplayAmount } from '@/utils/currency';
+import { convertUsdToInr } from '@/utils/currency';
+import { openLuxoriaReceipt } from '@/utils/generateReceipt';
 import { fetchMyBookings, cancelBooking } from '@/redux/slices/dashboardSlice';
 import { createReview, fetchMyReviews } from '@/redux/slices/reviewSlice';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,7 +21,7 @@ function dateMatchesQuery(bookingDate, query) {
 export default function MyBookings() {
   const dispatch = useDispatch();
   const { bookings, loading, error } = useSelector(state => state.dashboard);
-  const { accessToken } = useSelector(state => state.auth);
+  const { accessToken, user: currentUser, loading: authLoading } = useSelector(state => state.auth);
   const { reviews } = useSelector(state => state.reviews);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -40,10 +41,10 @@ export default function MyBookings() {
   const [reviewedIds, setReviewedIds] = useState(new Set()); // track just-submitted in this session
 
   useEffect(() => {
-    if (!accessToken) return;
+    if (authLoading || !accessToken) return;
     dispatch(fetchMyBookings());
     dispatch(fetchMyReviews());
-  }, [dispatch, accessToken]);
+  }, [dispatch, accessToken, authLoading]);
 
   // Filtering
   const filteredBookings = bookings.filter(b => {
@@ -106,35 +107,26 @@ export default function MyBookings() {
   };
 
   const handleDownloadReceipt = (booking) => {
-    const lines = [
-      '================================================',
-      '           LUXORIA — RENTAL RECEIPT             ',
-      '================================================',
-      '',
-      `Booking ID    : ${booking.bookingId}`,
-      `Vehicle       : ${booking.vehicle?.name || 'N/A'}`,
-      '',
-      `Pick-up       : ${new Date(booking.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
-      `Drop-off      : ${new Date(booking.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
-      `Total Days    : ${booking.totalDays}`,
-      '',
-      `Location      : ${booking.pickupLocation || 'N/A'}`,
-      `Status        : ${booking.status?.toUpperCase()}`,
-      `Total Amount  : ${formatDisplayAmount(booking.totalAmount)}`,
-      '',
-      '================================================',
-      '     Thank you for choosing Luxoria.            ',
-      '================================================',
-    ].join('\n');
-    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Luxoria_Receipt_${booking.bookingId}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const fmt = (iso) => iso
+      ? new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      : '—';
+    openLuxoriaReceipt({
+      bookingRef:          booking.bookingId,
+      dateIssued:          fmt(booking.createdAt),
+      tripStart:           fmt(booking.startDate),
+      tripEnd:             fmt(booking.endDate),
+      totalDays:           booking.totalDays,
+      pickupLocation:      booking.pickupLocation || 'N/A',
+      guestName:           currentUser?.name  || 'Guest',
+      guestEmail:          currentUser?.email || '',
+      vehicleName:         booking.vehicle?.name  || 'Luxury Vehicle',
+      vehicleBrand:        booking.vehicle?.brand || '',
+      vehicleTransmission: booking.vehicle?.transmission
+        ? booking.vehicle.transmission.charAt(0).toUpperCase() + booking.vehicle.transmission.slice(1)
+        : 'Automatic',
+      amountUsd:           booking.totalAmount ?? 0,
+      amountInr:           convertUsdToInr(booking.totalAmount ?? 0),
+    });
   };
 
   const renderStatusBadge = (status) => {

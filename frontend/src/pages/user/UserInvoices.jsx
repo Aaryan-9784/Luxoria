@@ -5,7 +5,8 @@ import api from '@/services/api';
 import { Download, Receipt, AlertCircle, CreditCard, CalendarDays, Hash, ChevronLeft, ChevronRight, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CustomSelect from '@/components/ui/CustomSelect';
-import { formatDisplayAmount } from '@/utils/currency';
+import { convertUsdToInr } from '@/utils/currency';
+import { openLuxoriaReceipt } from '@/utils/generateReceipt';
 
 export default function UserInvoices() {
   const [payments, setPayments] = useState([]);
@@ -13,10 +14,16 @@ export default function UserInvoices() {
   const [timeframe, setTimeframe] = useState('all'); // all, month, year
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
-  const { accessToken } = useSelector((state) => state.auth);
+  const { accessToken, user: currentUser, loading: authLoading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (!accessToken) return;
+    // Wait until auth has finished initialising before fetching
+    if (authLoading) return;
+    if (!accessToken) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     const fetchPayments = async () => {
       try {
         const res = await api.get('/bookings/my?limit=100');
@@ -34,6 +41,9 @@ export default function UserInvoices() {
             amount: b.totalAmount,
             vehicle: b.vehicle?.name || 'N/A',
             vehicleImage: b.vehicle?.images?.[0]?.url || null,
+            vehicleCategory: b.vehicle?.category || null,
+            vehicleTransmission: b.vehicle?.transmission || 'Automatic',
+            vehicleBrand: b.vehicle?.brand || '',
             status: b.status,
             method: 'Razorpay',
             pickupLocation: b.pickupLocation || 'N/A',
@@ -46,7 +56,7 @@ export default function UserInvoices() {
       }
     };
     fetchPayments();
-  }, [accessToken]);
+  }, [accessToken, authLoading]);
 
   const filteredPayments = useMemo(() => {
     const now = new Date();
@@ -69,38 +79,22 @@ export default function UserInvoices() {
   const paginatedPayments = filteredPayments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleDownloadInvoice = (tx) => {
-    const lines = [
-      '================================================',
-      '         LUXORIA — OFFICIAL INVOICE             ',
-      '================================================',
-      '',
-      `Invoice Ref  : ${tx.bookingId}`,
-      `Date Issued  : ${new Date(tx.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
-      '',
-      `Description  : Vehicle Rental — ${tx.vehicle}`,
-      `Period       : ${new Date(tx.startDate).toLocaleDateString('en-GB')} – ${new Date(tx.endDate).toLocaleDateString('en-GB')}`,
-      `Duration     : ${tx.totalDays} day(s)`,
-      `Pickup       : ${tx.pickupLocation}`,
-      `Payment Via  : ${tx.method}`,
-      `Status       : ${tx.status?.toUpperCase()}`,
-      '',
-      '------------------------------------------------',
-      `TOTAL CHARGED: ${formatDisplayAmount(tx.amount)}`,
-      '------------------------------------------------',
-      '',
-      '================================================',
-      '       Thank you for choosing Luxoria.          ',
-      '================================================',
-    ].join('\n');
-    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
-    const url  = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href  = url;
-    link.download = `Luxoria_Invoice_${tx.bookingId}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const fmt = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    openLuxoriaReceipt({
+      bookingRef:           tx.bookingId,
+      dateIssued:           fmt(tx.date),
+      tripStart:            fmt(tx.startDate),
+      tripEnd:              fmt(tx.endDate),
+      totalDays:            tx.totalDays,
+      pickupLocation:       tx.pickupLocation,
+      guestName:            currentUser?.name  || 'Guest',
+      guestEmail:           currentUser?.email || '',
+      vehicleName:          tx.vehicle,
+      vehicleBrand:         tx.vehicleBrand || '',
+      vehicleTransmission:  tx.vehicleTransmission || 'Automatic',
+      amountUsd:            tx.amount,
+      amountInr:            convertUsdToInr(tx.amount),
+    });
   };
 
   return (
@@ -113,7 +107,7 @@ export default function UserInvoices() {
           <p className="text-[#666666] text-sm font-medium tracking-wide">View your transaction history and download official receipts.</p>
         </div>
         
-        {payments.length > 0 && (
+        {!loading && payments.length > 0 && (
           <div className="flex items-center gap-4 w-full lg:w-auto">
             {/* Filter Timeline */}
             <div className="w-full sm:w-48">
@@ -133,7 +127,7 @@ export default function UserInvoices() {
       </div>
 
       {/* KPI Stats Bar */}
-      {payments.length > 0 && (
+      {!loading && payments.length > 0 && (
         <div className="flex flex-wrap items-center gap-6 px-6 py-4 bg-white border border-[#ECECEC] rounded-2xl shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#0F0F0F] flex items-center justify-center">
@@ -160,7 +154,50 @@ export default function UserInvoices() {
       )}
 
       {/* Main Content Area */}
-      {payments.length === 0 ? (
+      {loading ? (
+        /* ── Skeleton ── */
+        <div className="space-y-3">
+          {/* Stats skeleton */}
+          <div className="flex flex-wrap items-center gap-6 px-6 py-4 bg-white border border-[#ECECEC] rounded-2xl shadow-sm">
+            {[1,2,3].map(i => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#F0F0F0] animate-pulse" />
+                <div className="space-y-1.5">
+                  <div className="h-2 w-20 bg-[#F0F0F0] rounded animate-pulse" />
+                  <div className="h-4 w-14 bg-[#ECECEC] rounded animate-pulse" />
+                </div>
+                {i < 3 && <div className="hidden sm:block h-10 w-px bg-[#ECECEC] ml-3" />}
+              </div>
+            ))}
+          </div>
+          {/* Table skeleton */}
+          <div className="bg-white border border-[#ECECEC] rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-[#F9F9F9] border-b border-[#ECECEC] px-6 py-4 grid grid-cols-6 gap-4">
+              {['Date','Reference','Description','Method','Amount','Invoice'].map(h => (
+                <div key={h} className="h-2.5 bg-[#ECECEC] rounded animate-pulse" />
+              ))}
+            </div>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="px-6 py-5 border-b border-[#F5F5F5] grid grid-cols-6 gap-4 items-center">
+                <div className="h-3 w-20 bg-[#F5F5F5] rounded animate-pulse" />
+                <div className="h-6 w-24 bg-[#F5F5F5] rounded-lg animate-pulse" />
+                <div className="space-y-1.5">
+                  <div className="h-3 w-28 bg-[#F5F5F5] rounded animate-pulse" />
+                  <div className="h-2 w-20 bg-[#F0F0F0] rounded animate-pulse" />
+                </div>
+                <div className="h-3 w-20 bg-[#F5F5F5] rounded animate-pulse" />
+                <div className="space-y-1.5">
+                  <div className="h-3 w-14 bg-[#F5F5F5] rounded animate-pulse" />
+                  <div className="h-2 w-16 bg-[#F0F0F0] rounded animate-pulse" />
+                </div>
+                <div className="flex justify-end">
+                  <div className="h-8 w-8 bg-[#F5F5F5] rounded-lg animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : payments.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-4 bg-white border border-[#ECECEC] border-dashed rounded-2xl shadow-sm text-center">
           <div className="w-20 h-20 rounded-full bg-[#F5F5F5] flex items-center justify-center mb-6">
             <Receipt className="w-10 h-10 text-[#C9A75D] opacity-60" />

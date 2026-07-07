@@ -13,17 +13,16 @@ export default function WishlistPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { wishlist, loading } = useSelector(state => state.dashboard);
-  const { accessToken } = useSelector(state => state.auth);
+  const { accessToken, loading: authLoading } = useSelector(state => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('recent');
   const [removingId, setRemovingId] = useState(null);
   const [confirmId, setConfirmId] = useState(null); // vehicle._id to confirm remove
 
   useEffect(() => {
-    if (!accessToken) return;
-    // Only fetch from API — the slice will merge with local mock items automatically
+    if (authLoading || !accessToken) return;
     dispatch(fetchWishlist());
-  }, [dispatch, accessToken]);
+  }, [dispatch, accessToken, authLoading]);
 
   const handleRemove = async (vehicleId) => {
     setRemovingId(vehicleId);

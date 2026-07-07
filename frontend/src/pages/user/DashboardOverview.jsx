@@ -12,13 +12,13 @@ import { staggerContainer, staggerItem } from '@/lib/motion';
 export default function DashboardOverview() {
   const dispatch = useDispatch();
   const { stats, bookings, wishlist, loading } = useSelector(state => state.dashboard);
-  const { user, accessToken } = useSelector(state => state.auth);
+  const { user, accessToken, loading: authLoading } = useSelector(state => state.auth);
 
   useEffect(() => {
-    if (!accessToken) return;
+    if (authLoading || !accessToken) return;
     dispatch(fetchMyBookings());
     dispatch(fetchWishlist());
-  }, [dispatch, accessToken]);
+  }, [dispatch, accessToken, authLoading]);
 
   const activeBookings = bookings.filter(b => ['pending', 'confirmed', 'active'].includes(b.status)).slice(0, 3);
 
@@ -28,6 +28,59 @@ export default function DashboardOverview() {
     { label: 'Saved Vehicles', value: wishlist?.length || 0, icon: Heart },
     { label: 'Loyalty Points', value: stats?.loyaltyPoints || 0, icon: Award },
   ];
+
+  // Loading skeleton on hard refresh
+  if (loading && bookings.length === 0) {
+    return (
+      <div className="space-y-10">
+        {/* Header skeleton */}
+        <div>
+          <div className="h-8 w-56 bg-[#F0F0F0] rounded-lg animate-pulse mb-2" />
+          <div className="h-4 w-80 bg-[#F0F0F0] rounded animate-pulse" />
+        </div>
+        {/* KPI skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="bg-white border border-[#ECECEC] rounded-2xl p-6 space-y-4">
+              <div className="w-12 h-12 rounded-full bg-[#F0F0F0] animate-pulse" />
+              <div className="h-8 w-20 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-3 w-28 bg-[#F0F0F0] rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+        {/* Content skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-white border border-[#ECECEC] rounded-2xl p-6 space-y-4">
+            <div className="h-4 w-48 bg-[#F0F0F0] rounded animate-pulse" />
+            {[1,2].map(i => (
+              <div key={i} className="flex gap-4 p-4 rounded-xl border border-[#ECECEC]">
+                <div className="w-32 h-24 rounded-lg bg-[#F0F0F0] animate-pulse shrink-0" />
+                <div className="flex-1 space-y-2 pt-1">
+                  <div className="h-4 w-40 bg-[#F0F0F0] rounded animate-pulse" />
+                  <div className="h-3 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+                  <div className="h-3 w-24 bg-[#F0F0F0] rounded animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-6">
+            <div className="bg-white border border-[#ECECEC] rounded-2xl p-6 space-y-3">
+              <div className="h-4 w-32 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="grid grid-cols-2 gap-3">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="h-20 rounded-xl bg-[#F5F5F5] animate-pulse" />
+                ))}
+              </div>
+            </div>
+            <div className="bg-white border border-[#ECECEC] rounded-2xl p-6 space-y-3">
+              <div className="h-4 w-36 bg-[#F0F0F0] rounded animate-pulse" />
+              <div className="h-16 rounded-xl bg-[#F5F5F5] animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">

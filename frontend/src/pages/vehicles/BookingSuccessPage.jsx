@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { EASE_LUXE } from '@/lib/motion';
 import { formatDisplayAmount, convertUsdToInr, USD_TO_INR_RATE } from '@/utils/currency';
+import { openLuxoriaReceipt } from '@/utils/generateReceipt';
 
 export default function BookingSuccessPage() {
   const location = useLocation();
@@ -50,368 +51,27 @@ export default function BookingSuccessPage() {
 
   /* ── PDF download — browser print ── */
   const downloadReceipt = () => {
-    const usd = fmtDual(booking?.totalAmount).usd;
-    const inr = fmtDual(booking?.totalAmount).inr;
+    const fmtShort = (iso) => iso
+      ? new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      : '—';
 
-    const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Luxoria Receipt — ${bookingRef}</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #fff;
-      color: #0F0F0F;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-
-    .page {
-      width: 794px;
-      max-height: 1123px;
-      margin: 0 auto;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── Header ── */
-    .header {
-      background: #0F0F0F;
-      padding: 18px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 3px solid #C9A75D;
-    }
-    .brand-name {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 24px; font-weight: 700;
-      color: #fff; letter-spacing: 5px;
-      text-transform: uppercase; line-height: 1;
-    }
-    .brand-sub {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 8.5px; font-weight: 400;
-      color: #C9A75D; letter-spacing: 3.5px;
-      text-transform: uppercase; margin-top: 5px;
-    }
-    .header-right { text-align: right; }
-    .receipt-label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 8px; font-weight: 600;
-      color: #C9A75D; letter-spacing: 3.5px;
-      text-transform: uppercase; margin-bottom: 4px;
-    }
-    .receipt-meta {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px; color: rgba(255,255,255,0.5);
-      line-height: 1.8; font-weight: 300;
-    }
-    .receipt-meta strong { color: rgba(255,255,255,0.85); font-weight: 500; }
-    .status-pill {
-      display: inline-block;
-      margin-top: 8px;
-      background: #C9A75D;
-      color: #0F0F0F;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 8px; font-weight: 700;
-      letter-spacing: 2.5px; text-transform: uppercase;
-      padding: 4px 12px; border-radius: 50px;
-    }
-
-    /* ── Billed To / Vehicle strip ── */
-    .summary-strip {
-      background: #FAF7F1;
-      border-bottom: 1px solid #E6DAC2;
-      padding: 16px 40px;
-      display: grid;
-      grid-template-columns: 1fr 1px 1fr;
-      gap: 0;
-    }
-    .summary-divider { background: #E6DAC2; }
-    .summary-col { padding: 0 22px; }
-    .summary-col:first-child { padding-left: 0; }
-    .summary-col:last-child  { padding-right: 0; }
-    .summary-label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 8px; font-weight: 600;
-      color: #8A7B58; letter-spacing: 3px;
-      text-transform: uppercase; margin-bottom: 6px;
-    }
-    .summary-name  {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 15px; font-weight: 600; color: #0F0F0F; line-height: 1.3;
-    }
-    .summary-sub   {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 10.5px; color: #666; margin-top: 3px; line-height: 1.6; font-weight: 300;
-    }
-
-    /* ── Body ── */
-    .body { padding: 20px 40px; flex: 1; }
-
-    .section-label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 8px; font-weight: 600;
-      color: #888; letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    /* ── Table ── */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid #ECECEC;
-    }
-    thead tr { background: #0F0F0F; }
-    thead th {
-      font-family: 'DM Sans', sans-serif;
-      padding: 9px 14px;
-      font-size: 8px; font-weight: 600;
-      color: #fff; letter-spacing: 2.5px;
-      text-transform: uppercase; text-align: left;
-    }
-    thead th:last-child { text-align: right; }
-    tbody tr:nth-child(even) { background: #F9F7F2; }
-    tbody tr:nth-child(odd)  { background: #fff; }
-    tbody td {
-      font-family: 'DM Sans', sans-serif;
-      padding: 9px 14px;
-      font-size: 11.5px; color: #555;
-      border-bottom: 1px solid #F0F0F0;
-      font-weight: 300;
-    }
-    tbody td:last-child {
-      text-align: right;
-      font-weight: 600; color: #0F0F0F;
-    }
-    tbody tr:last-child td { border-bottom: none; }
-
-    /* ── Amount box ── */
-    .amount-box {
-      background: #0F0F0F;
-      border-radius: 10px;
-      padding: 18px 22px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      border-left: 4px solid #C9A75D;
-    }
-    .amount-left {}
-    .amount-label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 8px; font-weight: 600;
-      color: #8A7B58; letter-spacing: 3px;
-      text-transform: uppercase; margin-bottom: 6px;
-    }
-    .amount-usd {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 28px; font-weight: 700;
-      color: #fff; line-height: 1;
-    }
-    .amount-inr {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px; font-weight: 400;
-      color: #C9A75D; margin-top: 4px;
-    }
-    .amount-right { text-align: right; }
-    .payment-badge {
-      display: inline-block;
-      background: rgba(201,167,93,0.15);
-      border: 1px solid rgba(201,167,93,0.4);
-      color: #C9A75D;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 8px; font-weight: 600;
-      letter-spacing: 2px; text-transform: uppercase;
-      padding: 7px 16px; border-radius: 50px;
-      margin-bottom: 8px;
-    }
-    .payment-via {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 10px; color: rgba(255,255,255,0.35); font-weight: 300;
-    }
-    .payment-via strong { color: rgba(255,255,255,0.65); font-weight: 500; }
-
-    /* ── Note box ── */
-    .note-box {
-      background: #FFFBF0;
-      border: 1px solid #E6DAC2;
-      border-left: 3px solid #C9A75D;
-      border-radius: 8px;
-      padding: 10px 16px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 10px; color: #666; line-height: 1.6; font-weight: 300;
-      margin-bottom: 16px;
-    }
-    .note-box strong { color: #0F0F0F; font-weight: 600; }
-
-    /* ── Footer ── */
-    .footer {
-      border-top: 1px solid #ECECEC;
-      padding: 14px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #FAFAFA;
-    }
-    .footer-left { }
-    .footer-brand {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 13px; font-weight: 700;
-      color: #0F0F0F; letter-spacing: 3px;
-      text-transform: uppercase;
-    }
-    .footer-sub {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 9px; color: #aaa; margin-top: 2px; font-weight: 300; letter-spacing: 0.5px;
-    }
-    .footer-right { text-align: right; }
-    .footer-note {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 9px; color: #aaa; line-height: 1.7; font-weight: 300;
-    }
-    .footer-page {
-      font-family: 'DM Sans', sans-serif;
-      text-align: center;
-      font-size: 8.5px; color: #ccc;
-      margin-top: 4px;
-      letter-spacing: 1px;
-    }
-
-    /* ── Gold accent line at bottom ── */
-    .gold-bottom { height: 3px; background: linear-gradient(90deg, #C9A75D, #E8D090, #C9A75D); }
-
-    @media print {
-      body { margin: 0; }
-      .page { width: 100%; box-shadow: none; }
-    }
-  </style>
-</head>
-<body>
-<div class="page">
-
-  <!-- Header -->
-  <div class="header">
-    <div>
-      <div class="brand-name">Luxoria</div>
-      <div class="brand-sub">Luxury Vehicle Concierge</div>
-    </div>
-    <div class="header-right">
-      <div class="receipt-label">Payment Receipt</div>
-      <div class="receipt-meta">
-        <strong>REF</strong> &nbsp;${bookingRef}<br/>
-        <strong>DATE</strong> &nbsp;${fmtDate(new Date().toISOString())}
-      </div>
-      <span class="status-pill">&#10003; &nbsp;Confirmed</span>
-    </div>
-  </div>
-
-  <!-- Summary strip -->
-  <div class="summary-strip">
-    <div class="summary-col">
-      <div class="summary-label">Billed To</div>
-      <div class="summary-name">${guestName}</div>
-      <div class="summary-sub">
-        ${guestEmail || 'N/A'}<br/>
-        ${booking?.pickupLocation || 'Location TBD'}
-      </div>
-    </div>
-    <div class="summary-divider"></div>
-    <div class="summary-col">
-      <div class="summary-label">Vehicle</div>
-      <div class="summary-name">${vehicleName}</div>
-      <div class="summary-sub">
-        ${booking?.vehicle?.category ? booking.vehicle.category.charAt(0).toUpperCase() + booking.vehicle.category.slice(1) : 'Luxury Fleet'}
-        &nbsp;&middot;&nbsp;
-        ${booking?.vehicle?.transmission ? booking.vehicle.transmission.charAt(0).toUpperCase() + booking.vehicle.transmission.slice(1) : 'Automatic'}
-      </div>
-    </div>
-  </div>
-
-  <!-- Body -->
-  <div class="body">
-
-    <div class="section-label">Booking Details</div>
-    <table>
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Details</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Booking Reference</td><td>${bookingRef}</td></tr>
-        <tr><td>Trip Period</td><td>${fmtDate(booking?.startDate)} &rarr; ${fmtDate(booking?.endDate)}</td></tr>
-        <tr><td>Duration</td><td>${tripDays} day${tripDays !== 1 ? 's' : ''}</td></tr>
-        <tr><td>Pickup Location</td><td>${booking?.pickupLocation || 'To be confirmed'}</td></tr>
-        <tr><td>Payment Method</td><td>Razorpay &mdash; Online</td></tr>
-        <tr><td>Confirmed On</td><td>${fmtDate(new Date().toISOString())}</td></tr>
-      </tbody>
-    </table>
-
-    <!-- Amount box -->
-    <div class="amount-box">
-      <div class="amount-left">
-        <div class="amount-label">Total Amount Paid</div>
-        <div class="amount-usd">${usd}</div>
-        <div class="amount-inr">&#8776; ${inr}</div>
-      </div>
-      <div class="amount-right">
-        <div class="payment-badge">&#10003; &nbsp;Payment Captured</div>
-        <div class="payment-via">Processed via <strong>Razorpay</strong></div>
-      </div>
-    </div>
-
-    <!-- Note -->
-    <div class="note-box">
-      <strong>Important:</strong> This is your official payment receipt for booking
-      <strong>${bookingRef}</strong>. Please retain this document for your records.
-      For any queries, contact us at <strong>support@luxoria.in</strong>
-    </div>
-
-  </div>
-
-  <!-- Footer -->
-  <div class="footer">
-    <div class="footer-left">
-      <div class="footer-brand">Luxoria</div>
-      <div class="footer-sub">Luxury Vehicle Concierge &nbsp;&middot;&nbsp; luxoria.in</div>
-    </div>
-    <div class="footer-page">Page 1 of 1</div>
-    <div class="footer-right">
-      <div class="footer-note">
-        This is an official payment receipt.<br/>
-        For support: support@luxoria.in
-      </div>
-    </div>
-  </div>
-
-  <div class="gold-bottom"></div>
-</div>
-
-<script>
-  window.onload = function() {
-    window.print();
-    window.onafterprint = function() { window.close(); };
-  };
-</script>
-</body>
-</html>`;
-
-    const win = window.open('', '_blank', 'width=900,height=700');
-    win.document.write(html);
-    win.document.close();
+    openLuxoriaReceipt({
+      bookingRef:          bookingRef,
+      dateIssued:          fmtShort(new Date().toISOString()),
+      tripStart:           fmtShort(booking?.startDate),
+      tripEnd:             fmtShort(booking?.endDate),
+      totalDays:           booking?.totalDays ?? 1,
+      pickupLocation:      booking?.pickupLocation || 'To be confirmed',
+      guestName:           guestName,
+      guestEmail:          guestEmail,
+      vehicleName:         vehicleName,
+      vehicleBrand:        booking?.vehicle?.brand || '',
+      vehicleTransmission: booking?.vehicle?.transmission
+        ? booking.vehicle.transmission.charAt(0).toUpperCase() + booking.vehicle.transmission.slice(1)
+        : 'Automatic',
+      amountUsd:           booking?.totalAmount ?? 0,
+      amountInr:           convertUsdToInr(booking?.totalAmount ?? 0),
+    });
   };
 
   /* ── verify payment on mount ── */
@@ -450,7 +110,9 @@ export default function BookingSuccessPage() {
             className="absolute inset-0 rounded-full border-[3px] border-[#ECECEC] border-t-[#C9A75D]"
           />
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-[#C9A75D] text-sm font-bold">L</span>
+            <div className="w-9 h-9 bg-[#0F0F0F] rounded-full flex items-center justify-center shadow-sm">
+              <Car className="w-4 h-4 text-white" />
+            </div>
           </div>
         </div>
         <div className="text-center">

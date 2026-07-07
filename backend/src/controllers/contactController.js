@@ -57,6 +57,10 @@ export const submitSupportTicket = async (req, res, next) => {
     const senderEmail = req.user.email;
     const senderRole = req.user.role;
 
+    // Client support tickets always go to the dedicated support inbox,
+    // independent of ADMIN_EMAIL env var.
+    const SUPPORT_INBOX = 'aryanpatel5941@gmail.com';
+
     await emailService.sendSupportTicketToAdmin({
       subject,
       priority: resolvedPriority,
@@ -65,6 +69,7 @@ export const submitSupportTicket = async (req, res, next) => {
       senderName,
       senderEmail,
       senderRole,
+      recipientEmail: senderRole === 'user' ? SUPPORT_INBOX : undefined,
     });
 
     return ApiResponse.success(res, null, 'Support ticket submitted successfully');

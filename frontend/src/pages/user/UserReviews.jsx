@@ -39,7 +39,7 @@ function StarRating({ value, onChange, size = 'md' }) {
 export default function UserReviews() {
   const dispatch = useDispatch();
   const { reviews, loading, error } = useSelector(state => state.reviews);
-  const { accessToken } = useSelector(state => state.auth);
+  const { accessToken, loading: authLoading } = useSelector(state => state.auth);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRating, setFilterRating] = useState('all');
@@ -58,9 +58,9 @@ export default function UserReviews() {
   const [deleteInProgress, setDeleteInProgress] = useState(false);
 
   useEffect(() => {
-    if (!accessToken) return;
+    if (authLoading || !accessToken) return;
     dispatch(fetchMyReviews());
-  }, [dispatch, accessToken]);
+  }, [dispatch, accessToken, authLoading]);
 
   const filteredReviews = useMemo(() => {
     return reviews.filter(r => {

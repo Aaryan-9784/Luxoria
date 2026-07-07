@@ -83,7 +83,7 @@ export default function UserSupport() {
           
           {/* Quick Contact Cards */}
           <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <a href="tel:+918238012515" className="relative overflow-hidden bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all duration-500 group cursor-pointer block">
+            <a href="tel:+919979016491" className="relative overflow-hidden bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all duration-500 group cursor-pointer block">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A75D]/5 rounded-full blur-3xl group-hover:bg-[#C9A75D]/10 transition-all duration-500"></div>
               <div className="relative z-10 flex items-start gap-5">
                 <div className="w-14 h-14 rounded-full bg-[#C9A75D]/10 border border-[#C9A75D]/20 text-[#C9A75D] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-500">
@@ -91,13 +91,13 @@ export default function UserSupport() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-[10px] font-bold text-[#C9A75D] uppercase tracking-[0.2em] mb-1.5">VIP Concierge</p>
-                  <h4 className="text-[18px] font-bold text-[#0F0F0F] mb-2 tracking-wide">+91 82380 12515</h4>
+                  <h4 className="text-[18px] font-bold text-[#0F0F0F] mb-2 tracking-wide">+91 99790 16491</h4>
                   <p className="text-[12px] text-[#666666] leading-relaxed">Available 24/7 for active bookings and immediate assistance.</p>
                 </div>
               </div>
             </a>
             
-            <a href="mailto:aaryanpatel9784@gmail.com" className="relative overflow-hidden bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all duration-500 group cursor-pointer block">
+            <a href="mailto:aryanpatel5941@gmail.com" className="relative overflow-hidden bg-white border border-[#ECECEC] rounded-2xl p-7 shadow-sm hover:shadow-lg transition-all duration-500 group cursor-pointer block">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A75D]/5 rounded-full blur-3xl group-hover:bg-[#C9A75D]/10 transition-all duration-500"></div>
               <div className="relative z-10 flex items-start gap-5">
                 <div className="w-14 h-14 rounded-full bg-[#C9A75D]/10 border border-[#C9A75D]/20 text-[#C9A75D] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-500">
@@ -105,7 +105,7 @@ export default function UserSupport() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-[10px] font-bold text-[#C9A75D] uppercase tracking-[0.2em] mb-1.5">General Support</p>
-                  <h4 className="text-[15px] font-bold text-[#0F0F0F] mb-2 tracking-wide truncate">aaryanpatel9784@gmail.com</h4>
+                  <h4 className="text-[15px] font-bold text-[#0F0F0F] mb-2 tracking-wide truncate">aryanpatel5941@gmail.com</h4>
                   <p className="text-[12px] text-[#666666] leading-relaxed">Expect a response from our client team within 1-2 hours.</p>
                 </div>
               </div>

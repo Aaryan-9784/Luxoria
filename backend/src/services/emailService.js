@@ -322,7 +322,7 @@ class EmailService {
     });
   }
   async sendSupportTicketToAdmin(data) {
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@luxoria.com';
+    const adminEmail = data.recipientEmail || process.env.ADMIN_EMAIL || 'admin@luxoria.com';
 
     const isVendor = data.senderRole === 'vendor';
     const senderLabel = isVendor ? 'Partner' : 'Client';

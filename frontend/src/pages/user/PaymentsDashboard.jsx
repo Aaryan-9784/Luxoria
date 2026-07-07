@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 import { createPaymentOrder } from '@/redux/slices/bookingSlice';
-import { formatDisplayAmount } from '@/utils/currency';
+import { convertUsdToInr } from '@/utils/currency';
+import { openLuxoriaReceipt } from '@/utils/generateReceipt';
 import {
   CreditCard, ShieldCheck, Download, Hash,
   CalendarDays, DollarSign, ChevronLeft, ChevronRight,
@@ -33,7 +34,7 @@ const loadRazorpayScript = () =>
   });
 
 export default function PaymentsDashboard() {
-  const { accessToken, user } = useSelector(state => state.auth);
+  const { accessToken, user, loading: authLoading } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -47,17 +48,17 @@ export default function PaymentsDashboard() {
 
   // ── Fetch all bookings (paid + pending) ───────────────────────────────────
   useEffect(() => {
-    if (!accessToken) return;
+    if (authLoading) return;
+    if (!accessToken) { setLoading(false); return; }
+    setLoading(true);
     const fetchData = async () => {
       try {
         const res = await api.get('/bookings/my?limit=100');
-        // paginated response puts array directly in res.data.data
         const raw = Array.isArray(res.data.data)
           ? res.data.data
           : Array.isArray(res.data)
           ? res.data
           : [];
-        // include all except cancelled (show pending for pay-now, rest for history)
         setBookings(raw.filter(b => b.status !== 'cancelled' && b.totalAmount > 0));
       } catch (err) {
         console.error('Failed to fetch bookings:', err);
@@ -66,7 +67,7 @@ export default function PaymentsDashboard() {
       }
     };
     fetchData();
-  }, [accessToken]);
+  }, [accessToken, authLoading]);
 
   // ── Timeframe filter + sort ───────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -101,34 +102,28 @@ export default function PaymentsDashboard() {
   );
 
 
-  // ── Download receipt (.txt) ───────────────────────────────────────────────
+  // ── Download receipt ─────────────────────────────────────────────────────
   const handleDownload = (b) => {
-    const lines = [
-      '================================================',
-      '         LUXORIA — PAYMENT RECEIPT              ',
-      '================================================',
-      '',
-      `Booking Ref  : ${b.bookingId}`,
-      `Vehicle      : ${b.vehicle?.name || 'N/A'}`,
-      `Date         : ${new Date(b.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
-      `Period       : ${new Date(b.startDate).toLocaleDateString('en-GB')} – ${new Date(b.endDate).toLocaleDateString('en-GB')}`,
-      `Duration     : ${b.totalDays} day(s)`,
-      `Status       : ${b.status?.toUpperCase()}`,
-      `Amount Paid  : ${formatDisplayAmount(b.totalAmount)}`,
-      '',
-      '================================================',
-      '       Thank you for choosing Luxoria.          ',
-      '================================================',
-    ].join('\n');
-    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = `Luxoria_Payment_${b.bookingId}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const fmt = (iso) => iso
+      ? new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      : '—';
+    openLuxoriaReceipt({
+      bookingRef:          b.bookingId,
+      dateIssued:          fmt(b.createdAt),
+      tripStart:           fmt(b.startDate),
+      tripEnd:             fmt(b.endDate),
+      totalDays:           b.totalDays,
+      pickupLocation:      b.pickupLocation || 'N/A',
+      guestName:           user?.name  || 'Guest',
+      guestEmail:          user?.email || '',
+      vehicleName:         b.vehicle?.name  || 'Luxury Vehicle',
+      vehicleBrand:        b.vehicle?.brand || '',
+      vehicleTransmission: b.vehicle?.transmission
+        ? b.vehicle.transmission.charAt(0).toUpperCase() + b.vehicle.transmission.slice(1)
+        : 'Automatic',
+      amountUsd:           b.totalAmount ?? 0,
+      amountInr:           convertUsdToInr(b.totalAmount ?? 0),
+    });
   };
 
   // ── Pay Now (Razorpay retry for pending bookings) ─────────────────────────
