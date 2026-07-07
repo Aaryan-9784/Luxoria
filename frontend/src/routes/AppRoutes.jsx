@@ -60,8 +60,8 @@ const VendorLoginPage = React.lazy(() => import('@/pages/vendor/VendorLoginPage'
 const AdminOverview = React.lazy(() => import('@/pages/admin/AdminOverview'));
 const UserManagement = React.lazy(() => import('@/pages/admin/UserManagement'));
 const VendorManagement = React.lazy(() => import('@/pages/admin/VendorManagement'));
-const AdminConcierge = React.lazy(() => import('@/pages/admin/AdminConcierge'));
 const AdminBookings = React.lazy(() => import('@/pages/admin/AdminBookings'));
+const AdminCalendar = React.lazy(() => import('@/pages/admin/AdminCalendar'));
 const AdminAnalytics = React.lazy(() => import('@/pages/admin/AdminAnalytics'));
 const AdminCollections = React.lazy(() => import('@/pages/admin/AdminCollections'));
 const AdminFleetApprovals = React.lazy(() => import('@/pages/admin/AdminFleetApprovals'));
@@ -184,8 +184,8 @@ export default function AppRoutes() {
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/vendors" element={<VendorManagement />} />
             <Route path="/admin/fleet-approvals" element={<AdminFleetApprovals />} />
-            <Route path="/admin/concierge" element={<AdminConcierge />} />
             <Route path="/admin/bookings" element={<AdminBookings />} />
+            <Route path="/admin/calendar" element={<AdminCalendar />} />
             <Route path="/admin/collections" element={<AdminCollections />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/settings" element={<UserProfile />} />

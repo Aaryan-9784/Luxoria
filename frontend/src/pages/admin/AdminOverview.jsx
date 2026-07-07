@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAnalytics, fetchAdminBookings } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
-import { Users, Building2, Car, Wallet, TrendingUp, AlertCircle, ArrowRight, ShieldCheck, Activity, Database, Server } from 'lucide-react';
+import { Users, Building2, Car, Wallet, TrendingUp, AlertCircle, ArrowRight, ShieldCheck, Activity, Database, Server, CalendarDays } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function AdminOverview() {
