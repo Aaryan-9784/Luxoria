@@ -13,6 +13,9 @@ export const createVehicleSchema = {
     pricePerDay: Joi.number().positive().required(),
     features: Joi.array().items(Joi.string().trim()).optional(),
     description: Joi.string().max(2000).optional(),
+    horsepower: Joi.string().trim().optional(),
+    topSpeed: Joi.string().trim().optional(),
+    engine: Joi.string().trim().optional(),
     location: Joi.object({
       city: Joi.string().trim().optional(),
       state: Joi.string().trim().optional(),
@@ -34,6 +37,9 @@ export const updateVehicleSchema = {
     pricePerDay: Joi.number().positive().optional(),
     features: Joi.array().items(Joi.string().trim()).optional(),
     description: Joi.string().max(2000).optional(),
+    horsepower: Joi.string().trim().optional(),
+    topSpeed: Joi.string().trim().optional(),
+    engine: Joi.string().trim().optional(),
     location: Joi.object({
       city: Joi.string().trim().optional(),
       state: Joi.string().trim().optional(),

@@ -65,6 +65,10 @@ export default function VehicleComparisonModal({ vehicles, removeCompare, clearC
                     <span className="font-medium text-slate-900">{v.topSpeed}</span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-50 pb-3">
+                    <span className="text-slate-500 font-light">Engine</span>
+                    <span className="font-medium text-slate-900">{v.engine || '—'}</span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-slate-50 pb-3">
                     <span className="text-slate-500 font-light">Transmission</span>
                     <span className="font-medium text-slate-900">{v.transmission}</span>
                   </div>

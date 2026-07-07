@@ -272,6 +272,7 @@ export default function PremiumVehicleGrid() {
                   id: vehicle.id || vehicle._id,
                   topSpeed: vehicle.topSpeed || '—',
                   horsepower: vehicle.horsepower || '—',
+                  engine: vehicle.engine || '—',
                   isAvailable: vehicle.isAvailable !== undefined ? vehicle.isAvailable : true,
                 }}
                 isWishlisted={wishlistedIds.has(vehicle.id || vehicle._id)}

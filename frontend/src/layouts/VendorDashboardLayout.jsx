@@ -7,11 +7,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Car, PlusCircle, CalendarDays, 
   LineChart, UserCircle, LogOut, Menu, X,
-  ChevronLeft, ChevronRight, BarChart3, Clock, ShieldCheck, User, Bell, Globe, Wallet, HelpCircle
+  ChevronLeft, ChevronRight, BarChart3, Clock, ShieldCheck, User, Bell, Globe, Wallet, HelpCircle, Heart
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';
 import NotificationBell from '@/components/ui/NotificationBell';
+import WishlistDropdown from '@/components/ui/WishlistDropdown';
 import Avatar from '@/components/ui/Avatar';
 
 const NAV_GROUPS = [
@@ -264,6 +265,7 @@ export default function VendorDashboardLayout() {
           <div className="flex items-center gap-4 lg:gap-6 relative">
             
             <CalendarDropdown />
+            <WishlistDropdown />
             <NotificationBell />
 
             <button 

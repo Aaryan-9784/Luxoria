@@ -7,11 +7,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Users, Building2, Car, ShieldCheck, 
   CalendarDays, Settings, LogOut, Menu, X, Command,
-  ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell, Globe, Headset, UserCircle
+  ChevronLeft, ChevronRight, CreditCard, BarChart3, User, Bell, Globe, Headset, UserCircle, Heart
 } from 'lucide-react';
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';
 import NotificationBell from '@/components/ui/NotificationBell';
+import WishlistDropdown from '@/components/ui/WishlistDropdown';
 import Avatar from '@/components/ui/Avatar';
 
 const NAV_GROUPS = [
@@ -36,6 +37,7 @@ const NAV_GROUPS = [
   {
     label: 'System',
     items: [
+      { path: '/admin/wishlist', label: 'Wishlist', icon: Heart },
       { path: '/admin/settings', label: 'My Profile', icon: UserCircle },
     ]
   }
@@ -264,6 +266,7 @@ export default function AdminDashboardLayout() {
           <div className="flex items-center gap-4 lg:gap-6 relative">
             
             <CalendarDropdown />
+            <WishlistDropdown />
             <NotificationBell />
 
             <button 

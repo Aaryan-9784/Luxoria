@@ -72,6 +72,18 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       maxlength: [2000, 'Description cannot exceed 2000 characters'],
     },
+    horsepower: {
+      type: String,
+      trim: true,
+    },
+    topSpeed: {
+      type: String,
+      trim: true,
+    },
+    engine: {
+      type: String,
+      trim: true,
+    },
     location: {
       city: { type: String, trim: true, index: true },
       state: { type: String, trim: true },

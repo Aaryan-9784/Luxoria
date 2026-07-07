@@ -63,8 +63,9 @@ function VehicleCard({ vehicle, isCompared, toggleCompare }) {
         <div className="grid grid-cols-2 gap-y-3 mb-6 flex-1 text-sm text-slate-600 font-light border-y border-slate-100 py-4">
           <div><span className="font-medium text-slate-900">HP:</span> {vehicle.horsepower}</div>
           <div><span className="font-medium text-slate-900">Top Speed:</span> {vehicle.topSpeed}</div>
+          <div><span className="font-medium text-slate-900">Engine:</span> {vehicle.engine || '—'}</div>
           <div><span className="font-medium text-slate-900">Seats:</span> {vehicle.seats}</div>
-          <div><span className="font-medium text-slate-900">Trans:</span> {vehicle.transmission.slice(0,4)}</div>
+          <div className="col-span-2"><span className="font-medium text-slate-900">Trans:</span> {vehicle.transmission.slice(0,4)}</div>
         </div>
 
         <div className="flex items-center justify-between mt-auto">

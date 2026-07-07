@@ -7,10 +7,10 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/redux/slices/authSlice';
-import { fetchWishlist, removeFromWishlist } from '@/redux/slices/dashboardSlice';
 import Avatar from '@/components/ui/Avatar';
 import Dropdown, { DropdownItem, DropdownDivider } from '@/components/ui/Dropdown';
 import { preloadAuthImages } from '@/lib/preloadAuthImages';
+import { useWishlist } from '@/hooks/useWishlist';
 
 const NAV_LINKS = [
   { name: 'Home', path: '/' },
@@ -22,10 +22,10 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const WISHLIST_SEEN_KEY = 'luxoria_wishlist_seen_count';
-  const [wishlistSeen, setWishlistSeen] = useState(false);
+  // Local render-trigger so we re-render when WishlistDropdown marks seen
+  const [, forceUpdate] = useState(0);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-  const { wishlist } = useSelector((state) => state.dashboard);
+  const { wishlist, wishlistCount, wishlistPath, isUnseen, markSeen, handleRemove: handleRemoveWishlist } = useWishlist();
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -36,55 +36,20 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Re-render when WishlistDropdown (dashboard) marks seen
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchWishlist());
-    }
-  }, [dispatch, isAuthenticated]);
+    const handler = () => forceUpdate((n) => n + 1);
+    window.addEventListener('wishlist-seen', handler);
+    return () => window.removeEventListener('wishlist-seen', handler);
+  }, []);
 
-  // Persist & restore whether the user has "seen" the wishlist.
-  // We store the wishlist count at the time the user viewed it and
-  // consider it seen if the stored count is >= current count.
-  useEffect(() => {
-    try {
-      const stored = parseInt(localStorage.getItem(WISHLIST_SEEN_KEY), 10);
-      if (!Number.isNaN(stored) && stored >= (wishlist?.filter(w => w.vehicle)?.length || 0)) {
-        setWishlistSeen(true);
-      }
-    } catch (e) {
-      // ignore
-    }
-  }, [wishlist]);
-
-  // Reset "seen" when new items are added
-  const wishlistCount = wishlist?.filter(w => w.vehicle)?.length || 0;
-  const prevCountRef = React.useRef(wishlistCount);
-  useEffect(() => {
-    if (wishlistCount > prevCountRef.current) {
-      setWishlistSeen(false); // new item added — show dot again
-    }
-    prevCountRef.current = wishlistCount;
-  }, [wishlistCount]);
-
-  const handleWishlistOpen = () => {
-    setWishlistSeen(true); // mark as seen when dropdown opens
-    try {
-      localStorage.setItem(WISHLIST_SEEN_KEY, String(wishlistCount));
-    } catch (e) {}
-  };
-
-  const handleRemoveWishlist = async (e, vehicleId) => {
-    e.preventDefault();
-    e.stopPropagation();
-    await dispatch(removeFromWishlist(vehicleId));
-  };
+  const handleWishlistOpen = () => markSeen();
 
   const handleViewFullWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setWishlistSeen(true);
-    try { localStorage.setItem(WISHLIST_SEEN_KEY, String(wishlistCount)); } catch (e) {}
-    navigate('/wishlist');
+    markSeen();
+    navigate(wishlistPath);
   };
 
   const handleLogout = () => {
@@ -156,8 +121,8 @@ export default function Navbar() {
           <div className="flex items-center gap-5">
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
-                {/* Wishlist Dropdown — hidden for vendors and admins */}
-                {user?.role === 'user' && (
+                {/* Wishlist Dropdown — hidden for admins only */}
+                {(user?.role === 'user' || user?.role === 'vendor') && (
                 <Dropdown
                   align="right"
                   className="w-[320px] p-0"
@@ -165,8 +130,8 @@ export default function Navbar() {
                   trigger={
                     <button className="btn-icon relative text-secondary hover:text-error transition-colors hover:bg-surface/50 group">
                       <Heart className="w-5 h-5 group-hover:fill-error/20" />
-                      {wishlistCount > 0 && !wishlistSeen && (
-                        <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-white shadow-sm" />
+                      {isUnseen && (
+                        <span className="absolute top-1 right-1 w-2 h-2 bg-[#DC2626] rounded-full border-2 border-white shadow-sm" />
                       )}
                     </button>
                   }
@@ -220,7 +185,7 @@ export default function Navbar() {
                   </div>
                   <div className="p-2 border-t border-border bg-surface/30">
                     <Link
-                      to="/wishlist"
+                      to={wishlistPath}
                       onClick={handleViewFullWishlist}
                       className="block w-full text-center text-body-sm font-medium text-primary hover:text-accent py-1.5 transition-colors"
                     >

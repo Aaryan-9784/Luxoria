@@ -53,7 +53,6 @@ const VendorRevenue = React.lazy(() => import('@/pages/vendor/VendorRevenue'));
 const VendorSupport = React.lazy(() => import('@/pages/vendor/VendorSupport'));
 const VendorAnalytics = React.lazy(() => import('@/pages/vendor/VendorAnalytics'));
 const VendorAvailability = React.lazy(() => import('@/pages/vendor/VendorAvailability'));
-
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout';
 const AdminLoginPage = React.lazy(() => import('@/pages/admin/AdminLoginPage'));
 const VendorLoginPage = React.lazy(() => import('@/pages/vendor/VendorLoginPage'));
@@ -172,6 +171,7 @@ export default function AppRoutes() {
             <Route path="/vendor/support" element={<VendorSupport />} />
             <Route path="/vendor/analytics" element={<VendorAnalytics />} />
             <Route path="/vendor/notifications" element={<NotificationsPage />} />
+            <Route path="/vendor/wishlist" element={<WishlistPage />} />
             <Route path="/vendor/profile" element={<UserProfile />} />
           </Route>
         </Route>
@@ -188,6 +188,7 @@ export default function AppRoutes() {
             <Route path="/admin/calendar" element={<AdminCalendar />} />
             <Route path="/admin/collections" element={<AdminCollections />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
+            <Route path="/admin/wishlist" element={<WishlistPage />} />
             <Route path="/admin/settings" element={<UserProfile />} />
             <Route path="/admin/notifications" element={<NotificationsPage />} />
             <Route path="/admin/profile" element={<UserProfile />} />

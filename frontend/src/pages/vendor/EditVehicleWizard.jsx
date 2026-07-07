@@ -81,6 +81,9 @@ export default function EditVehicleWizard() {
           city:         v.location?.city  ?? '',
           state:        v.location?.state ?? '',
           features:     v.features?.join(', ') ?? '',
+          horsepower:   v.horsepower ?? '',
+          topSpeed:     v.topSpeed   ?? '',
+          engine:       v.engine     ?? '',
         });
         setImages((v.images ?? []).map((img) => img.url));
       } catch {
@@ -114,6 +117,9 @@ export default function EditVehicleWizard() {
         seats:        parseInt(data.seats, 10) || 4,
         pricePerDay:  parseFloat(data.pricePerDay),
         description:  data.description?.trim() || undefined,
+        horsepower:   data.horsepower?.trim()  || undefined,
+        topSpeed:     data.topSpeed?.trim()    || undefined,
+        engine:       data.engine?.trim()      || undefined,
         location: {
           city:  data.city?.trim()  || undefined,
           state: data.state?.trim() || undefined,
@@ -432,6 +438,21 @@ export default function EditVehicleWizard() {
                   <div>
                     <FieldLabel>State</FieldLabel>
                     <input {...register('state')} className={inputCls(false)} placeholder="e.g. Maharashtra" />
+                  </div>
+
+                  <div>
+                    <FieldLabel>Horsepower</FieldLabel>
+                    <input {...register('horsepower')} className={inputCls(false)} placeholder="e.g. 640 HP" />
+                  </div>
+
+                  <div>
+                    <FieldLabel>Top Speed</FieldLabel>
+                    <input {...register('topSpeed')} className={inputCls(false)} placeholder="e.g. 325 km/h" />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <FieldLabel>Engine</FieldLabel>
+                    <input {...register('engine')} className={inputCls(false)} placeholder="e.g. 5.2L V10" />
                   </div>
 
                   <div className="md:col-span-2">

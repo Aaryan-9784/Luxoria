@@ -130,6 +130,7 @@ function normaliseVehicle(v) {
     fuelType: v.fuelType,
     topSpeed: v.topSpeed,
     horsepower: v.horsepower,
+    engine: v.engine,
     location: v.location?.city || v.location || null,
     isAvailable: v.availability === 'available' || v.isAvailable,
   };

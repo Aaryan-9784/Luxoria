@@ -8,13 +8,16 @@ export default function VehicleSpecs({ vehicle }) {
 
   const specs = [
     { icon: Settings2, label: 'Transmission', value: vehicle.transmission },
-    { icon: Fuel, label: 'Fuel Type', value: vehicle.fuelType },
-    { icon: Users, label: 'Seats', value: `${vehicle.seats} Adults` },
-    { icon: Calendar, label: 'Year', value: vehicle.year || '2024' },
-    // Mock data for luxury feel if not in DB
-    { icon: Gauge, label: 'Top Speed', value: vehicle.category === 'sports' ? '320 km/h' : '250 km/h' },
-    { icon: Zap, label: '0-100 km/h', value: vehicle.category === 'sports' ? '2.9s' : '4.5s' },
+    { icon: Fuel,      label: 'Fuel Type',    value: vehicle.fuelType },
+    { icon: Users,     label: 'Seats',        value: `${vehicle.seats} Adults` },
+    { icon: Calendar,  label: 'Year',         value: vehicle.year || '2024' },
+    { icon: Gauge,     label: 'Top Speed',    value: vehicle.topSpeed || (vehicle.category === 'sports' ? '320 km/h' : '250 km/h') },
+    { icon: Zap,       label: 'Horsepower',   value: vehicle.horsepower || (vehicle.category === 'sports' ? '600 HP' : '400 HP') },
   ];
+
+  const engineRow = vehicle.engine
+    ? [{ icon: Settings2, label: 'Engine', value: vehicle.engine }]
+    : [];
 
   return (
     <div className="mb-8">
@@ -27,7 +30,7 @@ export default function VehicleSpecs({ vehicle }) {
         viewport={{ once: true }}
         className="grid grid-cols-2 md:grid-cols-3 gap-3"
       >
-        {specs.map((spec, idx) => (
+        {[...specs, ...engineRow].map((spec, idx) => (
           <motion.div 
             key={idx}
             variants={staggerItem}
