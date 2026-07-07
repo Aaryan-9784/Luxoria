@@ -194,17 +194,17 @@ export default function UserSupport() {
                     value={ticketInquiryType}
                     onChange={setTicketInquiryType}
                     options={[
-                      { value: 'general_question', label: 'General Question' },
-                      { value: 'booking_modification', label: 'Booking Modification' },
-                      { value: 'booking_cancellation', label: 'Booking Cancellation' },
-                      { value: 'payment_billing', label: 'Payment & Billing' },
-                      { value: 'vehicle_inquiry', label: 'Vehicle Inquiry' },
-                      { value: 'chauffeur_service', label: 'Chauffeur Service' },
-                      { value: 'urgent_assistance', label: 'Urgent Assistance' },
+                      { value: 'general_question',      label: 'General Question' },
+                      { value: 'booking_modification',  label: 'Booking Modification' },
+                      { value: 'booking_cancellation',  label: 'Booking Cancellation' },
+                      { value: 'payment_billing',       label: 'Payment & Billing' },
+                      { value: 'vehicle_inquiry',       label: 'Vehicle Inquiry' },
+                      { value: 'chauffeur_service',     label: 'Chauffeur Service' },
+                      { value: 'urgent_assistance',     label: 'Urgent Assistance' },
                     ]}
-                    icon={null}
                     placeholder="Select inquiry type"
-                    className="w-full bg-[#F5F5F5] border border-[#ECECEC] py-3.5 px-4"
+                    variant="field"
+                    className="w-full"
                   />
                 </div>
 

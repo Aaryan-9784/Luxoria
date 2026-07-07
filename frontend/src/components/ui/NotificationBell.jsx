@@ -3,18 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchNotifications, markAsRead, markAllAsRead, deleteNotification } from '@/redux/slices/notificationSlice';
 import { Bell, Check, Info, AlertTriangle, ShieldCheck, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function NotificationBell() {
   const dispatch = useDispatch();
   const { notifications, unreadCount } = useSelector(state => state.notifications);
+  const { user } = useSelector(state => state.auth);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const location = useLocation();
 
   const getNotificationsPath = () => {
-    if (location.pathname.startsWith('/admin')) return '/admin/notifications';
-    if (location.pathname.startsWith('/vendor')) return '/vendor/notifications';
+    if (user?.role === 'admin') return '/admin/notifications';
+    if (user?.role === 'vendor') return '/vendor/notifications';
     return '/notifications';
   };
 

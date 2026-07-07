@@ -12,6 +12,7 @@ import {
 import { pageTransition } from '@/lib/motion';
 import CalendarDropdown from '@/components/common/CalendarDropdown';
 import NotificationBell from '@/components/ui/NotificationBell';
+import WishlistDropdown from '@/components/ui/WishlistDropdown';
 import Avatar from '@/components/ui/Avatar';
 
 const NAV_GROUPS = [
@@ -318,6 +319,7 @@ export default function DashboardLayout() {
 
           <div className="flex items-center gap-4 lg:gap-6 relative">
             <CalendarDropdown />
+            <WishlistDropdown />
             <NotificationBell />
 
             <button

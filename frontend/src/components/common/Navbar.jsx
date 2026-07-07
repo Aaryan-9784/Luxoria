@@ -11,6 +11,7 @@ import Avatar from '@/components/ui/Avatar';
 import Dropdown, { DropdownItem, DropdownDivider } from '@/components/ui/Dropdown';
 import { preloadAuthImages } from '@/lib/preloadAuthImages';
 import { useWishlist } from '@/hooks/useWishlist';
+import NotificationBell from '@/components/ui/NotificationBell';
 
 const NAV_LINKS = [
   { name: 'Home', path: '/' },
@@ -121,8 +122,8 @@ export default function Navbar() {
           <div className="flex items-center gap-5">
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
-                {/* Wishlist Dropdown — hidden for admins only */}
-                {(user?.role === 'user' || user?.role === 'vendor') && (
+                {/* Wishlist Dropdown — shown for all authenticated roles */}
+                {(user?.role === 'user' || user?.role === 'vendor' || user?.role === 'admin') && (
                 <Dropdown
                   align="right"
                   className="w-[320px] p-0"
@@ -194,6 +195,9 @@ export default function Navbar() {
                   </div>
                 </Dropdown>
                 )}
+
+                {/* Notification Bell */}
+                <NotificationBell />
 
                 {/* User Profile Button */}
                 <div 

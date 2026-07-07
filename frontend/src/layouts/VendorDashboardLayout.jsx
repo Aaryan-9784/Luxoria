@@ -63,6 +63,8 @@ export default function VendorDashboardLayout() {
       if (activeItem) return activeItem.label;
     }
     if (location.pathname === '/vendor/profile') return 'My Profile';
+    if (location.pathname === '/vendor/notifications') return 'Notifications';
+    if (location.pathname === '/vendor/wishlist') return 'Wishlist';
     return 'Dashboard';
   };
 
@@ -251,7 +253,7 @@ export default function VendorDashboardLayout() {
               {/* Workspace badge */}
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F7F7] border border-[#EBEBEB]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C9A75D]" />
-                <span className="text-[10px] font-bold text-[#555555] tracking-[0.18em] uppercase">Partner</span>
+                <span className="text-[10px] font-bold text-[#555555] tracking-[0.18em] uppercase">Partner Workspace</span>
               </span>
 
               {/* Separator */}
