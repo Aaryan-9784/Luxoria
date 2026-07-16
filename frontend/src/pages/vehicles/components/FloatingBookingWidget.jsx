@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { createBooking, createPaymentOrder } from '@/redux/slices/bookingSlice';
+import { createBooking, createPaymentOrder, clearBookingState } from '@/redux/slices/bookingSlice';
 import { CalendarDays, MapPin, Info, ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
@@ -33,11 +33,20 @@ export default function FloatingBookingWidget({ vehicle }) {
   const [taxes, setTaxes] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
 
+  // Clear booking errors on mount and unmount
+  useEffect(() => {
+    dispatch(clearBookingState());
+    return () => dispatch(clearBookingState());
+  }, [dispatch]);
+
   // Today minimum date for picker
   const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     if (pickupDate && dropoffDate) {
+      // Clear any previous booking error when user changes dates
+      dispatch(clearBookingState());
+
       const pDate = new Date(pickupDate);
       const dDate = new Date(dropoffDate);
       const diffTime = Math.abs(dDate - pDate);

@@ -56,6 +56,9 @@ export const createBooking = asyncHandler(async (req, res) => {
     notes,
   });
 
+  // Mark vehicle as booked
+  await Vehicle.findByIdAndUpdate(vehicleId, { availability: 'booked' });
+
   // Notify vendor
   await Notification.create({
     recipient: vehicle.vendor,
@@ -192,6 +195,19 @@ export const updateBookingStatus = asyncHandler(async (req, res) => {
   booking.status = status;
   await booking.save();
 
+  // Reset vehicle availability if booking is completed or cancelled
+  if (['completed', 'cancelled'].includes(status)) {
+    const activeBookings = await Booking.countDocuments({
+      vehicle: booking.vehicle,
+      isActive: true,
+      status: { $in: ['pending', 'confirmed', 'active'] },
+      _id: { $ne: booking._id },
+    });
+    if (activeBookings === 0) {
+      await Vehicle.findByIdAndUpdate(booking.vehicle, { availability: 'available' });
+    }
+  }
+
   // Notify user
   await Notification.create({
     recipient: booking.user,
@@ -227,6 +243,17 @@ export const cancelBooking = asyncHandler(async (req, res) => {
   booking.status = 'cancelled';
   booking.cancellationReason = req.body.cancellationReason || 'Cancelled by user';
   await booking.save();
+
+  // Reset vehicle availability if no other active bookings exist for it
+  const activeBookings = await Booking.countDocuments({
+    vehicle: booking.vehicle,
+    isActive: true,
+    status: { $in: ['pending', 'confirmed', 'active'] },
+    _id: { $ne: booking._id },
+  });
+  if (activeBookings === 0) {
+    await Vehicle.findByIdAndUpdate(booking.vehicle, { availability: 'available' });
+  }
 
   // Notify vendor
   await Notification.create({
