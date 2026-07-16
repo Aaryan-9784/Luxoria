@@ -77,7 +77,6 @@ export const getFeaturedVehicles = asyncHandler(async (req, res) => {
   const vehicles = await Vehicle.find({
     isActive: true,
     status: 'approved',
-    'rating.average': { $gte: 4 },
   })
     .sort('-rating.average -createdAt')
     .limit(8)

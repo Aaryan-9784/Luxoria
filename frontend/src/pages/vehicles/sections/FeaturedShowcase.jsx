@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { setQuickView, addToCompare } from '@/redux/slices/vehicleSlice';
 import { toggleWishlist, fetchWishlist } from '@/redux/slices/dashboardSlice';
-import { FEATURED_VEHICLES } from '../data/vehiclesPageData';
 import { EASE_LUXE, staggerContainer, staggerItem, revealOnScroll } from '@/lib/motion';
 import { Heart, Eye, GitCompareArrows, ArrowRight, Star, MapPin, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -79,9 +78,13 @@ function FeaturedCard({ vehicle, isWishlisted, onQuickView, onWishlist, onCompar
           <div className="flex items-center gap-2 mb-5">
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4 text-accent fill-accent" />
-              <span className="text-sm font-bold text-primary">{vehicle.rating.average}</span>
+              <span className="text-sm font-bold text-primary">
+                {vehicle.rating?.average ?? (typeof vehicle.rating === 'number' ? vehicle.rating : '—')}
+              </span>
             </div>
-            <span className="text-xs text-muted">({vehicle.rating.count} reviews)</span>
+            <span className="text-xs text-muted">
+              {vehicle.rating?.count ? `(${vehicle.rating.count} reviews)` : ''}
+            </span>
             <div className={`ml-auto px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
               vehicle.isAvailable
                 ? 'bg-success/10 text-success'
@@ -118,6 +121,7 @@ function FeaturedCard({ vehicle, isWishlisted, onQuickView, onWishlist, onCompar
 
 export default function FeaturedShowcase() {
   const dispatch = useDispatch();
+  const { featuredVehicles } = useSelector(state => state.vehicle);
   const { wishlist: dashboardWishlist } = useSelector(state => state.dashboard);
   const { isAuthenticated } = useSelector(state => state.auth);
 
@@ -135,13 +139,16 @@ export default function FeaturedShowcase() {
 
   const handleWishlist = (vehicleId) => {
     if (!isAuthenticated) return;
-    const vehicleObj = FEATURED_VEHICLES.find(v => String(v.id) === String(vehicleId));
+    const vehicleObj = featuredVehicles.find(v => String(v.id || v._id) === String(vehicleId));
     dispatch(toggleWishlist({ vehicleId, vehicle: vehicleObj })).then((result) => {
       if (toggleWishlist.fulfilled.match(result) && result.payload.action === 'added') {
         dispatch(fetchWishlist());
       }
     });
   };
+
+  // Use live featuredVehicles from Redux (already normalised with canonical images)
+  const displayVehicles = featuredVehicles.slice(0, 3);
 
   return (
     <motion.section {...revealOnScroll} className="py-16 md:py-24">
@@ -169,11 +176,11 @@ export default function FeaturedShowcase() {
           variants={staggerContainer}
           className="grid grid-cols-1 gap-6"
         >
-          {FEATURED_VEHICLES.slice(0, 3).map(vehicle => (
+          {displayVehicles.map(vehicle => (
             <FeaturedCard
-              key={vehicle.id}
+              key={vehicle.id || vehicle._id}
               vehicle={vehicle}
-              isWishlisted={wishlistedIds.has(vehicle.id)}
+              isWishlisted={wishlistedIds.has(vehicle.id || vehicle._id)}
               onQuickView={(v) => dispatch(setQuickView(v))}
               onWishlist={isAuthenticated ? handleWishlist : undefined}
               onCompare={(v) => dispatch(addToCompare(v))}

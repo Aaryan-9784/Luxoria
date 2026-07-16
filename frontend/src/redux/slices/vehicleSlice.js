@@ -101,20 +101,20 @@ export const fetchFeaturedVehicles = createAsyncThunk(
   'vehicle/fetchFeatured',
   async (_, { rejectWithValue }) => {
     try {
-      try {
-        const response = await api.get('/vehicles/featured');
-        const vehicles = response.data?.data?.vehicles || response.data?.data || [];
-        
-        if (vehicles.length === 0) {
-          return FEATURED_VEHICLES;
-        }
-        
-        return vehicles;
-      } catch (err) {
-        return FEATURED_VEHICLES;
+      const response = await api.get('/vehicles/featured');
+      const vehicles = response.data?.data?.vehicles || response.data?.data || [];
+
+      // If the API returned real vehicles, normalise them (inject canonical images, etc.)
+      if (vehicles.length > 0) {
+        return vehicles.map(normaliseDbVehicle);
       }
-    } catch (error) {
-      return rejectWithValue('Failed to fetch featured vehicles');
+
+      // Backend returned no approved vehicles — fall back to mock data so the
+      // page doesn't look empty during initial setup
+      return HOME_FEATURED_VEHICLES;
+    } catch (err) {
+      // Network / server error — fall back to static data
+      return HOME_FEATURED_VEHICLES;
     }
   }
 );

@@ -12,7 +12,7 @@ import { SORT_OPTIONS, FEATURED_VEHICLES } from '../data/vehiclesPageData';
 
 export default function PremiumVehicleGrid() {
   const dispatch = useDispatch();
-  const { vehicles, loading, error, filters, sortBy, viewMode, pagination } = useSelector(state => state.vehicle);
+  const { vehicles, loading, error, filters, sortBy, viewMode, pagination, featuredVehicles } = useSelector(state => state.vehicle);
   const { wishlist: dashboardWishlist } = useSelector(state => state.dashboard);
   const { isAuthenticated } = useSelector(state => state.auth);
 
@@ -38,7 +38,7 @@ export default function PremiumVehicleGrid() {
     }
     // Find the full vehicle object
     const vehicleObj = vehicles.find(v => (v.id || v._id) === vehicleId) || 
-                       FEATURED_VEHICLES.find(v => v.id === vehicleId);
+                       featuredVehicles.find(v => (v.id || v._id) === vehicleId);
     
     dispatch(toggleWishlist({ vehicleId, vehicle: vehicleObj })).then((result) => {
       // After adding real backend vehicles, refetch to get the populated data
@@ -208,9 +208,9 @@ export default function PremiumVehicleGrid() {
             className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 relative"
           >
             <AnimatePresence>
-              {FEATURED_VEHICLES.slice(0, 6).map((vehicle) => (
+              {(featuredVehicles.length > 0 ? featuredVehicles : FEATURED_VEHICLES).slice(0, 6).map((vehicle) => (
                 <motion.div
-                  key={vehicle.id}
+                  key={vehicle.id || vehicle._id}
                   variants={staggerItem}
                   layout
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -222,7 +222,7 @@ export default function PremiumVehicleGrid() {
                   <div className={viewMode === 'list' ? 'flex gap-6 items-center' : ''}>
                     <LuxuryVehicleCard
                       vehicle={vehicle}
-                      isWishlisted={wishlistedIds.has(vehicle.id)}
+                      isWishlisted={wishlistedIds.has(vehicle.id || vehicle._id)}
                       onWishlist={isAuthenticated ? handleWishlistToggle : undefined}
                       onQuickView={(v) => dispatch(setQuickView(v))}
                       onCompare={(v) => dispatch(addToCompare(v))}

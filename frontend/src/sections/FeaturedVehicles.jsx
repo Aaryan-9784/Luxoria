@@ -92,7 +92,7 @@ export const HOME_FEATURED_VEHICLES = [
     horsepower: '650 HP',
     engine: '3.8L Flat-6 Twin-Turbo',
     location: 'Delhi',
-    isAvailable: false,
+    isAvailable: true,
   },
   {
     id: 'feat-6',

@@ -280,7 +280,7 @@ export const FEATURED_VEHICLES = [
     horsepower: '650 HP',
     engine: '3.8L Flat-6 Twin-Turbo',
     location: 'Delhi',
-    isAvailable: false,
+    isAvailable: true,
     badge: 'Iconic',
     features: ['Sport Chrono', 'PCCB Brakes', 'Active Aero', 'Sport Exhaust', 'PDK Transmission'],
     bookingCount: 312,
