@@ -36,7 +36,7 @@ const FEATURED_VEHICLES = [
   {
     name: '296 GTB',
     brand: 'Ferrari',
-    images: [{ url: 'https://images.collectingcars.com/081193/AS-01-10-06.jpg?w=1920&q=95', publicId: 'mock-2' }],
+    images: [{ url: 'https://www.carandbike.com/_next/image?url=https%3A%2F%2Fimages.carandbike.com%2Fcar-images%2Fgallery%2Fferrari%2F296-gtb%2Fexterior%2Fwp11215436-ferrari-296-gtb-wallpapers.jpg%3Fv%3D2026-05-11&w=1920&q=75', publicId: 'mock-2' }],
     pricePerDay: 3200,
     category: 'sports',
     rating: { average: 4.8, count: 96 },
@@ -54,7 +54,7 @@ const FEATURED_VEHICLES = [
   {
     name: 'Mistral',
     brand: 'Bugatti',
-    images: [{ url: 'https://cdn.motor1.com/images/mgl/eoBpg8/s1/bugatti-brouillard.webp', publicId: 'mock-3' }],
+    images: [{ url: 'https://bugatti-newsroom.imgix.net/a32c5a46-eb09-4a6f-ac28-35622dde9d4d/12%20BUGATTI_Roadster_launch-set?auto=format,compress&cs=srgb&sharp=10&w=380&dpr=2.625', publicId: 'mock-3' }],
     pricePerDay: 15000,
     category: 'sports',
     rating: { average: 5.0, count: 82 },
@@ -72,7 +72,7 @@ const FEATURED_VEHICLES = [
   {
     name: 'Huracán EVO',
     brand: 'Lamborghini',
-    images: [{ url: 'https://houstonexotics.blob.core.windows.net/ech-ga12749/full/1img4066.jpg', publicId: 'mock-4' }],
+    images: [{ url: 'https://cdn05.carsforsale.com/124b8a7020ce4aa488a6cecaea01af9c/2020-lamborghini-huracan-evo.jpg?width=960&height=720&format=&sig=fe905941158b85b7', publicId: 'mock-4' }],
     pricePerDay: 2800,
     category: 'sports',
     rating: { average: 4.7, count: 84 },
@@ -90,7 +90,7 @@ const FEATURED_VEHICLES = [
   {
     name: '911 Turbo S',
     brand: 'Porsche',
-    images: [{ url: 'https://images.collectingcars.com/023148/DSC03123-EDITED.jpg?w=3840&q=75', publicId: 'mock-5' }],
+    images: [{ url: 'https://www.porschelincolnwood.com/blogs/3305/wp-content/uploads/2025/09/Porsche-911-Turbo-S-1.jpeg', publicId: 'mock-5' }],
     pricePerDay: 2200,
     category: 'sports',
     rating: { average: 4.8, count: 210 },
