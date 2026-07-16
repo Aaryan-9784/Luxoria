@@ -4,6 +4,39 @@ import { FEATURED_VEHICLES } from '../../pages/vehicles/data/vehiclesPageData';
 import { HOME_FEATURED_VEHICLES } from '../../sections/FeaturedVehicles';
 import { vehicles as COLLECTION_VEHICLES } from '../../pages/public/components/collection/data';
 
+// ── Canonical image map for the 6 approved cars ──────────────────────────────
+// Keyed by lowercase "brand|name" so DB vehicles always show the correct image
+const CANONICAL_IMAGES = {
+  'rolls-royce|ghost series ii': 'https://calibremag.com/wp-content/uploads/2025/04/Rolls-Royce-Ghost-Series-II-Scotland-2025-CALIBRE-01.webp',
+  'ferrari|296 gtb':             'https://images.collectingcars.com/081193/AS-01-10-06.jpg?w=1920&q=95',
+  'bugatti|mistral':             'https://cdn.motor1.com/images/mgl/eoBpg8/s1/bugatti-brouillard.webp',
+  'lamborghini|huracán evo':     'https://houstonexotics.blob.core.windows.net/ech-ga12749/full/1img4066.jpg',
+  'lamborghini|huracan evo':     'https://houstonexotics.blob.core.windows.net/ech-ga12749/full/1img4066.jpg',
+  'porsche|911 turbo s':         'https://images.collectingcars.com/023148/DSC03123-EDITED.jpg?w=3840&q=75',
+  'mclaren|720s':                'https://issimi-vehicles-cdn.b-cdn.net/publicamlvehiclemanagement/VehicleDetails/628/timestamped-1722570747278-2018%20McLaren%20720S_001.jpg?width=3840&quality=75',
+};
+
+/**
+ * Returns the canonical image URL for a vehicle if it matches one of the 6
+ * known cars, otherwise falls back to whatever the DB stored.
+ */
+function resolveVehicleImage(vehicle) {
+  const key = `${(vehicle.brand || '').toLowerCase()}|${(vehicle.name || '').toLowerCase()}`;
+  return CANONICAL_IMAGES[key] || vehicle.images?.[0]?.url || vehicle.image || null;
+}
+
+/**
+ * Normalise a DB vehicle for use in Redux state, injecting the canonical image.
+ */
+function normaliseDbVehicle(v) {
+  return {
+    ...v,
+    id: v._id || v.id,
+    image: resolveVehicleImage(v),
+    isAvailable: v.availability === 'available' || v.isAvailable,
+  };
+}
+
 const initialState = {
   vehicles: [],
   featuredVehicles: [],
@@ -27,7 +60,7 @@ const initialState = {
     maxPrice: '',
     seats: '',
   },
-  sortBy: 'featured', // Default sorting
+  sortBy: '-createdAt', // Default sorting
   viewMode: 'grid', // 'grid' | 'list'
 
   // ── New: Vehicles Page Enhanced State ──
@@ -207,11 +240,18 @@ export const vehicleSlice = createSlice({
         state.loading = false;
         // Check if backend returned real data
         const backendVehicles = action.payload.data || [];
-        const backendPagination = action.payload.pagination || { page: 1, limit: 12, total: 0, pages: 0 };
+        const raw = action.payload.pagination || {};
+        const backendPagination = {
+          page: raw.page || 1,
+          limit: raw.limit || 12,
+          total: raw.total ?? raw.totalResults ?? 0,
+          // backend sends 'totalPages'; normalise to 'pages' used throughout the frontend
+          pages: raw.pages ?? raw.totalPages ?? 0,
+        };
         
         if (backendVehicles.length > 0) {
-          // Use real backend data
-          state.vehicles = backendVehicles;
+          // Use real backend data, normalising images to the canonical set
+          state.vehicles = backendVehicles.map(normaliseDbVehicle);
           state.pagination = backendPagination;
         } else {
           // Fallback to filtered mock data when backend is empty
@@ -324,7 +364,9 @@ export const vehicleSlice = createSlice({
       })
       .addCase(fetchVehicleById.fulfilled, (state, action) => {
         state.loading = false;
-        state.vehicleDetails = action.payload;
+        const v = action.payload;
+        // Inject canonical image if this is a DB vehicle (has _id)
+        state.vehicleDetails = v?._id ? normaliseDbVehicle(v) : v;
       })
       .addCase(fetchVehicleById.rejected, (state, action) => {
         state.loading = false;

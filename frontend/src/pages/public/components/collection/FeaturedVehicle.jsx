@@ -5,7 +5,7 @@ import { vehicles } from './data';
 
 export default function FeaturedVehicle() {
   // Select a specific high-end car from data
-  const editorPick = vehicles.find(v => v.id === 'rolls-royce-cullinan') || vehicles[0];
+  const editorPick = vehicles.find(v => v.id === 'rolls-royce-ghost-series-ii') || vehicles[0];
 
   return (
     <section className="py-24 bg-white">

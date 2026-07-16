@@ -35,7 +35,7 @@ class ApiFeatures {
   }
 
   sort() {
-    if (this.queryString.sort) {
+    if (this.queryString.sort && this.queryString.sort !== 'featured') {
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
     } else {
