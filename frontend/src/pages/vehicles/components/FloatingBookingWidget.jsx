@@ -5,12 +5,19 @@ import { createBooking, createPaymentOrder, clearBookingState } from '@/redux/sl
 import { CalendarDays, MapPin, Info, ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
-/** Lazily inject the Razorpay checkout script only when needed */
+/** Lazily inject the Razorpay checkout script only when needed.
+ *  data-auto_checkout="false" suppresses the BHK widget that
+ *  auto-fires and spams the console with 404s on the app's origin.
+ */
 const loadRazorpayScript = () =>
   new Promise((resolve) => {
     if (window.Razorpay) return resolve(true);
+    // Remove any stale script tag first to avoid duplicates
+    const existing = document.querySelector('script[src*="checkout.razorpay.com"]');
+    if (existing) { existing.remove(); }
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.setAttribute('data-auto_checkout', 'false');
     script.onload = () => resolve(true);
     script.onerror = () => resolve(false);
     document.body.appendChild(script);

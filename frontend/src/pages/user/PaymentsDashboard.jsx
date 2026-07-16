@@ -22,12 +22,18 @@ const STATUS_STYLE = {
   cancelled: { label: 'Refunded',  color: 'text-[#DC2626]', bg: 'bg-[#DC2626]/10', border: 'border-[#DC2626]/20' },
 };
 
-/** Lazily inject Razorpay checkout script only when needed */
+/** Lazily inject Razorpay checkout script only when needed.
+ *  data-auto_checkout="false" suppresses the BHK widget that
+ *  auto-fires and spams the console with 404s on the app's origin.
+ */
 const loadRazorpayScript = () =>
   new Promise((resolve) => {
     if (window.Razorpay) return resolve(true);
+    const existing = document.querySelector('script[src*="checkout.razorpay.com"]');
+    if (existing) { existing.remove(); }
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.setAttribute('data-auto_checkout', 'false');
     script.onload = () => resolve(true);
     script.onerror = () => resolve(false);
     document.body.appendChild(script);

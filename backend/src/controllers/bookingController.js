@@ -14,25 +14,31 @@ import asyncHandler from '../middleware/asyncHandler.js';
 export const createBooking = asyncHandler(async (req, res) => {
   const { vehicleId, startDate, endDate, pickupLocation, dropoffLocation, notes } = req.body;
 
+  // Only check isActive + approved — NOT availability field,
+  // because availability: 'booked' would block ALL dates even when
+  // the existing booking is on completely different dates.
   const vehicle = await Vehicle.findOne({
     _id: vehicleId,
     isActive: true,
     status: 'approved',
-    availability: 'available',
   });
 
   if (!vehicle) {
-    throw ApiError.notFound('Vehicle not available for booking');
+    throw ApiError.notFound('Vehicle not found or not approved for booking');
   }
 
-  // Check for overlapping bookings
+  // Block maintenance vehicles
+  if (vehicle.availability === 'maintenance') {
+    throw ApiError.badRequest('Vehicle is currently under maintenance');
+  }
+
+  // Date-level overlap check — this is the real availability gate
   const overlap = await Booking.findOne({
     vehicle: vehicleId,
     isActive: true,
     status: { $in: ['pending', 'confirmed', 'active'] },
-    $or: [
-      { startDate: { $lte: new Date(endDate) }, endDate: { $gte: new Date(startDate) } },
-    ],
+    startDate: { $lt: new Date(endDate) },
+    endDate:   { $gt: new Date(startDate) },
   });
 
   if (overlap) {
@@ -55,9 +61,6 @@ export const createBooking = asyncHandler(async (req, res) => {
     dropoffLocation,
     notes,
   });
-
-  // Mark vehicle as booked
-  await Vehicle.findByIdAndUpdate(vehicleId, { availability: 'booked' });
 
   // Notify vendor
   await Notification.create({
@@ -195,19 +198,6 @@ export const updateBookingStatus = asyncHandler(async (req, res) => {
   booking.status = status;
   await booking.save();
 
-  // Reset vehicle availability if booking is completed or cancelled
-  if (['completed', 'cancelled'].includes(status)) {
-    const activeBookings = await Booking.countDocuments({
-      vehicle: booking.vehicle,
-      isActive: true,
-      status: { $in: ['pending', 'confirmed', 'active'] },
-      _id: { $ne: booking._id },
-    });
-    if (activeBookings === 0) {
-      await Vehicle.findByIdAndUpdate(booking.vehicle, { availability: 'available' });
-    }
-  }
-
   // Notify user
   await Notification.create({
     recipient: booking.user,
@@ -243,17 +233,6 @@ export const cancelBooking = asyncHandler(async (req, res) => {
   booking.status = 'cancelled';
   booking.cancellationReason = req.body.cancellationReason || 'Cancelled by user';
   await booking.save();
-
-  // Reset vehicle availability if no other active bookings exist for it
-  const activeBookings = await Booking.countDocuments({
-    vehicle: booking.vehicle,
-    isActive: true,
-    status: { $in: ['pending', 'confirmed', 'active'] },
-    _id: { $ne: booking._id },
-  });
-  if (activeBookings === 0) {
-    await Vehicle.findByIdAndUpdate(booking.vehicle, { availability: 'available' });
-  }
 
   // Notify vendor
   await Notification.create({
