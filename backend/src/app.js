@@ -26,6 +26,9 @@ import newsletterRoutes from './routes/newsletterRoutes.js';
 
 const app = express();
 
+// ─── Trust Proxy (Required for Render/Vercel/Cloud deployments) ───
+app.set('trust proxy', 1);
+
 // ─── Passport Configuration ──────────────────────────────────────
 configurePassport();
 app.use(passport.initialize());
