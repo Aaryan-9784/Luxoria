@@ -30,6 +30,8 @@ const AboutPage = React.lazy(() => import('@/pages/public/AboutPage'));
 const ContactPage = React.lazy(() => import('@/pages/public/ContactPage'));
 const CollectionPage = React.lazy(() => import('@/pages/public/CollectionPage'));
 const WatchExperiencePage = React.lazy(() => import('@/pages/public/WatchExperiencePage'));
+const PrivacyPolicyPage = React.lazy(() => import('@/pages/public/PrivacyPolicyPage'));
+const TermsOfServicePage = React.lazy(() => import('@/pages/public/TermsOfServicePage'));
 
 const DashboardOverview = React.lazy(() => import('@/pages/user/DashboardOverview'));
 const MyBookings = React.lazy(() => import('@/pages/user/MyBookings'));
@@ -116,6 +118,8 @@ export default function AppRoutes() {
           <Route path="/experience" element={<ExperiencePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
           
           {/* Vendor Onboarding Removed */}
           
