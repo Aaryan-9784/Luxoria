@@ -2,24 +2,41 @@ import nodemailer from 'nodemailer';
 
 /**
  * Enterprise Email Service using Nodemailer
- * Configured for production via environment variables (e.g. Gmail SMTP, SendGrid, Mailtrap)
+ * Uses Resend SMTP for reliable cloud delivery (works on Render, Vercel, AWS)
+ * Fallback: Gmail SMTP for local development
  */
 class EmailService {
   constructor() {
-    const port = parseInt(process.env.SMTP_PORT) || 587;
-    this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
-      port,
-      secure: port === 465, // true for port 465, false for 587
-      requireTLS: port === 587,
-      auth: {
-        user: process.env.SMTP_USER || 'placeholder_user',
-        pass: process.env.SMTP_PASS || 'placeholder_pass',
-      },
-      tls: {
-        rejectUnauthorized: false, // Allows self-signed certs on cloud platforms
-      },
-    });
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (isProduction && process.env.RESEND_API_KEY) {
+      // Production: Use Resend SMTP (works reliably from cloud servers)
+      this.transporter = nodemailer.createTransport({
+        host: 'smtp.resend.com',
+        port: 465,
+        secure: true,
+        auth: {
+          user: 'resend',
+          pass: process.env.RESEND_API_KEY,
+        },
+      });
+    } else {
+      // Local Development: Use Gmail or configured SMTP
+      const port = parseInt(process.env.SMTP_PORT) || 587;
+      this.transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
+        port,
+        secure: port === 465,
+        requireTLS: port === 587,
+        auth: {
+          user: process.env.SMTP_USER || 'placeholder_user',
+          pass: process.env.SMTP_PASS || 'placeholder_pass',
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      });
+    }
   }
 
   async sendEmail(options) {
