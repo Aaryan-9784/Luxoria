@@ -6,12 +6,18 @@ import nodemailer from 'nodemailer';
  */
 class EmailService {
   constructor() {
+    const port = parseInt(process.env.SMTP_PORT) || 587;
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
-      port: process.env.SMTP_PORT || 2525,
+      port,
+      secure: port === 465, // true for port 465, false for 587
+      requireTLS: port === 587,
       auth: {
         user: process.env.SMTP_USER || 'placeholder_user',
         pass: process.env.SMTP_PASS || 'placeholder_pass',
+      },
+      tls: {
+        rejectUnauthorized: false, // Allows self-signed certs on cloud platforms
       },
     });
   }
