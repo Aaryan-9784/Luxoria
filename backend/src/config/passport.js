@@ -3,6 +3,11 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/User.js';
 
 const configurePassport = () => {
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    console.warn('⚠️ Google OAuth credentials missing in environment; skipping Google Strategy initialization.');
+    return;
+  }
+
   passport.use(
     new GoogleStrategy(
       {

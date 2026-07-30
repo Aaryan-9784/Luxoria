@@ -229,13 +229,7 @@ export const getConciergeRequests = asyncHandler(async (req, res) => {
     limit: requests.length || 10
   };
 
-  // We must return what adminSlice expects. The other routes use ApiResponse.paginated or ApiResponse.success
-  // The fetchConcierge thunk will expect response.data.data
-  res.status(200).json({
-    success: true,
-    data: requests,
-    pagination
-  });
+  ApiResponse.paginated(res, requests, pagination);
 });
 
 /**

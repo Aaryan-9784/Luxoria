@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Booking from '../models/Booking.js';
 import Payment from '../models/Payment.js';
 import User from '../models/User.js';
@@ -151,6 +152,8 @@ export const getDashboardAnalytics = async (period = 'year') => {
  * Get vendor dashboard analytics
  */
 export const getVendorAnalytics = async (vendorId) => {
+  const vendorObjId = typeof vendorId === 'string' ? new mongoose.Types.ObjectId(vendorId) : vendorId;
+
   const [
     totalVehicles,
     activeVehicles,
@@ -173,12 +176,12 @@ export const getVendorAnalytics = async (vendorId) => {
         },
       },
       { $unwind: '$bookingData' },
-      { $match: { 'bookingData.vendor': vendorId, status: 'captured' } },
+      { $match: { 'bookingData.vendor': vendorObjId, status: 'captured' } },
       { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
     ]),
 
     Booking.aggregate([
-      { $match: { vendor: vendorId, isActive: true } },
+      { $match: { vendor: vendorObjId, isActive: true } },
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]),
 
