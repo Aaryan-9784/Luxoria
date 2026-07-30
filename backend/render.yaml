@@ -11,15 +11,21 @@ services:
         value: 5000
       - key: CLIENT_URL
         sync: false
-      - key: MONGO_URI
+      - key: MONGODB_URI
         sync: false
-      - key: JWT_SECRET
+      - key: JWT_ACCESS_SECRET
         sync: false
       - key: JWT_REFRESH_SECRET
         sync: false
+      - key: JWT_ACCESS_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CALLBACK_URL
         sync: false
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
@@ -30,4 +36,16 @@ services:
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: ADMIN_EMAIL
         sync: false

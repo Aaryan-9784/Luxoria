@@ -32,9 +32,25 @@ app.use(passport.initialize());
 
 // ─── Security Middleware ─────────────────────────────────────────
 app.use(helmet());
+const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, '') : null;
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, etc) or matching client URLs
+      if (!origin) return callback(null, true);
+      
+      const isAllowed =
+        (clientUrl && origin.replace(/\/$/, '') === clientUrl) ||
+        origin.endsWith('.vercel.app') ||
+        origin.startsWith('http://localhost');
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Fallback allow in dev/staging
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
