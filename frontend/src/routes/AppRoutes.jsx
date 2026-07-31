@@ -1,8 +1,34 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setCredentials, setLoading } from '@/redux/slices/authSlice';
 import api from '@/services/api';
+
+const ROUTE_TITLES = {
+  '/': 'Luxoria — Luxury Fleet & Chauffeur Experience',
+  '/vehicles': 'Fleet Collection — Luxoria',
+  '/collection': 'Curated Collection — Luxoria',
+  '/experience': 'The Experience — Luxoria',
+  '/about': 'About Us — Luxoria',
+  '/contact': 'Concierge & Support — Luxoria',
+  '/login': 'Sign In — Luxoria',
+  '/register': 'Create Account — Luxoria',
+  '/forgot-password': 'Reset Password — Luxoria',
+  '/terms': 'Terms of Service — Luxoria',
+  '/privacy': 'Privacy Policy — Luxoria',
+  '/cookies': 'Cookie Policy — Luxoria',
+  '/profile': 'Account Dossier — Luxoria',
+  '/my-bookings': 'My Reservations — Luxoria',
+  '/wishlist': 'Saved Vehicles — Luxoria',
+  '/notifications': 'Notifications — Luxoria',
+  '/invoices': 'Billing & Invoices — Luxoria',
+  '/support': 'Customer Desk — Luxoria',
+  '/vendor': 'Vendor Dashboard — Luxoria',
+  '/vendor/fleet': 'Manage Fleet — Luxoria',
+  '/vendor/bookings': 'Vendor Bookings — Luxoria',
+  '/vendor/revenue': 'Earnings Analytics — Luxoria',
+  '/admin': 'Executive Panel — Luxoria',
+};
 
 // Route Guards
 import ProtectedRoute from './ProtectedRoute';
@@ -73,6 +99,21 @@ const AdminFleetApprovals = React.lazy(() => import('@/pages/admin/AdminFleetApp
 
 export default function AppRoutes() {
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  // Dynamic Apple/Tesla style document title updater
+  useEffect(() => {
+    const currentPath = location.pathname;
+    if (ROUTE_TITLES[currentPath]) {
+      document.title = ROUTE_TITLES[currentPath];
+    } else if (currentPath.startsWith('/vehicles/')) {
+      document.title = 'Vehicle Details — Luxoria';
+    } else if (currentPath.startsWith('/bookings/')) {
+      document.title = 'Reservation Detail — Luxoria';
+    } else {
+      document.title = 'Luxoria — Luxury Fleet & Chauffeur Experience';
+    }
+  }, [location]);
 
   const hasRestored = React.useRef(false);
 
