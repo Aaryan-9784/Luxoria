@@ -6,31 +6,31 @@ import LuxuryImage from '@/components/ui/LuxuryImage';
 const TESTIMONIALS = [
   {
     id: 1,
-    name: 'James Harrison',
-    vehicle: 'Supercar Experience',
-    image: 'https://i.pravatar.cc/150?img=11',
-    quote: 'The track day with the McLaren 720S was beyond exhilarating. The instructors were professional, and the hospitality was truly world-class. An experience I will never forget.'
+    name: 'Aarav Kapoor',
+    vehicle: 'Supercar Track Experience',
+    image: '/images/vikramaditya.png',
+    quote: 'The track day with the McLaren 720S was beyond exhilarating. The instructors were professional, and the hospitality was truly world-class. An experience I will cherish forever.'
   },
   {
     id: 2,
-    name: 'Sophia Laurent',
-    vehicle: 'Luxury Sedan Journey',
-    image: 'https://i.pravatar.cc/150?img=5',
-    quote: 'We booked a chauffeur-driven Rolls Royce for our anniversary. The driver was impeccably dressed, courteous, and made the entire evening feel like a cinematic dream.'
+    name: 'Priyanka Singhania',
+    vehicle: 'Chauffeur Royalty Journey',
+    image: '/images/ananya.png',
+    quote: 'We booked a chauffeur-driven Rolls Royce Ghost for our wedding anniversary. The driver was impeccably dressed, courteous, and made our evening feel like a cinematic dream.'
   },
   {
     id: 3,
-    name: 'Marcus Chen',
-    vehicle: 'Weekend Escape',
-    image: 'https://i.pravatar.cc/150?img=12',
-    quote: 'Renting the Porsche 911 for a weekend getaway in the Alps was the best decision. The car was in pristine condition, and the Luxoria team handled all the logistics flawlessly.'
+    name: 'Rohan Mehta',
+    vehicle: 'Weekend Luxury Escape',
+    image: '/images/rajeshwar.png',
+    quote: 'Renting the Porsche 911 Turbo S for a weekend drive to Udaipur was the best decision. The car was in pristine condition, and the Luxoria team handled logistics flawlessly.'
   },
   {
     id: 4,
-    name: 'Elena Rostova',
-    vehicle: 'Wedding Collection',
-    image: 'https://i.pravatar.cc/150?img=9',
-    quote: 'The Bentley made our wedding day perfect. The floral arrangements inside and the red carpet service provided by Luxoria exceeded our wildest expectations.'
+    name: 'Kavita Reddy',
+    vehicle: 'Grand Wedding Collection',
+    image: '/images/ananya.png',
+    quote: 'The Bentley Flying Spur made our wedding entrance unforgettable. The regal styling, floral setup, and red carpet service by Luxoria exceeded our wildest expectations.'
   }
 ];
 

@@ -6,24 +6,24 @@ import LuxuryImage from '@/components/ui/LuxuryImage';
 const TESTIMONIALS = [
   {
     id: 1,
-    name: 'Alexander Pierce',
+    name: 'Vikramaditya Singhania',
     vehicle: 'Rolls Royce Ghost',
-    image: 'https://i.pravatar.cc/150?img=11',
-    quote: 'The level of service provided was absolutely impeccable. The vehicle arrived in pristine condition, and the concierge was remarkably attentive to every detail of our itinerary.'
+    image: '/images/vikramaditya.png',
+    quote: 'The level of service provided was absolutely world-class. The Ghost arrived in immaculate condition for our Mumbai grand gala, and the white-glove concierge attentive care made the entire event unforgettable.'
   },
   {
     id: 2,
-    name: 'Eleanor Sterling',
-    vehicle: 'Bugatti Chiron',
-    image: 'https://i.pravatar.cc/150?img=5',
-    quote: 'An unforgettable experience. The seamless booking process and the sheer elegance of the vehicle made our anniversary weekend truly exceptional. Highly recommended.'
+    name: 'Ananya Deshmukh',
+    vehicle: 'Lamborghini Huracán Evo',
+    image: '/images/ananya.png',
+    quote: 'An extraordinary experience from start to finish. The seamless digital booking process and the sheer thrill of driving through Bengaluru made our celebration truly regal.'
   },
   {
     id: 3,
-    name: 'Julian Vance',
-    vehicle: 'Porsche 911 Turbo S',
-    image: 'https://i.pravatar.cc/150?img=12',
-    quote: 'Luxoria understands true luxury. From the moment the keys were handed over, it was clear that their commitment to excellence is not just a promise, but a standard.'
+    name: 'Rajeshwar Verma',
+    vehicle: 'Mercedes-Maybach S-Class',
+    image: '/images/rajeshwar.png',
+    quote: 'Luxoria defines true luxury mobility in India. From the flawless vehicle presentation to their dedicated concierge team, their commitment to perfection is not just a promise, but a standard.'
   }
 ];
 
