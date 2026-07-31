@@ -32,6 +32,7 @@ const CollectionPage = React.lazy(() => import('@/pages/public/CollectionPage'))
 const WatchExperiencePage = React.lazy(() => import('@/pages/public/WatchExperiencePage'));
 const PrivacyPolicyPage = React.lazy(() => import('@/pages/public/PrivacyPolicyPage'));
 const TermsOfServicePage = React.lazy(() => import('@/pages/public/TermsOfServicePage'));
+const CookiePolicyPage = React.lazy(() => import('@/pages/public/CookiePolicyPage'));
 
 const DashboardOverview = React.lazy(() => import('@/pages/user/DashboardOverview'));
 const MyBookings = React.lazy(() => import('@/pages/user/MyBookings'));
@@ -120,6 +121,7 @@ export default function AppRoutes() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/cookies" element={<CookiePolicyPage />} />
           
           {/* Vendor Onboarding Removed */}
           

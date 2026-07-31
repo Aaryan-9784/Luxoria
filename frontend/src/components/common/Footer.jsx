@@ -103,20 +103,15 @@ export default function Footer() {
             </div>
 
             <div className="flex items-center gap-4 mt-2">
-              {[
-                { Icon: Instagram, href: "https://instagram.com/luxoria" },
-                { Icon: Twitter, href: "https://twitter.com/luxoria" },
-                { Icon: Linkedin, href: "https://linkedin.com/company/luxoria" }
-              ].map(({ Icon, href }, i) => (
-                <a
+              {[Instagram, Twitter, Linkedin].map((Icon, i) => (
+                <button
                   key={i}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white transition-all duration-300"
+                  type="button"
+                  onClick={(e) => e.preventDefault()}
+                  className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white transition-all duration-300 cursor-default outline-none"
                 >
                   <Icon className="w-4 h-4" />
-                </a>
+                </button>
               ))}
             </div>
           </div>
