@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/User.js';
+import emailService from '../services/emailService.js';
 
 const configurePassport = () => {
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
@@ -47,6 +48,9 @@ const configurePassport = () => {
             },
             isVerified: true,
           });
+
+          // Send welcome email (non-blocking)
+          emailService.sendWelcomeEmail(user).catch((err) => console.error('OAuth welcome email failed:', err));
 
           done(null, user);
         } catch (error) {

@@ -4,6 +4,8 @@ import {
   login,
   vendorLogin,
   adminLogin,
+  verifyLoginOtp,
+  resendLoginOtp,
   refreshAccessToken,
   logout,
   forgotPassword,
@@ -17,6 +19,8 @@ import validate from '../middleware/validate.js';
 import {
   registerSchema,
   loginSchema,
+  verifyOtpSchema,
+  resendOtpSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
 } from '../validations/authValidation.js';
@@ -28,6 +32,8 @@ router.post('/register', validate(registerSchema), register);
 router.post('/login', validate(loginSchema), login);
 router.post('/vendor/login', validate(loginSchema), vendorLogin);
 router.post('/admin/login', validate(loginSchema), adminLogin);
+router.post('/verify-otp', validate(verifyOtpSchema), verifyLoginOtp);
+router.post('/resend-otp', validate(resendOtpSchema), resendLoginOtp);
 router.post('/refresh', refreshAccessToken);
 router.post('/forgot-password', validate(forgotPasswordSchema), forgotPassword);
 router.put('/reset-password/:token', validate(resetPasswordSchema), resetPassword);

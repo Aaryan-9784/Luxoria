@@ -71,6 +71,11 @@ const userSchema = new mongoose.Schema(
     },
     passwordResetToken: String,
     passwordResetExpires: Date,
+    loginOtp: {
+      type: String,
+      select: false,
+    },
+    loginOtpExpires: Date,
   },
   {
     timestamps: true,
@@ -81,6 +86,8 @@ const userSchema = new mongoose.Schema(
         delete ret.__v;
         delete ret.passwordResetToken;
         delete ret.passwordResetExpires;
+        delete ret.loginOtp;
+        delete ret.loginOtpExpires;
         return ret;
       },
     },

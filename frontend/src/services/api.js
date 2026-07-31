@@ -48,13 +48,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     
-    // Check if error is 401, we haven't retried yet, and it's not the refresh/login endpoint itself
+    // Check if error is 401, we haven't retried yet, and it's not an auth endpoint itself
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes('/auth/login') &&
-      !originalRequest.url?.includes('/auth/register') &&
-      !originalRequest.url?.includes('/auth/refresh')
+      !originalRequest.url?.includes('/auth/')
     ) {
       if (isRefreshing) {
         // Queue the request while refresh is in progress

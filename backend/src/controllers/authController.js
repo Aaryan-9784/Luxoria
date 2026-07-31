@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import User from '../models/User.js';
 import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
@@ -12,6 +13,18 @@ import {
   clearRefreshTokenCookie,
 } from '../services/authService.js';
 import emailService from '../services/emailService.js';
+
+const generateAndSendOtp = async (user) => {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+  user.loginOtp = hashedOtp;
+  user.loginOtpExpires = expiresAt;
+  await user.save({ validateBeforeSave: false });
+
+  await emailService.sendLoginOtp(user, otp);
+};
 
 /**
  * @desc    Register a new user
@@ -66,28 +79,16 @@ export const login = asyncHandler(async (req, res) => {
     throw ApiError.unauthorized('Invalid email or password');
   }
 
-
   if (!user.isActive) {
     throw ApiError.forbidden('Your account has been deactivated. Contact support.');
   }
 
-  const accessToken = generateAccessToken(user._id);
-  const refreshToken = generateRefreshToken(user._id);
-
-  // Clean expired tokens and add new one
-  user.cleanExpiredTokens();
-  user.refreshTokens.push({
-    token: refreshToken,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  });
-  await user.save({ validateBeforeSave: false });
-
-  setRefreshTokenCookie(res, refreshToken);
+  await generateAndSendOtp(user);
 
   ApiResponse.success(res, {
-    user: user.toJSON(),
-    accessToken,
-  }, 'Logged in successfully');
+    requireOtp: true,
+    email: user.email,
+  }, 'Verification OTP has been sent to your email.');
 });
 
 /**
@@ -112,22 +113,12 @@ export const vendorLogin = asyncHandler(async (req, res) => {
     throw ApiError.forbidden('Your account has been deactivated. Contact support.');
   }
 
-  const accessToken = generateAccessToken(user._id);
-  const refreshToken = generateRefreshToken(user._id);
-
-  user.cleanExpiredTokens();
-  user.refreshTokens.push({
-    token: refreshToken,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  });
-  await user.save({ validateBeforeSave: false });
-
-  setRefreshTokenCookie(res, refreshToken);
+  await generateAndSendOtp(user);
 
   ApiResponse.success(res, {
-    user: user.toJSON(),
-    accessToken,
-  }, 'Logged in successfully');
+    requireOtp: true,
+    email: user.email,
+  }, 'Verification OTP has been sent to your email.');
 });
 
 /**
@@ -152,6 +143,53 @@ export const adminLogin = asyncHandler(async (req, res) => {
     throw ApiError.forbidden('Your account has been deactivated. Contact support.');
   }
 
+  await generateAndSendOtp(user);
+
+  ApiResponse.success(res, {
+    requireOtp: true,
+    email: user.email,
+  }, 'Verification OTP has been sent to your email.');
+});
+
+/**
+ * @desc    Verify Login OTP
+ * @route   POST /api/auth/verify-otp
+ * @access  Public
+ */
+export const verifyLoginOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) {
+    throw ApiError.badRequest('Email and OTP verification code are required');
+  }
+  const cleanEmail = String(email).toLowerCase().trim();
+  const cleanOtp = String(otp).trim();
+
+  const user = await User.findOne({ email: cleanEmail }).select('+loginOtp +loginOtpExpires');
+  if (!user) {
+    throw ApiError.badRequest('Account not found. Please sign in again.');
+  }
+
+  if (!user.loginOtp || !user.loginOtpExpires) {
+    throw ApiError.badRequest('No active verification code found for this account. Please sign in again.');
+  }
+
+  if (user.loginOtpExpires < new Date()) {
+    user.loginOtp = undefined;
+    user.loginOtpExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    throw ApiError.badRequest('Verification code has expired. Please click "Resend Code".');
+  }
+
+  const hashedOtp = crypto.createHash('sha256').update(cleanOtp).digest('hex');
+  if (user.loginOtp !== hashedOtp) {
+    throw ApiError.badRequest('Incorrect verification code. Please check your email and try again.');
+  }
+
+  // Clear OTP fields
+  user.loginOtp = undefined;
+  user.loginOtpExpires = undefined;
+
+  // Generate tokens
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
 
@@ -168,6 +206,28 @@ export const adminLogin = asyncHandler(async (req, res) => {
     user: user.toJSON(),
     accessToken,
   }, 'Logged in successfully');
+});
+
+/**
+ * @desc    Resend Login OTP
+ * @route   POST /api/auth/resend-otp
+ * @access  Public
+ */
+export const resendLoginOtp = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    throw ApiError.badRequest('Email address is required');
+  }
+  const cleanEmail = String(email).toLowerCase().trim();
+
+  const user = await User.findOne({ email: cleanEmail });
+  if (!user) {
+    throw ApiError.badRequest('Account not found with this email');
+  }
+
+  await generateAndSendOtp(user);
+
+  ApiResponse.success(res, { email: user.email }, 'Verification OTP has been resent to your email.');
 });
 
 

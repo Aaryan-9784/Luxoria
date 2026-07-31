@@ -1,23 +1,32 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import AuthImage from '@/components/ui/AuthImage';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Car, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { pageTransition, EASE_LUXE } from '@/lib/motion';
-import { useDispatch } from 'react-redux';
-import { vendorLogin } from '@/redux/slices/authSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { vendorLogin, verifyLoginOtp, resendLoginOtp, clearOtpState } from '@/redux/slices/authSlice';
 import Alert from '@/components/ui/Alert';
-
+import OtpVerificationModal from '@/components/auth/OtpVerificationModal';
 
 export default function VendorLoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { otpRequired: reduxOtpRequired, tempEmail: reduxTempEmail } = useSelector((state) => state.auth);
+
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // Local OTP flow state fallback
+  const [localRequireOtp, setLocalRequireOtp] = useState(false);
+  const [localPendingEmail, setLocalPendingEmail] = useState('');
+
+  const showOtpStep = reduxOtpRequired || localRequireOtp;
+  const currentEmail = reduxTempEmail || localPendingEmail;
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -25,11 +34,38 @@ export default function VendorLoginPage() {
     const result = await dispatch(vendorLogin(data));
     
     if (vendorLogin.fulfilled.match(result)) {
-      navigate('/vendor/dashboard', { replace: true });
+      if (result.payload?.requireOtp) {
+        setLocalPendingEmail(result.payload.email || data.email);
+        setLocalRequireOtp(true);
+      } else {
+        navigate('/vendor/dashboard', { replace: true });
+      }
     } else {
       setErrorMsg(result.payload || 'Invalid credentials');
     }
     setLoading(false);
+  };
+
+  const handleVerifyOtp = async (otpCode) => {
+    const result = await dispatch(verifyLoginOtp({ email: currentEmail, otp: otpCode }));
+    if (verifyLoginOtp.fulfilled.match(result)) {
+      navigate('/vendor/dashboard', { replace: true });
+      return null;
+    } else {
+      return result.payload || 'Invalid OTP code';
+    }
+  };
+
+  const handleResendOtp = async () => {
+    const result = await dispatch(resendLoginOtp(currentEmail));
+    if (resendLoginOtp.rejected.match(result)) {
+      throw new Error(result.payload || 'Failed to resend OTP');
+    }
+  };
+
+  const handleBackToCredentials = () => {
+    dispatch(clearOtpState());
+    setLocalRequireOtp(false);
   };
 
   return (
@@ -97,85 +133,105 @@ export default function VendorLoginPage() {
             <span className="auth-logo-text">Luxoria Partners</span>
           </Link>
 
-          <div className="auth-card-header">
-            <h2 className="auth-card-title">Partner Portal</h2>
-            <p className="auth-card-subtitle">
-              Enter your vendor credentials to continue.
-            </p>
-          </div>
+          <AnimatePresence mode="wait">
+            {showOtpStep ? (
+              <OtpVerificationModal
+                key="otp-step"
+                email={currentEmail}
+                onVerify={handleVerifyOtp}
+                onResend={handleResendOtp}
+                onBack={handleBackToCredentials}
+                themeColor="#3498db"
+              />
+            ) : (
+              <motion.div
+                key="vendor-login-credentials"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className="auth-card-header">
+                  <h2 className="auth-card-title">Partner Portal</h2>
+                  <p className="auth-card-subtitle">
+                    Enter your vendor credentials to continue.
+                  </p>
+                </div>
 
-          {errorMsg && (
-            <Alert type="error" className="mb-6">{errorMsg}</Alert>
-          )}
+                {errorMsg && (
+                  <Alert type="error" className="mb-6">{errorMsg}</Alert>
+                )}
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Email */}
-            <div className="auth-input-group">
-              <div className="auth-input-wrapper">
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Email Address"
-                  className={`auth-input ${errors.email ? 'has-error' : ''}`}
-                  {...register('email', {
-                    required: 'Email is required',
-                    pattern: { value: /^\S+@\S+\.\S+$/, message: 'Valid email is required' },
-                  })}
-                />
-                <label htmlFor="email" className="auth-floating-label">Email Address</label>
-                <Mail className="auth-input-icon" />
-              </div>
-              {errors.email && <div className="auth-input-error"><span>{errors.email.message}</span></div>}
-            </div>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  {/* Email */}
+                  <div className="auth-input-group">
+                    <div className="auth-input-wrapper">
+                      <input
+                        type="email"
+                        id="email"
+                        placeholder="Email Address"
+                        className={`auth-input ${errors.email ? 'has-error' : ''}`}
+                        {...register('email', {
+                          required: 'Email is required',
+                          pattern: { value: /^\S+@\S+\.\S+$/, message: 'Valid email is required' },
+                        })}
+                      />
+                      <label htmlFor="email" className="auth-floating-label">Email Address</label>
+                      <Mail className="auth-input-icon" />
+                    </div>
+                    {errors.email && <div className="auth-input-error"><span>{errors.email.message}</span></div>}
+                  </div>
 
-            {/* Password */}
-            <div className="auth-input-group" style={{ marginBottom: '16px' }}>
-              <div className="auth-input-wrapper">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  placeholder="Password"
-                  className={`auth-input ${errors.password ? 'has-error' : ''}`}
-                  {...register('password', {
-                    required: 'Password is required',
-                  })}
-                />
-                <label htmlFor="password" className="auth-floating-label">Password</label>
-                <Lock className="auth-input-icon" />
-                <button type="button" className="auth-password-toggle" onClick={() => setShowPassword(!showPassword)}>
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              {errors.password && <div className="auth-input-error"><span>{errors.password.message}</span></div>}
-            </div>
+                  {/* Password */}
+                  <div className="auth-input-group" style={{ marginBottom: '16px' }}>
+                    <div className="auth-input-wrapper">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        id="password"
+                        placeholder="Password"
+                        className={`auth-input ${errors.password ? 'has-error' : ''}`}
+                        {...register('password', {
+                          required: 'Password is required',
+                        })}
+                      />
+                      <label htmlFor="password" className="auth-floating-label">Password</label>
+                      <Lock className="auth-input-icon" />
+                      <button type="button" className="auth-password-toggle" onClick={() => setShowPassword(!showPassword)}>
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    {errors.password && <div className="auth-input-error"><span>{errors.password.message}</span></div>}
+                  </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px' }}>
-              <Link to="/forgot-password" style={{ fontSize: '0.875rem', color: '#3498db', fontWeight: 500 }}>
-                Forgot Password?
-              </Link>
-            </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px' }}>
+                    <Link to="/forgot-password" style={{ fontSize: '0.875rem', color: '#3498db', fontWeight: 500 }}>
+                      Forgot Password?
+                    </Link>
+                  </div>
 
-            <button
-              type="submit"
-              className="auth-submit-btn"
-              disabled={loading}
-              style={{ background: '#2C3E50', color: 'white' }}
-            >
-              {loading ? (
-                <span className="spinner" />
-              ) : (
-                <>
-                  Vendor Login
-                  <ArrowRight className="w-5 h-5" style={{ marginLeft: '8px' }} />
-                </>
-              )}
-            </button>
-          </form>
+                  <button
+                    type="submit"
+                    className="auth-submit-btn"
+                    disabled={loading}
+                    style={{ background: '#2C3E50', color: 'white' }}
+                  >
+                    {loading ? (
+                      <span className="spinner" />
+                    ) : (
+                      <>
+                        Vendor Login
+                        <ArrowRight className="w-5 h-5" style={{ marginLeft: '8px' }} />
+                      </>
+                    )}
+                  </button>
+                </form>
 
-          <p className="auth-switch">
-            Not a vendor?{' '}
-            <Link to="/login" style={{ color: '#3498db' }}>User Login</Link>
-          </p>
+                <p className="auth-switch">
+                  Not a vendor?{' '}
+                  <Link to="/login" style={{ color: '#3498db' }}>User Login</Link>
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </motion.div>

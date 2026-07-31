@@ -8,6 +8,8 @@ const initialState = {
   isAuthenticated: false,
   loading: true,
   error: null,
+  otpRequired: false,
+  tempEmail: null,
 };
 
 export const register = createAsyncThunk('auth/register', async (userData, { rejectWithValue }) => {
@@ -73,6 +75,23 @@ export const resetPassword = createAsyncThunk('auth/resetPassword', async ({ tok
   }
 });
 
+export const verifyLoginOtp = createAsyncThunk('auth/verifyLoginOtp', async ({ email, otp }, { rejectWithValue }) => {
+  try {
+    const response = await api.post('/auth/verify-otp', { email, otp });
+    return response.data.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error?.message || 'OTP verification failed');
+  }
+});
+
+export const resendLoginOtp = createAsyncThunk('auth/resendLoginOtp', async (email, { rejectWithValue }) => {
+  try {
+    const response = await api.post('/auth/resend-otp', { email });
+    return response.data.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error?.message || 'Failed to resend OTP');
+  }
+});
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -83,15 +102,23 @@ export const authSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.isAuthenticated = true;
       state.loading = false;
+      state.otpRequired = false;
+      state.tempEmail = null;
     },
     updateUser: (state, action) => {
       state.user = action.payload.user;
+    },
+    clearOtpState: (state) => {
+      state.otpRequired = false;
+      state.tempEmail = null;
     },
     logout: (state) => {
       state.user = null;
       state.accessToken = null;
       state.isAuthenticated = false;
       state.loading = false;
+      state.otpRequired = false;
+      state.tempEmail = null;
       // Use raw axios to prevent interceptor from triggering a refresh token flow if access token is already expired during logout
       const baseURL = import.meta.env.VITE_API_URL || '/api';
       axios.post(`${baseURL}/auth/logout`, {}, { withCredentials: true }).catch(() => {});
@@ -107,62 +134,87 @@ export const authSlice = createSlice({
     builder
       // Login
       .addCase(login.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload.user;
-        state.accessToken = action.payload.accessToken;
-        state.isAuthenticated = true;
+        if (action.payload?.requireOtp) {
+          state.otpRequired = true;
+          state.tempEmail = action.payload.email;
+        } else if (action.payload?.user && action.payload?.accessToken) {
+          state.user = action.payload.user;
+          state.accessToken = action.payload.accessToken;
+          state.isAuthenticated = true;
+          state.otpRequired = false;
+          state.tempEmail = null;
+        }
       })
       .addCase(login.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload;
       })
       // Vendor Login
       .addCase(vendorLogin.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(vendorLogin.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload.user;
-        state.accessToken = action.payload.accessToken;
-        state.isAuthenticated = true;
+        if (action.payload?.requireOtp) {
+          state.otpRequired = true;
+          state.tempEmail = action.payload.email;
+        } else if (action.payload?.user && action.payload?.accessToken) {
+          state.user = action.payload.user;
+          state.accessToken = action.payload.accessToken;
+          state.isAuthenticated = true;
+          state.otpRequired = false;
+          state.tempEmail = null;
+        }
       })
       .addCase(vendorLogin.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload;
       })
       // Admin Login
       .addCase(adminLogin.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(adminLogin.fulfilled, (state, action) => {
-        state.loading = false;
+        if (action.payload?.requireOtp) {
+          state.otpRequired = true;
+          state.tempEmail = action.payload.email;
+        } else if (action.payload?.user && action.payload?.accessToken) {
+          state.user = action.payload.user;
+          state.accessToken = action.payload.accessToken;
+          state.isAuthenticated = true;
+          state.otpRequired = false;
+          state.tempEmail = null;
+        }
+      })
+      .addCase(adminLogin.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      // Verify OTP
+      .addCase(verifyLoginOtp.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(verifyLoginOtp.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
+        state.otpRequired = false;
+        state.tempEmail = null;
       })
-      .addCase(adminLogin.rejected, (state, action) => {
-        state.loading = false;
+      .addCase(verifyLoginOtp.rejected, (state, action) => {
         state.error = action.payload;
       })
       // Register
       .addCase(register.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.loading = false;
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
+        state.otpRequired = false;
+        state.tempEmail = null;
       })
       .addCase(register.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload;
       })
       // Fetch Profile (used on app load to restore session if refresh token is valid)
@@ -172,7 +224,6 @@ export const authSlice = createSlice({
       .addCase(fetchProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        // token is handled by the api interceptor which will refresh if needed
         state.isAuthenticated = true;
       })
       .addCase(fetchProfile.rejected, (state) => {
@@ -183,5 +234,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, updateUser, logout, setLoading, clearError } = authSlice.actions;
+export const { setCredentials, updateUser, clearOtpState, logout, setLoading, clearError } = authSlice.actions;
 export default authSlice.reducer;

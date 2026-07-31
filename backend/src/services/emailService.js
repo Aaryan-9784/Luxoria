@@ -201,6 +201,52 @@ class EmailService {
     await this.sendEmail({ email: user.email, subject: 'Luxoria Security: Password Reset Request', html });
   }
 
+  async sendLoginOtp(user, otp) {
+    const html = `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+        <!-- Header -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0F172A; border-bottom: 4px solid #D4AF37;">
+          <tr>
+            <td align="center" style="padding: 40px 30px;">
+              <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                <tr>
+                  <td align="center" valign="middle" style="padding-right: 15px;">
+                    <img src="https://api.iconify.design/lucide:car.svg?color=%23D4AF37&width=140&height=140" width="35" height="35" alt="Luxoria Logo" style="display: block; border: 0;" />
+                  </td>
+                  <td align="center" valign="middle">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 6px; text-transform: uppercase;">Luxoria</h1>
+                  </td>
+                </tr>
+              </table>
+              <p style="color: #D4AF37; margin: 15px 0 0 0; font-size: 13px; letter-spacing: 4px; text-transform: uppercase; font-weight: 600;">Two-Factor Authentication</p>
+            </td>
+          </tr>
+        </table>
+        
+        <!-- Body -->
+        <div style="padding: 40px 30px; text-align: center;">
+          <h2 style="color: #0F172A; font-size: 20px; font-weight: 600; margin-bottom: 12px;">Login Verification Code</h2>
+          <p style="color: #4B5563; font-size: 15px; line-height: 1.6; margin-top: 0;">Hello ${user.name || 'valued user'},</p>
+          <p style="color: #4B5563; font-size: 15px; line-height: 1.6;">Use the following 6-digit verification code to complete your login. This code is valid for <strong>10 minutes</strong>.</p>
+          
+          <div style="margin: 35px 0; padding: 20px; background-color: #F8FAFC; border: 2px dashed #D4AF37; border-radius: 12px; display: inline-block;">
+            <span style="font-family: 'Courier New', Courier, monospace; font-size: 36px; font-weight: 800; letter-spacing: 12px; color: #0F172A; margin-left: 12px;">${otp}</span>
+          </div>
+          
+          <p style="color: #9CA3AF; font-size: 13px; line-height: 1.5; margin-top: 25px; padding-top: 25px; border-top: 1px solid #F3F4F6;">If you did not attempt to sign in to your Luxoria account, please secure your password immediately.</p>
+        </div>
+        
+        <!-- Footer -->
+        <div style="background-color: #F8FAFC; padding: 25px; text-align: center; border-top: 1px solid #E5E7EB;">
+          <p style="color: #64748B; font-size: 13px; line-height: 1.6; margin: 0;">
+            <strong style="color: #0F172A;">&copy; ${new Date().getFullYear()} Luxoria Premium Private Limited.</strong><br>All rights reserved.
+          </p>
+        </div>
+      </div>
+    `;
+    await this.sendEmail({ email: user.email, subject: `Luxoria Verification Code: ${otp}`, html });
+  }
+
   async sendContactInquiryToAdmin(data) {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@luxoria.com';
     const html = `
