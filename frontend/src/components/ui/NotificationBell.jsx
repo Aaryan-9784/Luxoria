@@ -19,8 +19,10 @@ export default function NotificationBell() {
   };
 
   useEffect(() => {
-    dispatch(fetchNotifications());
-  }, [dispatch]);
+    if (user) {
+      dispatch(fetchNotifications());
+    }
+  }, [dispatch, user]);
 
   // Click outside to close
   useEffect(() => {

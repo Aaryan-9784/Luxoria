@@ -47,12 +47,16 @@ const errorHandler = (err, req, res, next) => {
 
   // ─── Log in development ────────────────────────────────────────
   if (process.env.NODE_ENV === 'development') {
-    console.error('ERROR:', {
-      statusCode,
-      message,
-      stack: err.stack,
-      errors,
-    });
+    if (statusCode >= 500) {
+      console.error('SERVER ERROR:', {
+        statusCode,
+        message,
+        stack: err.stack,
+        errors,
+      });
+    } else if (statusCode !== 401) {
+      console.warn(`[${statusCode}] ${message}`);
+    }
   }
 
   // ─── Send Response ────────────────────────────────────────────

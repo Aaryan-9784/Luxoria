@@ -10,16 +10,32 @@ const startServer = async () => {
     await connectDB();
 
     const server = app.listen(PORT, () => {
-      console.log(`
-  ╔══════════════════════════════════════════╗
-  ║                                          ║
-  ║   🚗  LUXORIA API Server                 ║
-  ║                                          ║
-  ║   Port: ${PORT}                            ║
-  ║   Mode: ${process.env.NODE_ENV || 'development'}                  ║
-  ║                                          ║
-  ╚══════════════════════════════════════════╝
-      `);
+      const INNER_WIDTH = 40;
+      const getVisualWidth = (str) => {
+        let width = 0;
+        for (const char of str) {
+          const code = char.codePointAt(0);
+          width += (code > 0xffff || (code >= 0x1f300 && code <= 0x1f9ff)) ? 2 : 1;
+        }
+        return width;
+      };
+
+      const line = (str = '') => {
+        const visWidth = getVisualWidth(str);
+        const pad = Math.max(0, INNER_WIDTH - visWidth);
+        return `  ║ ${str}${' '.repeat(pad)} ║`;
+      };
+
+      console.log('\n' + [
+        `  ╔${'═'.repeat(INNER_WIDTH + 2)}╗`,
+        line(''),
+        line('  🚗  LUXORIA API Server'),
+        line(''),
+        line(`  Port: ${PORT}`),
+        line(`  Mode: ${process.env.NODE_ENV || 'development'}`),
+        line(''),
+        `  ╚${'═'.repeat(INNER_WIDTH + 2)}╝`
+      ].join('\n') + '\n');
     });
 
     // Graceful shutdown

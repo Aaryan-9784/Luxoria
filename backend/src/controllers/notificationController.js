@@ -72,3 +72,27 @@ export const deleteAllNotifications = asyncHandler(async (req, res) => {
 
   ApiResponse.success(res, null, 'All notifications deleted');
 });
+
+/**
+ * @desc    Stream notifications via SSE
+ * @route   GET /api/notifications/stream
+ * @access  Protected
+ */
+export const streamNotifications = asyncHandler(async (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  if (typeof res.flushHeaders === 'function') {
+    res.flushHeaders();
+  }
+
+  res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Notification stream connected' })}\n\n`);
+
+  const intervalId = setInterval(() => {
+    res.write(': keep-alive\n\n');
+  }, 30000);
+
+  req.on('close', () => {
+    clearInterval(intervalId);
+  });
+});
