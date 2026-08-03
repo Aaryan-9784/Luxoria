@@ -1,15 +1,24 @@
-# ==============================
-# Dependencies & Package Managers
-# ==============================
+# ================================================================
+#  LUXORIA — Root .gitignore
+#  Comprehensive exclusions for MERN stack project
+# ================================================================
+
+
+# ──────────────────────────────────────────────────────────────────
+#  Dependencies & Package Managers
+# ──────────────────────────────────────────────────────────────────
 node_modules/
 jspm_packages/
 .npm/
 .yarn/
+.pnp.*
 .pnpm-store/
+package-lock.json
 
-# ==============================
-# Environment Variables & Secrets
-# ==============================
+
+# ──────────────────────────────────────────────────────────────────
+#  Environment Variables & Secrets
+# ──────────────────────────────────────────────────────────────────
 .env
 .env.local
 .env.development
@@ -23,24 +32,27 @@ jspm_packages/
 !.env.example
 !.env.sample
 
-# ==============================
-# Secrets & Certificates
-# ==============================
+
+# ──────────────────────────────────────────────────────────────────
+#  Secrets, Keys & Certificates
+# ──────────────────────────────────────────────────────────────────
 *.pem
 *.key
 *.cert
 *.p12
 *.pfx
 *.p8
+*.jks
 private_key.pem
 public_key.pem
 serviceAccountKey.json
 google-credentials.json
 firebase-adminsdk*.json
 
-# ==============================
-# Build Outputs & Bundlers
-# ==============================
+
+# ──────────────────────────────────────────────────────────────────
+#  Build Outputs & Bundler Caches
+# ──────────────────────────────────────────────────────────────────
 dist/
 dist-ssr/
 build/
@@ -56,19 +68,22 @@ out/
 .next/
 .nuxt/
 
-# ==============================
-# Logs & Process Caches
-# ==============================
+
+# ──────────────────────────────────────────────────────────────────
+#  Logs & Process Output
+# ──────────────────────────────────────────────────────────────────
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
-# ==============================
-# Uploads, Heavy Media & Temp Files
-# ==============================
+
+# ──────────────────────────────────────────────────────────────────
+#  Uploads, Heavy Media & Temporary Files
+# ──────────────────────────────────────────────────────────────────
 backend/uploads/
 backend/public/uploads/
 backend/temp/
@@ -76,15 +91,28 @@ frontend/public/uploads/
 *.tmp
 *.bak
 *.backup
+
+# Large video files (use Cloudinary / CDN instead)
 *.mp4
 *.mov
 *.avi
 *.mkv
 *.webm
 
-# ==============================
-# Testing & Coverage
-# ==============================
+# Large image archives
+*.psd
+*.ai
+
+# Personal photo files at root
+*.jpeg
+*.jpg
+!frontend/public/**/*.jpeg
+!frontend/public/**/*.jpg
+
+
+# ──────────────────────────────────────────────────────────────────
+#  Testing & Code Coverage
+# ──────────────────────────────────────────────────────────────────
 coverage/
 .nyc_output/
 *.lcov
@@ -94,41 +122,55 @@ cypress/screenshots/
 cypress/videos/
 .jest-cache/
 
-# ==============================
-# Database Files
-# ==============================
+
+# ──────────────────────────────────────────────────────────────────
+#  Database Files
+# ──────────────────────────────────────────────────────────────────
 *.db
 *.sqlite
 *.sqlite3
+data/db/
 
-# ==============================
-# IDEs, Editors & AI Agent Artifacts
-# ==============================
+
+# ──────────────────────────────────────────────────────────────────
+#  IDEs, Editors & AI Agent Artifacts
+# ──────────────────────────────────────────────────────────────────
+# JetBrains
 .idea/
+
+# Visual Studio
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
+
+# Vim / Neovim swap files
 *.swp
 *.swo
 *.swn
 *~
+
+# VS Code (allow shared settings)
+.vscode/
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# AI agents & generated caches
 .gemini/
 .brain/
 .agents/
 .system_generated/
 brain/
 scratch/
+.cursor/
+.copilot/
 
-# Allow shared VS Code settings
-.vscode/
-!.vscode/settings.json
-!.vscode/launch.json
-!.vscode/extensions.json
 
-# ==============================
-# OS-Specific Files
-# ==============================
+# ──────────────────────────────────────────────────────────────────
+#  OS-Specific System Files
+# ──────────────────────────────────────────────────────────────────
+
 # macOS
 .DS_Store
 .DS_Store?
@@ -142,12 +184,18 @@ scratch/
 Thumbs.db
 Desktop.ini
 ehthumbs.db
+ehthumbs_vista.db
 $RECYCLE.BIN/
 *.lnk
 
-# ==============================
-# Deployment & Hosting
-# ==============================
+# Linux
+.directory
+*.swp
+
+
+# ──────────────────────────────────────────────────────────────────
+#  Deployment & Hosting Platforms
+# ──────────────────────────────────────────────────────────────────
 .vercel/
 .netlify/
 .serverless/
@@ -155,18 +203,38 @@ $RECYCLE.BIN/
 .wrangler/
 .render-build-log
 render-build.log
+fly.toml
 
-# ==============================
-# Docker
-# ==============================
+
+# ──────────────────────────────────────────────────────────────────
+#  Docker
+# ──────────────────────────────────────────────────────────────────
 docker-compose.override.yml
+.dockerignore
 
-# ==============================
-# Miscellaneous
-# ==============================
+
+# ──────────────────────────────────────────────────────────────────
+#  Development Scripts & Scratch Files
+#  (One-off debug/test/seed scripts at backend root)
+# ──────────────────────────────────────────────────────────────────
+backend/check_*.js
+backend/clear_*.js
+backend/fix_*.js
+backend/get_*.js
+backend/test*.js
+backend/update_images.js
+backend/seed*.js
+frontend/get_cars.*
+
+
+# ──────────────────────────────────────────────────────────────────
+#  Miscellaneous
+# ──────────────────────────────────────────────────────────────────
 *.tgz
 *.tar.gz
 *.zip
+*.rar
+*.7z
 .node_repl_history
 notes.md
 todo.md
