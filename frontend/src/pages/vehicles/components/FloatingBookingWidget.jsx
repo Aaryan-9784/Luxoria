@@ -59,9 +59,19 @@ export default function FloatingBookingWidget({ vehicle }) {
       const [dy, dm, dd] = dropoffDate.split('-').map(Number);
       const pUtc = Date.UTC(py, pm - 1, pd);
       const dUtc = Date.UTC(dy, dm - 1, dd);
-      const diffTime = Math.max(0, dUtc - pUtc);
+
+      // If dropoff is before pickup, reset calculations
+      if (dUtc < pUtc) {
+        setDays(0);
+        setBaseTotal(0);
+        setTaxes(0);
+        setGrandTotal(0);
+        return;
+      }
+
+      const diffTime = dUtc - pUtc;
       // Calendar day count is inclusive: same-day (22 to 22) = 1 day, next-day (22 to 23) = 2 days
-      const diffDays = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1);
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
       
       setDays(diffDays);
       const base = diffDays * (vehicle?.pricePerDay || 0);
@@ -91,6 +101,14 @@ export default function FloatingBookingWidget({ vehicle }) {
     }
   };
 
+  const handleDropoffDateChange = (val) => {
+    if (pickupDate && val < pickupDate) {
+      setDropoffDate(pickupDate);
+    } else {
+      setDropoffDate(val);
+    }
+  };
+
   const handleReserve = async () => {
     if (!isAuthenticated) {
       navigate('/login?redirect=/vehicles/' + vehicle._id);
@@ -101,6 +119,11 @@ export default function FloatingBookingWidget({ vehicle }) {
 
     if (!pickupDate || !dropoffDate) {
       alert("Please select your rental dates");
+      return;
+    }
+
+    if (dropoffDate < pickupDate) {
+      alert("Dropoff date cannot be earlier than pickup date");
       return;
     }
 
@@ -197,7 +220,7 @@ export default function FloatingBookingWidget({ vehicle }) {
                 type="date" 
                 min={pickupDate || today}
                 value={dropoffDate}
-                onChange={(e) => setDropoffDate(e.target.value)}
+                onChange={(e) => handleDropoffDateChange(e.target.value)}
                 className="w-full bg-surface border border-border rounded-xl pl-9 pr-3 py-2.5 text-body-sm outline-none focus:border-accent"
               />
             </div>
