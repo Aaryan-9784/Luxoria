@@ -20,8 +20,17 @@ class EmailService {
           pass: process.env.RESEND_API_KEY,
         },
       });
+    } else if (process.env.SMTP_HOST === 'smtp.gmail.com' || process.env.SMTP_USER?.includes('@gmail.com')) {
+      // Gmail SMTP: Use built-in 'gmail' service preset for reliable SSL/TLS handling
+      this.transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
     } else {
-      // Local Development: Use Gmail or configured SMTP
+      // Local Development or Custom SMTP: Use configured SMTP
       const port = parseInt(process.env.SMTP_PORT) || 587;
       this.transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
@@ -40,8 +49,9 @@ class EmailService {
   }
 
   async sendEmail(options) {
+    const senderEmail = process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@luxoria.com';
     const mailOptions = {
-      from: options.from || `Luxoria Premium <${process.env.SMTP_FROM || 'noreply@luxoria.com'}>`,
+      from: options.from || `Luxoria Premium <${senderEmail}>`,
       to: options.to || options.email,
       replyTo: options.replyTo,
       subject: options.subject,
@@ -52,10 +62,10 @@ class EmailService {
     try {
       if (process.env.NODE_ENV !== 'test') {
         const info = await this.transporter.sendMail(mailOptions);
-        console.log(`Email sent: ${info.messageId}`);
+        console.log(`Email sent successfully: ${info.messageId}`);
       }
     } catch (error) {
-      console.error(`Error sending email to ${options.email}:`, error);
+      console.error(`Error sending email to ${options.email || options.to}:`, error.message || error);
       // We don't throw to prevent blocking the main thread (e.g. booking success)
     }
   }
