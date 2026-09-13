@@ -1,19 +1,17 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ChevronDown, Sparkles, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ChevronDown } from 'lucide-react';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
+import { useSelector, useDispatch } from 'react-redux';
 import { EASE_LUXE } from '@/lib/motion';
-import { HERO_STATS } from '../data/vehiclesPageData';
+import { fetchPublicStats } from '@/redux/slices/vehicleSlice';
 
 export default function CinematicHero() {
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
-    container: undefined, // use the window (default), not a div
     offset: ['start start', 'end start'],
-    layoutEffect: false, // avoids the static-position warning
   });
 
   const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
@@ -21,6 +19,24 @@ export default function CinematicHero() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
   const [statsRef, statsInView] = useInView({ triggerOnce: true, threshold: 0.3 });
+  const dispatch = useDispatch();
+  const { publicStats, pagination, vehicles } = useSelector(state => state.vehicle);
+
+  React.useEffect(() => {
+    if (!publicStats) {
+      dispatch(fetchPublicStats());
+    }
+  }, [dispatch, publicStats]);
+
+  const totalVehicles = pagination.total || vehicles.length || publicStats?.totalVehicles || 6;
+  const totalBrands = publicStats?.totalBrands || 6;
+  const totalBookings = publicStats?.totalBookings || 1;
+
+  const heroStats = [
+    { value: totalVehicles, suffix: '+', label: 'Luxury Vehicles' },
+    { value: totalBrands, suffix: '+', label: 'Premium Brands' },
+    { value: totalBookings, suffix: '+', label: 'Confirmed Bookings' },
+  ];
 
   const scrollToCollection = () => {
     const el = document.getElementById('vehicle-collection');
@@ -35,7 +51,7 @@ export default function CinematicHero() {
           initial={{ scale: 1.15 }}
           animate={{ scale: 1 }}
           transition={{ duration: 20, ease: 'linear', repeat: Infinity, repeatType: 'reverse' }}
-          src="https://www.williamloughran.co.uk/media/8006/ferrari-812-competizione-2339-1.jpg"
+          src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=2400&q=85"
           alt="Luxury vehicle cinematic"
           className="w-full h-full object-cover"
         />
@@ -83,7 +99,7 @@ export default function CinematicHero() {
           transition={{ duration: 0.8, delay: 1.1, ease: EASE_LUXE }}
           className="flex items-center justify-center gap-8 md:gap-16"
         >
-          {HERO_STATS.map((stat, i) => (
+          {heroStats.map((stat, i) => (
             <div key={stat.label} className="text-center">
               <div className="text-3xl md:text-4xl font-bold text-white tracking-tight">
                 {statsInView ? (

@@ -24,17 +24,26 @@ export default function NotificationBell() {
     }
   }, [dispatch, user]);
 
-  // Click outside to close
+  // Click outside or Escape to close
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
+    const handleKey = (event) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('mousedown', handleOutside);
+      document.addEventListener('touchstart', handleOutside);
+      document.addEventListener('keydown', handleKey);
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('touchstart', handleOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, [isOpen]);
 
   const getIcon = (type) => {

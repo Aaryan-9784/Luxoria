@@ -16,15 +16,24 @@ export default function Dropdown({
   const [isOpen, setIsOpen] = React.useState(false);
   const ref = React.useRef(null);
 
-  // Close on outside click
+  // Close on outside click or Escape
   React.useEffect(() => {
     const handleClickOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
         setIsOpen(false);
       }
     };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, []);
 
   const handleToggle = () => {

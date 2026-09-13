@@ -20,13 +20,24 @@ export default function WishlistDropdown() {
     return () => window.removeEventListener('wishlist-seen', handler);
   }, []);
 
-  // Close on outside click
+  // Close on outside click or Escape
   useEffect(() => {
-    const handler = (e) => {
+    const handleOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     };
-    if (open) document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    if (open) {
+      document.addEventListener('mousedown', handleOutside);
+      document.addEventListener('touchstart', handleOutside);
+      document.addEventListener('keydown', handleKey);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('touchstart', handleOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, [open]);
 
   const handleOpen = () => {

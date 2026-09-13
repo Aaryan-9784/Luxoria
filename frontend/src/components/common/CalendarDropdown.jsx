@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X, Search } from 'lucide-react';
+import useClickOutside from '@/hooks/useClickOutside';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -19,6 +20,7 @@ function isSameDay(a, b) {
 
 export default function CalendarDropdown() {
   const [showCalendar, setShowCalendar] = useState(false);
+  const dropdownRef = useClickOutside(() => setShowCalendar(false), showCalendar);
   const [viewDate, setViewDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [searchInput, setSearchInput] = useState('');
@@ -149,7 +151,7 @@ export default function CalendarDropdown() {
     : null;
 
   return (
-    <div className="relative flex items-center">
+    <div ref={dropdownRef} className="relative flex items-center">
       {/* Trigger button */}
       <button
         onClick={() => setShowCalendar(!showCalendar)}
@@ -178,12 +180,7 @@ export default function CalendarDropdown() {
 
       <AnimatePresence>
         {showCalendar && (
-          <>
-            {/* Backdrop */}
-            <div className="fixed inset-0 z-40" onClick={() => setShowCalendar(false)} />
-
-            {/* Calendar panel */}
-            <motion.div
+          <motion.div
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -320,7 +317,6 @@ export default function CalendarDropdown() {
                 </button>
               </div>
             </motion.div>
-          </>
         )}
       </AnimatePresence>
     </div>

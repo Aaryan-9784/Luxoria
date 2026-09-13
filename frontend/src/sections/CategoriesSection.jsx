@@ -1,20 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Car, Zap, Mountain, Crown, Wind, Truck } from 'lucide-react';
+import { Car, Zap, Mountain, Crown, Wind } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPublicStats } from '@/redux/slices/vehicleSlice';
 import { staggerContainer, staggerItem } from '@/lib/motion';
-import LuxuryImage from '@/components/ui/LuxuryImage';
 
-const CATEGORIES = [
-  { name: 'Sports Cars', icon: Car, count: 86, slug: 'sports', image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Luxury SUVs', icon: Mountain, count: 124, slug: 'suv', image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Electric', icon: Zap, count: 52, slug: 'electric', image: 'https://images.unsplash.com/photo-1619682817481-e994891cd1f5?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Sedans', icon: Crown, count: 98, slug: 'sedan', image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Convertibles', icon: Wind, count: 41, slug: 'convertible', image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Luxury Vans', icon: Truck, count: 28, slug: 'limousine', image: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?q=80&w=600&auto=format&fit=crop' },
+const CATEGORY_DEFINITIONS = [
+  { name: 'Sports Cars', icon: Car, slug: 'sports' },
+  { name: 'Ultra Luxury', icon: Crown, slug: 'luxury' },
+  { name: 'Luxury SUVs', icon: Mountain, slug: 'suv' },
+  { name: 'Electric Class', icon: Zap, slug: 'electric' },
+  { name: 'Sedans', icon: Crown, slug: 'sedan' },
+  { name: 'Convertibles', icon: Wind, slug: 'convertible' },
 ];
 
 export default function CategoriesSection() {
+  const dispatch = useDispatch();
+  const { publicStats } = useSelector((state) => state.vehicle);
+
+  useEffect(() => {
+    if (!publicStats) {
+      dispatch(fetchPublicStats());
+    }
+  }, [dispatch, publicStats]);
+
+  const categoryCounts = publicStats?.categoryCounts || { sports: 5, luxury: 1 };
   return (
     <section className="section-spacing bg-background">
       <div className="container-luxe">
@@ -58,24 +69,27 @@ export default function CategoriesSection() {
           variants={staggerContainer}
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5"
         >
-          {CATEGORIES.map((cat) => (
-            <motion.div key={cat.slug} variants={staggerItem}>
-              <Link
-                to={`/vehicles?category=${cat.slug}`}
-                className="group relative flex flex-col items-center justify-end p-6 h-64 md:h-80 rounded-3xl border border-white/10 bg-primary overflow-hidden shadow-sm hover:shadow-glow-gold hover:-translate-y-2 transition-all duration-500"
-              >
-
-
-                <div className="relative z-10 flex flex-col items-center text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                  <div className="w-12 h-12 rounded-full glass-dark flex items-center justify-center mb-4 group-hover:bg-accent group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-500 border border-white/20">
-                    <cat.icon className="w-5 h-5 text-white transition-colors duration-300" />
+          {CATEGORY_DEFINITIONS.map((cat) => {
+            const count = categoryCounts[cat.slug] || 0;
+            return (
+              <motion.div key={cat.slug} variants={staggerItem}>
+                <Link
+                  to={`/vehicles?category=${cat.slug}`}
+                  className="group relative flex flex-col items-center justify-end p-6 h-64 md:h-80 rounded-3xl border border-white/10 bg-primary overflow-hidden shadow-sm hover:shadow-glow-gold hover:-translate-y-2 transition-all duration-500"
+                >
+                  <div className="relative z-10 flex flex-col items-center text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                    <div className="w-12 h-12 rounded-full glass-dark flex items-center justify-center mb-4 group-hover:bg-accent group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-500 border border-white/20">
+                      <cat.icon className="w-5 h-5 text-white transition-colors duration-300" />
+                    </div>
+                    <h3 className="text-body font-bold text-white mb-1 tracking-wide">{cat.name}</h3>
+                    <span className="text-caption text-white/70 uppercase tracking-widest">
+                      {count > 0 ? `${count} vehicle${count === 1 ? '' : 's'}` : 'Explore Fleet'}
+                    </span>
                   </div>
-                  <h3 className="text-body font-bold text-white mb-1 tracking-wide">{cat.name}</h3>
-                  <span className="text-caption text-white/70 uppercase tracking-widest">{cat.count} vehicles</span>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                </Link>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

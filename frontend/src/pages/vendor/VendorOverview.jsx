@@ -45,28 +45,28 @@ export default function VendorOverview() {
     const now = new Date();
 
     if (timeFilter === 'This Year') {
-      // Group completed bookings by month
+      // Group confirmed/completed bookings by month
       const monthly = Array.from({ length: 12 }, (_, i) => ({ name: `Month ${i + 1}`, revenue: 0 }));
       bookings
-        .filter(b => b.status === 'completed' && new Date(b.createdAt).getFullYear() === now.getFullYear())
+        .filter(b => ['confirmed', 'active', 'completed'].includes(b.status) && new Date(b.createdAt).getFullYear() === now.getFullYear())
         .forEach(b => {
           const month = new Date(b.createdAt).getMonth(); // 0-indexed
-          monthly[month].revenue += b.totalAmount || 0;
+          monthly[month].revenue += Math.round((b.totalAmount || 0) * 0.85);
         });
       return monthly;
     }
 
     if (timeFilter === 'Last 3 Months') {
-      // Group completed bookings into 12 weekly buckets (~3 months)
+      // Group confirmed/completed bookings into 12 weekly buckets (~3 months)
       const weeks = Array.from({ length: 12 }, (_, i) => ({ name: `Week ${i + 1}`, revenue: 0 }));
       const threeMonthsAgo = new Date(now);
       threeMonthsAgo.setMonth(now.getMonth() - 3);
       bookings
-        .filter(b => b.status === 'completed' && new Date(b.createdAt) >= threeMonthsAgo)
+        .filter(b => ['confirmed', 'active', 'completed'].includes(b.status) && new Date(b.createdAt) >= threeMonthsAgo)
         .forEach(b => {
           const diffDays = Math.floor((now - new Date(b.createdAt)) / (1000 * 60 * 60 * 24));
           const weekIndex = Math.min(11, Math.floor((90 - diffDays) / 7));
-          if (weekIndex >= 0) weeks[weekIndex].revenue += b.totalAmount || 0;
+          if (weekIndex >= 0) weeks[weekIndex].revenue += Math.round((b.totalAmount || 0) * 0.85);
         });
       return weeks;
     }
@@ -77,11 +77,11 @@ export default function VendorOverview() {
     bookings
       .filter(b => {
         const d = new Date(b.createdAt);
-        return b.status === 'completed' && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        return ['confirmed', 'active', 'completed'].includes(b.status) && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
       })
       .forEach(b => {
         const day = new Date(b.createdAt).getDate() - 1; // 0-indexed
-        if (day >= 0 && day < daily.length) daily[day].revenue += b.totalAmount || 0;
+        if (day >= 0 && day < daily.length) daily[day].revenue += Math.round((b.totalAmount || 0) * 0.85);
       });
     return daily;
   };

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  getVehicles, getVehicle, getFeaturedVehicles, createVehicle,
+  getVehicles, getVehicle, getFeaturedVehicles, getPublicStats, createVehicle,
   updateVehicle, deleteVehicle, uploadImages, deleteImage, getVendorVehicles
 } from '../controllers/vehicleController.js';
 import { protect, authorize } from '../middleware/auth.js';
@@ -14,6 +14,7 @@ const router = Router();
 // Public routes
 router.get('/', getVehicles);
 router.get('/featured', getFeaturedVehicles);
+router.get('/stats', getPublicStats);
 // Vendor & Admin fleet management routes
 router.get('/vendor', protect, authorize('vendor', 'admin'), getVendorVehicles);
 

@@ -8,32 +8,32 @@ const FLEET_CATEGORIES = [
   {
     title: 'Luxury Sedans',
     image: 'https://images.pexels.com/photos/3729464/pexels-photo-3729464.jpeg?auto=compress&cs=tinysrgb&w=2070',
-    link: '/collection?category=sedans'
+    link: '/vehicles?category=sedan'
   },
   {
     title: 'Supercars',
     image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop',
-    link: '/collection?category=supercars'
+    link: '/vehicles?category=sports'
   },
   {
     title: 'Luxury SUVs',
     image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2070&auto=format&fit=crop',
-    link: '/collection?category=suvs'
+    link: '/vehicles?category=suv'
   },
   {
     title: 'Executive Vehicles',
     image: 'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?q=80&w=2070&auto=format&fit=crop',
-    link: '/collection?category=executive'
+    link: '/vehicles?category=luxury'
   },
   {
     title: 'Wedding Collection',
     image: 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=2070&auto=format&fit=crop',
-    link: '/collection?category=wedding'
+    link: '/vehicles?category=luxury'
   },
   {
     title: 'Chauffeur Collection',
     image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?q=80&w=2070&auto=format&fit=crop',
-    link: '/collection?category=chauffeur'
+    link: '/vehicles?category=limousine'
   }
 ];
 
@@ -70,7 +70,7 @@ export default function AboutFleetShowcase() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Link to="/collection" className="group flex items-center gap-3 text-primary font-bold tracking-widest uppercase text-sm hover:text-accent transition-colors duration-300">
+            <Link to="/vehicles" className="group flex items-center gap-3 text-primary font-bold tracking-widest uppercase text-sm hover:text-accent transition-colors duration-300">
               View All Categories
               <span className="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center group-hover:border-accent group-hover:bg-accent group-hover:text-white transition-all duration-300">
                 <ArrowUpRight className="w-4 h-4" />

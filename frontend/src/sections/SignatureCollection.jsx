@@ -6,7 +6,6 @@ import { ArrowRight } from 'lucide-react';
 import LuxuryVehicleCard from '@/pages/vehicles/components/LuxuryVehicleCard';
 import { fetchFeaturedVehicles, setQuickView, addToCompare } from '@/redux/slices/vehicleSlice';
 import { toggleWishlist, fetchWishlist } from '@/redux/slices/dashboardSlice';
-import { HOME_FEATURED_VEHICLES } from './FeaturedVehicles';
 
 /**
  * Normalise a DB vehicle document into the shape LuxuryVehicleCard expects.
@@ -60,8 +59,8 @@ export default function SignatureCollection() {
     }
   }, [dispatch, isAuthenticated]);
 
-  // Use live data if available, otherwise fall back to static mock data
-  const rawVehicles = featuredVehicles.length > 0 ? featuredVehicles : HOME_FEATURED_VEHICLES;
+  // Use live database vehicles only
+  const rawVehicles = featuredVehicles;
   const vehicles = rawVehicles.slice(0, 6).map(normaliseVehicle);
 
   /* ── Handlers ── */

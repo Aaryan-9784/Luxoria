@@ -13,7 +13,7 @@
 
 <br />
 
-![Luxoria Hero Banner](https://images.pexels.com/photos/3729464/pexels-photo-3729464.jpeg?auto=compress&cs=tinysrgb&w=1600)
+![Luxoria Hero Banner](https://calibremag.com/wp-content/uploads/2025/04/Rolls-Royce-Ghost-Series-II-Scotland-2025-CALIBRE-01.webp)
 
 <br />
 

@@ -188,17 +188,19 @@ export default function AdminCollections() {
               />
             </div>
             {/* Filter */}
-            <CustomSelect
-              value={filter}
-              onChange={(val) => setFilter(val)}
-              options={[
-                { value: 'all', label: 'All Entries' },
-                { value: 'collection', label: 'Collections (In)' },
-                { value: 'payout', label: 'Payouts (Out)' },
-                { value: 'fee', label: 'Fees (Deductions)' }
-              ]}
-              className="bg-[#F9F9F9]"
-            />
+            <div className="w-full sm:w-52">
+              <CustomSelect
+                value={filter}
+                onChange={(val) => setFilter(val)}
+                options={[
+                  { value: 'all', label: 'All Entries' },
+                  { value: 'collection', label: 'Collections (In)' },
+                  { value: 'payout', label: 'Payouts (Out)' },
+                  { value: 'fee', label: 'Fees (Deductions)' }
+                ]}
+                triggerClassName="bg-[#F9F9F9]"
+              />
+            </div>
           </div>
         </div>
 

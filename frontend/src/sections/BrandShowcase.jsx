@@ -1,14 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPublicStats } from '@/redux/slices/vehicleSlice';
 
-const BRANDS = [
-  'Rolls Royce', 'Bugatti', 'Porsche', 
+const DEFAULT_BRANDS = [
+  'Rolls-Royce', 'Bugatti', 'Porsche', 
   'McLaren', 'Ferrari', 'Lamborghini'
 ];
 
 export default function BrandShowcase() {
+  const dispatch = useDispatch();
+  const { publicStats, featuredVehicles } = useSelector((state) => state.vehicle);
+
+  useEffect(() => {
+    if (!publicStats) {
+      dispatch(fetchPublicStats());
+    }
+  }, [dispatch, publicStats]);
+
+  const liveBrands = (publicStats?.brands && publicStats.brands.length > 0)
+    ? publicStats.brands
+    : (featuredVehicles && featuredVehicles.length > 0)
+      ? Array.from(new Set(featuredVehicles.map(v => v.brand).filter(Boolean)))
+      : DEFAULT_BRANDS;
+
   // Duplicate array for seamless looping
-  const marqueeBrands = [...BRANDS, ...BRANDS, ...BRANDS];
+  const marqueeBrands = [...liveBrands, ...liveBrands, ...liveBrands];
 
   return (
     <section className="py-20 bg-primary overflow-hidden border-y border-white/5 relative">
@@ -33,14 +51,15 @@ export default function BrandShowcase() {
           className="flex whitespace-nowrap"
         >
           {marqueeBrands.map((brand, i) => (
-            <div
+            <Link
+              to={`/vehicles?brand=${encodeURIComponent(brand)}`}
               key={`${brand}-${i}`}
-              className="px-8 md:px-16 flex items-center justify-center cursor-pointer group/brand"
+              className="px-8 md:px-16 flex items-center justify-center cursor-pointer group/brand inline-block"
             >
               <span className="text-2xl md:text-3xl font-bold tracking-[0.15em] uppercase text-white/30 grayscale transition-all duration-500 ease-out group-hover/brand:grayscale-0 group-hover/brand:opacity-100 group-hover/brand:text-accent group-hover/brand:scale-110 group-hover/brand:drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]">
                 {brand}
               </span>
-            </div>
+            </Link>
           ))}
         </motion.div>
       </div>

@@ -92,12 +92,23 @@ export const vendorSlice = createSlice({
         state.loading = false;
         state.bookings = action.payload;
         
-        // Revenue = only completed (paid) bookings
-        const revenue = action.payload
+        // Confirmed, active, or completed bookings represent customer-paid rentals
+        const paidBookings = action.payload.filter(b => ['confirmed', 'active', 'completed'].includes(b.status));
+        const grossRevenue = paidBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+        const platformFees = grossRevenue * 0.15; // 15% platform commission
+        const netRevenue = grossRevenue * 0.85;   // 85% net vendor payout
+
+        // Pending payouts = confirmed/active bookings awaiting trip completion
+        const pendingPayouts = action.payload
+          .filter(b => ['confirmed', 'active'].includes(b.status))
+          .reduce((sum, b) => sum + ((b.totalAmount || 0) * 0.85), 0);
+
+        // Settled payouts = completed bookings
+        const settledPayouts = action.payload
           .filter(b => b.status === 'completed')
-          .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+          .reduce((sum, b) => sum + ((b.totalAmount || 0) * 0.85), 0);
           
-        // Active rentals = confirmed + currently active (not pending, not completed/cancelled)
+        // Active rentals = confirmed + currently active
         const active = action.payload.filter(b => ['confirmed', 'active'].includes(b.status));
 
         // Pending requests = bookings awaiting vendor action
@@ -105,7 +116,11 @@ export const vendorSlice = createSlice({
 
         state.stats = {
           ...state.stats,
-          totalRevenue: revenue,
+          grossRevenue,
+          platformFees,
+          totalRevenue: netRevenue,
+          pendingPayouts,
+          settledPayouts,
           activeRentals: active.length,
           totalBookings: action.payload.length,
           pendingRequests: pendingBookings.length,

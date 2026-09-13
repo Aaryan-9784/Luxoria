@@ -1,21 +1,24 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { EASE_LUXE } from '@/lib/motion';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPublicStats } from '@/redux/slices/vehicleSlice';
 
-function AnimatedCounter({ target, suffix = '', prefix = '' }) {
+function AnimatedCounter({ target, prefix = '' }) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
   const [display, setDisplay] = React.useState(0);
 
   React.useEffect(() => {
+    animate(count, target, { duration: 1.5, ease: EASE_LUXE });
     const unsubscribe = rounded.on('change', (v) => setDisplay(v));
     return () => unsubscribe();
-  }, [rounded]);
+  }, [count, rounded, target]);
 
   return (
     <motion.span
       onViewportEnter={() => {
-        animate(count, target, { duration: 2, ease: EASE_LUXE });
+        animate(count, target, { duration: 1.5, ease: EASE_LUXE });
       }}
       viewport={{ once: true, margin: '-100px' }}
     >
@@ -24,14 +27,27 @@ function AnimatedCounter({ target, suffix = '', prefix = '' }) {
   );
 }
 
-const STATS = [
-  { value: 500, suffix: '+', label: 'Premium Vehicles', description: 'Curated luxury fleet' },
-  { value: 12, suffix: 'K+', label: 'Happy Clients', description: 'Across the globe' },
-  { value: 45, suffix: '+', label: 'Cities Covered', description: 'Nationwide presence' },
-  { value: 200, suffix: '+', label: 'Verified Partners', description: 'Certified excellence' },
-];
-
 export default function StatsSection() {
+  const dispatch = useDispatch();
+  const { publicStats, featuredVehicles } = useSelector((state) => state.vehicle);
+
+  React.useEffect(() => {
+    if (!publicStats) {
+      dispatch(fetchPublicStats());
+    }
+  }, [dispatch, publicStats]);
+
+  const vehiclesCount = publicStats?.totalVehicles ?? (featuredVehicles?.length || 6);
+  const brandsCount = publicStats?.totalBrands ?? 6;
+  const partnersCount = publicStats?.totalPartners ?? 1;
+  const bookingsCount = publicStats?.totalBookings ?? 1;
+
+  const stats = [
+    { value: vehiclesCount, suffix: '+', label: 'Premium Vehicles', description: 'Curated luxury fleet' },
+    { value: brandsCount, suffix: '+', label: 'Luxury Brands', description: 'World-renowned automakers' },
+    { value: bookingsCount, suffix: '+', label: 'Completed Bookings', description: 'Trusted bespoke journeys' },
+    { value: partnersCount, suffix: '+', label: 'Verified Partners', description: 'Certified excellence' },
+  ];
   return (
     <section className="py-24 bg-surface relative overflow-hidden">
       <div className="container-luxe">
@@ -73,7 +89,7 @@ export default function StatsSection() {
 
         {/* Distinct Floating Cards Grid - Light/Dark Theme Compatible */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {STATS.map((stat, i) => (
+          {stats.map((stat, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}

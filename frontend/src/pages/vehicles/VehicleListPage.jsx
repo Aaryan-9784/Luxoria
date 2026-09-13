@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchVehicles, fetchFeaturedVehicles, clearFilters } from '@/redux/slices/vehicleSlice';
+import { fetchVehicles, fetchFeaturedVehicles } from '@/redux/slices/vehicleSlice';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { pageTransition } from '@/lib/motion';
 
 // Sections
 import CinematicHero from './sections/CinematicHero';
 import SmartSearch from './sections/SmartSearch';
-import EliteBrandShowcase from './sections/EliteBrandShowcase';
 import AdvancedFilterPanel from './sections/AdvancedFilterPanel';
 import FeaturedShowcase from './sections/FeaturedShowcase';
 import PremiumVehicleGrid from './sections/PremiumVehicleGrid';

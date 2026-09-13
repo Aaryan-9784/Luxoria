@@ -7,26 +7,14 @@ const WISHLIST_KEY = 'luxoria_wishlist_items';
 const loadWishlistFromStorage = () => {
   try {
     const raw = localStorage.getItem(WISHLIST_KEY);
-    if (raw) return JSON.parse(raw);
-
-    // Migrate legacy simple ID list stored by `vehicleSlice` under 'luxoria_wishlist'
-    const legacy = localStorage.getItem('luxoria_wishlist');
-    if (legacy) {
-      try {
-        const ids = JSON.parse(legacy);
-        if (Array.isArray(ids)) {
-          const migrated = ids.map(id => ({
-            _id: `wishlist-${id}`,
-            vehicleId: String(id),
-            vehicle: { _id: String(id), id: String(id), name: '', brand: '', pricePerDay: 0 },
-            user: null,
-            createdAt: new Date().toISOString(),
-          }));
-          // persist migrated format
-          localStorage.setItem(WISHLIST_KEY, JSON.stringify(migrated));
-          return migrated;
-        }
-      } catch {}
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => {
+          const id = item.vehicle?._id || item.vehicleId || item.vehicle?.id;
+          return isMongoId(id);
+        });
+      }
     }
     return [];
   } catch {
@@ -63,15 +51,11 @@ export const fetchMyBookings = createAsyncThunk('dashboard/fetchBookings', async
   }
 });
 
-export const fetchWishlist = createAsyncThunk('dashboard/fetchWishlist', async (_, { getState, rejectWithValue }) => {
+export const fetchWishlist = createAsyncThunk('dashboard/fetchWishlist', async (_, { rejectWithValue }) => {
   try {
     const response = await api.get('/wishlist');
     const apiItems = response.data.data.wishlist || [];
-    // Preserve any locally-stored mock items (non-MongoDB IDs) that the API doesn't know about
-    const localMockItems = getState().dashboard.wishlist.filter(
-      w => !isMongoId(w.vehicle?._id || w.vehicle?.id || w.vehicleId || '')
-    );
-    return { apiItems, localMockItems };
+    return { apiItems };
   } catch (error) {
     return rejectWithValue('Failed to fetch wishlist');
   }
@@ -90,8 +74,7 @@ export const toggleWishlist = createAsyncThunk('dashboard/toggleWishlist', async
     );
 
     if (!isMongoId(vehicleId)) {
-      // Local-only toggle for mock data — no API call
-      return { vehicleId, vehicle: vehicleObj, action: alreadySaved ? 'removed' : 'added', mock: true };
+      return rejectWithValue('Invalid vehicle ID');
     }
 
     if (alreadySaved) {
@@ -148,7 +131,9 @@ export const dashboardSlice = createSlice({
         state.loading = false;
         state.bookings = action.payload;
         const active = action.payload.filter(b => ['pending', 'confirmed', 'active'].includes(b.status));
-        const totalAmount = action.payload.filter(b => b.status === 'completed').reduce((s, b) => s + b.totalAmount, 0);
+        // Paid bookings = confirmed, active, completed (actual money paid)
+        const paidBookings = action.payload.filter(b => ['confirmed', 'active', 'completed'].includes(b.status));
+        const totalAmount = paidBookings.reduce((s, b) => s + (b.totalAmount || 0), 0);
         state.stats = {
           totalBookings: action.payload.length,
           activeBookings: active.length,
@@ -161,22 +146,13 @@ export const dashboardSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Wishlist fetch — merge API + local mock items ─────────────────────
+      // ── Wishlist fetch — real API database items only ─────────────────────
       .addCase(fetchWishlist.pending, (state) => { state.wishlistLoading = true; })
       .addCase(fetchWishlist.fulfilled, (state, action) => {
         state.wishlistLoading = false;
-        const { apiItems, localMockItems } = action.payload;
-        // Deduplicate: start with API items, then append any mock items not already covered
-        const merged = [...apiItems];
-        localMockItems.forEach(mockItem => {
-          const mockId = mockItem.vehicle?._id || mockItem.vehicle?.id || mockItem.vehicleId;
-          const alreadyIn = merged.some(
-            a => (a.vehicle?._id || a.vehicle?.id) === mockId
-          );
-          if (!alreadyIn) merged.push(mockItem);
-        });
-        state.wishlist = merged;
-        saveWishlistToStorage(merged);
+        const apiItems = action.payload.apiItems || [];
+        state.wishlist = apiItems;
+        saveWishlistToStorage(apiItems);
       })
       .addCase(fetchWishlist.rejected, (state) => { state.wishlistLoading = false; })
 

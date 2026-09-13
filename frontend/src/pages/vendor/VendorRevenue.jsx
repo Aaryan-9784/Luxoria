@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchVendorBookings } from '@/redux/slices/vendorSlice';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
-import { Wallet, TrendingUp, DollarSign, Download, ArrowUpRight, Calendar, FileText, Car } from 'lucide-react';
+import { Wallet, TrendingUp, DollarSign, Download, ArrowUpRight, Calendar, FileText, Car, CreditCard, Receipt, Clock } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 
 export default function VendorRevenue() {
@@ -36,16 +36,24 @@ export default function VendorRevenue() {
     return true;
   });
 
-  // Completed or confirmed = earned revenue
-  const earnedBookings  = filteredByTime.filter(b => b.status === 'completed' || b.status === 'confirmed');
-  // Pending = projected revenue
-  const pendingBookings = filteredByTime.filter(b => b.status === 'pending' || b.status === 'active');
+  // Paid bookings (confirmed, active, completed)
+  const paidBookings    = filteredByTime.filter(b => ['confirmed', 'active', 'completed'].includes(b.status));
+  const grossCollected  = paidBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+  const platformFees    = Math.round(grossCollected * 0.15); // 15% platform commission
+  const netEarnings     = Math.round(grossCollected * 0.85); // 85% vendor payout
+  
+  // Pending payouts = confirmed or active bookings awaiting trip completion
+  const pendingPayouts  = filteredByTime
+    .filter(b => ['confirmed', 'active'].includes(b.status))
+    .reduce((sum, b) => sum + Math.round((b.totalAmount || 0) * 0.85), 0);
 
-  const totalRevenue   = earnedBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
-  const pendingRevenue = pendingBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+  // Settled payouts = completed bookings
+  const settledPayouts  = filteredByTime
+    .filter(b => b.status === 'completed')
+    .reduce((sum, b) => sum + Math.round((b.totalAmount || 0) * 0.85), 0);
 
-  // Recent transactions = earned bookings sorted newest first, capped at 10
-  const recentTransactions = [...earnedBookings]
+  // Recent transactions = paid bookings sorted newest first, capped at 10
+  const recentTransactions = [...paidBookings]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 10);
 
@@ -55,11 +63,13 @@ export default function VendorRevenue() {
 
   // ── Export CSV ─────────────────────────────────────────────────────────────
   const handleExportCSV = () => {
-    const headers = ['Booking ID', 'Vehicle', 'Customer', 'Rental Period', 'Days', 'Amount', 'Status', 'Date'];
+    const headers = ['Booking ID', 'Vehicle', 'Customer', 'Rental Period', 'Days', 'Gross Amount', 'Platform Fee (15%)', 'Net Payout', 'Status', 'Date'];
     const rows = allSortedBookings.map(b => {
       const start = b.startDate ? new Date(b.startDate).toLocaleDateString('en-US') : '-';
       const end   = b.endDate   ? new Date(b.endDate).toLocaleDateString('en-US')   : '-';
-      // Escape any quotes inside string fields
+      const gross = b.totalAmount || 0;
+      const fee   = Math.round(gross * 0.15);
+      const net   = Math.round(gross * 0.85);
       const safeName    = (b.vehicle?.name || 'Unknown').replace(/"/g, '""');
       const safeCustomer = (b.user?.name   || 'Unknown').replace(/"/g, '""');
       return [
@@ -68,7 +78,9 @@ export default function VendorRevenue() {
         `"${safeCustomer}"`,
         `"${start} - ${end}"`,
         b.totalDays  ?? '-',
-        b.totalAmount ?? 0,
+        gross,
+        fee,
+        net,
         b.status,
         new Date(b.createdAt).toLocaleDateString('en-US'),
       ].join(',');
@@ -79,7 +91,7 @@ export default function VendorRevenue() {
     const blobUrl = URL.createObjectURL(blob);
     const link    = document.createElement('a');
     link.href     = blobUrl;
-    link.download = `luxoria_earnings_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `luxoria_vendor_earnings_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -88,11 +100,11 @@ export default function VendorRevenue() {
 
   // ── Status helpers ─────────────────────────────────────────────────────────
   const statusConfig = {
-    completed: { label: 'Completed', bg: '#16A34A10', text: '#16A34A', border: '#16A34A30' },
-    confirmed: { label: 'Confirmed', bg: '#C9A75D10', text: '#C9A75D', border: '#C9A75D30' },
-    active:    { label: 'Active',    bg: '#2563EB10', text: '#2563EB', border: '#2563EB30' },
-    pending:   { label: 'Pending',   bg: '#9CA3AF15', text: '#6B7280', border: '#9CA3AF30' },
-    cancelled: { label: 'Cancelled', bg: '#DC262610', text: '#DC2626', border: '#DC262630' },
+    completed: { label: 'Settled',    bg: '#16A34A10', text: '#16A34A', border: '#16A34A30' },
+    confirmed: { label: 'Processing', bg: '#C9A75D10', text: '#C9A75D', border: '#C9A75D30' },
+    active:    { label: 'Active',     bg: '#2563EB10', text: '#2563EB', border: '#2563EB30' },
+    pending:   { label: 'Pending',    bg: '#9CA3AF15', text: '#6B7280', border: '#9CA3AF30' },
+    cancelled: { label: 'Cancelled',  bg: '#DC262610', text: '#DC2626', border: '#DC262630' },
   };
   const getStatus = (s) => statusConfig[s] || statusConfig.pending;
 
@@ -106,9 +118,10 @@ export default function VendorRevenue() {
   }
 
   const KPI_DATA = [
-    { label: 'Total Earnings',      value: `$${totalRevenue.toLocaleString('en-US')}`,   icon: Wallet },
-    { label: 'Completed Trips',     value: earnedBookings.length,                          icon: TrendingUp },
-    { label: 'Projected (Pending)', value: `$${pendingRevenue.toLocaleString('en-US')}`,  icon: DollarSign },
+    { label: 'Gross Collected (YTD)', value: `$${grossCollected.toLocaleString('en-US')}`, icon: CreditCard, sub: 'Customer Booking Volume' },
+    { label: 'Pending Payouts',       value: `$${pendingPayouts.toLocaleString('en-US')}`,  icon: Wallet,     sub: 'Awaiting Trip Settlement' },
+    { label: 'Platform Fees',         value: `$${platformFees.toLocaleString('en-US')}`,    icon: Receipt,    sub: '15% System Deduction' },
+    { label: 'Net Revenue',           value: `$${netEarnings.toLocaleString('en-US')}`,     icon: DollarSign, sub: '85% Net Partner Share' },
   ];
 
   return (
@@ -142,12 +155,12 @@ export default function VendorRevenue() {
         </div>
       </div>
 
-      {/* KPI Widgets */}
-      <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* KPI Widgets (4-Card Grid matching Collections layout) */}
+      <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {KPI_DATA.map((kpi, idx) => (
           <div key={idx} className="relative overflow-hidden group bg-white border border-[#ECECEC] rounded-2xl p-6 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-default">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C9A75D] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10 flex flex-col justify-between h-full gap-6">
+            <div className="relative z-10 flex flex-col justify-between h-full gap-5">
               <div className="flex justify-between items-start">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center bg-[#0F0F0F] text-[#C9A75D] group-hover:scale-110 transition-transform duration-500 shadow-md">
                   <kpi.icon className="w-5 h-5" />
@@ -156,6 +169,7 @@ export default function VendorRevenue() {
               <div>
                 <h3 className="text-[32px] font-bold text-[#0F0F0F] tracking-tight mb-1">{kpi.value}</h3>
                 <p className="text-[11px] font-bold text-[#666666] uppercase tracking-[0.15em]">{kpi.label}</p>
+                {kpi.sub && <p className="text-[10px] text-[#9CA3AF] font-medium mt-0.5">{kpi.sub}</p>}
               </div>
             </div>
           </div>
@@ -167,7 +181,7 @@ export default function VendorRevenue() {
         <div className="px-6 py-5 border-b border-[#ECECEC] flex items-center justify-between">
           <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F]">Recent Transactions</h3>
           <span className="text-[11px] font-bold text-[#666666] bg-[#F5F5F5] px-3 py-1.5 rounded-full uppercase tracking-wide">
-            {recentTransactions.length} of {earnedBookings.length}
+            {recentTransactions.length} of {paidBookings.length}
           </span>
         </div>
 
@@ -189,9 +203,10 @@ export default function VendorRevenue() {
                   <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Booking ID</th>
                   <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Vehicle</th>
                   <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Rental Period</th>
-                  <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider text-right">Days</th>
-                  <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider text-right">Amount</th>
-                  <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider text-right">Status</th>
+                  <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider text-right">Gross</th>
+                  <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider text-right">Fee (15%)</th>
+                  <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider text-right">Net Payout</th>
+                  <th className="py-3.5 px-6 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider text-right">Payout Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F5F5F5]">
@@ -200,6 +215,10 @@ export default function VendorRevenue() {
                   const imgUrl = booking.vehicle?.images?.[0]?.url ?? null;
                   const start = booking.startDate ? new Date(booking.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
                   const end   = booking.endDate   ? new Date(booking.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+                  const gross = booking.totalAmount || 0;
+                  const fee   = Math.round(gross * 0.15);
+                  const net   = Math.round(gross * 0.85);
+
                   return (
                     <motion.tr
                       variants={staggerItem}
@@ -236,17 +255,24 @@ export default function VendorRevenue() {
                         <span className="text-[12px] font-medium text-[#666666]">{start} – {end}</span>
                       </td>
 
-                      {/* Days */}
+                      {/* Gross */}
                       <td className="py-4 px-6 text-right">
-                        <span className="text-[13px] font-bold text-[#0F0F0F]">
-                          {booking.totalDays ?? '—'}
+                        <span className="text-[13px] font-medium text-[#666666]">
+                          ${gross.toLocaleString('en-US')}
                         </span>
                       </td>
 
-                      {/* Amount */}
+                      {/* Fee */}
+                      <td className="py-4 px-6 text-right">
+                        <span className="text-[13px] font-medium text-[#DC2626]">
+                          -${fee.toLocaleString('en-US')}
+                        </span>
+                      </td>
+
+                      {/* Net Payout */}
                       <td className="py-4 px-6 text-right">
                         <span className="text-[14px] font-bold text-[#16A34A] inline-flex items-center justify-end gap-1">
-                          +${(booking.totalAmount || 0).toLocaleString('en-US')}
+                          +${net.toLocaleString('en-US')}
                           <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </span>
                       </td>

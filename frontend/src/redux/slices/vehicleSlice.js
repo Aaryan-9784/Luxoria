@@ -1,8 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
-import { FEATURED_VEHICLES } from '../../pages/vehicles/data/vehiclesPageData';
-import { HOME_FEATURED_VEHICLES } from '../../sections/FeaturedVehicles';
-import { vehicles as COLLECTION_VEHICLES } from '../../pages/public/components/collection/data';
 
 // ── Canonical image map for the 6 approved cars ──────────────────────────────
 // Keyed by lowercase "brand|name" so DB vehicles always show the correct image
@@ -62,6 +59,7 @@ const initialState = {
   },
   sortBy: '-createdAt', // Default sorting
   viewMode: 'grid', // 'grid' | 'list'
+  publicStats: null,
 
   // ── New: Vehicles Page Enhanced State ──
   wishlist: JSON.parse(localStorage.getItem('luxoria_wishlist') || '[]'),
@@ -103,18 +101,22 @@ export const fetchFeaturedVehicles = createAsyncThunk(
     try {
       const response = await api.get('/vehicles/featured');
       const vehicles = response.data?.data?.vehicles || response.data?.data || [];
-
-      // If the API returned real vehicles, normalise them (inject canonical images, etc.)
-      if (vehicles.length > 0) {
-        return vehicles.map(normaliseDbVehicle);
-      }
-
-      // Backend returned no approved vehicles — fall back to mock data so the
-      // page doesn't look empty during initial setup
-      return HOME_FEATURED_VEHICLES;
+      return vehicles.map(normaliseDbVehicle);
     } catch (err) {
-      // Network / server error — fall back to static data
-      return HOME_FEATURED_VEHICLES;
+      return rejectWithValue(err.response?.data?.error?.message || 'Failed to fetch featured vehicles');
+    }
+  }
+);
+
+// Fetch public database metrics for statistics showcases
+export const fetchPublicStats = createAsyncThunk(
+  'vehicle/fetchPublicStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/vehicles/stats');
+      return response.data?.data || null;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.error?.message || 'Failed to fetch public stats');
     }
   }
 );
@@ -124,29 +126,10 @@ export const fetchVehicleById = createAsyncThunk(
   'vehicle/fetchById',
   async (id, { rejectWithValue }) => {
     try {
-      // Intercept mock IDs to prevent 400 Bad Request errors from MongoDB CastError
-      const isMongoId = /^[0-9a-fA-F]{24}$/.test(String(id));
-      
-      if (!isMongoId) {
-        const vehicle = FEATURED_VEHICLES.find(v => String(v.id) === String(id)) ||
-                        HOME_FEATURED_VEHICLES.find(v => String(v.id) === String(id)) ||
-                        COLLECTION_VEHICLES.find(v => String(v.id) === String(id));
-        if (vehicle) return vehicle;
-        throw new Error('Mock vehicle not found');
-      }
-
-      try {
-        const response = await api.get(`/vehicles/${id}`);
-        return response.data.data.vehicle;
-      } catch (err) {
-        const vehicle = FEATURED_VEHICLES.find(v => String(v.id) === String(id)) ||
-                        HOME_FEATURED_VEHICLES.find(v => String(v.id) === String(id)) ||
-                        COLLECTION_VEHICLES.find(v => String(v.id) === String(id));
-        if (vehicle) return vehicle;
-        throw err;
-      }
+      const response = await api.get(`/vehicles/${id}`);
+      return response.data?.data?.vehicle || response.data?.data;
     } catch (error) {
-      return rejectWithValue('Failed to fetch vehicle details');
+      return rejectWithValue(error.response?.data?.error?.message || 'Failed to fetch vehicle details');
     }
   }
 );
@@ -249,24 +232,8 @@ export const vehicleSlice = createSlice({
           pages: raw.pages ?? raw.totalPages ?? 0,
         };
         
-        const hasActiveFilters = Object.values(state.filters).some(
-          (val) => val !== '' && val !== null && val !== undefined
-        );
-
-        if (backendVehicles.length > 0 || hasActiveFilters) {
-          // Use real backend data (even when empty, rendering a proper zero-results state for active filters)
-          state.vehicles = backendVehicles.map(normaliseDbVehicle);
-          state.pagination = backendPagination;
-        } else {
-          // Fallback to mock data ONLY when database is entirely empty and no search filters are active
-          state.vehicles = [...FEATURED_VEHICLES];
-          state.pagination = {
-            page: 1,
-            limit: 12,
-            total: FEATURED_VEHICLES.length,
-            pages: Math.ceil(FEATURED_VEHICLES.length / 12),
-          };
-        }
+        state.vehicles = backendVehicles.map(normaliseDbVehicle);
+        state.pagination = backendPagination;
       })
       .addCase(fetchVehicles.rejected, (state, action) => {
         state.loading = false;
@@ -274,6 +241,9 @@ export const vehicleSlice = createSlice({
       })
       .addCase(fetchFeaturedVehicles.fulfilled, (state, action) => {
         state.featuredVehicles = action.payload;
+      })
+      .addCase(fetchPublicStats.fulfilled, (state, action) => {
+        state.publicStats = action.payload;
       })
       .addCase(fetchVehicleById.pending, (state) => {
         state.loading = true;

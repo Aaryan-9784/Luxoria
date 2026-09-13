@@ -32,8 +32,8 @@ export default function WishlistPage() {
   };
 
   const processedWishlist = useMemo(() => {
-    // Include items that have a vehicle object OR a vehicleId (local mock items)
-    let result = wishlist.filter(item => item.vehicle || item.vehicleId);
+    // Only include real vehicles populated from the database
+    let result = wishlist.filter(item => item && item.vehicle && (item.vehicle._id || item.vehicle.id));
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       result = result.filter(item =>
@@ -177,9 +177,9 @@ export default function WishlistPage() {
           <AnimatePresence mode="popLayout">
             {processedWishlist.map((item) => {
               const v = item.vehicle;
-              const vehicleId = v?._id || v?.id || item.vehicleId;
-              // Support both images array (backend) and single image string (mock data)
-              const imageUrl = v?.images?.[0]?.url || v?.images?.[0] || v?.image || null;
+              const vehicleId = v?._id || v?.id || item.vehicleId || item._id;
+              // Real database vehicle image URL
+              const imageUrl = v?.images?.[0]?.url || v?.images?.[0] || null;
               const isRemoving = removingId === vehicleId;
               const displayRating = typeof v?.rating === 'object' ? v?.rating?.average : v?.rating;
               return (

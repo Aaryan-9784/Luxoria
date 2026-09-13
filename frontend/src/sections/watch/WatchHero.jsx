@@ -1,8 +1,45 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { fadeUp } from '@/lib/motion';
 
 export default function WatchHero() {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Full volume
+    video.volume = 1.0;
+    video.muted = false;
+
+    // Attempt unmuted playback immediately
+    video.play().catch(() => {
+      // If browser blocks unmuted autoplay on a cold direct URL load,
+      // play continuously and unmute on the very first user interaction
+      video.muted = true;
+      video.play().catch(() => {});
+
+      const enableAudio = () => {
+        if (videoRef.current) {
+          videoRef.current.muted = false;
+          videoRef.current.volume = 1.0;
+          videoRef.current.play().catch(() => {});
+        }
+        cleanup();
+      };
+
+      const cleanup = () => {
+        ['click', 'touchstart', 'scroll', 'pointerdown', 'keydown'].forEach((evt) => {
+          document.removeEventListener(evt, enableAudio);
+        });
+      };
+
+      ['click', 'touchstart', 'scroll', 'pointerdown', 'keydown'].forEach((evt) => {
+        document.addEventListener(evt, enableAudio, { once: true, passive: true });
+      });
+    });
+  }, []);
 
   return (
     <>
@@ -11,9 +48,9 @@ export default function WatchHero() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/40 z-10" /> {/* Overlay */}
           <video 
+            ref={videoRef}
             key="luxoria-bg-video"
             autoPlay 
-            muted
             loop 
             playsInline
             className="w-full h-full object-cover"

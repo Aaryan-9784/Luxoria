@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPublicStats } from '@/redux/slices/vehicleSlice';
 import LuxuryImage from '@/components/ui/LuxuryImage';
 
 export default function LuxuryStorytelling() {
+  const dispatch = useDispatch();
+  const { publicStats } = useSelector((state) => state.vehicle);
+
+  useEffect(() => {
+    if (!publicStats) {
+      dispatch(fetchPublicStats());
+    }
+  }, [dispatch, publicStats]);
+
+  const fleetCount = publicStats?.totalVehicles || 6;
+  const marquesCount = publicStats?.totalBrands || 6;
+
   return (
     <section className="py-[140px] bg-background">
       <div className="container-luxe px-6 lg:px-20 mx-auto max-w-[1440px]">
@@ -53,16 +67,16 @@ export default function LuxuryStorytelling() {
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-border">
               <div>
-                <p className="text-3xl font-bold text-primary mb-2">98%</p>
+                <p className="text-3xl font-bold text-primary mb-2">100%</p>
                 <p className="text-caption text-secondary uppercase tracking-widest">Satisfaction</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-primary mb-2">12k+</p>
-                <p className="text-caption text-secondary uppercase tracking-widest">Rentals</p>
+                <p className="text-3xl font-bold text-primary mb-2">{fleetCount}+</p>
+                <p className="text-caption text-secondary uppercase tracking-widest">Curated Fleet</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-primary mb-2">24/7</p>
-                <p className="text-caption text-secondary uppercase tracking-widest">Concierge</p>
+                <p className="text-3xl font-bold text-primary mb-2">{marquesCount}</p>
+                <p className="text-caption text-secondary uppercase tracking-widest">Elite Marques</p>
               </div>
             </div>
           </motion.div>

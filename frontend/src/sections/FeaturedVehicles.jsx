@@ -7,111 +7,7 @@ import { staggerContainer, staggerItem } from '@/lib/motion';
 import LuxuryVehicleCard from '@/pages/vehicles/components/LuxuryVehicleCard';
 import { fetchFeaturedVehicles } from '@/redux/slices/vehicleSlice';
 
-// Fallback mock data — only used when the API is unavailable
-export const HOME_FEATURED_VEHICLES = [
-  {
-    id: 'feat-1',
-    name: 'Ghost Series II',
-    brand: 'Rolls-Royce',
-    image: 'https://calibremag.com/wp-content/uploads/2025/04/Rolls-Royce-Ghost-Series-II-Scotland-2025-CALIBRE-01.webp',
-    pricePerDay: 2500,
-    category: 'luxury',
-    rating: { average: 4.9, count: 128 },
-    seats: 5,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '250 km/h',
-    horsepower: '571 HP',
-    engine: '6.75L V12 Twin-Turbo',
-    location: 'Mumbai',
-    isAvailable: true,
-  },
-  {
-    id: 'feat-2',
-    name: '296 GTB',
-    brand: 'Ferrari',
-    image: 'https://images.collectingcars.com/081193/AS-01-10-06.jpg?w=1920&q=95',
-    pricePerDay: 3200,
-    category: 'sports',
-    rating: { average: 4.8, count: 96 },
-    seats: 2,
-    transmission: 'automatic',
-    fuelType: 'hybrid',
-    topSpeed: '330 km/h',
-    horsepower: '830 HP',
-    engine: '3.0L V6 Hybrid',
-    location: 'Delhi',
-    isAvailable: true,
-  },
-  {
-    id: 'feat-3',
-    name: 'Mistral',
-    brand: 'Bugatti',
-    image: 'https://cdn.motor1.com/images/mgl/eoBpg8/s1/bugatti-brouillard.webp',
-    pricePerDay: 15000,
-    category: 'sports',
-    rating: { average: 5.0, count: 82 },
-    seats: 2,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '420 km/h',
-    horsepower: '1600 HP',
-    engine: '8.0L W16 Quad-Turbo',
-    location: 'Bangalore',
-    isAvailable: true,
-  },
-  {
-    id: 'feat-4',
-    name: 'Huracán EVO',
-    brand: 'Lamborghini',
-    image: 'https://houstonexotics.blob.core.windows.net/ech-ga12749/full/1img4066.jpg',
-    pricePerDay: 2800,
-    category: 'sports',
-    rating: { average: 4.7, count: 84 },
-    seats: 2,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '325 km/h',
-    horsepower: '640 HP',
-    engine: '5.2L V10',
-    location: 'Mumbai',
-    isAvailable: true,
-  },
-  {
-    id: 'feat-5',
-    name: '911 Turbo S',
-    brand: 'Porsche',
-    image: 'https://images.collectingcars.com/023148/DSC03123-EDITED.jpg?w=3840&q=75',
-    pricePerDay: 2200,
-    category: 'sports',
-    rating: { average: 4.8, count: 210 },
-    seats: 4,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '330 km/h',
-    horsepower: '650 HP',
-    engine: '3.8L Flat-6 Twin-Turbo',
-    location: 'Delhi',
-    isAvailable: true,
-  },
-  {
-    id: 'feat-6',
-    name: '720S',
-    brand: 'McLaren',
-    image: 'https://issimi-vehicles-cdn.b-cdn.net/publicamlvehiclemanagement/VehicleDetails/628/timestamped-1722570747278-2018%20McLaren%20720S_001.jpg?width=3840&quality=75',
-    pricePerDay: 2500,
-    category: 'sports',
-    rating: { average: 4.9, count: 110 },
-    seats: 2,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '341 km/h',
-    horsepower: '710 HP',
-    engine: '4.0L V8 Twin-Turbo',
-    location: 'Hyderabad',
-    isAvailable: true,
-  },
-];
+
 
 /**
  * Normalise a DB vehicle document into the shape LuxuryVehicleCard expects.
@@ -147,8 +43,8 @@ export default function FeaturedVehicles() {
     }
   }, [dispatch, featuredVehicles.length]);
 
-  // Use live data if available, otherwise fall back to static mock data
-  const rawVehicles = featuredVehicles.length > 0 ? featuredVehicles : HOME_FEATURED_VEHICLES;
+  // Use live database data only
+  const rawVehicles = featuredVehicles;
   const vehicles = rawVehicles.slice(0, 6).map(normaliseVehicle);
 
   return (

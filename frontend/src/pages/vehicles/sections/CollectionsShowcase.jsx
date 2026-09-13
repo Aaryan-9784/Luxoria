@@ -32,7 +32,7 @@ function CollectionCard({ collection, onClick }) {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <span className="inline-block px-3 py-1 mb-3 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold text-white tracking-[0.15em] uppercase border border-white/20">
-            {collection.vehicleCount} Vehicles
+            {collection.tag || 'Luxury Class'}
           </span>
           <h3 className="text-xl md:text-2xl font-bold text-white mb-2 tracking-tight drop-shadow-md">
             {collection.title}

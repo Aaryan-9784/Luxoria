@@ -73,14 +73,30 @@ export default function FloatingBookingWidget({ vehicle }) {
     }
   }, [pickupDate, dropoffDate, vehicle]);
 
+  // Sync location if vehicle arrives after mount
+  useEffect(() => {
+    if (vehicle?.location?.city && !location) {
+      setLocation(vehicle.location.city);
+    }
+  }, [vehicle]);
+
+  const handlePickupDateChange = (val) => {
+    setPickupDate(val);
+    if (!dropoffDate || dropoffDate < val) {
+      setDropoffDate(val);
+    }
+  };
+
   const handleReserve = async () => {
     if (!isAuthenticated) {
       navigate('/login?redirect=/vehicles/' + vehicle._id);
       return;
     }
 
-    if (!pickupDate || !dropoffDate || !location) {
-      alert("Please fill all booking details");
+    const finalLocation = location || vehicle?.location?.city || 'Mumbai';
+
+    if (!pickupDate || !dropoffDate) {
+      alert("Please select your rental dates");
       return;
     }
 
@@ -89,8 +105,8 @@ export default function FloatingBookingWidget({ vehicle }) {
       vehicleId: vehicle._id,
       startDate: pickupDate,
       endDate: dropoffDate,
-      pickupLocation: location,
-      dropoffLocation: location,
+      pickupLocation: finalLocation,
+      dropoffLocation: finalLocation,
     }));
 
     if (createBooking.fulfilled.match(bookingResult)) {
@@ -164,7 +180,7 @@ export default function FloatingBookingWidget({ vehicle }) {
                 type="date" 
                 min={today}
                 value={pickupDate}
-                onChange={(e) => setPickupDate(e.target.value)}
+                onChange={(e) => handlePickupDateChange(e.target.value)}
                 className="w-full bg-surface border border-border rounded-xl pl-9 pr-3 py-2.5 text-body-sm outline-none focus:border-accent"
               />
             </div>

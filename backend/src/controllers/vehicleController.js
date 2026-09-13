@@ -1,5 +1,6 @@
 import Vehicle from '../models/Vehicle.js';
 import Booking from '../models/Booking.js';
+import User from '../models/User.js';
 import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import ApiFeatures from '../utils/apiFeatures.js';
@@ -86,6 +87,40 @@ export const getFeaturedVehicles = asyncHandler(async (req, res) => {
     .populate('vendor', 'name avatar');
 
   ApiResponse.success(res, { vehicles });
+});
+
+/**
+ * @desc    Get public platform statistics and metrics directly from database
+ * @route   GET /api/vehicles/stats
+ * @access  Public
+ */
+export const getPublicStats = asyncHandler(async (req, res) => {
+  const [totalVehicles, totalClients, totalPartners, totalBookings, brands, categoryAgg] = await Promise.all([
+    Vehicle.countDocuments({ isActive: true, status: 'approved' }),
+    User.countDocuments({ role: 'user' }),
+    User.countDocuments({ role: 'vendor' }),
+    Booking.countDocuments(),
+    Vehicle.distinct('brand', { isActive: true, status: 'approved' }),
+    Vehicle.aggregate([
+      { $match: { isActive: true, status: 'approved' } },
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+    ]),
+  ]);
+
+  const categoryCounts = {};
+  categoryAgg.forEach((c) => {
+    if (c._id) categoryCounts[c._id] = c.count;
+  });
+
+  ApiResponse.success(res, {
+    totalVehicles,
+    totalBrands: brands.length,
+    brands,
+    totalClients,
+    totalPartners,
+    totalBookings,
+    categoryCounts,
+  });
 });
 
 /**

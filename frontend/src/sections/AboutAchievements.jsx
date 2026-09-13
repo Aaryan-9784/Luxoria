@@ -1,14 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-
-const ACHIEVEMENTS = [
-  { value: '100+', label: 'Premium Vehicles' },
-  { value: '500+', label: 'Luxury Experiences' },
-  { value: '50+', label: 'Cities Worldwide' },
-  { value: '98%', label: 'Satisfaction Rate' }
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPublicStats } from '@/redux/slices/vehicleSlice';
 
 export default function AboutAchievements() {
+  const dispatch = useDispatch();
+  const { publicStats } = useSelector((state) => state.vehicle);
+
+  useEffect(() => {
+    if (!publicStats) {
+      dispatch(fetchPublicStats());
+    }
+  }, [dispatch, publicStats]);
+
+  const totalVehicles = publicStats?.totalVehicles || 6;
+  const totalBrands = publicStats?.totalBrands || 6;
+  const totalPartners = publicStats?.totalPartners || 1;
+
+  const achievements = [
+    { value: `${totalVehicles}+`, label: 'Curated Vehicles' },
+    { value: `${totalBrands}+`, label: 'World-Class Brands' },
+    { value: `${totalPartners}+`, label: 'Certified Partners' },
+    { value: '100%', label: 'Pristine Delivery' },
+  ];
   return (
     <section className="py-[100px] bg-primary relative overflow-hidden text-white">
       {/* Background Overlay */}
@@ -17,7 +31,7 @@ export default function AboutAchievements() {
 
       <div className="container-luxe px-6 lg:px-20 mx-auto max-w-[1440px] relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 divide-x divide-white/10">
-          {ACHIEVEMENTS.map((item, index) => (
+          {achievements.map((item, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}

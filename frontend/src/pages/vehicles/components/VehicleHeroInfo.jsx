@@ -42,11 +42,9 @@ export default function VehicleHeroInfo({ vehicle }) {
             <div className="flex items-center gap-1.5">
               <MapPin className="w-4 h-4" />
               <span>
-                {vehicle.location 
-                  ? (typeof vehicle.location === 'object' 
-                      ? `${vehicle.location.city || ''}${vehicle.location.city && vehicle.location.state ? ', ' : ''}${vehicle.location.state || ''}` 
-                      : vehicle.location)
-                  : 'Dubai, UAE'}
+                {typeof vehicle.location === 'object'
+                  ? [vehicle.location?.city, vehicle.location?.state, vehicle.location?.country].filter(Boolean).join(', ') || 'Available Fleet Hub'
+                  : vehicle.location || 'Available Fleet Hub'}
               </span>
             </div>
           </motion.div>

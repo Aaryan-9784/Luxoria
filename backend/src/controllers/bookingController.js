@@ -34,6 +34,27 @@ export const createBooking = asyncHandler(async (req, res) => {
     throw ApiError.badRequest('Vehicle is currently under maintenance');
   }
 
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    throw ApiError.badRequest('Invalid start or end date');
+  }
+  if (start > end) {
+    throw ApiError.badRequest('End date cannot be before start date');
+  }
+  // Allow bookings starting today, giving timezone buffer
+  const yesterdayUTC = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  yesterdayUTC.setUTCHours(0, 0, 0, 0);
+  if (start < yesterdayUTC) {
+    throw ApiError.badRequest('Start date cannot be in the past');
+  }
+
+  // Normalize start to beginning of day and end to end of day
+  const startOfDay = new Date(startDate);
+  startOfDay.setUTCHours(0, 0, 0, 0);
+  const endOfDay = new Date(endDate);
+  endOfDay.setUTCHours(23, 59, 59, 999);
+
   // Date-level overlap check — pending checkouts older than 15 mins are treated as abandoned
   const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
   const overlap = await Booking.findOne({
@@ -43,29 +64,15 @@ export const createBooking = asyncHandler(async (req, res) => {
       { status: { $in: ['confirmed', 'active'] } },
       { status: 'pending', createdAt: { $gte: fifteenMinutesAgo } },
     ],
-    startDate: { $lt: new Date(endDate) },
-    endDate:   { $gt: new Date(startDate) },
+    startDate: { $lte: endOfDay },
+    endDate:   { $gte: startOfDay },
   });
 
   if (overlap) {
     throw ApiError.conflict('Vehicle is already booked for the selected dates');
   }
 
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-    throw ApiError.badRequest('Invalid start or end date');
-  }
-  if (start >= end) {
-    throw ApiError.badRequest('End date must be after start date');
-  }
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  if (start < today) {
-    throw ApiError.badRequest('Start date cannot be in the past');
-  }
-
-  const diffTime = end.getTime() - start.getTime();
+  const diffTime = Math.abs(end.getTime() - start.getTime());
   const totalDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   const totalAmount = totalDays * vehicle.pricePerDay;
 
@@ -73,13 +80,13 @@ export const createBooking = asyncHandler(async (req, res) => {
     user: req.user._id,
     vehicle: vehicleId,
     vendor: vehicle.vendor,
-    startDate,
-    endDate,
+    startDate: startOfDay,
+    endDate: endOfDay,
     totalDays,
     totalAmount,
-    pickupLocation,
-    dropoffLocation,
-    notes,
+    pickupLocation: pickupLocation || vehicle.location?.city || 'Mumbai',
+    dropoffLocation: dropoffLocation || pickupLocation || vehicle.location?.city || 'Mumbai',
+    notes: notes || '',
   });
 
   // Notify vendor

@@ -21,12 +21,53 @@ export default function DashboardOverview() {
   }, [dispatch, accessToken, authLoading]);
 
   const activeBookings = bookings.filter(b => ['pending', 'confirmed', 'active'].includes(b.status)).slice(0, 3);
+  const activeCount = bookings.filter(b => ['pending', 'confirmed', 'active'].includes(b.status)).length;
+  const paidBookings = bookings.filter(b => ['confirmed', 'active', 'completed'].includes(b.status));
+  const realTotalSpent = stats?.totalSpent ?? paidBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+  const realLoyaltyPoints = stats?.loyaltyPoints ?? Math.floor(realTotalSpent / 100);
+
+  // Dynamic membership tier derived from real loyalty points and database spend
+  let tierName = 'Silver Tier';
+  let tierSubtitle = 'Preferred Client';
+  let nextTierName = 'Gold Tier';
+  let nextTierThreshold = 100;
+  let currentTierBase = 0;
+
+  if (realLoyaltyPoints >= 1000) {
+    tierName = 'Black Elite';
+    tierSubtitle = 'VIP Elite Client';
+    nextTierName = 'Maximum Tier Achieved';
+    nextTierThreshold = realLoyaltyPoints;
+    currentTierBase = 1000;
+  } else if (realLoyaltyPoints >= 500) {
+    tierName = 'Platinum Tier';
+    tierSubtitle = 'VIP Luxury Client';
+    nextTierName = 'Black Elite';
+    nextTierThreshold = 1000;
+    currentTierBase = 500;
+  } else if (realLoyaltyPoints >= 100) {
+    tierName = 'Gold Tier';
+    tierSubtitle = 'Premium Client';
+    nextTierName = 'Platinum Tier';
+    nextTierThreshold = 500;
+    currentTierBase = 100;
+  } else {
+    tierName = 'Silver Tier';
+    tierSubtitle = 'Preferred Client';
+    nextTierName = 'Gold Tier';
+    nextTierThreshold = 100;
+    currentTierBase = 0;
+  }
+
+  const progressPercent = nextTierThreshold === currentTierBase
+    ? 100
+    : Math.min(Math.max(Math.round(((realLoyaltyPoints - currentTierBase) / (nextTierThreshold - currentTierBase)) * 100), 0), 100);
 
   const KPI_DATA = [
-    { label: 'Total Spent', value: `$${(stats?.totalSpent || 0).toLocaleString('en-US')}`, icon: Wallet },
-    { label: 'Active Bookings', value: stats?.activeBookings || 0, icon: Car },
+    { label: 'Total Spent', value: `$${realTotalSpent.toLocaleString('en-US')}`, icon: Wallet },
+    { label: 'Active Bookings', value: activeCount, icon: Car },
     { label: 'Saved Vehicles', value: wishlist?.length || 0, icon: Heart },
-    { label: 'Loyalty Points', value: stats?.loyaltyPoints || 0, icon: Award },
+    { label: 'Loyalty Points', value: realLoyaltyPoints.toLocaleString('en-US'), icon: Award },
   ];
 
   // Loading skeleton on hard refresh
@@ -211,8 +252,8 @@ export default function DashboardOverview() {
                     <Award className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[12px] font-bold uppercase tracking-wider text-[#0F0F0F] block">Gold Tier</span>
-                    <span className="text-[10px] text-[#666666]">Premium Client</span>
+                    <span className="text-[12px] font-bold uppercase tracking-wider text-[#0F0F0F] block">{tierName}</span>
+                    <span className="text-[10px] text-[#666666]">{tierSubtitle}</span>
                   </div>
                 </div>
                 <span className="text-[11px] font-bold text-[#C9A75D]">Active</span>
@@ -220,11 +261,15 @@ export default function DashboardOverview() {
 
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider">
-                  <span className="text-[#666666]">Next Tier: Platinum</span>
-                  <span className="text-[#0F0F0F]">{(stats?.loyaltyPoints || 0)} / 5,000 pts</span>
+                  <span className="text-[#666666]">Next Tier: {nextTierName}</span>
+                  <span className="text-[#0F0F0F]">
+                    {nextTierThreshold === currentTierBase
+                      ? `${realLoyaltyPoints.toLocaleString()} pts (Max Tier)`
+                      : `${realLoyaltyPoints.toLocaleString()} / ${nextTierThreshold.toLocaleString()} pts`}
+                  </span>
                 </div>
                 <div className="w-full bg-[#F5F5F5] h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-[#C9A75D] h-full rounded-full transition-all duration-1000" style={{ width: `${Math.min(((stats?.loyaltyPoints || 0) / 5000) * 100, 100)}%` }} />
+                  <div className="bg-[#C9A75D] h-full rounded-full transition-all duration-1000" style={{ width: `${progressPercent}%` }} />
                 </div>
               </div>
             </div>

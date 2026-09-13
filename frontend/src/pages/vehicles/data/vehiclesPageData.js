@@ -1,20 +1,20 @@
 /**
- * LUXORIA — Vehicles Page Data
- * Premium mock dataset for all sections of the luxury vehicle marketplace.
+ * LUXORIA — Vehicles Page Static Configuration Data
+ * Luxury brand definitions, categories, and booking step metadata.
  */
 
 // ─── Luxury Brands ──────────────────────────────────────────────────────────
 export const LUXURY_BRANDS = [
-  { id: 'rolls-royce', name: 'Rolls-Royce', initial: 'RR', vehicleCount: 24, color: '#1B1B3A', description: 'The pinnacle of luxury motoring' },
-  { id: 'bentley', name: 'Bentley', initial: 'B', vehicleCount: 18, color: '#2C5F2D', description: 'Extraordinary journeys since 1919' },
-  { id: 'ferrari', name: 'Ferrari', initial: 'F', vehicleCount: 32, color: '#DC0000', description: 'The prancing horse legend' },
-  { id: 'lamborghini', name: 'Lamborghini', initial: 'L', vehicleCount: 28, color: '#DDB321', description: 'Unleash the extraordinary' },
-  { id: 'porsche', name: 'Porsche', initial: 'P', vehicleCount: 45, color: '#B12B28', description: 'There is no substitute' },
-  { id: 'mclaren', name: 'McLaren', initial: 'M', vehicleCount: 15, color: '#FF8000', description: 'Fearlessly forward' },
-  { id: 'aston-martin', name: 'Aston Martin', initial: 'AM', vehicleCount: 20, color: '#006847', description: 'Power, beauty and soul' },
-  { id: 'mercedes-maybach', name: 'Mercedes-Maybach', initial: 'MM', vehicleCount: 22, color: '#231F20', description: 'The ultimate in luxury' },
-  { id: 'bmw-m', name: 'BMW M', initial: 'M', vehicleCount: 35, color: '#0066B1', description: 'The most powerful letter in the world' },
-  { id: 'audi-rs', name: 'Audi RS', initial: 'RS', vehicleCount: 30, color: '#BB0A30', description: 'Vorsprung durch Technik' },
+  { id: 'rolls-royce', name: 'Rolls-Royce', initial: 'RR', subtitle: 'Ultra Luxury', color: '#1B1B3A', description: 'The pinnacle of luxury motoring' },
+  { id: 'bentley', name: 'Bentley', initial: 'B', subtitle: 'Grand Touring', color: '#2C5F2D', description: 'Extraordinary journeys since 1919' },
+  { id: 'ferrari', name: 'Ferrari', initial: 'F', subtitle: 'Italian Supercar', color: '#DC0000', description: 'The prancing horse legend' },
+  { id: 'lamborghini', name: 'Lamborghini', initial: 'L', subtitle: 'Exotic Sports', color: '#DDB321', description: 'Unleash the extraordinary' },
+  { id: 'porsche', name: 'Porsche', initial: 'P', subtitle: 'Performance', color: '#B12B28', description: 'There is no substitute' },
+  { id: 'mclaren', name: 'McLaren', initial: 'M', subtitle: 'Supercar', color: '#FF8000', description: 'Fearlessly forward' },
+  { id: 'aston-martin', name: 'Aston Martin', initial: 'AM', subtitle: 'British Luxury', color: '#006847', description: 'Power, beauty and soul' },
+  { id: 'mercedes-maybach', name: 'Mercedes-Maybach', initial: 'MM', subtitle: 'Prestige Class', color: '#231F20', description: 'The ultimate in luxury' },
+  { id: 'bmw-m', name: 'BMW M', initial: 'M', subtitle: 'Motorsport', color: '#0066B1', description: 'The most powerful letter in the world' },
+  { id: 'audi-rs', name: 'Audi RS', initial: 'RS', subtitle: 'High Performance', color: '#BB0A30', description: 'Vorsprung durch Technik' },
 ];
 
 // ─── Collections ─────────────────────────────────────────────────────────────
@@ -24,7 +24,7 @@ export const COLLECTIONS = [
     title: 'Luxury Sedans',
     description: 'Refined elegance meets supreme comfort',
     image: 'https://i.ytimg.com/vi/lzKtgJ7wY2c/maxresdefault.jpg',
-    vehicleCount: 48,
+    tag: 'Executive Class',
     category: 'sedan',
   },
   {
@@ -32,7 +32,7 @@ export const COLLECTIONS = [
     title: 'Executive SUVs',
     description: 'Commanding presence, unmatched versatility',
     image: 'https://media.cdn-jaguarlandrover.com/api/v2/images/120439/w/1600/h/900.jpg',
-    vehicleCount: 36,
+    tag: 'Prestige SUV',
     category: 'suv',
   },
   {
@@ -40,7 +40,7 @@ export const COLLECTIONS = [
     title: 'Sports Cars',
     description: 'Pure driving exhilaration',
     image: 'https://robbreport.com/wp-content/uploads/2020/07/6-3.jpg',
-    vehicleCount: 52,
+    tag: 'High Performance',
     category: 'sports',
   },
   {
@@ -48,7 +48,7 @@ export const COLLECTIONS = [
     title: 'Supercars',
     description: 'Beyond extraordinary performance',
     image: 'https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80&w=1200',
-    vehicleCount: 28,
+    tag: 'Track & Street',
     category: 'sports',
   },
   {
@@ -56,15 +56,15 @@ export const COLLECTIONS = [
     title: 'Hypercars',
     description: 'The absolute pinnacle of automotive engineering',
     image: 'https://www.slashgear.com/img/gallery/10-of-the-most-expensive-hypercars-ever-made-ranked/l-intro-1709668510.jpg',
-    vehicleCount: 12,
+    tag: 'Pinnacle Series',
     category: 'sports',
   },
   {
     id: 'electric-luxury',
     title: 'Electric Luxury',
     description: 'Sustainable sophistication',
-    image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=1200',
-    vehicleCount: 24,
+    image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=1200',
+    tag: 'Next-Gen EV',
     category: 'electric',
   },
   {
@@ -72,7 +72,7 @@ export const COLLECTIONS = [
     title: 'Wedding Collection',
     description: 'Make your special day unforgettable',
     image: 'https://calibremag.com/wp-content/uploads/2025/04/Rolls-Royce-Ghost-Series-II-Scotland-2025-CALIBRE-01.webp',
-    vehicleCount: 18,
+    tag: 'Ceremonial',
     category: 'luxury',
   },
   {
@@ -80,7 +80,7 @@ export const COLLECTIONS = [
     title: 'Chauffeur Collection',
     description: 'Premium chauffeur-driven experiences',
     image: 'https://www.cityluxchauffeurs.com/assets/images/fleet/s-class/s-class.webp',
-    vehicleCount: 30,
+    tag: 'Chauffeur-Driven',
     category: 'limousine',
   },
 ];
@@ -179,136 +179,6 @@ export const BOOKING_STEPS = [
   { step: 6, title: 'Drive', description: 'Experience the extraordinary on the open road', icon: 'Gauge' },
 ];
 
-// ─── Featured Vehicles (Demo Data) ──────────────────────────────────────────
-export const FEATURED_VEHICLES = [
-  {
-    id: 'feat-1',
-    name: 'Ghost Series II',
-    brand: 'Rolls-Royce',
-    image: 'https://calibremag.com/wp-content/uploads/2025/04/Rolls-Royce-Ghost-Series-II-Scotland-2025-CALIBRE-01.webp',
-    pricePerDay: 2500,
-    category: 'luxury',
-    rating: { average: 4.9, count: 128 },
-    seats: 5,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '250 km/h',
-    horsepower: '571 HP',
-    engine: '6.75L V12 Twin-Turbo',
-    location: 'Mumbai',
-    isAvailable: true,
-    badge: 'Editors Choice',
-    features: ['Starlight Headliner', 'Bespoke Audio', 'Night Vision', 'Massage Seats', 'Champagne Cooler'],
-    bookingCount: 156,
-    createdAt: '2024-01-15T10:30:00Z',
-  },
-  {
-    id: 'feat-2',
-    name: '296 GTB',
-    brand: 'Ferrari',
-    image: 'https://images.collectingcars.com/081193/AS-01-10-06.jpg?w=1920&q=95',
-    pricePerDay: 3200,
-    category: 'sports',
-    rating: { average: 4.8, count: 96 },
-    seats: 2,
-    transmission: 'automatic',
-    fuelType: 'hybrid',
-    topSpeed: '330 km/h',
-    horsepower: '830 HP',
-    engine: '3.0L V6 Hybrid',
-    location: 'Delhi',
-    isAvailable: true,
-    badge: 'Most Popular',
-    features: ['Carbon Fiber Body', 'Fiorano Package', 'Racing Seats', 'Telemetry System', 'Track Mode'],
-    bookingCount: 284,
-    createdAt: '2024-03-22T14:20:00Z',
-  },
-  {
-    id: 'feat-3',
-    name: 'Mistral',
-    brand: 'Bugatti',
-    image: 'https://cdn.motor1.com/images/mgl/eoBpg8/s1/bugatti-brouillard.webp',
-    pricePerDay: 15000,
-    category: 'sports',
-    rating: { average: 5.0, count: 82 },
-    seats: 2,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '420 km/h',
-    horsepower: '1600 HP',
-    engine: '8.0L W16 Quad-Turbo',
-    location: 'Bangalore',
-    isAvailable: true,
-    badge: 'Highest Rated',
-    features: ['Diamond Knurling', 'Rotating Display', 'Naim Audio', 'Handcrafted Interior', 'All-Wheel Drive'],
-    bookingCount: 47,
-    createdAt: '2024-06-10T09:15:00Z',
-  },
-  {
-    id: 'feat-4',
-    name: 'Huracán EVO',
-    brand: 'Lamborghini',
-    image: 'https://houstonexotics.blob.core.windows.net/ech-ga12749/full/1img4066.jpg',
-    pricePerDay: 2800,
-    category: 'sports',
-    rating: { average: 4.7, count: 84 },
-    seats: 2,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '325 km/h',
-    horsepower: '640 HP',
-    engine: '5.2L V10',
-    location: 'Mumbai',
-    isAvailable: true,
-    badge: 'Supercar',
-    features: ['LDVI System', 'ALA Aero', 'Corsa Mode', 'Carbon Ceramics', 'Performante Kit'],
-    bookingCount: 198,
-    createdAt: '2024-02-08T11:45:00Z',
-  },
-  {
-    id: 'feat-5',
-    name: '911 Turbo S',
-    brand: 'Porsche',
-    image: 'https://images.collectingcars.com/023148/DSC03123-EDITED.jpg?w=3840&q=75',
-    pricePerDay: 2200,
-    category: 'sports',
-    rating: { average: 4.8, count: 210 },
-    seats: 4,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '330 km/h',
-    horsepower: '650 HP',
-    engine: '3.8L Flat-6 Twin-Turbo',
-    location: 'Delhi',
-    isAvailable: true,
-    badge: 'Iconic',
-    features: ['Sport Chrono', 'PCCB Brakes', 'Active Aero', 'Sport Exhaust', 'PDK Transmission'],
-    bookingCount: 312,
-    createdAt: '2023-11-20T16:30:00Z',
-  },
-  {
-    id: 'feat-6',
-    name: '720S',
-    brand: 'McLaren',
-    image: 'https://issimi-vehicles-cdn.b-cdn.net/publicamlvehiclemanagement/VehicleDetails/628/timestamped-1722570747278-2018%20McLaren%20720S_001.jpg?width=3840&quality=75',
-    pricePerDay: 2500,
-    category: 'sports',
-    rating: { average: 4.9, count: 110 },
-    seats: 2,
-    transmission: 'automatic',
-    fuelType: 'petrol',
-    topSpeed: '341 km/h',
-    horsepower: '710 HP',
-    engine: '4.0L V8 Twin-Turbo',
-    location: 'Hyderabad',
-    isAvailable: true,
-    badge: 'Ultra Luxury',
-    features: ['Executive Rear Seats', 'Burmester 4D', 'Magic Body Control', 'Rear Entertainment', 'Fragrance System'],
-    bookingCount: 223,
-    createdAt: '2024-04-05T13:00:00Z',
-  },
-];
-
 // ─── Sort Options ────────────────────────────────────────────────────────────
 export const SORT_OPTIONS = [
   { value: 'featured', label: 'Featured' },
@@ -321,7 +191,7 @@ export const SORT_OPTIONS = [
 
 // ─── Filter Options ──────────────────────────────────────────────────────────
 export const FILTER_OPTIONS = {
-  brand: ['Rolls-Royce', 'Bentley', 'Ferrari', 'Lamborghini', 'Porsche', 'McLaren', 'Aston Martin', 'Mercedes-Maybach', 'BMW M', 'Audi RS'],
+  brand: ['Ferrari', 'Rolls-Royce', 'McLaren', 'Lamborghini', 'Porsche', 'Bugatti', 'Bentley', 'Aston Martin', 'Mercedes-Maybach', 'BMW M', 'Audi RS'],
   category: ['sports', 'suv', 'luxury', 'sedan', 'convertible', 'electric', 'limousine'],
   transmission: ['automatic', 'manual'],
   fuelType: ['petrol', 'diesel', 'electric', 'hybrid'],
@@ -331,7 +201,7 @@ export const FILTER_OPTIONS = {
 
 // ─── Hero Statistics ─────────────────────────────────────────────────────────
 export const HERO_STATS = [
-  { value: 500, suffix: '+', label: 'Luxury Vehicles' },
-  { value: 50, suffix: '+', label: 'Premium Brands' },
-  { value: 15, suffix: 'K+', label: 'Happy Clients' },
+  { value: 6, suffix: '+', label: 'Luxury Vehicles' },
+  { value: 6, suffix: '+', label: 'Premium Brands' },
+  { value: 1, suffix: '+', label: 'Confirmed Bookings' },
 ];

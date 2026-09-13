@@ -9,8 +9,9 @@ export default function CustomSelect({
   options,
   icon: Icon,
   className,
+  triggerClassName,
   placeholder = 'Select an option',
-  variant = 'default', // 'default' | 'field'
+  variant = 'default', // 'default' | 'field' | 'pill'
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
@@ -21,8 +22,19 @@ export default function CustomSelect({
         setIsOpen(false);
       }
     };
-    if (isOpen) document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener('keydown', handleKey);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, [isOpen]);
 
   const selectedOption = options?.find((opt) => opt.value === value) || null;
@@ -39,15 +51,18 @@ export default function CustomSelect({
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className={cn(
-          'w-full flex items-center justify-between gap-3',
+          'w-full flex items-center justify-between gap-3 min-h-[42px]',
           variant === 'field'
-            ? 'bg-[#F5F5F5] border rounded-xl px-4 py-3.5'
-            : 'bg-white border rounded-full px-4 py-2.5 shadow-sm',
-          'text-[13px] font-semibold text-[#0F0F0F]',
+            ? 'bg-[#F5F5F5] border border-[#ECECEC] rounded-xl px-4 py-3'
+            : variant === 'pill'
+            ? 'bg-white border border-[#ECECEC] rounded-full px-4 py-2.5 shadow-xs'
+            : 'bg-white border border-[#ECECEC] rounded-xl px-4 py-2.5 shadow-xs',
+          'text-[13px] font-medium text-[#0F0F0F]',
           'transition-all duration-200 cursor-pointer focus:outline-none',
           isOpen
-            ? 'border-[#C9A75D] ring-2 ring-[#C9A75D]/20'
-            : 'border-[#E0E0E0] hover:border-[#C9A75D]/60'
+            ? 'border-[#C9A75D] ring-2 ring-[#C9A75D]/20 shadow-sm'
+            : 'hover:border-[#C9A75D]/60 hover:bg-[#FCFBF8]',
+          triggerClassName
         )}
       >
         <span className="flex items-center gap-2.5 truncate min-w-0">
@@ -79,7 +94,7 @@ export default function CustomSelect({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute z-[9999] w-full mt-2 bg-white border border-[#E5E7EB] rounded-2xl shadow-xl overflow-hidden"
+            className="absolute z-[9999] w-full mt-1.5 bg-white border border-[#ECECEC] rounded-xl shadow-xl overflow-hidden"
           >
             <div className="py-1.5 max-h-64 overflow-y-auto">
               {options?.map((option) => {

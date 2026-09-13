@@ -14,6 +14,7 @@ import CalendarDropdown from '@/components/common/CalendarDropdown';
 import NotificationBell from '@/components/ui/NotificationBell';
 import WishlistDropdown from '@/components/ui/WishlistDropdown';
 import Avatar from '@/components/ui/Avatar';
+import useClickOutside from '@/hooks/useClickOutside';
 
 const NAV_GROUPS = [
   {
@@ -51,6 +52,7 @@ export default function DashboardLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileMenuRef = useClickOutside(() => setShowProfileMenu(false), showProfileMenu);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -338,36 +340,33 @@ export default function DashboardLayout() {
             <WishlistDropdown />
             <NotificationBell />
 
-            <button
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-white border border-[#ECECEC] shadow-sm hover:shadow-md transition-all group focus:outline-none focus:ring-2 focus:ring-[#C9A75D]/30"
-              title="Profile menu"
-            >
-              <Avatar
-                src={user?.avatar?.url}
-                name={user?.name || ''}
-                size="sm"
-                variant="luxury"
-                showOnline
-              />
+            {/* Profile Menu */}
+            <div ref={profileMenuRef} className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-white border border-[#ECECEC] shadow-sm hover:shadow-md transition-all group focus:outline-none focus:ring-2 focus:ring-[#C9A75D]/30"
+                title="Profile menu"
+              >
+                <Avatar
+                  src={user?.avatar?.url}
+                  name={user?.name || ''}
+                  size="sm"
+                  variant="luxury"
+                  showOnline
+                />
 
-              <div className="text-center hidden sm:block">
-                <p className="text-[13px] font-bold text-[#0F0F0F] leading-tight group-hover:text-[#C9A75D] transition-colors">
-                  {user?.name || 'My Account'}
-                </p>
-                <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5">
-                  Client
-                </p>
-              </div>
-            </button>
+                <div className="text-center hidden sm:block">
+                  <p className="text-[13px] font-bold text-[#0F0F0F] leading-tight group-hover:text-[#C9A75D] transition-colors">
+                    {user?.name || 'My Account'}
+                  </p>
+                  <p className="text-[10px] text-[#666666] uppercase tracking-[0.1em] font-bold mt-0.5">
+                    Client
+                  </p>
+                </div>
+              </button>
 
-            <AnimatePresence>
-              {showProfileMenu && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setShowProfileMenu(false)}
-                  />
+              <AnimatePresence>
+                {showProfileMenu && (
                   <motion.div
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -399,9 +398,9 @@ export default function DashboardLayout() {
                       </button>
                     </div>
                   </motion.div>
-                </>
-              )}
-            </AnimatePresence>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </header>
 

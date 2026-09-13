@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAnalytics, fetchAdminBookings } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
-import { Users, Building2, Car, Wallet, TrendingUp, AlertCircle, ArrowRight, ShieldCheck, Activity, Database, Server, CalendarDays } from 'lucide-react';
+import { Users, Building2, Car, Wallet, TrendingUp, AlertCircle, ArrowRight, ShieldCheck, Award, CalendarDays } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function AdminOverview() {
@@ -32,6 +32,8 @@ export default function AdminOverview() {
     { label: 'Active Vendors', value: analytics?.overview?.totalVendors || 0, icon: Building2 },
     { label: 'Total Fleet', value: analytics?.overview?.totalVehicles || 0, icon: Car },
   ];
+
+  const topVendor = analytics?.topVendors?.[0] || null;
 
   return (
     <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-10">
@@ -189,31 +191,49 @@ export default function AdminOverview() {
             </div>
           </div>
 
-          {/* System Health */}
+          {/* Top Performing Partner */}
           <div className="bg-white border border-[#ECECEC] rounded-2xl p-6 shadow-sm relative overflow-hidden">
-            <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] mb-6 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[#C9A75D]" /> System Health
-            </h3>
-            <div className="space-y-4 relative z-10">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  <Server className="w-4 h-4 text-[#666666]" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0F0F0F]">Core API</span>
-                </div>
-                <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[#16A34A]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse"></span> Operational
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  <Database className="w-4 h-4 text-[#666666]" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0F0F0F]">Database</span>
-                </div>
-                <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[#16A34A]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse"></span> Latency 12ms
-                </span>
-              </div>
+            <div className="flex justify-between items-center mb-5">
+              <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#0F0F0F] flex items-center gap-2">
+                <Award className="w-4 h-4 text-[#C9A75D]" /> Top Partner
+              </h3>
+              <Link to="/admin/vendors" className="text-[#C9A75D] text-[11px] font-bold uppercase tracking-wider hover:text-[#B59345] transition-colors flex items-center gap-1">
+                Manage &rarr;
+              </Link>
             </div>
+
+            {topVendor ? (
+              <div className="space-y-4 relative z-10">
+                <div className="p-3.5 rounded-xl bg-[#F5F5F5]/60 border border-[#ECECEC] flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-white border border-[#ECECEC] flex items-center justify-center text-[#C9A75D] shadow-sm shrink-0">
+                      <Building2 className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-[#0F0F0F] text-sm truncate">{topVendor.name}</p>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#16A34A] uppercase tracking-wider mt-0.5">
+                        <ShieldCheck className="w-3 h-3 text-[#16A34A]" /> Verified Partner
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 rounded-xl border border-[#ECECEC] bg-white text-center">
+                    <p className="text-[10px] font-bold text-[#666666] uppercase tracking-wider">Revenue</p>
+                    <p className="text-base font-bold text-[#0F0F0F] mt-0.5">${(topVendor.revenue || 0).toLocaleString()}</p>
+                  </div>
+                  <div className="p-3 rounded-xl border border-[#ECECEC] bg-white text-center">
+                    <p className="text-[10px] font-bold text-[#666666] uppercase tracking-wider">Bookings</p>
+                    <p className="text-base font-bold text-[#0F0F0F] mt-0.5">{topVendor.bookings || 0}</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-[11px] font-bold text-[#666666] uppercase tracking-wider">No active partners yet</p>
+              </div>
+            )}
           </div>
 
         </motion.div>

@@ -21,7 +21,7 @@ export default function AdminFleetApprovals() {
     pending: vehicles.filter(v => v.status === 'pending').length,
     approved: vehicles.filter(v => v.status === 'approved').length,
     rejected: vehicles.filter(v => v.status === 'rejected').length,
-    avgTime: '2.4h' // Mocked avg time for now
+    total: vehicles.length,
   };
 
   const filteredVehicles = filter === 'all' ? vehicles : vehicles.filter(v => v.status === filter);
@@ -102,10 +102,10 @@ export default function AdminFleetApprovals() {
       {/* KPI Grid (Matched to AdminOverview theme) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { title: 'Pending Review', value: kpis.pending, icon: Clock, prefix: '', trend: '+2', isUp: false }, // More pending is bad
-          { title: 'Approved (This Week)', value: kpis.approved, icon: ShieldCheck, prefix: '', trend: '+15%', isUp: true },
-          { title: 'Rejected', value: kpis.rejected, icon: XCircle, prefix: '', trend: '-1', isUp: true },
-          { title: 'Avg. Review Time', value: 0, overrideValue: kpis.avgTime, icon: Clock, prefix: '', trend: '-0.5h', isUp: true },
+          { title: 'Pending Review', value: kpis.pending, icon: Clock, badge: 'Action Required', badgeColor: kpis.pending > 0 ? 'bg-[#C9A75D]/10 text-[#C9A75D]' : 'bg-[#16A34A]/10 text-[#16A34A]' },
+          { title: 'Approved Fleet', value: kpis.approved, icon: ShieldCheck, badge: 'Active Fleet', badgeColor: 'bg-[#16A34A]/10 text-[#16A34A]' },
+          { title: 'Rejected Submissions', value: kpis.rejected, icon: XCircle, badge: 'Declined', badgeColor: 'bg-[#666666]/10 text-[#666666]' },
+          { title: 'Total Submissions', value: kpis.total, icon: Car, badge: 'Database', badgeColor: 'bg-[#0F0F0F]/10 text-[#0F0F0F]' },
         ].map((kpi, idx) => (
           <div key={idx} className="relative overflow-hidden group bg-white border border-[#ECECEC] rounded-2xl p-6 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-default flex flex-col justify-between h-full min-h-[160px]">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C9A75D] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -114,15 +114,14 @@ export default function AdminFleetApprovals() {
               <div className="w-12 h-12 rounded-full flex items-center justify-center bg-[#0F0F0F] text-[#C9A75D] group-hover:scale-110 transition-transform duration-500 shadow-md">
                 <kpi.icon className="w-5 h-5" />
               </div>
-              <div className={`flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full ${kpi.isUp ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#DC2626]/10 text-[#DC2626]'}`}>
-                {kpi.isUp ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                {kpi.trend}
+              <div className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${kpi.badgeColor}`}>
+                {kpi.badge}
               </div>
             </div>
             
             <div className="relative z-10 mt-auto">
               <h3 className="text-[32px] font-bold text-[#0F0F0F] tracking-tight mb-1">
-                {kpi.overrideValue ? kpi.overrideValue : <>{kpi.prefix}<CountUp end={kpi.value} duration={2} separator="," /></>}
+                <CountUp end={kpi.value} duration={1.5} separator="," />
               </h3>
               <p className="text-[11px] font-bold text-[#666666] uppercase tracking-[0.15em]">{kpi.title}</p>
             </div>
