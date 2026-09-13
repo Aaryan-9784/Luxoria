@@ -52,21 +52,36 @@ export function openLuxoriaReceipt(data) {
 
     body {
       font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
-      background: #ffffff;
+      background: #f4f4f5;
       color: #1a1a1a;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #ffffff !important; }
+      .page {
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 40px 48px !important;
+      }
     }
 
     /* ─── Page shell — A4 portrait ─── */
     .page {
       width: 794px;
       min-height: 1123px;
-      margin: 0 auto;
+      margin: 20px auto;
       background: #ffffff;
       padding: 52px 60px 44px;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
     }
 
     /* ─── HEADER ─── */
@@ -326,6 +341,13 @@ export function openLuxoriaReceipt(data) {
   </style>
 </head>
 <body>
+<div class="no-print" style="position: sticky; top: 0; background: #0F172A; color: white; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-family: sans-serif;">
+  <div style="font-size: 13px; font-weight: 600; letter-spacing: 1px; color: #D4AF37;">LUXORIA OFFICIAL RECEIPT &mdash; ${ref}</div>
+  <div style="display: flex; gap: 10px;">
+    <button onclick="window.print()" style="background: #D4AF37; color: #0F172A; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">Download / Save as PDF</button>
+    <button onclick="window.close()" style="background: rgba(255,255,255,0.15); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer;">Close</button>
+  </div>
+</div>
 <div class="page">
 
   <!-- HEADER -->
@@ -431,16 +453,48 @@ export function openLuxoriaReceipt(data) {
 </div>
 <script>
   window.onload = function () {
-    window.print();
-    window.onafterprint = function () { window.close(); };
+    setTimeout(function() {
+      try {
+        window.focus();
+        window.print();
+      } catch (e) {}
+    }, 400);
   };
 </script>
 </body>
 </html>`;
 
-  const win = window.open('', `Luxoria_Receipt_${ref}`, 'width=920,height=1060');
-  if (win) {
-    win.document.write(html);
-    win.document.close();
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const blobUrl = URL.createObjectURL(blob);
+
+  // Try opening in a new tab first
+  let win = null;
+  try {
+    win = window.open(blobUrl, '_blank');
+  } catch (e) {
+    win = null;
+  }
+
+  // If window.open was blocked by a browser popup blocker, trigger printable iframe fallback
+  if (!win || win.closed || typeof win.closed === 'undefined') {
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    iframe.src = blobUrl;
+    document.body.appendChild(iframe);
+    iframe.onload = () => {
+      setTimeout(() => {
+        try {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+        } catch (err) {
+          console.error('Print iframe failed:', err);
+        }
+      }, 500);
+    };
   }
 }
