@@ -51,7 +51,40 @@ class EmailService {
   async sendEmail(options) {
     const to = options.to || options.email;
 
-    // 1. If RESEND_API_KEY is provided, use Resend HTTPS REST API (Port 443 - NEVER blocked by Render)
+    // 1. If BREVO_API_KEY is provided, use Brevo HTTPS REST API (Port 443 - sends to ANY recipient without requiring custom domain)
+    if (process.env.BREVO_API_KEY) {
+      try {
+        const senderEmail = process.env.SMTP_FROM || process.env.SMTP_USER || 'aaryanpatel9784@gmail.com';
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+          method: 'POST',
+          headers: {
+            'api-key': process.env.BREVO_API_KEY,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            sender: { name: 'Luxoria Premium', email: senderEmail },
+            to: [{ email: to }],
+            replyTo: options.replyTo ? { email: options.replyTo } : undefined,
+            subject: options.subject,
+            htmlContent: options.html,
+            textContent: options.message,
+          }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || JSON.stringify(data));
+        }
+
+        console.log(`Email sent successfully via Brevo HTTPS API: ${data.messageId}`);
+        return { success: true, messageId: data.messageId };
+      } catch (error) {
+        console.error(`Brevo HTTPS API error: ${error.message}`);
+      }
+    }
+
+    // 2. If RESEND_API_KEY is provided, use Resend HTTPS REST API (Port 443 - NEVER blocked by Render)
     if (process.env.RESEND_API_KEY) {
       try {
         const fromAddress = process.env.RESEND_FROM || 'Luxoria <onboarding@resend.dev>';
