@@ -70,13 +70,21 @@ api.interceptors.response.use(
 
       try {
         // Attempt to refresh token using the backend endpoint
+        // Pass stored refresh token in body as cross-domain cookie fallback
+        const storedRefreshToken = localStorage.getItem('luxoria_refresh_token');
         const response = await axios.post(
           `${baseURL}/auth/refresh`,
-          {},
+          { refreshToken: storedRefreshToken || undefined },
           { withCredentials: true }
         );
         
         const newAccessToken = response.data.data.accessToken;
+        const newRefreshToken = response.data.data.refreshToken;
+
+        // Update stored refresh token for future requests
+        if (newRefreshToken) {
+          localStorage.setItem('luxoria_refresh_token', newRefreshToken);
+        }
         
         // Update the store with the new access token
         if (store) {
@@ -97,6 +105,8 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         // Refresh failed, session is truly expired
+        localStorage.removeItem('luxoria_has_session');
+        localStorage.removeItem('luxoria_refresh_token');
         if (store) {
           store.dispatch({ type: 'auth/logout' });
         }

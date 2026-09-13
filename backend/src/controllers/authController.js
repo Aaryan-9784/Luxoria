@@ -63,6 +63,7 @@ export const register = asyncHandler(async (req, res) => {
   ApiResponse.created(res, {
     user: user.toJSON(),
     accessToken,
+    refreshToken,
   }, 'Account created successfully');
 });
 
@@ -222,6 +223,7 @@ export const verifyLoginOtp = asyncHandler(async (req, res) => {
   ApiResponse.success(res, {
     user: user.toJSON(),
     accessToken,
+    refreshToken,
   }, 'Logged in successfully');
 });
 
@@ -254,7 +256,7 @@ export const resendLoginOtp = asyncHandler(async (req, res) => {
  * @access  Public (requires refresh token cookie)
  */
 export const refreshAccessToken = asyncHandler(async (req, res) => {
-  const { refreshToken } = req.cookies;
+  const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
   if (!refreshToken) {
     throw ApiError.unauthorized('No refresh token provided');
@@ -310,7 +312,10 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
   const newAccessToken = generateAccessToken(user._id);
   setRefreshTokenCookie(res, newRefreshToken);
 
-  ApiResponse.success(res, { accessToken: newAccessToken }, 'Token refreshed');
+  ApiResponse.success(res, { 
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+  }, 'Token refreshed');
 });
 
 /**
@@ -417,6 +422,7 @@ export const googleOAuthCallback = asyncHandler(async (req, res) => {
   }
 
   // Generate tokens
+  const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
@@ -431,6 +437,6 @@ export const googleOAuthCallback = asyncHandler(async (req, res) => {
   // Set the HTTP-only cookie
   setRefreshTokenCookie(res, refreshToken);
 
-  // Redirect to frontend OAuth callback page to initiate token exchange
-  res.redirect(`${clientUrl}/oauth-callback`);
+  // Redirect to frontend OAuth callback page with tokens for reliable cross-domain support
+  res.redirect(`${clientUrl}/oauth-callback?token=${accessToken}&refreshToken=${refreshToken}`);
 });

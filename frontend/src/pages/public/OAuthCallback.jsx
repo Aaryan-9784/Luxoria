@@ -1,51 +1,103 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '@/redux/slices/authSlice';
 import { motion } from 'framer-motion';
 import { Car } from 'lucide-react';
+import api from '@/services/api';
 
 export default function OAuthCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  const hasFetched = React.useRef(false);
+  const dispatch = useDispatch();
+  const hasProcessed = React.useRef(false);
 
   useEffect(() => {
-    if (hasFetched.current) return;
-    hasFetched.current = true;
+    if (hasProcessed.current) return;
+    hasProcessed.current = true;
 
-    const handleAuth = async () => {
+    const handleOAuth = async () => {
       const error = searchParams.get('error');
-
       if (error) {
-        navigate('/login?error=auth_failed');
+        navigate(`/login?error=${encodeURIComponent(error)}`, { replace: true });
         return;
       }
-      
-      // We no longer manually call /auth/refresh here.
-      // AppRoutes.jsx already calls /auth/refresh on initial load, which happens concurrently.
-      // If we call it here too, the backend's Strict Token Rotation will detect token reuse and invalidate the session (401).
-      // Let's just wait for Redux to be updated by AppRoutes.jsx!
-    };
 
-    handleAuth();
-  }, [searchParams, navigate]);
+      const token = searchParams.get('token');
+      const refreshToken = searchParams.get('refreshToken');
 
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+      // 1. Cross-domain token exchange (recommended for Vercel + Render deployments)
+      if (token) {
+        try {
+          if (refreshToken) {
+            localStorage.setItem('luxoria_refresh_token', refreshToken);
+          }
+          localStorage.setItem('luxoria_has_session', 'true');
 
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      const role = user.role;
-      navigate(
-        role === 'admin'
+          const profileRes = await api.get('/auth/me', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const user = profileRes.data.data.user;
+          dispatch(setCredentials({ user, accessToken: token }));
+
+          const role = user.role;
+          const targetPath = role === 'admin'
+            ? '/admin/dashboard'
+            : role === 'vendor'
+              ? '/vendor/dashboard'
+              : '/dashboard';
+
+          navigate(targetPath, { replace: true });
+          return;
+        } catch (fetchErr) {
+          console.error('OAuth profile retrieval failed:', fetchErr);
+          localStorage.removeItem('luxoria_has_session');
+          localStorage.removeItem('luxoria_refresh_token');
+          navigate('/login?error=auth_failed', { replace: true });
+          return;
+        }
+      }
+
+      // 2. Cookie-based fallback
+      try {
+        const storedRefreshToken = localStorage.getItem('luxoria_refresh_token');
+        const refreshRes = await api.post('/auth/refresh', {
+          refreshToken: storedRefreshToken || undefined,
+        });
+
+        const accessToken = refreshRes.data.data.accessToken;
+        const newRefreshToken = refreshRes.data.data.refreshToken;
+        if (newRefreshToken) {
+          localStorage.setItem('luxoria_refresh_token', newRefreshToken);
+        }
+        localStorage.setItem('luxoria_has_session', 'true');
+
+        const profileRes = await api.get('/auth/me', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        const user = profileRes.data.data.user;
+        dispatch(setCredentials({ user, accessToken }));
+
+        const role = user.role;
+        const targetPath = role === 'admin'
           ? '/admin/dashboard'
           : role === 'vendor'
             ? '/vendor/dashboard'
-            : '/dashboard',
-        { replace: true }
-      );
-    }
-  }, [isAuthenticated, user, navigate]);
+            : '/dashboard';
+
+        navigate(targetPath, { replace: true });
+      } catch (cookieErr) {
+        console.error('OAuth fallback failed:', cookieErr);
+        localStorage.removeItem('luxoria_has_session');
+        localStorage.removeItem('luxoria_refresh_token');
+        navigate('/login?error=auth_failed', { replace: true });
+      }
+    };
+
+    handleOAuth();
+  }, [searchParams, navigate, dispatch]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center">

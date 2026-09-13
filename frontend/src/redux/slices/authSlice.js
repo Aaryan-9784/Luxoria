@@ -104,6 +104,11 @@ export const authSlice = createSlice({
       state.loading = false;
       state.otpRequired = false;
       state.tempEmail = null;
+      // Persist session marker for cross-domain deployments
+      localStorage.setItem('luxoria_has_session', 'true');
+      if (action.payload.refreshToken) {
+        localStorage.setItem('luxoria_refresh_token', action.payload.refreshToken);
+      }
     },
     updateUser: (state, action) => {
       state.user = action.payload.user;
@@ -119,6 +124,9 @@ export const authSlice = createSlice({
       state.loading = false;
       state.otpRequired = false;
       state.tempEmail = null;
+      // Clear cross-domain session markers
+      localStorage.removeItem('luxoria_has_session');
+      localStorage.removeItem('luxoria_refresh_token');
       // Use raw axios to prevent interceptor from triggering a refresh token flow if access token is already expired during logout
       const baseURL = import.meta.env.VITE_API_URL || '/api';
       axios.post(`${baseURL}/auth/logout`, {}, { withCredentials: true }).catch(() => {});
@@ -199,6 +207,11 @@ export const authSlice = createSlice({
         state.isAuthenticated = true;
         state.otpRequired = false;
         state.tempEmail = null;
+        // Persist session markers for cross-domain deployments
+        localStorage.setItem('luxoria_has_session', 'true');
+        if (action.payload.refreshToken) {
+          localStorage.setItem('luxoria_refresh_token', action.payload.refreshToken);
+        }
       })
       .addCase(verifyLoginOtp.rejected, (state, action) => {
         state.error = action.payload;
@@ -213,6 +226,11 @@ export const authSlice = createSlice({
         state.isAuthenticated = true;
         state.otpRequired = false;
         state.tempEmail = null;
+        // Persist session markers for cross-domain deployments
+        localStorage.setItem('luxoria_has_session', 'true');
+        if (action.payload.refreshToken) {
+          localStorage.setItem('luxoria_refresh_token', action.payload.refreshToken);
+        }
       })
       .addCase(register.rejected, (state, action) => {
         state.error = action.payload;

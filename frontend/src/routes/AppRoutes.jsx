@@ -126,13 +126,34 @@ export default function AppRoutes() {
     if (hasRestored.current) return;
     hasRestored.current = true;
 
+    // Skip session restore on OAuth callback — OAuthCallback.jsx handles it
+    if (window.location.pathname === '/oauth-callback') {
+      dispatch(setLoading(false));
+      return;
+    }
+
+    // Skip if user has never logged in (avoids red 401 in console for guests)
+    if (!localStorage.getItem('luxoria_has_session')) {
+      dispatch(setLoading(false));
+      return;
+    }
+
     const restoreSession = async () => {
       try {
         // Try to refresh the access token from the refresh cookie
-        // Use api instance (respects Vite proxy, avoids CORS issues in dev)
-        const refreshRes = await api.post('/auth/refresh');
+        // Pass stored refresh token in body as cross-domain fallback
+        const storedRefreshToken = localStorage.getItem('luxoria_refresh_token');
+        const refreshRes = await api.post('/auth/refresh', {
+          refreshToken: storedRefreshToken || undefined,
+        });
 
         const accessToken = refreshRes.data.data.accessToken;
+        const newRefreshToken = refreshRes.data.data.refreshToken;
+
+        // Update stored refresh token for future requests
+        if (newRefreshToken) {
+          localStorage.setItem('luxoria_refresh_token', newRefreshToken);
+        }
 
         // Now fetch the profile with the new access token
         const profileRes = await api.get('/auth/me', {
@@ -145,6 +166,8 @@ export default function AppRoutes() {
         }));
       } catch {
         // No valid session — user needs to log in
+        localStorage.removeItem('luxoria_has_session');
+        localStorage.removeItem('luxoria_refresh_token');
         dispatch(setLoading(false));
       }
     };

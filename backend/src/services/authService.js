@@ -68,6 +68,7 @@ export const setRefreshTokenCookie = (res, token) => {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
+    partitioned: isProduction ? true : undefined,
     path: '/',
     maxAge,
   });
@@ -84,6 +85,7 @@ export const clearRefreshTokenCookie = (res) => {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
+    partitioned: isProduction ? true : undefined,
     path: '/',
     expires: new Date(0),
   });

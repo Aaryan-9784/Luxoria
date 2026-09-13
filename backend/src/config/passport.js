@@ -26,12 +26,20 @@ const configurePassport = () => {
           }
 
           // Check if user exists with same email
-          user = await User.findOne({ email: profile.emails[0].value });
+          const email = profile.emails?.[0]?.value;
+          if (!email) {
+            return done(new Error('No email found in Google profile'), null);
+          }
+
+          user = await User.findOne({ email });
 
           if (user) {
             user.googleId = profile.id;
-            if (!user.avatar.url && profile.photos[0]) {
-              user.avatar.url = profile.photos[0].value;
+            if (!user.avatar?.url && profile.photos?.[0]?.value) {
+              user.avatar = {
+                url: profile.photos[0].value,
+                publicId: '',
+              };
             }
             await user.save();
             return done(null, user);
@@ -39,11 +47,11 @@ const configurePassport = () => {
 
           // Create new user
           user = await User.create({
-            name: profile.displayName,
-            email: profile.emails[0].value,
+            name: profile.displayName || email.split('@')[0],
+            email: email,
             googleId: profile.id,
             avatar: {
-              url: profile.photos[0]?.value || '',
+              url: profile.photos?.[0]?.value || '',
               publicId: '',
             },
             isVerified: true,

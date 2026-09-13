@@ -40,11 +40,21 @@ router.post('/forgot-password', authLimiter, validate(forgotPasswordSchema), for
 router.put('/reset-password/:token', authLimiter, validate(resetPasswordSchema), resetPassword);
 
 // Google OAuth routes
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
+router.get('/google', (req, res, next) => {
+  const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    return res.redirect(`${clientUrl}/login?error=google_oauth_not_configured`);
+  }
+  passport.authenticate('google', { scope: ['profile', 'email'], session: false })(req, res, next);
+});
+
 router.get(
   '/google/callback',
   (req, res, next) => {
     const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+      return res.redirect(`${clientUrl}/login?error=google_oauth_not_configured`);
+    }
     passport.authenticate('google', { 
       session: false, 
       failureRedirect: `${clientUrl}/login?error=auth_failed` 

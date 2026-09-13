@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AuthImage from '@/components/ui/AuthImage';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { Car, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { pageTransition, EASE_LUXE } from '@/lib/motion';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,16 +10,30 @@ import { login, verifyLoginOtp, resendLoginOtp, clearOtpState } from '@/redux/sl
 import Alert from '@/components/ui/Alert';
 import OtpVerificationModal from '@/components/auth/OtpVerificationModal';
 
+const OAUTH_ERROR_MESSAGES = {
+  auth_failed: 'Google sign-in failed. Please try again or use email login.',
+  google_oauth_not_configured: 'Google sign-in is currently unavailable. Please use email login.',
+};
+
 export default function LoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { otpRequired: reduxOtpRequired, tempEmail: reduxTempEmail } = useSelector((state) => state.auth);
   
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // Show OAuth error from redirect
+  useEffect(() => {
+    const oauthError = searchParams.get('error');
+    if (oauthError) {
+      setErrorMsg(OAUTH_ERROR_MESSAGES[oauthError] || 'Authentication failed. Please try again.');
+    }
+  }, [searchParams]);
 
   // Local OTP flow state fallback
   const [localRequireOtp, setLocalRequireOtp] = useState(false);
