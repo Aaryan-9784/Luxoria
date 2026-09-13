@@ -341,13 +341,6 @@ export function openLuxoriaReceipt(data) {
   </style>
 </head>
 <body>
-<div class="no-print" style="position: sticky; top: 0; background: #0F172A; color: white; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-family: sans-serif;">
-  <div style="font-size: 13px; font-weight: 600; letter-spacing: 1px; color: #D4AF37;">LUXORIA OFFICIAL RECEIPT &mdash; ${ref}</div>
-  <div style="display: flex; gap: 10px;">
-    <button onclick="window.print()" style="background: #D4AF37; color: #0F172A; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">Download / Save as PDF</button>
-    <button onclick="window.close()" style="background: rgba(255,255,255,0.15); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer;">Close</button>
-  </div>
-</div>
 <div class="page">
 
   <!-- HEADER -->
@@ -472,29 +465,36 @@ export function openLuxoriaReceipt(data) {
 </body>
 </html>`;
 
-  // Open window directly synchronously on user click (never blocked by browser pop-up blockers)
-  let win = null;
-  try {
-    win = window.open('', '_blank');
-  } catch (e) {
-    win = null;
-  }
+  // Direct PDF Generation: Opens the native Print / Save-as-PDF modal directly without any intermediate tab or page
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  iframe.style.visibility = 'hidden';
+  document.body.appendChild(iframe);
 
-  if (win && !win.closed) {
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-    win.focus();
-  } else {
-    // If strict pop-up blocker intervened, fallback to temporary link click
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const blobUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-  }
+  const doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write(html);
+  doc.close();
+
+  setTimeout(() => {
+    try {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    } catch (e) {
+      console.error('Direct print failed:', e);
+    } finally {
+      setTimeout(() => {
+        try {
+          if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+          }
+        } catch (e) {}
+      }, 3000);
+    }
+  }, 350);
 }
