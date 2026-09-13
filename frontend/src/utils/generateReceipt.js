@@ -342,9 +342,6 @@ export function openLuxoriaReceipt(data) {
   </style>
 </head>
 <body>
-<div class="no-print" style="position: fixed; top: 16px; right: 24px; z-index: 999999; display: flex; gap: 8px;">
-  <button onclick="window.close()" style="background: #0F172A; color: #ffffff; border: 1px solid #D4AF37; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">✕ Close Window</button>
-</div>
 <div class="page">
 
   <!-- HEADER -->
@@ -448,64 +445,56 @@ export function openLuxoriaReceipt(data) {
   </div>
 
 </div>
-<script>
-  var isClosing = false;
-  function closeWindow() {
-    if (isClosing) return;
-    isClosing = true;
-    try {
-      window.close();
-    } catch (e) {}
-  }
-
-  // Closes immediately when user clicks "Cancel" or "Print" in the print dialog
-  window.addEventListener('afterprint', function() {
-    setTimeout(closeWindow, 50);
-  });
-  window.onafterprint = function() {
-    setTimeout(closeWindow, 50);
-  };
-
-  function runPrint() {
-    try {
-      window.focus();
-      window.print();
-      // On Chromium browsers, window.print() is synchronous;
-      // as soon as the user clicks Cancel or Print, execution resumes here:
-      setTimeout(closeWindow, 80);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  if (document.readyState === 'complete') {
-    setTimeout(runPrint, 250);
-  } else {
-    window.addEventListener('load', function() {
-      setTimeout(runPrint, 250);
-    });
-    setTimeout(runPrint, 600);
-  }
-</script>
 </body>
 </html>`;
 
-  // Open Receipt in a dedicated printable window that triggers Print / Save-as-PDF (Image 3)
-  let win = null;
-  try {
-    win = window.open('', '_blank', 'width=920,height=1060');
-  } catch (e) {
-    console.error('window.open failed:', e);
+  // Remove any previously injected print frames
+  const oldFrame = document.getElementById('luxoria-print-frame');
+  if (oldFrame) {
+    try { oldFrame.remove(); } catch (e) {}
   }
 
-  if (win) {
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-  } else {
-    // Fallback if popup is blocked
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    window.location.href = url;
+  // Create an off-screen renderable iframe (100% dimensions, zero extra tabs or popup windows)
+  const iframe = document.createElement('iframe');
+  iframe.id = 'luxoria-print-frame';
+  iframe.style.position = 'fixed';
+  iframe.style.top = '-9999px';
+  iframe.style.left = '-9999px';
+  iframe.style.width = '1024px';
+  iframe.style.height = '100%';
+  iframe.style.border = 'none';
+  iframe.style.zIndex = '-9999';
+  document.body.appendChild(iframe);
+
+  try {
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    const doPrint = () => {
+      try {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+      } catch (err) {
+        console.error('Iframe print error, trying popup fallback:', err);
+        const win = window.open('', '_blank', 'width=920,height=1060');
+        if (win) {
+          win.document.open();
+          win.document.write(html);
+          win.document.close();
+          setTimeout(() => { win.focus(); win.print(); }, 300);
+        }
+      }
+    };
+
+    if (doc.readyState === 'complete') {
+      setTimeout(doPrint, 250);
+    } else {
+      iframe.onload = () => setTimeout(doPrint, 250);
+      setTimeout(doPrint, 600);
+    }
+  } catch (err) {
+    console.error('Print setup error:', err);
   }
 }
