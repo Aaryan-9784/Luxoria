@@ -79,7 +79,8 @@ export const createBooking = asyncHandler(async (req, res) => {
   }
 
   const diffTime = Math.abs(endOfDay.getTime() - startOfDay.getTime());
-  const totalDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+  // Inclusive calendar days: same-day = 1 day, 1 calendar day apart = 2 days
+  const totalDays = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1);
   const totalAmount = totalDays * vehicle.pricePerDay;
 
   const booking = await Booking.create({

@@ -54,10 +54,14 @@ export default function FloatingBookingWidget({ vehicle }) {
       // Clear any previous booking error when user changes dates
       dispatch(clearBookingState());
 
-      const pDate = new Date(pickupDate);
-      const dDate = new Date(dropoffDate);
-      const diffTime = Math.abs(dDate - pDate);
-      const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      // Parse date components to pure UTC timestamps to prevent timezone or DST distortion
+      const [py, pm, pd] = pickupDate.split('-').map(Number);
+      const [dy, dm, dd] = dropoffDate.split('-').map(Number);
+      const pUtc = Date.UTC(py, pm - 1, pd);
+      const dUtc = Date.UTC(dy, dm - 1, dd);
+      const diffTime = Math.max(0, dUtc - pUtc);
+      // Calendar day count is inclusive: same-day (22 to 22) = 1 day, next-day (22 to 23) = 2 days
+      const diffDays = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1);
       
       setDays(diffDays);
       const base = diffDays * (vehicle?.pricePerDay || 0);

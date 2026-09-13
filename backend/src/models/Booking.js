@@ -91,7 +91,8 @@ bookingSchema.pre('save', function (next) {
     const e = new Date(this.endDate);
     e.setUTCHours(0, 0, 0, 0);
     const diffTime = Math.abs(e.getTime() - s.getTime());
-    this.totalDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+    // Inclusive calendar days: same-day = 1 day, 1 calendar day apart = 2 days
+    this.totalDays = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1);
   }
 
   next();
