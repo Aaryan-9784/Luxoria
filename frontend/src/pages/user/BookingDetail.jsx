@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { formatDisplayAmount } from '@/utils/currency';
+import { formatDisplayAmount, convertUsdToInr } from '@/utils/currency';
+import { openLuxoriaReceipt } from '@/utils/generateReceipt';
 import { cancelBooking } from '@/redux/slices/dashboardSlice';
 import { createReview, fetchMyReviews } from '@/redux/slices/reviewSlice';
 import api from '@/services/api';
@@ -57,6 +58,9 @@ export default function BookingDetail() {
   const [error, setError] = useState(null);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+
+  // Auth user state
+  const currentUser = useSelector(state => state.auth?.user);
 
   // Review state
   const { reviews } = useSelector(state => state.reviews);
@@ -126,42 +130,27 @@ export default function BookingDetail() {
 
   const handleDownloadReceipt = () => {
     if (!booking) return;
-    const lines = [
-      '================================================',
-      '           LUXORIA — RENTAL RECEIPT             ',
-      '================================================',
-      '',
-      `Booking ID    : ${booking.bookingId}`,
-      `Vehicle       : ${booking.vehicle?.name || 'N/A'}`,
-      `Brand         : ${booking.vehicle?.brand || 'N/A'}`,
-      `Category      : ${booking.vehicle?.category || 'N/A'}`,
-      '',
-      `Pick-up       : ${new Date(booking.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
-      `Drop-off      : ${new Date(booking.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
-      `Total Days    : ${booking.totalDays}`,
-      '',
-      `Pickup Loc.   : ${booking.pickupLocation || 'N/A'}`,
-      `Dropoff Loc.  : ${booking.dropoffLocation || 'N/A'}`,
-      '',
-      `Status        : ${booking.status?.toUpperCase()}`,
-      `Total Amount  : ${formatDisplayAmount(booking.totalAmount)}`,
-      '',
-      booking.notes ? `Notes         : ${booking.notes}` : '',
-      '',
-      '================================================',
-      '     Thank you for choosing Luxoria.            ',
-      '================================================',
-    ].join('\n');
+    const fmt = (iso) => iso
+      ? new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      : '—';
 
-    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Luxoria_Receipt_${booking.bookingId}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    openLuxoriaReceipt({
+      bookingRef:          booking.bookingId,
+      dateIssued:          fmt(booking.createdAt || new Date()),
+      tripStart:           fmt(booking.startDate),
+      tripEnd:             fmt(booking.endDate),
+      totalDays:           booking.totalDays ?? 1,
+      pickupLocation:      booking.pickupLocation || 'N/A',
+      guestName:           booking.user?.name || currentUser?.name || 'Valued Guest',
+      guestEmail:          booking.user?.email || currentUser?.email || '',
+      vehicleName:         booking.vehicle?.name || 'Luxury Vehicle',
+      vehicleBrand:        booking.vehicle?.brand || '',
+      vehicleTransmission: booking.vehicle?.transmission
+        ? booking.vehicle.transmission.charAt(0).toUpperCase() + booking.vehicle.transmission.slice(1)
+        : 'Automatic',
+      amountUsd:           booking.totalAmount ?? 0,
+      amountInr:           convertUsdToInr(booking.totalAmount ?? 0),
+    });
   };
 
   if (loading) {
