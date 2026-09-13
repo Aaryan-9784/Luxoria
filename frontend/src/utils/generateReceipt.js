@@ -465,36 +465,22 @@ export function openLuxoriaReceipt(data) {
 </body>
 </html>`;
 
-  // Direct PDF Generation: Opens the native Print / Save-as-PDF modal directly without any intermediate tab or page
-  const iframe = document.createElement('iframe');
-  iframe.style.position = 'fixed';
-  iframe.style.right = '0';
-  iframe.style.bottom = '0';
-  iframe.style.width = '0';
-  iframe.style.height = '0';
-  iframe.style.border = '0';
-  iframe.style.visibility = 'hidden';
-  document.body.appendChild(iframe);
+  // Open Receipt in a dedicated printable window that triggers Print / Save-as-PDF (Image 3)
+  let win = null;
+  try {
+    win = window.open('', '_blank', 'width=920,height=1060');
+  } catch (e) {
+    console.error('window.open failed:', e);
+  }
 
-  const doc = iframe.contentWindow.document;
-  doc.open();
-  doc.write(html);
-  doc.close();
-
-  setTimeout(() => {
-    try {
-      iframe.contentWindow.focus();
-      iframe.contentWindow.print();
-    } catch (e) {
-      console.error('Direct print failed:', e);
-    } finally {
-      setTimeout(() => {
-        try {
-          if (document.body.contains(iframe)) {
-            document.body.removeChild(iframe);
-          }
-        } catch (e) {}
-      }, 3000);
-    }
-  }, 350);
+  if (win) {
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+  } else {
+    // Fallback if popup is blocked
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    window.location.href = url;
+  }
 }
