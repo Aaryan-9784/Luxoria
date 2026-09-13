@@ -337,10 +337,14 @@ export function openLuxoriaReceipt(data) {
       @page { margin: 0; size: A4 portrait; }
       body  { margin: 0; }
       .page { width: 100%; min-height: 100vh; padding: 44px 56px 40px; }
+      .no-print { display: none !important; }
     }
   </style>
 </head>
 <body>
+<div class="no-print" style="position: fixed; top: 16px; right: 24px; z-index: 999999; display: flex; gap: 8px;">
+  <button onclick="window.close()" style="background: #0F172A; color: #ffffff; border: 1px solid #D4AF37; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">✕ Close Window</button>
+</div>
 <div class="page">
 
   <!-- HEADER -->
@@ -445,21 +449,42 @@ export function openLuxoriaReceipt(data) {
 
 </div>
 <script>
+  var isClosing = false;
+  function closeWindow() {
+    if (isClosing) return;
+    isClosing = true;
+    try {
+      window.close();
+    } catch (e) {}
+  }
+
+  // Closes immediately when user clicks "Cancel" or "Print" in the print dialog
+  window.addEventListener('afterprint', function() {
+    setTimeout(closeWindow, 50);
+  });
+  window.onafterprint = function() {
+    setTimeout(closeWindow, 50);
+  };
+
   function runPrint() {
     try {
       window.focus();
       window.print();
+      // On Chromium browsers, window.print() is synchronous;
+      // as soon as the user clicks Cancel or Print, execution resumes here:
+      setTimeout(closeWindow, 80);
     } catch (e) {
       console.error(e);
     }
   }
+
   if (document.readyState === 'complete') {
-    setTimeout(runPrint, 350);
+    setTimeout(runPrint, 250);
   } else {
     window.addEventListener('load', function() {
-      setTimeout(runPrint, 350);
+      setTimeout(runPrint, 250);
     });
-    setTimeout(runPrint, 800);
+    setTimeout(runPrint, 600);
   }
 </script>
 </body>
