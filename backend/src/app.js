@@ -42,8 +42,9 @@ app.use(
       // Allow requests with no origin (mobile apps, curl, etc) or matching client URLs
       if (!origin) return callback(null, true);
       
+      const normalizedOrigin = origin.replace(/\/$/, '');
       const isAllowed =
-        (clientUrl && origin.replace(/\/$/, '') === clientUrl) ||
+        (clientUrl && normalizedOrigin === clientUrl) ||
         origin.endsWith('.vercel.app') ||
         origin.startsWith('http://localhost');
 
@@ -54,8 +55,9 @@ app.use(
       }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    optionsSuccessStatus: 200,
   })
 );
 app.use(mongoSanitize());
@@ -82,15 +84,20 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 
-// ─── Health Check ────────────────────────────────────────────────
-app.get('/api/health', (req, res) => {
+// ─── Health Checks (Root, /health, /api/health for Render/Docker/AWS probes) ───
+const healthResponse = (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'LUXORIA API is running',
+    message: 'LUXORIA API is operational',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
+    environment: process.env.NODE_ENV || 'development',
+    uptime: Math.floor(process.uptime()),
   });
-});
+};
+
+app.get('/', healthResponse);
+app.get('/health', healthResponse);
+app.get('/api/health', healthResponse);
 
 // ─── API Routes ──────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);

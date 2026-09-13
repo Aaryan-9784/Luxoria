@@ -1,17 +1,12 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCredentials } from '@/redux/slices/authSlice';
+import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Car } from 'lucide-react';
-import axios from 'axios';
-
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function OAuthCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const hasFetched = React.useRef(false);
 

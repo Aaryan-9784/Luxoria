@@ -408,11 +408,12 @@ export const getMe = asyncHandler(async (req, res) => {
  * @access  Public
  */
 export const googleOAuthCallback = asyncHandler(async (req, res) => {
+  const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
   // User is injected by passport middleware
   const user = req.user;
 
   if (!user) {
-    return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/login?error=auth_failed`);
+    return res.redirect(`${clientUrl}/login?error=auth_failed`);
   }
 
   // Generate tokens
@@ -423,7 +424,7 @@ export const googleOAuthCallback = asyncHandler(async (req, res) => {
   user.cleanExpiredTokens();
   user.refreshTokens.push({
     token: refreshToken,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    expiresAt,
   });
   await user.save({ validateBeforeSave: false });
 
@@ -431,5 +432,5 @@ export const googleOAuthCallback = asyncHandler(async (req, res) => {
   setRefreshTokenCookie(res, refreshToken);
 
   // Redirect to frontend OAuth callback page to initiate token exchange
-  res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/oauth-callback`);
+  res.redirect(`${clientUrl}/oauth-callback`);
 });

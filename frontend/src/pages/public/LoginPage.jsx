@@ -255,7 +255,10 @@ export default function LoginPage() {
 
                 <button
                   type="button"
-                  onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`}
+                  onClick={() => {
+                    const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/+$/, '');
+                    window.location.href = `${apiBase}/auth/google`;
+                  }}
                   className="w-full flex items-center justify-center gap-3 bg-surface border border-border text-primary py-3 px-4 rounded-xl hover:bg-surface-light transition-colors duration-300"
                   style={{ 
                     backgroundColor: 'rgba(255, 255, 255, 0.03)', 

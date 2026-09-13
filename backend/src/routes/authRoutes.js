@@ -44,9 +44,10 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get(
   '/google/callback',
   (req, res, next) => {
+    const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
     passport.authenticate('google', { 
       session: false, 
-      failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:5173'}/login?error=auth_failed` 
+      failureRedirect: `${clientUrl}/login?error=auth_failed` 
     })(req, res, next);
   },
   googleOAuthCallback

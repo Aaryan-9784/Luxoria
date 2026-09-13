@@ -9,8 +9,6 @@ import { useDispatch } from 'react-redux';
 import { forgotPassword } from '@/redux/slices/authSlice';
 import Alert from '@/components/ui/Alert';
 
-const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`;
-
 export default function ForgotPasswordPage() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const dispatch = useDispatch();

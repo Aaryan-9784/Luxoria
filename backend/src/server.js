@@ -7,6 +7,17 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
+    // ── Fail-fast configuration validation for production ──
+    const requiredEnv = ['MONGODB_URI', 'JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET'];
+    const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+
+    if (missingEnv.length > 0) {
+      console.error('\n❌ FATAL DEPLOYMENT CONFIGURATION ERROR:');
+      console.error(`Missing required environment variable(s): ${missingEnv.join(', ')}`);
+      console.error('Please configure these in your cloud provider environment variables dashboard or .env file.\n');
+      process.exit(1);
+    }
+
     await connectDB();
 
     const server = app.listen(PORT, () => {
