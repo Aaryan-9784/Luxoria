@@ -7,6 +7,7 @@ import ApiResponse from '../utils/ApiResponse.js';
 import ApiFeatures from '../utils/apiFeatures.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import * as paymentService from '../services/paymentService.js';
+import emailService from '../services/emailService.js';
 
 /**
  * @desc    Create booking
@@ -101,6 +102,12 @@ export const createBooking = asyncHandler(async (req, res) => {
   const populatedBooking = await Booking.findById(booking._id)
     .populate('vehicle', 'name brand images pricePerDay')
     .populate('user', 'name email avatar');
+
+  // Send confirmation email to customer (non-blocking)
+  if (populatedBooking?.user?.email && populatedBooking?.vehicle) {
+    emailService.sendBookingConfirmation(populatedBooking.user, populatedBooking, populatedBooking.vehicle)
+      .catch((err) => console.error('Booking confirmation email failed:', err));
+  }
 
   ApiResponse.created(res, { booking: populatedBooking }, 'Booking created successfully');
 });
@@ -245,6 +252,12 @@ export const updateBookingStatus = asyncHandler(async (req, res) => {
     { path: 'user', select: 'name email phone avatar' },
     { path: 'vendor', select: 'name email phone' },
   ]);
+
+  // If status is updated to confirmed, send confirmation email
+  if (status === 'confirmed' && booking.user?.email && booking.vehicle) {
+    emailService.sendBookingConfirmation(booking.user, booking, booking.vehicle)
+      .catch((err) => console.error('Status update confirmation email failed:', err));
+  }
 
   ApiResponse.success(res, { booking }, 'Booking status updated');
 });

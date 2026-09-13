@@ -22,6 +22,7 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import newsletterRoutes from './routes/newsletterRoutes.js';
+import emailService from './services/emailService.js';
 
 const app = express();
 
@@ -98,6 +99,34 @@ const healthResponse = (req, res) => {
 app.get('/', healthResponse);
 app.get('/health', healthResponse);
 app.get('/api/health', healthResponse);
+
+// Diagnostic test endpoint to verify email delivery from production
+app.get('/api/health/test-email', async (req, res) => {
+  const targetEmail = req.query.to || process.env.SMTP_USER || 'aaryanpatel9784@gmail.com';
+  try {
+    const result = await emailService.sendEmail({
+      email: targetEmail,
+      subject: 'Luxoria Email Test - Delivery Confirmed',
+      html: `
+        <div style="font-family: sans-serif; padding: 20px; border: 1px solid #D4AF37; border-radius: 8px;">
+          <h2 style="color: #0F172A;">Luxoria Email System Operational</h2>
+          <p>This is a live test confirming that your email system on Render is connected and delivering properly.</p>
+          <p><strong>Environment:</strong> ${process.env.NODE_ENV || 'production'}</p>
+          <p><strong>Time:</strong> ${new Date().toISOString()}</p>
+        </div>
+      `,
+      message: 'Luxoria Email System is operational!',
+    });
+
+    res.status(200).json({
+      success: result?.success !== false,
+      targetEmail,
+      result,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // ─── API Routes ──────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);

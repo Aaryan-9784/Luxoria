@@ -63,10 +63,13 @@ class EmailService {
       if (process.env.NODE_ENV !== 'test') {
         const info = await this.transporter.sendMail(mailOptions);
         console.log(`Email sent successfully: ${info.messageId}`);
+        return { success: true, messageId: info.messageId };
       }
+      return { success: true, mocked: true };
     } catch (error) {
       console.error(`Error sending email to ${options.email || options.to}:`, error.message || error);
       // We don't throw to prevent blocking the main thread (e.g. booking success)
+      return { success: false, error: error.message };
     }
   }
 
