@@ -49,10 +49,46 @@ class EmailService {
   }
 
   async sendEmail(options) {
+    const to = options.to || options.email;
+
+    // 1. If RESEND_API_KEY is provided, use Resend HTTPS REST API (Port 443 - NEVER blocked by Render)
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const fromAddress = process.env.RESEND_FROM || 'Luxoria <onboarding@resend.dev>';
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: fromAddress,
+            to: Array.isArray(to) ? to : [to],
+            reply_to: options.replyTo,
+            subject: options.subject,
+            html: options.html,
+            text: options.message,
+          }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || JSON.stringify(data));
+        }
+
+        console.log(`Email sent successfully via Resend HTTPS API: ${data.id}`);
+        return { success: true, messageId: data.id };
+      } catch (error) {
+        console.error(`Resend HTTPS API error: ${error.message}`);
+        // Fall through to SMTP transporter if needed
+      }
+    }
+
+    // 2. SMTP Transporter Fallback
     const senderEmail = process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@luxoria.com';
     const mailOptions = {
       from: options.from || `Luxoria Premium <${senderEmail}>`,
-      to: options.to || options.email,
+      to,
       replyTo: options.replyTo,
       subject: options.subject,
       html: options.html,
@@ -62,12 +98,12 @@ class EmailService {
     try {
       if (process.env.NODE_ENV !== 'test') {
         const info = await this.transporter.sendMail(mailOptions);
-        console.log(`Email sent successfully: ${info.messageId}`);
+        console.log(`Email sent successfully via SMTP: ${info.messageId}`);
         return { success: true, messageId: info.messageId };
       }
       return { success: true, mocked: true };
     } catch (error) {
-      console.error(`Error sending email to ${options.email || options.to}:`, error.message || error);
+      console.error(`Error sending email to ${to}:`, error.message || error);
       // We don't throw to prevent blocking the main thread (e.g. booking success)
       return { success: false, error: error.message };
     }
