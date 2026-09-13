@@ -452,49 +452,49 @@ export function openLuxoriaReceipt(data) {
 
 </div>
 <script>
-  window.onload = function () {
-    setTimeout(function() {
-      try {
-        window.focus();
-        window.print();
-      } catch (e) {}
-    }, 400);
-  };
+  function runPrint() {
+    try {
+      window.focus();
+      window.print();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(runPrint, 350);
+  } else {
+    window.addEventListener('load', function() {
+      setTimeout(runPrint, 350);
+    });
+    setTimeout(runPrint, 800);
+  }
 </script>
 </body>
 </html>`;
 
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  const blobUrl = URL.createObjectURL(blob);
-
-  // Try opening in a new tab first
+  // Open window directly synchronously on user click (never blocked by browser pop-up blockers)
   let win = null;
   try {
-    win = window.open(blobUrl, '_blank');
+    win = window.open('', '_blank');
   } catch (e) {
     win = null;
   }
 
-  // If window.open was blocked by a browser popup blocker, trigger printable iframe fallback
-  if (!win || win.closed || typeof win.closed === 'undefined') {
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
-    iframe.src = blobUrl;
-    document.body.appendChild(iframe);
-    iframe.onload = () => {
-      setTimeout(() => {
-        try {
-          iframe.contentWindow.focus();
-          iframe.contentWindow.print();
-        } catch (err) {
-          console.error('Print iframe failed:', err);
-        }
-      }, 500);
-    };
+  if (win && !win.closed) {
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+  } else {
+    // If strict pop-up blocker intervened, fallback to temporary link click
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
   }
 }
