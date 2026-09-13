@@ -20,7 +20,6 @@ import wishlistRoutes from './routes/wishlistRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import masterDataRoutes from './routes/masterDataRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import newsletterRoutes from './routes/newsletterRoutes.js';
 
@@ -63,7 +62,14 @@ app.use(mongoSanitize());
 app.use(hpp());
 
 // ─── Body Parsing ────────────────────────────────────────────────
-app.use(express.json({ limit: '10mb' }));
+app.use(
+  express.json({
+    limit: '10mb',
+    verify: (req, res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
@@ -96,7 +102,6 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/master-data', masterDataRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 

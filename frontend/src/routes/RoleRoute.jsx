@@ -1,8 +1,9 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 export default function RoleRoute({ allowedRoles }) {
   const { user, isAuthenticated, loading } = useSelector((state) => state.auth);
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -13,12 +14,12 @@ export default function RoleRoute({ allowedRoles }) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return allowedRoles.includes(user?.role) ? (
     <Outlet />
   ) : (
-    <Navigate to="/unauthorized" replace />
+    <Navigate to="/unauthorized" state={{ from: location }} replace />
   );
 }

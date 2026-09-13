@@ -21,6 +21,7 @@ const generateAndSendOtp = async (user) => {
 
   user.loginOtp = hashedOtp;
   user.loginOtpExpires = expiresAt;
+  user.loginOtpAttempts = 0;
   await user.save({ validateBeforeSave: false });
 
   await emailService.sendLoginOtp(user, otp);
@@ -32,7 +33,7 @@ const generateAndSendOtp = async (user) => {
  * @access  Public
  */
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password, phone, role } = req.body;
+  const { name, email, password, phone, role, businessName } = req.body;
 
   // Check if user already exists
   const existingUser = await User.findOne({ email });
@@ -40,7 +41,7 @@ export const register = asyncHandler(async (req, res) => {
     throw ApiError.conflict('An account with this email already exists');
   }
 
-  const user = await User.create({ name, email, password, phone, role });
+  const user = await User.create({ name, email, password, phone, role, businessName });
 
   // Generate tokens
   const accessToken = generateAccessToken(user._id);
@@ -164,9 +165,13 @@ export const verifyLoginOtp = asyncHandler(async (req, res) => {
   const cleanEmail = String(email).toLowerCase().trim();
   const cleanOtp = String(otp).trim();
 
-  const user = await User.findOne({ email: cleanEmail }).select('+loginOtp +loginOtpExpires');
+  const user = await User.findOne({ email: cleanEmail }).select('+loginOtp +loginOtpExpires +loginOtpAttempts');
   if (!user) {
     throw ApiError.badRequest('Account not found. Please sign in again.');
+  }
+
+  if (!user.isActive) {
+    throw ApiError.forbidden('Your account has been deactivated. Contact support.');
   }
 
   if (!user.loginOtp || !user.loginOtpExpires) {
@@ -176,18 +181,30 @@ export const verifyLoginOtp = asyncHandler(async (req, res) => {
   if (user.loginOtpExpires < new Date()) {
     user.loginOtp = undefined;
     user.loginOtpExpires = undefined;
+    user.loginOtpAttempts = 0;
     await user.save({ validateBeforeSave: false });
     throw ApiError.badRequest('Verification code has expired. Please click "Resend Code".');
   }
 
   const hashedOtp = crypto.createHash('sha256').update(cleanOtp).digest('hex');
   if (user.loginOtp !== hashedOtp) {
-    throw ApiError.badRequest('Incorrect verification code. Please check your email and try again.');
+    user.loginOtpAttempts = (user.loginOtpAttempts || 0) + 1;
+    if (user.loginOtpAttempts >= 5) {
+      user.loginOtp = undefined;
+      user.loginOtpExpires = undefined;
+      user.loginOtpAttempts = 0;
+      await user.save({ validateBeforeSave: false });
+      throw ApiError.badRequest('Too many failed verification attempts. This code has been invalidated. Please sign in again.');
+    }
+    await user.save({ validateBeforeSave: false });
+    const remainingAttempts = 5 - user.loginOtpAttempts;
+    throw ApiError.badRequest(`Incorrect verification code. ${remainingAttempts} attempt${remainingAttempts === 1 ? '' : 's'} remaining.`);
   }
 
   // Clear OTP fields
   user.loginOtp = undefined;
   user.loginOtpExpires = undefined;
+  user.loginOtpAttempts = 0;
 
   // Generate tokens
   const accessToken = generateAccessToken(user._id);
@@ -254,7 +271,13 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
   const user = await User.findById(decoded.id);
   if (!user) {
+    clearRefreshTokenCookie(res);
     throw ApiError.unauthorized('User not found');
+  }
+
+  if (!user.isActive) {
+    clearRefreshTokenCookie(res);
+    throw ApiError.forbidden('Your account has been deactivated. Contact support.');
   }
 
   // Rotate: Replace old token atomically

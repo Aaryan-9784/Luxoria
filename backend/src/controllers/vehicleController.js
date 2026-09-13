@@ -1,10 +1,13 @@
 import Vehicle from '../models/Vehicle.js';
+import Booking from '../models/Booking.js';
 import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import ApiFeatures from '../utils/apiFeatures.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import { uploadMultipleToCloudinary, deleteFromCloudinary } from '../services/uploadService.js';
 import { UPLOAD } from '../constants/index.js';
+
+const escapeRegex = (str) => String(str).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 
 /**
  * @desc    Get all vehicles (public, with filters)
@@ -16,11 +19,11 @@ export const getVehicles = asyncHandler(async (req, res) => {
 
   // Build filter from query params
   const filter = { ...baseFilter };
-  if (req.query.brand) filter.brand = new RegExp(req.query.brand, 'i');
+  if (req.query.brand) filter.brand = new RegExp(escapeRegex(req.query.brand), 'i');
   if (req.query.category) filter.category = req.query.category;
   if (req.query.transmission) filter.transmission = req.query.transmission;
   if (req.query.fuelType) filter.fuelType = req.query.fuelType;
-  if (req.query.city) filter['location.city'] = new RegExp(req.query.city, 'i');
+  if (req.query.city) filter['location.city'] = new RegExp(escapeRegex(req.query.city), 'i');
   if (req.query.minPrice || req.query.maxPrice) {
     filter.pricePerDay = {};
     if (req.query.minPrice) filter.pricePerDay.$gte = Number(req.query.minPrice);
@@ -91,7 +94,10 @@ export const getFeaturedVehicles = asyncHandler(async (req, res) => {
  * @access  Vendor
  */
 export const getVendorVehicles = asyncHandler(async (req, res) => {
-  const filter = { vendor: req.user._id, isActive: true };
+  const filter = { isActive: true };
+  if (req.user.role !== 'admin' || req.query.vendor) {
+    filter.vendor = req.query.vendor || req.user._id;
+  }
   if (req.query.status) filter.status = req.query.status;
 
   const totalCount = await Vehicle.countDocuments(filter);
@@ -108,12 +114,16 @@ export const getVendorVehicles = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc    Create vehicle (vendor)
+ * @desc    Create vehicle (vendor / admin)
  * @route   POST /api/vehicles
- * @access  Vendor
+ * @access  Vendor / Admin
  */
 export const createVehicle = asyncHandler(async (req, res) => {
-  req.body.vendor = req.user._id;
+  if (req.user.role === 'vendor' && !req.user.isVerified) {
+    throw ApiError.forbidden('Your vendor account is pending verification by an administrator. You can only list vehicles once verified.');
+  }
+
+  req.body.vendor = req.body.vendor || req.user._id;
 
   const vehicle = await Vehicle.create(req.body);
 
@@ -121,9 +131,9 @@ export const createVehicle = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc    Update vehicle (vendor — owner only)
+ * @desc    Update vehicle (vendor — owner or admin)
  * @route   PUT /api/vehicles/:id
- * @access  Vendor
+ * @access  Vendor / Admin
  */
 export const updateVehicle = asyncHandler(async (req, res) => {
   let vehicle = await Vehicle.findById(req.params.id);
@@ -132,7 +142,8 @@ export const updateVehicle = asyncHandler(async (req, res) => {
     throw ApiError.notFound('Vehicle not found');
   }
 
-  if (vehicle.vendor.toString() !== req.user._id.toString()) {
+  const isAuthorized = req.user.role === 'admin' || vehicle.vendor.toString() === req.user._id.toString();
+  if (!isAuthorized) {
     throw ApiError.forbidden('You can only update your own vehicles');
   }
 
@@ -147,7 +158,7 @@ export const updateVehicle = asyncHandler(async (req, res) => {
 /**
  * @desc    Delete vehicle (soft delete)
  * @route   DELETE /api/vehicles/:id
- * @access  Vendor
+ * @access  Vendor / Admin
  */
 export const deleteVehicle = asyncHandler(async (req, res) => {
   const vehicle = await Vehicle.findById(req.params.id);
@@ -156,11 +167,22 @@ export const deleteVehicle = asyncHandler(async (req, res) => {
     throw ApiError.notFound('Vehicle not found');
   }
 
-  if (vehicle.vendor.toString() !== req.user._id.toString()) {
+  const isAuthorized = req.user.role === 'admin' || vehicle.vendor.toString() === req.user._id.toString();
+  if (!isAuthorized) {
     throw ApiError.forbidden('You can only delete your own vehicles');
   }
 
+  const activeBookings = await Booking.countDocuments({
+    vehicle: req.params.id,
+    status: { $in: ['confirmed', 'active'] },
+  });
+
+  if (activeBookings > 0) {
+    throw ApiError.badRequest('Cannot delete vehicle with active or confirmed bookings. Please complete or cancel them first.');
+  }
+
   vehicle.isActive = false;
+  vehicle.isAvailable = false;
   await vehicle.save();
 
   ApiResponse.success(res, null, 'Vehicle deleted successfully');
@@ -169,7 +191,7 @@ export const deleteVehicle = asyncHandler(async (req, res) => {
 /**
  * @desc    Upload vehicle images
  * @route   POST /api/vehicles/:id/images
- * @access  Vendor
+ * @access  Vendor / Admin
  */
 export const uploadImages = asyncHandler(async (req, res) => {
   const vehicle = await Vehicle.findById(req.params.id);
@@ -178,7 +200,8 @@ export const uploadImages = asyncHandler(async (req, res) => {
     throw ApiError.notFound('Vehicle not found');
   }
 
-  if (vehicle.vendor.toString() !== req.user._id.toString()) {
+  const isAuthorized = req.user.role === 'admin' || vehicle.vendor.toString() === req.user._id.toString();
+  if (!isAuthorized) {
     throw ApiError.forbidden('You can only upload images to your own vehicles');
   }
 
@@ -204,7 +227,7 @@ export const uploadImages = asyncHandler(async (req, res) => {
 /**
  * @desc    Delete vehicle image
  * @route   DELETE /api/vehicles/:id/images/:imageId
- * @access  Vendor
+ * @access  Vendor / Admin
  */
 export const deleteImage = asyncHandler(async (req, res) => {
   const vehicle = await Vehicle.findById(req.params.id);
@@ -213,7 +236,8 @@ export const deleteImage = asyncHandler(async (req, res) => {
     throw ApiError.notFound('Vehicle not found');
   }
 
-  if (vehicle.vendor.toString() !== req.user._id.toString()) {
+  const isAuthorized = req.user.role === 'admin' || vehicle.vendor.toString() === req.user._id.toString();
+  if (!isAuthorized) {
     throw ApiError.forbidden('You can only delete images from your own vehicles');
   }
 

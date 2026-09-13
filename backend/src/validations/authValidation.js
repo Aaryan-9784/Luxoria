@@ -10,7 +10,8 @@ export const registerSchema = {
     password: Joi.string().pattern(passwordPattern).required().messages({
       'string.pattern.base': passwordMessage,
     }),
-    phone: Joi.string().pattern(/^[+]?[\d\s-]{10,15}$/).optional(),
+    phone: Joi.string().pattern(/^[+]?[\d\s-]{10,15}$/).optional().allow('', null),
+    businessName: Joi.string().trim().max(100).optional().allow('', null),
     role: Joi.string().valid('user', 'vendor').default('user'),
   }),
 };

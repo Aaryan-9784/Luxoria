@@ -1,41 +1,31 @@
 # ================================================================
 #  LUXORIA — Root .gitignore
-#  Comprehensive exclusions for MERN stack project
+#  Enterprise-grade exclusions for MERN Stack Architecture
 # ================================================================
 
-
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
 #  Dependencies & Package Managers
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
 node_modules/
 jspm_packages/
 .npm/
 .yarn/
+.pnp
 .pnp.*
 .pnpm-store/
+.bun/
 package-lock.json
 
-
-# ──────────────────────────────────────────────────────────────────
-#  Environment Variables & Secrets
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+#  Environment Variables & Secrets (Keep .env.example safe)
+# ────────────────────────────────────────────────────────────────
 .env
-.env.local
-.env.development
-.env.development.local
-.env.test
-.env.test.local
-.env.staging
-.env.production
-.env.production.local
-*.env
+.env.*
 !.env.example
 !.env.sample
+*.env
 
-
-# ──────────────────────────────────────────────────────────────────
-#  Secrets, Keys & Certificates
-# ──────────────────────────────────────────────────────────────────
+# Secrets, Keys, Certificates & Credentials
 *.pem
 *.key
 *.cert
@@ -49,10 +39,9 @@ serviceAccountKey.json
 google-credentials.json
 firebase-adminsdk*.json
 
-
-# ──────────────────────────────────────────────────────────────────
-#  Build Outputs & Bundler Caches
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+#  Build Outputs, Bundler Caches & Generated Assets
+# ────────────────────────────────────────────────────────────────
 dist/
 dist-ssr/
 build/
@@ -65,13 +54,11 @@ out/
 .stylelintcache
 .parcel-cache/
 .turbo/
-.next/
-.nuxt/
+.cache/
 
-
-# ──────────────────────────────────────────────────────────────────
-#  Logs & Process Output
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+#  Logs & Process Runtime Files
+# ────────────────────────────────────────────────────────────────
 logs/
 *.log
 npm-debug.log*
@@ -79,40 +66,34 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.node_repl_history
 
-
-# ──────────────────────────────────────────────────────────────────
-#  Uploads, Heavy Media & Temporary Files
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+#  Uploads, Temporary Media & Local Storage
+# ────────────────────────────────────────────────────────────────
 backend/uploads/
 backend/public/uploads/
 backend/temp/
 frontend/public/uploads/
+uploads/
+temp/
+tmp/
 *.tmp
 *.bak
 *.backup
 
-# Large video files (use Cloudinary / CDN instead)
+# Heavy raw media archives (Use Cloudinary CDN)
 *.mp4
 *.mov
 *.avi
 *.mkv
 *.webm
-
-# Large image archives
 *.psd
 *.ai
 
-# Personal photo files at root
-*.jpeg
-*.jpg
-!frontend/public/**/*.jpeg
-!frontend/public/**/*.jpg
-
-
-# ──────────────────────────────────────────────────────────────────
-#  Testing & Code Coverage
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+#  Testing, Coverage & Reports
+# ────────────────────────────────────────────────────────────────
 coverage/
 .nyc_output/
 *.lcov
@@ -122,41 +103,42 @@ cypress/screenshots/
 cypress/videos/
 .jest-cache/
 
-
-# ──────────────────────────────────────────────────────────────────
-#  Database Files
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+#  Database & Local Storage Dumps
+# ────────────────────────────────────────────────────────────────
 *.db
 *.sqlite
 *.sqlite3
+*.dump
 data/db/
 
-
-# ──────────────────────────────────────────────────────────────────
-#  IDEs, Editors & AI Agent Artifacts
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+#  IDEs, Editors & Workstations
+# ────────────────────────────────────────────────────────────────
 # JetBrains
 .idea/
 
-# Visual Studio
+# Visual Studio / VS Code
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-
-# Vim / Neovim swap files
-*.swp
-*.swo
-*.swn
-*~
-
-# VS Code (allow shared settings)
-.vscode/
+.vscode/*
 !.vscode/settings.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# AI agents & generated caches
+# Vim / Sublime / Emacs
+*.swp
+*.swo
+*.swn
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ────────────────────────────────────────────────────────────────
+#  AI Agents, Scratch Files & IDE Caches
+# ────────────────────────────────────────────────────────────────
 .gemini/
 .brain/
 .agents/
@@ -165,12 +147,23 @@ brain/
 scratch/
 .cursor/
 .copilot/
+notes.md
+todo.md
+*.todo
 
+# Temporary Scratch Scripts
+backend/src/scripts/clearData.js
+backend/check_*.js
+backend/clear_*.js
+backend/fix_*.js
+backend/get_*.js
+backend/test*.js
+backend/seed*.js
+frontend/get_cars.*
 
-# ──────────────────────────────────────────────────────────────────
-#  OS-Specific System Files
-# ──────────────────────────────────────────────────────────────────
-
+# ────────────────────────────────────────────────────────────────
+#  OS-Specific System Artifacts
+# ────────────────────────────────────────────────────────────────
 # macOS
 .DS_Store
 .DS_Store?
@@ -182,60 +175,24 @@ scratch/
 
 # Windows
 Thumbs.db
-Desktop.ini
 ehthumbs.db
 ehthumbs_vista.db
+Desktop.ini
 $RECYCLE.BIN/
 *.lnk
 
 # Linux
 .directory
-*.swp
 
-
-# ──────────────────────────────────────────────────────────────────
-#  Deployment & Hosting Platforms
-# ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+#  Deployment & Cloud Provider Cache
+# ────────────────────────────────────────────────────────────────
 .vercel/
 .netlify/
 .serverless/
 .firebase/
 .wrangler/
-.render-build-log
 render-build.log
+.render-build-log
 fly.toml
-
-
-# ──────────────────────────────────────────────────────────────────
-#  Docker
-# ──────────────────────────────────────────────────────────────────
 docker-compose.override.yml
-.dockerignore
-
-
-# ──────────────────────────────────────────────────────────────────
-#  Development Scripts & Scratch Files
-#  (One-off debug/test/seed scripts at backend root)
-# ──────────────────────────────────────────────────────────────────
-backend/check_*.js
-backend/clear_*.js
-backend/fix_*.js
-backend/get_*.js
-backend/test*.js
-backend/update_images.js
-backend/seed*.js
-frontend/get_cars.*
-
-
-# ──────────────────────────────────────────────────────────────────
-#  Miscellaneous
-# ──────────────────────────────────────────────────────────────────
-*.tgz
-*.tar.gz
-*.zip
-*.rar
-*.7z
-.node_repl_history
-notes.md
-todo.md
-*.todo

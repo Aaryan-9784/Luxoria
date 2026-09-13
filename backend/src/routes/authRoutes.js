@@ -15,6 +15,7 @@ import {
 } from '../controllers/authController.js';
 import passport from 'passport';
 import { protect } from '../middleware/auth.js';
+import { authLimiter } from '../middleware/rateLimiter.js';
 import validate from '../middleware/validate.js';
 import {
   registerSchema,
@@ -27,16 +28,16 @@ import {
 
 const router = express.Router();
 
-// Public routes
-router.post('/register', validate(registerSchema), register);
-router.post('/login', validate(loginSchema), login);
-router.post('/vendor/login', validate(loginSchema), vendorLogin);
-router.post('/admin/login', validate(loginSchema), adminLogin);
-router.post('/verify-otp', validate(verifyOtpSchema), verifyLoginOtp);
-router.post('/resend-otp', validate(resendOtpSchema), resendLoginOtp);
+// Public routes (rate-limited)
+router.post('/register', authLimiter, validate(registerSchema), register);
+router.post('/login', authLimiter, validate(loginSchema), login);
+router.post('/vendor/login', authLimiter, validate(loginSchema), vendorLogin);
+router.post('/admin/login', authLimiter, validate(loginSchema), adminLogin);
+router.post('/verify-otp', authLimiter, validate(verifyOtpSchema), verifyLoginOtp);
+router.post('/resend-otp', authLimiter, validate(resendOtpSchema), resendLoginOtp);
 router.post('/refresh', refreshAccessToken);
-router.post('/forgot-password', validate(forgotPasswordSchema), forgotPassword);
-router.put('/reset-password/:token', validate(resetPasswordSchema), resetPassword);
+router.post('/forgot-password', authLimiter, validate(forgotPasswordSchema), forgotPassword);
+router.put('/reset-password/:token', authLimiter, validate(resetPasswordSchema), resetPassword);
 
 // Google OAuth routes
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));

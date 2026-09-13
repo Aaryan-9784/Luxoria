@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import crypto from 'crypto';
 
 const conciergeRequestSchema = new mongoose.Schema(
   {
@@ -60,9 +61,9 @@ conciergeRequestSchema.index({ requestId: 1 });
 // Generate request ID before save
 conciergeRequestSchema.pre('save', function (next) {
   if (!this.requestId) {
-    // Generate a unique ID like CR-XXXX
-    const randomNum = Math.floor(1000 + Math.random() * 9000);
-    this.requestId = `CR-${randomNum}`;
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const entropy = crypto.randomBytes(2).toString('hex').toUpperCase();
+    this.requestId = `CR-${timestamp}-${entropy}`;
   }
   next();
 });

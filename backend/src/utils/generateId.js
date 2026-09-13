@@ -1,8 +1,9 @@
 import crypto from 'crypto';
 
 export const generateBookingId = () => {
+  const timestamp = Date.now().toString(36).toUpperCase();
   const random = crypto.randomBytes(3).toString('hex').toUpperCase();
-  return `LUX-${random}`;
+  return `LUX-${timestamp}-${random}`;
 };
 
 export const generateResetToken = () => {

@@ -15,6 +15,7 @@ import NotificationBell from '@/components/ui/NotificationBell';
 
 const NAV_LINKS = [
   { name: 'Home', path: '/' },
+  { name: 'Fleet', path: '/vehicles' },
   { name: 'Collection', path: '/collection' },
   { name: 'Experience', path: '/experience' },
   { name: 'About', path: '/about' },

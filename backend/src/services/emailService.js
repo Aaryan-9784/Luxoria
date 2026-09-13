@@ -382,7 +382,7 @@ class EmailService {
     `;
     await this.sendEmail({
       email: adminEmail,
-      to: `"Aryan Patel" <${adminEmail}>`,
+      to: `"Luxoria Admin" <${adminEmail}>`,
       from: `"${data.name}" <${process.env.SMTP_FROM || 'noreply@luxoria.com'}>`,
       replyTo: data.email,
       subject: `VIP Vendor Inquiry: ${data.vehicleName}`,

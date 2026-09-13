@@ -9,7 +9,8 @@ class ApiFeatures {
 
   search(searchFields = []) {
     if (this.queryString.search && searchFields.length > 0) {
-      const searchRegex = new RegExp(this.queryString.search, 'i');
+      const sanitized = String(this.queryString.search).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+      const searchRegex = new RegExp(sanitized, 'i');
       const searchConditions = searchFields.map((field) => ({
         [field]: searchRegex,
       }));

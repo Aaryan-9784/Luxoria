@@ -13,6 +13,7 @@ export default function WatchHero() {
           <video 
             key="luxoria-bg-video"
             autoPlay 
+            muted
             loop 
             playsInline
             className="w-full h-full object-cover"

@@ -17,7 +17,17 @@ export default function GuestRoute() {
   if (isAuthenticated && user) {
     const role = user.role;
     const defaultPath = role === 'admin' ? '/admin/dashboard' : role === 'vendor' ? '/vendor/dashboard' : '/dashboard';
-    const targetPath = location.state?.from?.pathname !== '/' && location.state?.from?.pathname ? location.state.from.pathname : defaultPath;
+    const attemptedPath = location.state?.from?.pathname;
+
+    let targetPath = defaultPath;
+    if (attemptedPath && attemptedPath !== '/' && attemptedPath !== '/login' && attemptedPath !== '/register' && attemptedPath !== '/unauthorized') {
+      const isAdminRestricted = attemptedPath.startsWith('/admin') && role !== 'admin';
+      const isVendorRestricted = attemptedPath.startsWith('/vendor') && role !== 'vendor' && role !== 'admin';
+      if (!isAdminRestricted && !isVendorRestricted) {
+        targetPath = attemptedPath;
+      }
+    }
+
     return <Navigate to={targetPath} replace />;
   }
 

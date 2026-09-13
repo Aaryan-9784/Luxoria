@@ -1,51 +1,49 @@
-# ==============================
-# Dependencies
-# ==============================
-node_modules/
+# ================================================================
+#  LUXORIA — Frontend .gitignore
+# ================================================================
 
-# ==============================
-# Environment Variables
-# ==============================
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/
+
+# Environment Configurations
 .env
 .env.*
 !.env.example
 
-# ==============================
-# Build Output
-# ==============================
+# Production Build & Bundler Cache
 dist/
-build/
 dist-ssr/
-
-# ==============================
-# Vite & Bundler Cache
-# ==============================
+build/
+out/
 .vite/
 .eslintcache
 
-# ==============================
 # Logs
-# ==============================
 *.log
 npm-debug.log*
+yarn-debug.log*
 
-# ==============================
 # Testing & Coverage
-# ==============================
 coverage/
+playwright-report/
 
-# ==============================
-# OS-Specific Files
-# ==============================
+# IDE & Editor Files
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# Operating System Files
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# ==============================
-# IDE & Editor Files
-# ==============================
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
+# Deployment Previews
+.vercel/
+.netlify/

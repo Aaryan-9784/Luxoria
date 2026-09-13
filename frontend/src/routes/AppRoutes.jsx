@@ -28,6 +28,7 @@ const ROUTE_TITLES = {
   '/vendor/bookings': 'Vendor Bookings — Luxoria',
   '/vendor/revenue': 'Earnings Analytics — Luxoria',
   '/admin': 'Executive Panel — Luxoria',
+  '/admin/concierge': 'Concierge Management — Luxoria',
 };
 
 // Route Guards
@@ -59,6 +60,8 @@ const WatchExperiencePage = React.lazy(() => import('@/pages/public/WatchExperie
 const PrivacyPolicyPage = React.lazy(() => import('@/pages/public/PrivacyPolicyPage'));
 const TermsOfServicePage = React.lazy(() => import('@/pages/public/TermsOfServicePage'));
 const CookiePolicyPage = React.lazy(() => import('@/pages/public/CookiePolicyPage'));
+const UnauthorizedPage = React.lazy(() => import('@/pages/public/UnauthorizedPage'));
+const NotFoundPage = React.lazy(() => import('@/pages/public/NotFoundPage'));
 
 const DashboardOverview = React.lazy(() => import('@/pages/user/DashboardOverview'));
 const MyBookings = React.lazy(() => import('@/pages/user/MyBookings'));
@@ -85,6 +88,7 @@ const VendorAvailability = React.lazy(() => import('@/pages/vendor/VendorAvailab
 import AdminDashboardLayout from '@/layouts/AdminDashboardLayout';
 const AdminLoginPage = React.lazy(() => import('@/pages/admin/AdminLoginPage'));
 const VendorLoginPage = React.lazy(() => import('@/pages/vendor/VendorLoginPage'));
+const VendorSignupPage = React.lazy(() => import('@/pages/public/VendorSignupPage'));
 const AdminOverview = React.lazy(() => import('@/pages/admin/AdminOverview'));
 const UserManagement = React.lazy(() => import('@/pages/admin/UserManagement'));
 const VendorManagement = React.lazy(() => import('@/pages/admin/VendorManagement'));
@@ -93,6 +97,7 @@ const AdminCalendar = React.lazy(() => import('@/pages/admin/AdminCalendar'));
 const AdminAnalytics = React.lazy(() => import('@/pages/admin/AdminAnalytics'));
 const AdminCollections = React.lazy(() => import('@/pages/admin/AdminCollections'));
 const AdminFleetApprovals = React.lazy(() => import('@/pages/admin/AdminFleetApprovals'));
+const AdminConcierge = React.lazy(() => import('@/pages/admin/AdminConcierge'));
 
 
 
@@ -166,7 +171,7 @@ export default function AppRoutes() {
           
           {/* Vendor Onboarding Removed */}
           
-          <Route path="/unauthorized" element={<div className="pt-28 container-luxe section-spacing text-center text-error">Unauthorized Access</div>} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/oauth-callback" element={<OAuthCallback />} />
         </Route>
 
@@ -183,6 +188,7 @@ export default function AppRoutes() {
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/vendor/login" element={<VendorLoginPage />} />
+          <Route path="/vendor/register" element={<VendorSignupPage />} />
         </Route>
 
 
@@ -233,6 +239,7 @@ export default function AppRoutes() {
             <Route path="/admin/fleet-approvals" element={<AdminFleetApprovals />} />
             <Route path="/admin/bookings" element={<AdminBookings />} />
             <Route path="/admin/calendar" element={<AdminCalendar />} />
+            <Route path="/admin/concierge" element={<AdminConcierge />} />
             <Route path="/admin/collections" element={<AdminCollections />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/wishlist" element={<WishlistPage />} />
@@ -241,6 +248,9 @@ export default function AppRoutes() {
             <Route path="/admin/profile" element={<UserProfile />} />
           </Route>
         </Route>
+
+        {/* 404 Catch-All */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </React.Suspense>
   );

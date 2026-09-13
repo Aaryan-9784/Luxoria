@@ -55,7 +55,7 @@ export const addToWishlist = asyncHandler(async (req, res) => {
 export const removeFromWishlist = asyncHandler(async (req, res) => {
   const result = await Wishlist.findOneAndDelete({
     user: req.user._id,
-    vehicle: req.params.vehicleId,
+    $or: [{ vehicle: req.params.vehicleId }, { _id: req.params.vehicleId }],
   });
 
   if (!result) {

@@ -1,849 +1,777 @@
 <div align="center">
 
-# 🏎️ LUXORIA
+# LUXORIA™
+### Enterprise-Grade Ultra-Luxury Mobility & Fleet Orchestration Platform
 
-### Ultra-Premium Luxury Car Rental Platform
-
-**Developed by [Aryan Patel](https://github.com/Aaryan-9784)**
+[![Build Status](https://img.shields.io/badge/Build-Passing-10B981?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/Aaryan-9784/Luxoria)
+[![Security Hardened](https://img.shields.io/badge/Security-OWASP_Hardened-6366F1?style=for-the-badge&logo=auth0&logoColor=white)](#-security-architecture--compliance)
+[![React 19](https://img.shields.io/badge/Frontend-React_19_+_Vite_6-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![Node.js](https://img.shields.io/badge/Backend-Node.js_18+_ESM-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
+[![MongoDB Atlas](https://img.shields.io/badge/Database-MongoDB_Atlas_Replica-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com)
+[![Razorpay Secured](https://img.shields.io/badge/Payments-Razorpay_HMAC--256-02042B?style=for-the-badge&logo=razorpay&logoColor=white)](https://razorpay.com)
+[![License: MIT](https://img.shields.io/badge/License-Enterprise_MIT-EAB308?style=for-the-badge)](LICENSE)
 
 <br />
 
-![LUXORIA Banner](https://images.pexels.com/photos/3729464/pexels-photo-3729464.jpeg?auto=compress&cs=tinysrgb&w=1200)
+![Luxoria Hero Banner](https://images.pexels.com/photos/3729464/pexels-photo-3729464.jpeg?auto=compress&cs=tinysrgb&w=1600)
 
 <br />
 
-[![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black&style=for-the-badge)](https://react.dev)
-[![Vite 6](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white&style=for-the-badge)](https://vitejs.dev)
-[![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS-4.0-06B6D4?logo=tailwind-css&logoColor=white&style=for-the-badge)](https://tailwindcss.com)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white&style=for-the-badge)](https://nodejs.org)
-[![Express 4](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white&style=for-the-badge)](https://expressjs.com)
-[![MongoDB Atlas](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white&style=for-the-badge)](https://mongodb.com)
-[![Redux Toolkit](https://img.shields.io/badge/Redux_Toolkit-2.x-764ABC?logo=redux&logoColor=white&style=for-the-badge)](https://redux-toolkit.js.org)
-[![Razorpay](https://img.shields.io/badge/Razorpay-Payments-02042B?logo=razorpay&logoColor=white&style=for-the-badge)](https://razorpay.com)
-[![License MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+**A mission-critical B2C & B2B luxury mobility ecosystem designed for elite concierge services, high-end fleet concessionaires, and ultra-high-net-worth clientele.**
 
-**A full-stack enterprise MERN platform for luxury car rentals and fleet management.**
+[Executive Summary](#-executive-summary) · [System Topology](#-system-topology) · [Enterprise Portals](#-enterprise-portals) · [Security & Compliance](#-security-architecture--compliance) · [API Specification](#-rest-api-specification) · [Production Runbook](#-production-deployment--runbooks)
 
-*3 Role-Based Portals · 2-Step Email OTP Security · Razorpay Payments · Google OAuth 2.0*
-*Real-Time Fleet Overlap Validation · Enterprise Analytics · Concierge Services*
-
-[Getting Started](#-quick-start-guide) · [API Reference](#-api-endpoint-reference) · [Deployment](#-deployment-guide) · [Contributing](#-contributing--license)
+---
 
 </div>
 
----
-
 ## 📋 Table of Contents
 
-- [✨ Project Overview](#-project-overview)
-- [🏛️ System Architecture](#️-system-architecture)
-- [🌟 Key Feature Highlights](#-key-feature-highlights)
-- [📱 Three Dedicated Portals](#-three-dedicated-portals)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [🗄️ Database Schemas](#️-database-schemas)
-- [📁 Project Structure](#-project-structure)
-- [🚀 Quick Start Guide](#-quick-start-guide)
-- [🔑 Environment Variables](#-environment-variables)
-- [🔐 Security & Authentication](#-security--authentication)
-- [💳 Payment & Refund Architecture](#-payment--refund-architecture)
-- [📡 API Endpoint Reference](#-api-endpoint-reference)
-- [🚢 Deployment Guide](#-deployment-guide)
-- [🤝 Contributing & License](#-contributing--license)
+- [🏢 Executive Summary](#-executive-summary)
+- [🏛️ System Topology & Architecture](#️-system-topology--architecture)
+- [✨ Core Commercial Capabilities](#-core-commercial-capabilities)
+- [🖥️ Enterprise Portals & User Journeys](#️-enterprise-portals--user-journeys)
+- [🛡️ Role-Based Access Control (RBAC) Matrix](#️-role-based-access-control-rbac-matrix)
+- [🗄️ Domain Entity Architecture & Data Model](#️-domain-entity-architecture--data-model)
+- [🔐 Security Architecture & Compliance](#-security-architecture--compliance)
+- [💳 Financial Settlement & Refund Lifecycle](#-financial-settlement--refund-lifecycle)
+- [🛠️ Engineering Stack & Component Specifications](#️-engineering-stack--component-specifications)
+- [📂 Monorepo File System Layout](#-monorepo-file-system-layout)
+- [🚀 Local Development & Environment Setup](#-local-development--environment-setup)
+- [🔑 Environment Variables Reference](#-environment-variables-reference)
+- [📡 REST API Specification](#-rest-api-specification)
+- [🚢 Production Deployment & Runbooks](#-production-deployment--runbooks)
+- [📈 Performance, Observability & Auditing](#-performance-observability--auditing)
+- [⚖️ Corporate Governance, Legal & Licensing](#️-corporate-governance-legal--licensing)
 
 ---
 
-## ✨ Project Overview
+## 🏢 Executive Summary
 
-**LUXORIA** is an ultra-premium, full-stack luxury car rental marketplace connecting elite customers with verified vehicle vendors and fleet owners across India. Built with the MERN stack and modern web engineering principles, Luxoria combines an evocative dark-luxury aesthetic with bank-grade security, automated reservation checks, Razorpay online payments, and enterprise analytics.
+**LUXORIA™** is a full-lifecycle digital automotive marketplace engineered specifically for the luxury and exotic mobility sector. Unlike commoditized vehicle rental scripts, Luxoria was conceptualized from first principles to reflect the discreet operational needs, high ticket sizes, and stringent verification standards demanded by luxury vehicle fleet owners, corporate travel bureaus, and high-net-worth individuals (HNWIs).
 
-### Why Luxoria?
-
-| Feature | Description |
-|---------|-------------|
-| **Multi-Portal System** | Dedicated UI experiences for Clients, Fleet Vendors, and Platform Administrators — all within one unified codebase |
-| **Zero Double-Bookings** | Dynamic date-range overlap algorithm checks vehicle availability server-side before checkout |
-| **2-Step Verification (2FA)** | Manual credential logins protected via 6-digit email OTP verification backed by SHA-256 cryptographic hashing |
-| **Concierge & Chauffeur** | Integrated doorstep concierge and white-glove chauffeur service request management |
-| **High-Contrast UI** | Engineered with custom Tailwind CSS tokens, Framer Motion micro-interactions, and accessibility standards |
-
----
-
-## 🏛️ System Architecture
+### Strategic Value Matrix
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                    CLIENT BROWSER                                   │
-│          Vite 6  ·  React 19  ·  Redux Toolkit 2.x                 │
-│          Framer Motion  ·  Recharts  ·  Lucide Icons               │
-└──────────────────────────┬──────────────────────────────────────────┘
-                           │
-                    HTTPS / REST API
-                   (Axios Interceptors)
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                    BACKEND API SERVER                                │
-│                Express 4  ·  Node.js 18+                            │
-│                                                                     │
-│  ┌────────────┐  ┌──────────────┐  ┌──────────────┐                │
-│  │   Auth      │  │  Validation  │  │  Rate Limit  │                │
-│  │ Middleware  │  │  Layer (Joi) │  │  & Security  │                │
-│  │ (JWT+RBAC) │  │              │  │  (Helmet)    │                │
-│  └──────┬─────┘  └──────┬───────┘  └──────┬───────┘                │
-│         └───────────┬────┘               ──┘                        │
-│                     ▼                                               │
-│  ┌──────────────────────────────────────────────────────────┐       │
-│  │                   SERVICE LAYER                           │       │
-│  │                                                           │       │
-│  │  📦 MongoDB Atlas (Mongoose 8 ODM)                        │       │
-│  │  💳 Razorpay SDK (HMAC-SHA256 Signatures)                 │       │
-│  │  📧 Nodemailer SMTP (Branded HTML Templates)              │       │
-│  │  🖼️ Cloudinary v2 (Stream Uploads via Multer)             │       │
-│  │  🔑 Passport.js (Google OAuth 2.0)                        │       │
-│  └──────────────────────────────────────────────────────────┘       │
-└─────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            LUXORIA BUSINESS VALUE                            │
+├───────────────────────┬──────────────────────────────┬───────────────────────┤
+│    FOR CLIENTS        │       FOR FLEET OWNERS       │   FOR PLATFORM OPS    │
+├───────────────────────┼──────────────────────────────┼───────────────────────┤
+│ • Instant access to   │ • Comprehensive fleet        │ • Centralized dealer  │
+│   verified supercars  │   utilization tracking       │   approval pipeline   │
+│ • White-glove         │ • Blackout calendar & rate   │ • Multi-aggregator    │
+│   chauffeur services  │   management controls        │   revenue reporting   │
+│ • Bank-grade checkout │ • Direct dispute resolution  │ • Full KYC & account  │
+│   with instant receipt│   and customer oversight     │   governance tooling  │
+└───────────────────────┴──────────────────────────────┴───────────────────────┘
+```
+
+> [!NOTE]
+> The platform is built natively with modern JavaScript technologies (React 19, Vite 6, Node.js 18+ ESM, Express 4, and MongoDB Atlas), ensuring zero legacy overhead, minimal bundle sizes, and production deployment velocity.
+
+---
+
+## 🏛️ System Topology & Architecture
+
+Luxoria implements a modern multi-tier cloud topology optimized for high availability, transactional integrity, and low-latency asset delivery.
+
+```
+                                [ CLIENT SURFACE ]
+          ┌─────────────────────────────────────────────────────────────┐
+          │  React 19 SPA (Vite 6) · Tailwind CSS 4 Design Tokens       │
+          │  Redux Toolkit 2.x Store · Axios Interceptor Pipeline       │
+          │  jsPDF Dynamic Generator · Recharts SVG Engine              │
+          └──────────────────────────────┬──────────────────────────────┘
+                                         │  HTTPS / WSS (JSON REST + SSE)
+                                         ▼
+                                [ EDGE ROUTING ]
+          ┌─────────────────────────────────────────────────────────────┐
+          │  Vercel Edge Network / Global Anycast DNS CDN               │
+          │  SPA Route Rewrites · Gzip/Brotli Compression · TLS 1.3     │
+          └──────────────────────────────┬──────────────────────────────┘
+                                         │  Reverse Proxy / REST
+                                         ▼
+                                [ APPLICATION CORE ]
+          ┌─────────────────────────────────────────────────────────────┐
+          │  Express 4 Application Cluster (Node.js 18+ ESM)            │
+          │                                                             │
+          │  ┌──────────────────────┐   ┌────────────────────────────┐  │
+          │  │ Security Perimeter   │   │ Business Logic Engine      │  │
+          │  │ • Helmet Security    │   │ • Atomic Conflict Engine   │  │
+          │  │ • HPP Parameter San. │   │ • Dynamic Pricing Pipeline │  │
+          │  │ • Mongo Query Filter │   │ • 11 Aggregation Pipelines │  │
+          │  │ • Dual JWT + OTP     │   │ • SSE Stream Broadcaster   │  │
+          │  └──────────┬───────────┘   └─────────────┬──────────────┘  │
+          └─────────────┼─────────────────────────────┼─────────────────┘
+                        │                             │
+        ┌───────────────┴──────────────┐              │
+        ▼                              ▼              ▼
+[ MEDIA INFRASTRUCTURE ]     [ PAYMENT GATEWAY ]   [ DATABASE CLUSTER ]
+  Cloudinary v2 Global         Razorpay API         MongoDB Atlas
+  Image CDN & Stream Buffers   HMAC-SHA256 Sig      Replica Set (Luxoria2)
 ```
 
 ---
 
-## 🌟 Key Feature Highlights
+## ✨ Core Commercial Capabilities
 
-### 🔐 Bank-Grade Authentication & 2FA
+### 1. 🛡️ Bank-Grade Identity & Dual-Token Architecture
+- **Dual JWT Security**: 15-minute cryptographically signed Access Tokens coupled with 7-day HTTP-Only, `SameSite=Strict` Refresh Tokens stored in secure cookie storage.
+- **Atomic Refresh Token Rotation**: Implements active session theft detection—if a compromised refresh token is reused, all active sessions for that user account are automatically revoked.
+- **2-Step Login Multi-Factor Authentication (MFA)**: Mandatory 6-digit email OTP for manual credentials, hashed via SHA-256 with strict 10-minute time-to-live (TTL) and brute-force backoff limits.
+- **Google OAuth 2.0 Integration**: Frictionless one-click social authentication via Passport.js automatically synchronizing verified identity records.
 
-- **Dual JWT Architecture** — Short-lived access tokens (15 min) in memory + long-lived HTTP-only refresh tokens (7 days) with atomic rotation
-- **2-Step OTP Security** — Mandatory 6-digit email OTP during manual logins, SHA-256 hashed with 10-minute expiry
-- **Google OAuth 2.0** — Single-click social authentication via Passport.js returning secure JWT credentials
-- **Password Recovery** — Forgot password flow with email-based reset tokens
-- **Automatic Token Refresh** — Axios interceptors silently request new access tokens on 401 responses
-- **Role-Based Access Control** — `user`, `vendor`, and `admin` roles with middleware-enforced route protection
+### 2. ⚡ Zero-Collision Fleet Reservation Engine
+- **Server-Side Conflict Interceptor**: Solves the concurrent booking problem by running atomic MongoDB date boundary overlap queries (`$and` / `$nor`) both during UI date selection and immediately before payment order generation.
+- **Lifecycle Pipeline**: Explicit state transitions: `pending` $\rightarrow$ `confirmed` $\rightarrow$ `active` $\rightarrow$ `completed` (or `cancelled`).
+- **Dynamic Price Breakdown Engine**: Computes duration, progressive multi-day rate reductions, security deposits, and value-added concierge charges server-side.
 
-### 🚘 Fleet & Booking Management Engine
+### 3. 💳 Razorpay Enterprise Payment Gateway
+- **Tamper-Proof Order Initialization**: Prices are never accepted from client requests; the server computes exact amounts in currency sub-units (paise/cents) before requesting an order from Razorpay.
+- **Cryptographic Signature Verification**: Payments are only confirmed upon mathematical verification of the `razorpay_signature` using HMAC-SHA256 hashing against the server secret key.
+- **Automated Tiered Refund Engine**: Automatic refund calculations during customer cancellations based on contractual timelines (>48h: 100%, 24-48h: 50%, <24h: 0%).
 
-- **Dynamic Overlap Prevention** — Server-side MongoDB query blocks date collisions in real-time
-- **Automated Price Calculation** — `Total = totalDays × pricePerDay + Taxes & Deductibles`
-- **Booking Status Lifecycle** — `pending` → `confirmed` → `active` → `completed` (or `cancelled`)
-- **Vendor Fleet Management** — Add, edit, delete vehicles with multi-image Cloudinary uploads
-- **Availability Calendar** — Visual date-based vehicle availability tracking for vendors
-- **Concierge Service Requests** — Doorstep delivery and white-glove chauffeur booking integration
+### 4. 📊 Enterprise Real-Time Analytics Suite
+- **Platform Executive Aggregations**: 11 concurrent MongoDB aggregation pipelines generating real-time KPIs: Gross Volume, Net Platform Fees, Fleet Utilization Rates, Customer Acquisition Trends, and Vendor Settlement Balances.
+- **Fleet Concessionaire Analytics**: 5 focused pipelines providing individual vehicle profitability, rental day trends, and customer satisfaction ratings.
 
-### 💳 Razorpay Online Payment Gateway
-
-- **Cryptographic Order Creation** — Server generates Razorpay Order ID with exact price calculation
-- **Frontend SDK Integration** — Native Razorpay checkout modal with branded theme
-- **HMAC-SHA256 Verification** — Server verifies payment signature before confirming bookings
-- **Automated Refund Tiers** — Tiered cancellation policy: 100% refund >48h, 50% refund 24–48h, 0% <24h
-
-### 📊 Enterprise Real-Time Analytics
-
-- **Admin Dashboard** — 11 parallel MongoDB aggregations: total revenue, monthly trends, top vendors, fleet utilization
-- **Vendor Dashboard** — 5 parallel aggregations: fleet earnings, active rentals, revenue breakdowns, booking trends
-- **User Dashboard** — Personal booking history, spending summaries, payment tracking, invoice generation
-
-### ⭐ Reviews, Wishlists & Notifications
-
-- **Vehicle Reviews** — Users can create, edit, and delete reviews for rented vehicles
-- **Wishlist System** — Save favorite vehicles for quick access
-- **Real-Time Notifications** — SSE-powered notification streaming with read/unread management
-- **Newsletter Subscriptions** — Email newsletter signup for marketing engagement
+### 5. 🛎️ White-Glove Concierge & Chauffeur Services
+- **Bespoke Mobility Requests**: Dedicated dispatch module enabling customers to book professional chauffeurs, airport VIP pickup, and personal security escorts alongside vehicle leases.
 
 ---
 
-## 📱 Three Dedicated Portals
+## 🖥️ Enterprise Portals & User Journeys
 
-### 👤 User Portal — *Customers & Renters*
+Luxoria segregates access into three distinct, branded application interfaces within a single unified web application:
 
-| Page | Capabilities |
-|------|-------------|
-| Dashboard Overview | Booking summaries, spending stats, recent activity |
-| Browse & Filter Vehicles | Sports, Sedan, SUV categories with advanced filtering |
-| Vehicle Details & Booking | Photo gallery, specs, date picker, Razorpay checkout |
-| My Bookings | Reservation history, status tracking, cancellation |
-| Payments Dashboard | Transaction history, payment breakdowns |
-| Invoices | Downloadable PDF/HTML booking invoices |
-| Profile Management | Avatar upload, personal info, password changes |
-| Reviews & Ratings | Write and manage vehicle reviews |
-| Wishlist | Save and manage favorite vehicles |
-| Notifications | Real-time alerts for booking updates |
-| Support | Submit support tickets to platform admin |
+### 1. 👤 Client Portal (*Storefront & Private Ledger*)
+| Functional Domain | Enterprise Capabilities |
+|:---|:---|
+| **Fleet Discovery** | High-performance catalog browsing with category tabs, dynamic pricing sliders, mechanical spec sheets, and high-resolution photo galleries. |
+| **Reservation Hub** | Interactive date-range calendar picker with real-time blackout checks and integrated Razorpay modal checkout. |
+| **Customer Portfolio** | Centralized booking dashboard, real-time status tracking, cancellation requests, digital wallet transaction history, and instant PDF invoice downloads. |
+| **Personal Profile** | Cloudinary-powered avatar upload, credential management, personal review administration, and notification settings. |
 
-### 🏢 Vendor Portal — *Car Owners & Fleet Suppliers*
+### 2. 🏢 Fleet Vendor Portal (*Concessionaire Command Center*)
+| Functional Domain | Enterprise Capabilities |
+|:---|:---|
+| **Inventory Management** | Multi-step vehicle submission wizard supporting technical telemetry (horsepower, top speed, engine specs) and Cloudinary multi-image uploads. |
+| **Reservation Ledger** | Real-time intake queue to review, approve, reject, or mark active vehicle handovers. |
+| **Availability Scheduler** | Calendar-based blackout module for maintenance, private leases, or seasonal downtime. |
+| **Financial Intelligence**| Detailed revenue breakdown, earnings statements, payout ledger, and utilization charts. |
 
-| Page | Capabilities |
-|------|-------------|
-| Vendor Overview | Fleet performance snapshot, pending actions |
-| Add Vehicle Wizard | Multi-step vehicle submission with Cloudinary image upload |
-| Edit Vehicle Wizard | Modify existing vehicle details and media |
-| Manage Fleet | Complete fleet listing with status management |
-| Vendor Bookings | Incoming booking requests, approval/rejection |
-| Availability Calendar | Visual date-based vehicle availability management |
-| Revenue Analytics | Earnings breakdown, payout tracking |
-| Advanced Analytics | Detailed performance charts and trends |
-| Support | Vendor-specific support ticket system |
-
-### 🛡️ Admin Panel — *Platform Governance*
-
-| Page | Capabilities |
-|------|-------------|
-| Admin Overview | Platform-wide KPIs and real-time metrics |
-| User Management | Account oversight, status updates (active/banned) |
-| Vendor Management | Vendor applications, approval/rejection workflows |
-| Fleet Approvals | Vehicle listing audits and approval pipeline |
-| Booking Management | Platform-wide booking oversight and status control |
-| Collections Management | Curated vehicle collections and featured listings |
-| Concierge Requests | Manage doorstep delivery and chauffeur requests |
-| Analytics Dashboard | Enterprise revenue charts, trend analysis, top performers |
-| Calendar View | Platform-wide booking calendar overview |
+### 3. 🛡️ Admin Governance Suite (*Platform Operations*)
+| Functional Domain | Enterprise Capabilities |
+|:---|:---|
+| **Executive Dashboard** | Bird's-eye platform metrics: Gross booking volume, total active fleet units, daily registration velocity, and platform margins. |
+| **Fleet Auditing Pipeline**| Compliance and safety audit pipeline to review, approve, or reject vendor vehicle submissions before public listing. |
+| **Account Governance** | User and vendor account moderation, verification elevation, and security suspension toggles. |
+| **Concierge Coordination**| Service queue for VIP doorstep delivery, private driver dispatch, and itinerary fulfillment. |
 
 ---
 
-## 🛠️ Tech Stack
+## 🛡️ Role-Based Access Control (RBAC) Matrix
 
-### Frontend
+Luxoria enforces strict RBAC at both the API layer (`protect`, `authorize`) and the client routing layer (`RoleRoute`, `ProtectedRoute`, `GuestRoute`).
 
-| Category | Technology | Purpose |
-|----------|-----------|---------|
-| **Library** | React 19 | UI with Hooks, Suspense, Lazy Loading |
-| **Build Tool** | Vite 6 | Fast HMR, optimized production chunks |
-| **State Management** | Redux Toolkit 2.x + React-Redux 9 | Global state with async thunks |
-| **Styling** | Tailwind CSS 4 + Custom CSS Design System | Utility-first with design tokens |
-| **Animations** | Framer Motion 11 | Page transitions & micro-interactions |
-| **Icons** | Lucide React | Consistent icon library |
-| **Forms** | React Hook Form 7 | Performant form validation |
-| **HTTP Client** | Axios | Interceptors & request interlocking |
-| **Charts** | Recharts 3 | Revenue & booking analytics |
-| **Routing** | React Router DOM 7 | Client-side routing & guards |
-| **PDF Generation** | jsPDF 4 | Client-side invoice PDF generation |
-| **Utilities** | clsx, tailwind-merge | Conditional classname merging |
+```
+                              [ INCOMING REQUEST ]
+                                       │
+                                       ▼
+                             [ protect Middleware ]
+                                       │
+                ┌──────────────────────┴──────────────────────┐
+                │ Valid JWT Access Token                      │ Missing / Expired
+                ▼                                             ▼
+       [ Populate req.user ]                         [ 401 Unauthorized ]
+                │
+                ▼
+       [ authorize('role') ]
+                │
+    ┌───────────┴───────────┐
+    │ Matches Allowed Role   │ Role Mismatch
+    ▼                       ▼
+[ Next Controller ]     [ 403 Forbidden ]
+```
 
-### Backend
-
-| Category | Technology | Purpose |
-|----------|-----------|---------|
-| **Runtime** | Node.js 18+ (ES Modules) | Server-side JavaScript |
-| **Framework** | Express 4 | RESTful API routing |
-| **Database** | MongoDB Atlas + Mongoose 8 | Document storage & ODM |
-| **Auth** | JWT (jsonwebtoken) + bcryptjs | Token-based auth & password hashing |
-| **OAuth** | Passport.js + passport-google-oauth20 | Google social login |
-| **Payments** | Razorpay Node SDK | Order creation & signature verification |
-| **File Storage** | Cloudinary v2 + Multer + Streamifier | Cloud image upload pipeline |
-| **Email** | Nodemailer | SMTP email delivery with HTML templates |
-| **Validation** | Joi 17 | Request schema validation |
-| **Security** | Helmet, HPP, express-rate-limit, express-mongo-sanitize | Headers, query protection, rate limiting, NoSQL injection prevention |
-| **Logging** | Morgan | HTTP request logging |
-
----
-
-## 🗄️ Database Schemas
-
-| Model | File | Description |
-|-------|------|-------------|
-| **User** | `User.js` | Accounts with roles (`user`, `vendor`, `admin`), profile data, OAuth flags, OTP tracking, password reset tokens |
-| **Vehicle** | `Vehicle.js` | Fleet listings with specs, pricing, images (Cloudinary), approval status, vendor reference, slug |
-| **Booking** | `Booking.js` | Reservations linking users to vehicles with date ranges, status lifecycle, pricing, cancellation reasons |
-| **Payment** | `Payment.js` | Razorpay transaction records with order IDs, payment IDs, signatures, amounts, refund tracking |
-| **Review** | `Review.js` | User vehicle reviews with ratings, comments, edit history |
-| **Wishlist** | `Wishlist.js` | User-to-vehicle saved favorites |
-| **Notification** | `Notification.js` | System alerts for booking updates, approvals, and admin communications |
-| **ConciergeRequest** | `ConciergeRequest.js` | Doorstep delivery and chauffeur service requests with status tracking |
-| **Newsletter** | `Newsletter.js` | Email newsletter subscriptions |
-| **MasterData** | `MasterData.js` | Configurable lookup data by category (vehicle types, brands, etc.) |
+| Operational Capability | Public / Guest | Client (`user`) | Fleet Owner (`vendor`) | Platform Admin (`admin`) |
+|:---|:---:|:---:|:---:|:---:|
+| Browse Approved Fleet & Specs |  |  |  |  |
+| Submit Inquiries & VIP Newsletter |  |  |  |  |
+| Book Vehicle & Authorize Payment | ❌ |  | ❌ | ❌ |
+| Manage Personal Bookings & Invoices | ❌ |  | ❌ |  |
+| Write Reviews & Manage Wishlist | ❌ |  | ❌ |  |
+| Submit Fleet Vehicles for Listing | ❌ | ❌ |  |  |
+| Edit / Update Vendor Fleet | ❌ | ❌ |  |  |
+| Access Vendor Revenue & Booking Ops | ❌ | ❌ |  | ❌ |
+| Audit & Approve Fleet Submissions | ❌ | ❌ | ❌ |  |
+| Suspend / Elevate User & Vendor Accounts | ❌ | ❌ | ❌ |  |
+| View Platform Financial Aggregations | ❌ | ❌ | ❌ |  |
+| Manage Platform Concierge Queue | ❌ | Submit | ❌ | Manage |
 
 ---
 
-## 📁 Project Structure
+## 🗄️ Domain Entity Architecture & Data Model
+
+The application operates on the **`Luxoria2`** production database in MongoDB Atlas, governed by 9 Mongoose schemas:
+
+```mermaid
+erDiagram
+    User ||--o{ Booking : "reserves"
+    User ||--o{ Review : "writes"
+    User ||--o{ Wishlist : "bookmarks"
+    User ||--o{ Notification : "receives"
+    User ||--o{ ConciergeRequest : "requests"
+    User ||--o{ Vehicle : "owns/vendors"
+    
+    Vehicle ||--o{ Booking : "leased in"
+    Vehicle ||--o{ Review : "reviewed in"
+    Vehicle ||--o{ Wishlist : "saved in"
+    
+    Booking ||--|| Payment : "settled by"
+```
+
+### Schema Inventory
+
+| Entity | Mongoose Model | Primary Indexes | Key Responsibilities |
+|:---|:---|:---|:---|
+| **User** | `User.js` | `email`, `role`, `createdAt` | Account authentication, roles, OAuth identifiers, OTP hash & expiry, profile telemetry. |
+| **Vehicle** | `Vehicle.js` | `slug`, `status`, `vendor`, `brand` | Fleet inventory, technical specifications, Cloudinary images, approval status, pricing. |
+| **Booking** | `Booking.js` | `user`, `vehicle`, `startDate`, `endDate`, `status` | Rental reservations, double-booking prevention, total pricing, cancellation details. |
+| **Payment** | `Payment.js` | `booking`, `razorpayOrderId`, `status` | Razorpay order IDs, payment IDs, HMAC signatures, refund audit records. |
+| **Review** | `Review.js` | `vehicle`, `user`, `rating` | Customer reviews, ratings (1-5), and feedback for verified rentals. |
+| **Wishlist** | `Wishlist.js` | `user`, `vehicle` | User vehicle bookmarks for quick access. |
+| **Notification** | `Notification.js` | `recipient`, `isRead`, `createdAt` | Real-time system notifications and SSE streaming delivery. |
+| **ConciergeRequest** | `ConciergeRequest.js` | `user`, `status`, `date` | Chauffeur, security, and white-glove doorstep delivery requests. |
+| **Newsletter** | `Newsletter.js` | `email`, `isActive` | VIP marketing and launch update subscriptions. |
+
+---
+
+## 🔐 Security Architecture & Compliance
+
+### 1. Dual-Token + 2-Step OTP Authentication Flow
+
+```
+[ User Enters Credentials ]
+             │
+             ▼
+[ Verify Password with bcrypt (12 rounds) ] ──(Invalid)──▶ [ 401 Unauthorized ]
+             │
+          (Valid)
+             ▼
+[ Generate Cryptographic 6-Digit Code ]
+[ Compute SHA-256 Hash & Persist with 10-min TTL ]
+[ Dispatch Plain OTP via SMTP (Nodemailer) ]
+             │
+             ▼
+[ Prompt OTP Verification Modal ]
+             │
+             ▼
+[ Submit OTP ] ──▶ [ Verify SHA-256 Hash ] ──(Mismatch)──▶ [ 400 Invalid OTP ]
+                          │
+                       (Match)
+                          ▼
+            [ Generate 15m JWT Access Token ]
+            [ Generate 7d JWT Refresh Token ]
+            [ Set Secure HTTP-Only Cookie ]
+            [ Return User Profile & Access Token ]
+```
+
+### 2. Defense-in-Depth Middleware Stack
+
+```
+[ INCOMING HTTP REQUEST ]
+           │
+           ▼
+[ Helmet Middleware ]           Sets security headers (X-Frame-Options, HSTS, X-XSS-Protection)
+           │
+           ▼
+[ CORS Origin Whitelist ]       Validates Origin against CLIENT_URL whitelist
+           │
+           ▼
+[ Express Rate Limiter ]        Enforces window-based sliding limits (Auth: 5/15m, General: 100/15m)
+           │
+           ▼
+[ Express Mongo Sanitize ]      Recursively strips '$' and '.' characters from body/params/query
+           │
+           ▼
+[ HPP Parameter Sanitation ]    Eliminates HTTP Parameter Pollution attacks
+           │
+           ▼
+[ Joi Validation Layer ]        Validates payload structure and data types before controllers
+           │
+           ▼
+[ Route Controller Logic ]
+```
+
+---
+
+## 💳 Financial Settlement & Refund Lifecycle
+
+```
+CLIENT APP                        BACKEND CORE                      RAZORPAY API
+    │                                  │                                  │
+    │ 1. POST /api/payments/create-order│                                  │
+    │    { bookingId }                 │                                  │
+    │ ───────────────────────────────> │ 2. Compute cost from Vehicle    │
+    │                                  │    record & date math            │
+    │                                  │ 3. Create Order in Sub-units     │
+    │                                  │ ───────────────────────────────> │
+    │                                  │ 4. Return { id: order_xxx }      │
+    │                                  │ <─────────────────────────────── │
+    │ 5. Return order payload          │                                  │
+    │ <─────────────────────────────── │                                  │
+    │                                  │                                  │
+    │ 6. Open Razorpay Modal & Pay     │                                  │
+    │ ──────────────────────────────────────────────────────────────────> │
+    │ 7. Return Payment Signature      │                                  │
+    │ <────────────────────────────────────────────────────────────────── │
+    │                                  │                                  │
+    │ 8. POST /api/payments/verify     │                                  │
+    │    { orderId, paymentId, sig }   │                                  │
+    │ ───────────────────────────────> │ 9. Compute HMAC-SHA256           │
+    │                                  │    Crypto verification           │
+    │                                  │ 10. Update Booking & Payment     │
+    │ 11. Return Success & Receipt     │                                  │
+    │ <─────────────────────────────── │                                  │
+```
+
+### Contractual Refund Matrix
+| Cancellation Horizon | Refund Tier | Implementation Details |
+|:---|:---:|:---|
+| **> 48 hours** prior to rental start | **100% Full Refund** | Automated Razorpay refund transaction; payment status marked `refunded`. |
+| **24 to 48 hours** prior to rental start | **50% Partial Refund** | 50% retained as platform holding fee; balance refunded via Razorpay. |
+| **< 24 hours** prior to rental start | **0% Non-Refundable** | Immediate forfeiture due to fleet blackout reserve costs. |
+
+---
+
+## 🛠️ Engineering Stack & Component Specifications
+
+### Frontend Layer
+- **Framework**: [React 19](https://react.dev/) — Functional components with Hooks, Suspense, and Lazy Loading.
+- **Build Engine**: [Vite 6](https://vitejs.dev/) — Lightning-fast ES modules development and Rollup production bundling.
+- **Styling Architecture**: [Tailwind CSS 4](https://tailwindcss.com/) — High-contrast luxury design tokens, CSS variables, and bespoke scrollbars.
+- **Animation System**: [Framer Motion 11](https://www.framer.com/motion/) — Hardware-accelerated transitions, modal physics, and card hover effects.
+- **Analytics Visualization**: [Recharts 3](https://recharts.org/) — Scalable SVG charts with dynamic tooltips and responsive containers.
+- **State Store**: [Redux Toolkit 2](https://redux-toolkit.js.org/) — Normalized state slices with async thunks for predictable state management.
+
+### Backend Layer
+- **Runtime**: [Node.js 18+ (ESM)](https://nodejs.org/) — Native ECMAScript Modules for clean modular imports.
+- **Web Framework**: [Express 4](https://expressjs.com/) — Enterprise middleware chaining, routing controllers, and centralized error catching.
+- **Database / ORM**: [MongoDB Atlas](https://www.mongodb.com/atlas) with [Mongoose 8](https://mongoosejs.com/) — Strict schema types, automated validators, and document middleware.
+- **Cryptographic Security**: `crypto`, `bcryptjs`, and `jsonwebtoken` — Standardized AES/HMAC hashing and JWT signing.
+- **Media Ingestion**: [Cloudinary v2](https://cloudinary.com/) + [Multer](https://github.com/expressjs/multer) + [Streamifier](https://github.com/gabrielflorit/streamifier) — Zero-disk-write memory buffer stream uploads.
+
+---
+
+## 📂 Monorepo File System Layout
 
 ```
 LUXORIA/
-├── README.md
-├── .gitignore
+├── .gitignore                         # Enterprise root exclusions (Secrets, Caches, OS files)
+├── README.md                          # Master architectural documentation
 │
-├── backend/
-│   ├── src/
-│   │   ├── app.js                     # Express app setup, middleware, route mounting
-│   │   ├── server.js                  # Server bootstrap, DB connection, port binding
-│   │   │
-│   │   ├── config/                    # Service configurations
-│   │   │   ├── db.js                  #   MongoDB Atlas connection
-│   │   │   ├── cloudinary.js          #   Cloudinary SDK setup
-│   │   │   ├── mail.js                #   Nodemailer SMTP transport
-│   │   │   ├── passport.js            #   Google OAuth 2.0 strategy
-│   │   │   └── razorpay.js            #   Razorpay client instance
-│   │   │
-│   │   ├── constants/                 # Application-wide constants
-│   │   │   └── index.js               #   Booking statuses, roles, limits
-│   │   │
-│   │   ├── controllers/               # Route handler logic
-│   │   │   ├── authController.js      #   Register, login, OTP, OAuth, password reset
-│   │   │   ├── userController.js      #   Profile CRUD, avatar management
-│   │   │   ├── vehicleController.js   #   Vehicle CRUD, image management
-│   │   │   ├── bookingController.js   #   Booking lifecycle management
-│   │   │   ├── paymentController.js   #   Razorpay order & verification
-│   │   │   ├── adminController.js     #   User/vendor/vehicle/booking admin ops
-│   │   │   ├── reviewController.js    #   Vehicle review CRUD
-│   │   │   ├── wishlistController.js  #   Wishlist add/remove/list
-│   │   │   ├── notificationController.js  # Notification CRUD & SSE stream
-│   │   │   ├── contactController.js   #   Contact form & support tickets
-│   │   │   ├── newsletterController.js #  Newsletter subscription
-│   │   │   └── masterDataController.js #  Lookup data management
-│   │   │
-│   │   ├── middleware/                # Express middleware
-│   │   │   ├── auth.js                #   JWT verification, role authorization
-│   │   │   ├── errorHandler.js        #   Global error handler
-│   │   │   ├── rateLimiter.js         #   Rate limiting configurations
-│   │   │   ├── upload.js              #   Multer file upload config
-│   │   │   ├── validate.js            #   Joi schema validation wrapper
-│   │   │   └── asyncHandler.js        #   Async error catch wrapper
-│   │   │
-│   │   ├── models/                    # Mongoose schemas
-│   │   │   ├── User.js                #   User accounts & auth
-│   │   │   ├── Vehicle.js             #   Fleet vehicle listings
-│   │   │   ├── Booking.js             #   Rental reservations
-│   │   │   ├── Payment.js             #   Payment transactions
-│   │   │   ├── Review.js              #   Vehicle reviews & ratings
-│   │   │   ├── Wishlist.js            #   User wishlists
-│   │   │   ├── Notification.js        #   System notifications
-│   │   │   ├── ConciergeRequest.js    #   Concierge service requests
-│   │   │   ├── Newsletter.js          #   Newsletter subscriptions
-│   │   │   └── MasterData.js          #   Configurable lookup data
-│   │   │
-│   │   ├── routes/                    # Express route definitions
-│   │   │   ├── authRoutes.js          #   /api/auth/*
-│   │   │   ├── userRoutes.js          #   /api/users/*
-│   │   │   ├── vehicleRoutes.js       #   /api/vehicles/*
-│   │   │   ├── bookingRoutes.js       #   /api/bookings/*
-│   │   │   ├── paymentRoutes.js       #   /api/payments/*
-│   │   │   ├── adminRoutes.js         #   /api/admin/*
-│   │   │   ├── reviewRoutes.js        #   /api/reviews/*
-│   │   │   ├── wishlistRoutes.js      #   /api/wishlist/*
-│   │   │   ├── notificationRoutes.js  #   /api/notifications/*
-│   │   │   ├── contactRoutes.js       #   /api/contact/*
-│   │   │   ├── newsletterRoutes.js    #   /api/newsletter/*
-│   │   │   └── masterDataRoutes.js    #   /api/master-data/*
-│   │   │
-│   │   ├── services/                  # Business logic services
-│   │   │   ├── analyticsService.js    #   MongoDB aggregation pipelines
-│   │   │   ├── authService.js         #   OTP generation & hashing
-│   │   │   ├── emailService.js        #   Branded HTML email templates
-│   │   │   ├── paymentService.js      #   Razorpay order & refund logic
-│   │   │   └── uploadService.js       #   Cloudinary stream upload handler
-│   │   │
-│   │   ├── utils/                     # Shared utilities
-│   │   │   ├── ApiError.js            #   Custom error class
-│   │   │   ├── ApiResponse.js         #   Standardized response wrapper
-│   │   │   ├── apiFeatures.js         #   Query filtering, sorting, pagination
-│   │   │   ├── currency.js            #   Currency formatting helpers
-│   │   │   └── generateId.js          #   Unique ID generation
-│   │   │
-│   │   ├── validations/               # Joi validation schemas
-│   │   │   ├── authValidation.js      #   Auth input schemas
-│   │   │   ├── userValidation.js      #   Profile update schemas
-│   │   │   ├── vehicleValidation.js   #   Vehicle create/update schemas
-│   │   │   ├── bookingValidation.js   #   Booking & cancellation schemas
-│   │   │   └── paymentValidation.js   #   Payment order & verify schemas
-│   │   │
-│   │   └── scripts/                   # Database seed & migration scripts
-│   │       ├── seed.js                #   Vehicle data seeder
-│   │       ├── addVehicleSpecs.js     #   Spec field migration
-│   │       ├── fixVehicleSlugs.js     #   Slug normalization
-│   │       └── updateVendor.js        #   Vendor data updates
+├── backend/                           # API Server Application
+│   ├── .env.example                   # Backend environment template
+│   ├── .gitignore                     # Backend-specific exclusions
+│   ├── package.json                   # Backend dependencies & script definitions
+│   ├── render.yaml                    # Infrastructure blueprint for Render Web Services
 │   │
-│   ├── render.yaml                    # Render deployment configuration
-│   └── package.json
+│   └── src/
+│       ├── app.js                     # Express app setup, CORS, Helmet, RateLimiting, Router
+│       ├── server.js                  # Process bootstrapping, DB connection & port binding
+│       │
+│       ├── config/                    # Infrastructure & vendor initializations
+│       │   ├── db.js                  #   Mongoose connection pool configuration
+│       │   ├── cloudinary.js          #   Cloudinary API credentials
+│       │   ├── mail.js                #   Nodemailer SMTP transport
+│       │   ├── passport.js            #   Google OAuth 2.0 passport strategy
+│       │   └── razorpay.js            #   Razorpay instance setup
+│       │
+│       ├── constants/                 # Domain constants, enums & limits
+│       │   └── index.js
+│       │
+│       ├── controllers/               # Business logic & request handling
+│       │   ├── adminController.js     #   User/vendor auditing & platform analytics
+│       │   ├── authController.js      #   Registration, login, OTP & session rotation
+│       │   ├── bookingController.js   #   Collision prevention & booking lifecycle
+│       │   ├── contactController.js   #   Inquiry dispatch & support ticket routing
+│       │   ├── newsletterController.js#   Newsletter marketing subscriptions
+│       │   ├── notificationController.js# Notification CRUD & SSE stream broadcast
+│       │   ├── paymentController.js   #   Razorpay order creation & signature verification
+│       │   ├── reviewController.js    #   Verified rental rating management
+│       │   ├── userController.js      #   Profile updates, avatar & password changes
+│       │   ├── vehicleController.js   #   Fleet specifications, search & image upload
+│       │   └── wishlistController.js  #   Wishlist toggle & management
+│       │
+│       ├── middleware/                # Express middleware suite
+│       │   ├── auth.js                #   JWT verification & RBAC authorization
+│       │   ├── errorHandler.js        #   Centralized ApiError response formatter
+│       │   ├── rateLimiter.js         #   Sliding-window IP rate limiters
+│       │   ├── upload.js              #   Multer in-memory file buffer handler
+│       │   └── validate.js            #   Joi schema validation interceptor
+│       │
+│       ├── models/                    # Mongoose database models
+│       │   ├── Booking.js             #   Rental reservations & collision intervals
+│       │   ├── ConciergeRequest.js    #   VIP chauffeur and delivery orders
+│       │   ├── Newsletter.js          #   VIP newsletter subscriptions
+│       │   ├── Notification.js        #   In-app alerts & SSE event models
+│       │   ├── Payment.js             #   Transaction logs & refund audits
+│       │   ├── Review.js              #   Vehicle ratings and customer feedback
+│       │   ├── User.js                #   Identity records, credentials & RBAC roles
+│       │   ├── Vehicle.js             #   Fleet catalog & Cloudinary media links
+│       │   └── Wishlist.js            #   Saved customer vehicle bookmarks
+│       │
+│       ├── routes/                    # API route definitions
+│       │   ├── adminRoutes.js
+│       │   ├── authRoutes.js
+│       │   ├── bookingRoutes.js
+│       │   ├── contactRoutes.js
+│       │   ├── newsletterRoutes.js
+│       │   ├── notificationRoutes.js
+│       │   ├── paymentRoutes.js
+│       │   ├── reviewRoutes.js
+│       │   ├── userRoutes.js
+│       │   └── vehicleRoutes.js
+│       │
+│       ├── services/                  # Business service implementations
+│       │   ├── analyticsService.js    #   11-Pipeline MongoDB aggregations
+│       │   ├── authService.js         #   Cryptographic OTP generation
+│       │   ├── emailService.js        #   Branded HTML mail templates
+│       │   ├── paymentService.js      #   Razorpay order & refund logic
+│       │   └── uploadService.js       #   Cloudinary stream buffer pipeline
+│       │
+│       ├── utils/                     # Shared helpers & wrappers
+│       │   ├── ApiError.js            #   Standard operational error abstraction
+│       │   ├── ApiResponse.js         #   Consistent JSON envelope formatter
+│       │   ├── apiFeatures.js         #   Query filtering, search & pagination
+│       │   └── currency.js            #   Price and currency formatting utilities
+│       │
+│       └── validations/               # Joi request schema definitions
+│           ├── authValidation.js
+│           ├── bookingValidation.js
+│           ├── paymentValidation.js
+│           ├── userValidation.js
+│           └── vehicleValidation.js
 │
-└── frontend/
-    ├── index.html                     # Entry HTML with SEO meta tags
-    ├── vercel.json                    # Vercel deployment & SPA rewrites
-    ├── vite.config.js                 # Vite build configuration
-    ├── eslint.config.js               # ESLint flat config
-    │
-    ├── public/                        # Static assets (favicon, images)
+└── frontend/                          # Vite 6 + React 19 Client
+    ├── .env.example                   # Client environment template
+    ├── .gitignore                     # Frontend-specific exclusions
+    ├── index.html                     # HTML5 shell with luxury typography
+    ├── package.json                   # Client dependencies & scripts
+    ├── vercel.json                    # Vercel SPA routing redirects
+    ├── vite.config.js                 # Vite bundler, chunks & proxy config
     │
     └── src/
         ├── App.jsx                    # Root application component
-        ├── main.jsx                   # React DOM entry point
+        ├── main.jsx                   # React 19 bootstrap entry
         │
-        ├── app/                       # Redux store configuration
+        ├── app/                       # Redux Toolkit store definition
+        │   └── store.js
         │
-        ├── components/                # Reusable UI components
-        │   ├── auth/                  #   OTP modal, OAuth button, auth forms
-        │   ├── common/                #   Navbar, Footer, Modals, Loading states
-        │   └── ui/                    #   Design system primitives (buttons, inputs)
+        ├── components/                # Reusable UI component library
+        │   ├── auth/                  #   OTP modal, OAuth button, login forms
+        │   ├── common/                #   Navbar, Footer, Modals, Spinners
+        │   └── ui/                    #   Buttons, Badges, Inputs, Dialogs
         │
-        ├── hooks/                     # Custom React hooks
-        │   └── useWishlist.js         #   Wishlist state management hook
+        ├── layouts/                   # Layout scaffolds
+        │   ├── AdminDashboardLayout.jsx
+        │   ├── DashboardLayout.jsx    #   Client user portal layout
+        │   ├── MainLayout.jsx         #   Public storefront layout
+        │   └── VendorDashboardLayout.jsx
         │
-        ├── layouts/                   # Page layout wrappers
-        │   ├── MainLayout.jsx         #   Public pages (navbar + footer)
-        │   ├── DashboardLayout.jsx    #   User dashboard with sidebar
-        │   ├── VendorDashboardLayout.jsx  # Vendor dashboard with sidebar
-        │   └── AdminDashboardLayout.jsx   # Admin dashboard with sidebar
+        ├── pages/                     # Routed page views
+        │   ├── admin/                 #   Admin dashboard, user audit, fleet audit
+        │   ├── public/                #   Home, About, Contact, Collections, Auth
+        │   │   ├── NotFoundPage.jsx   #   Bespoke luxury 404 handler
+        │   │   └── UnauthorizedPage.jsx#  Access denied 403 handler
+        │   ├── user/                  #   User dashboard, bookings, payments, profile
+        │   ├── vehicles/              #   Vehicle catalog, details, booking checkout
+        │   └── vendor/                #   Vendor dashboard, fleet wizard, availability
         │
-        ├── pages/                     # Page-level components
-        │   ├── public/                #   HomePage, Login, Register, About, Contact,
-        │   │   │                      #   Collections, Experience, Legal pages,
-        │   │   │                      #   Vendor Signup, OAuth Callback,
-        │   │   │                      #   Forgot/Reset Password
-        │   │   └── components/        #   Public page sub-components
-        │   │
-        │   ├── vehicles/             #   VehicleList, VehicleDetails, BookingSuccess
-        │   │   ├── components/        #   Vehicle page sub-components
-        │   │   ├── sections/          #   Vehicle page section components
-        │   │   └── data/              #   Static vehicle data
-        │   │
-        │   ├── user/                  #   Dashboard, Bookings, Payments, Invoices,
-        │   │                          #   Profile, Reviews, Wishlist, Notifications,
-        │   │                          #   Messages, Support
-        │   │
-        │   ├── vendor/                #   Overview, AddVehicle, EditVehicle,
-        │   │                          #   ManageFleet, Bookings, Availability,
-        │   │                          #   Revenue, Analytics, Support
-        │   │
-        │   └── admin/                 #   Overview, UserMgmt, VendorMgmt,
-        │                              #   FleetApprovals, Bookings, Collections,
-        │                              #   Concierge, Analytics, Calendar, Login
-        │
-        ├── providers/                 # Context providers
-        │
-        ├── redux/                     # Redux state management
+        ├── redux/                     # Redux slices
         │   └── slices/
-        │       ├── authSlice.js       #   Authentication state & async thunks
-        │       ├── vehicleSlice.js    #   Vehicle listing state
-        │       ├── bookingSlice.js    #   Booking management state
-        │       ├── vendorSlice.js     #   Vendor operations state
-        │       ├── adminSlice.js      #   Admin operations state
-        │       ├── dashboardSlice.js  #   Dashboard analytics state
-        │       ├── reviewSlice.js     #   Reviews state
-        │       ├── notificationSlice.js # Notification state
-        │       └── uiSlice.js         #   UI toggle state
+        │       ├── adminSlice.js
+        │       ├── authSlice.js
+        │       ├── bookingSlice.js
+        │       ├── dashboardSlice.js
+        │       ├── notificationSlice.js
+        │       ├── reviewSlice.js
+        │       ├── uiSlice.js
+        │       ├── vehicleSlice.js
+        │       └── vendorSlice.js
         │
-        ├── routes/                    # Client-side routing
-        │   ├── AppRoutes.jsx          #   Route definitions & lazy loading
-        │   ├── ProtectedRoute.jsx     #   Auth-required route guard
-        │   ├── RoleRoute.jsx          #   Role-based route guard
-        │   └── GuestRoute.jsx         #   Redirect-if-logged-in guard
+        ├── routes/                    # Client route definitions & guards
+        │   ├── AppRoutes.jsx          #   Lazy-loaded route mapping
+        │   ├── GuestRoute.jsx         #   Guest-only route guard
+        │   ├── ProtectedRoute.jsx     #   Authenticated user guard
+        │   └── RoleRoute.jsx          #   RBAC authorization guard
         │
-        ├── sections/                  # Modular page sections (46 components)
-        │   ├── HeroSection.jsx        #   Animated homepage hero
-        │   ├── FeaturedVehicles.jsx   #   Featured car carousel
-        │   ├── About*.jsx             #   About page sections
-        │   ├── Contact*.jsx           #   Contact page sections
-        │   ├── Experience*.jsx        #   Experience page sections
-        │   ├── Collection*.jsx        #   Collection page sections
-        │   └── ...                    #   CTA, FAQ, Stats, Testimonials, etc.
-        │
-        ├── services/                  # API layer
-        │   └── api.js                 #   Axios instance with interceptors
-        │
-        ├── styles/                    # Global stylesheets
-        │
-        ├── lib/                       # Utility libraries
-        │
-        └── utils/                     # Helper functions
+        ├── sections/                  # Modular landing page sections
+        ├── services/                  # Axios HTTP client with auto-refresh
+        └── styles/                    # Global Tailwind CSS tokens
 ```
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Local Development & Environment Setup
 
 ### Prerequisites
+- **Node.js**: `v18.0.0` or higher
+- **npm**: `v9.0.0` or higher
+- **MongoDB Atlas**: An active connection string
+- **External API Keys**: Razorpay (Test mode), Cloudinary, Nodemailer SMTP credentials
 
-| Requirement | Minimum Version |
-|-------------|----------------|
-| Node.js | v18.0.0+ |
-| npm | v9.0.0+ |
-| MongoDB Atlas | Active cluster (or local MongoDB) |
-| Razorpay Account | Test Key ID & Secret |
-| Cloudinary Account | Cloud name, API key & secret |
-| Google Cloud Console | OAuth 2.0 Client ID & Secret |
-| Gmail App Password | For SMTP email delivery |
+### Step-by-Step Installation
 
-### Step 1 — Clone the Repository
-
+#### 1. Repository Ingestion
 ```bash
 git clone https://github.com/Aaryan-9784/Luxoria.git
 cd Luxoria
 ```
 
-### Step 2 — Install Dependencies
-
+#### 2. Environment Configuration
+Duplicate the provided example templates:
 ```bash
-# Backend
-cd backend
-npm install
-
-# Frontend (open new terminal)
-cd frontend
-npm install
-```
-
-### Step 3 — Configure Environment Variables
-
-```bash
-# Copy example env files
+# Setup backend configuration
 cp backend/.env.example backend/.env
+
+# Setup frontend configuration
 cp frontend/.env.example frontend/.env
 ```
+*(Populate the variables with your sandbox/test credentials—see [Environment Variables Reference](#-environment-variables-reference)).*
 
-Edit both `.env` files with your credentials — see [Environment Variables](#-environment-variables) below.
+#### 3. Dependency Installation
+```bash
+# Install backend dependencies
+cd backend
+npm install
 
-### Step 4 — Start Development Servers
+# Install frontend dependencies
+cd ../frontend
+npm install
+```
+
+#### 4. Launch Local Development Services
+Execute both services in dedicated terminal instances:
 
 ```bash
-# Terminal 1 — Backend
+# Terminal 1: Backend Express Server
 cd backend
 npm run dev
+# Expected Output: ✓ MongoDB connected: ac-my2u6p0-shard...
+# Server running at: http://localhost:5000
 ```
-> 🚀 **Backend API:** `http://localhost:5000`
 
 ```bash
-# Terminal 2 — Frontend
+# Terminal 2: Frontend Vite Server
 cd frontend
 npm run dev
-```
-> 🌐 **Frontend App:** `http://localhost:5173`
-
-### Step 5 — Seed Database *(Optional)*
-
-```bash
-# From the backend directory
-node src/scripts/seed.js
+# Expected Output: VITE v6.x ready in XXX ms
+# Client accessible at: http://localhost:5173
 ```
 
 ---
 
-## 🔑 Environment Variables
+## 🔑 Environment Variables Reference
 
-### `backend/.env`
+### Backend Configuration (`backend/.env`)
 
-```env
-# ── Application ──────────────────────────────────
-PORT=5000
-NODE_ENV=development
-CLIENT_URL=http://localhost:5173
+| Variable | Type | Required | Description | Example / Default |
+|:---|:---:|:---:|:---|:---|
+| `PORT` | Number | Optional | Express server binding port | `5000` |
+| `NODE_ENV` | String | Required | Environment mode (`development` / `production`) | `development` |
+| `CLIENT_URL` | String | Required | Allowed CORS origin for client requests | `http://localhost:5173` |
+| `MONGODB_URI` | String | Required | MongoDB Atlas replica set URI targeting `Luxoria2` | `mongodb://...:27017/Luxoria2?ssl=true...` |
+| `JWT_ACCESS_SECRET` | String | Required | Cryptographic secret for signing access tokens (min 32 chars) | `32+ character random string` |
+| `JWT_REFRESH_SECRET`| String | Required | Cryptographic secret for signing refresh tokens (min 32 chars)| `32+ character random string` |
+| `JWT_ACCESS_EXPIRES_IN` | String | Optional | Lifetime duration for access tokens | `15m` |
+| `JWT_REFRESH_EXPIRES_IN`| String | Optional | Lifetime duration for refresh tokens | `7d` |
+| `RAZORPAY_KEY_ID` | String | Required | Razorpay public key ID | `rzp_test_...` |
+| `RAZORPAY_KEY_SECRET` | String | Required | Razorpay private secret for HMAC signatures | `your_secret_key` |
+| `CLOUDINARY_CLOUD_NAME` | String | Required | Cloudinary organization name | `your_cloud_name` |
+| `CLOUDINARY_API_KEY` | String | Required | Cloudinary API access key | `your_api_key` |
+| `CLOUDINARY_API_SECRET` | String | Required | Cloudinary API secret | `your_api_secret` |
+| `SMTP_HOST` | String | Required | SMTP host address | `smtp.gmail.com` |
+| `SMTP_PORT` | Number | Required | SMTP TLS port | `587` |
+| `SMTP_USER` | String | Required | SMTP authentication username / email | `your_email@gmail.com` |
+| `SMTP_PASS` | String | Required | SMTP app password | `your_app_password` |
+| `SMTP_FROM` | String | Required | Sender address for system emails | `noreply@luxoria.com` |
+| `GOOGLE_CLIENT_ID` | String | Optional | Google OAuth 2.0 Web Client ID | `client_id.apps.googleusercontent.com` |
+| `GOOGLE_CLIENT_SECRET` | String | Optional | Google OAuth 2.0 Client Secret | `client_secret` |
+| `GOOGLE_CALLBACK_URL` | String | Optional | Google OAuth redirection callback | `http://localhost:5000/api/auth/google/callback` |
 
-# ── MongoDB ──────────────────────────────────────
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/luxoria?retryWrites=true&w=majority
+### Frontend Configuration (`frontend/.env`)
 
-# ── JWT Tokens ───────────────────────────────────
-JWT_ACCESS_SECRET=your_super_secret_access_key_min_32_characters
-JWT_REFRESH_SECRET=your_super_secret_refresh_key_min_32_characters
-JWT_ACCESS_EXPIRES_IN=15m
-JWT_REFRESH_EXPIRES_IN=7d
+| Variable | Type | Required | Description | Example / Default |
+|:---|:---:|:---:|:---|:---|
+| `VITE_API_URL` | String | Required | Fully qualified path to Backend API | `http://localhost:5000/api` |
+| `VITE_RAZORPAY_KEY_ID` | String | Required | Razorpay public key for checkout modal | `rzp_test_...` |
 
-# ── Google OAuth 2.0 ────────────────────────────
-GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+---
 
-# ── Razorpay ─────────────────────────────────────
-RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
-RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+## 📡 REST API Specification
 
-# ── Cloudinary ───────────────────────────────────
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+**Base Production URL**: `https://<api-domain>/api`  
+**Local Development URL**: `http://localhost:5000/api`
 
-# ── SMTP Email (Nodemailer) ─────────────────────
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_google_app_password
-SMTP_FROM=noreply@luxoria.com
+### 1. Authentication & Session Services (`/api/auth`)
+| HTTP | Route Path | Access | Payload / Query | Functional Description |
+|:---|:---|:---:|:---|:---|
+| `POST` | `/register` | Public | `{ name, email, password, phone }` | Registers client profile and provisions account. |
+| `POST` | `/login` | Public | `{ email, password }` | Validates credentials and sends 6-digit email OTP. |
+| `POST` | `/vendor/login` | Public | `{ email, password }` | Vendor portal login with OTP verification. |
+| `POST` | `/admin/login` | Public | `{ email, password }` | Admin governance login with OTP verification. |
+| `POST` | `/verify-otp` | Public | `{ email, otp }` | Verifies SHA-256 OTP; sets refresh cookie & returns access token. |
+| `POST` | `/resend-otp` | Public | `{ email }` | Dispatches new OTP code subject to rate limits. |
+| `POST` | `/refresh` | Public | *(HTTP-only cookie)* | Rotates refresh token and returns new access token. |
+| `POST` | `/forgot-password` | Public | `{ email }` | Generates reset token and dispatches recovery email. |
+| `PUT` | `/reset-password/:token` | Public | `{ password }` | Resets password with cryptographic token. |
+| `POST` | `/logout` | Public | *(HTTP-only cookie)* | Invalidates session and clears refresh cookie. |
+| `GET` | `/me` | Protected | Bearer Token | Retrieves authenticated identity profile. |
+| `GET` | `/google` | Public | None | Initiates Google OAuth 2.0 authentication flow. |
+| `GET` | `/google/callback` | Public | Query params | OAuth callback; redirects with session token. |
 
-# ── Admin ────────────────────────────────────────
-ADMIN_EMAIL=admin@luxoria.com
+### 2. Vehicle Fleet Ingestion & Search (`/api/vehicles`)
+| HTTP | Route Path | Access | Payload / Query | Functional Description |
+|:---|:---|:---:|:---|:---|
+| `GET` | `/` | Public | `page, limit, brand, minPrice, maxPrice` | Paginated search across all approved fleet vehicles. |
+| `GET` | `/featured` | Public | None | Retrieves curated flagship vehicles for showcase. |
+| `GET` | `/vendor` | Vendor | None | Retrieves fleet units belonging to authenticated vendor. |
+| `GET` | `/:id` | Public | Route parameter | Detailed vehicle specs, gallery, and rates. |
+| `POST` | `/` | Vendor | Vehicle spec payload | Submits new vehicle listing for administrative review. |
+| `PUT` | `/:id` | Vendor | Vehicle update payload | Modifies pricing, specs, or availability of vendor vehicle. |
+| `DELETE`| `/:id` | Vendor | Route parameter | Retires vehicle listing from active catalog. |
+| `POST` | `/:id/images` | Vendor | `multipart/form-data` | Direct memory stream upload of gallery photos to Cloudinary. |
+| `DELETE`| `/:id/images/:imageId` | Vendor | Route parameters | Deletes specific photo asset from Cloudinary & vehicle document. |
+
+### 3. Reservation & Booking Operations (`/api/bookings`)
+| HTTP | Route Path | Access | Payload / Query | Functional Description |
+|:---|:---|:---:|:---|:---|
+| `GET` | `/` | Protected | `page, limit, status` | Retrieves user-scoped booking history. |
+| `POST` | `/` | User | `{ vehicleId, startDate, endDate }` | Creates reservation with date collision check. |
+| `GET` | `/my` | User | None | Retrieves personal rental portfolio. |
+| `GET` | `/vendor` | Vendor | None | Retrieves booking requests for vendor's fleet. |
+| `GET` | `/:id` | Protected | Route parameter | Fetches granular booking details and status. |
+| `PUT` | `/:id/status` | Vendor/Admin| `{ status }` | Advances booking lifecycle (`confirmed`, `active`, `completed`). |
+| `PUT` | `/:id/cancel` | User | `{ cancellationReason }` | Cancels booking and triggers contractual refund tier. |
+
+### 4. Financial Clearing & Verification (`/api/payments`)
+| HTTP | Route Path | Access | Payload / Query | Functional Description |
+|:---|:---|:---:|:---|:---|
+| `POST` | `/create-order` | User | `{ bookingId }` | Generates verified Razorpay order with server pricing. |
+| `POST` | `/verify` | User | `{ orderId, paymentId, signature }` | Verifies HMAC-SHA256 signature and confirms booking. |
+| `GET` | `/:bookingId` | Protected | Route parameter | Returns payment receipt and transaction history. |
+
+### 5. Enterprise Governance (`/api/admin`)
+| HTTP | Route Path | Access | Payload / Query | Functional Description |
+|:---|:---|:---:|:---|:---|
+| `GET` | `/users` | Admin | `page, limit, search` | Comprehensive account management directory. |
+| `PUT` | `/users/:id/status` | Admin | `{ status: 'active' \| 'banned' }` | Suspends or reinstates user accounts. |
+| `GET` | `/vendors` | Admin | None | Directory of registered fleet concessionaires. |
+| `PUT` | `/vendors/:id/approve` | Admin | `{ status: 'approved' \| 'rejected' }` | Reviews and approves vendor onboarding. |
+| `GET` | `/vehicles` | Admin | None | Platform-wide fleet listing for auditing. |
+| `PUT` | `/vehicles/:id/approve`| Admin | `{ status: 'approved' \| 'rejected' }` | Approves vehicle for public marketplace listing. |
+| `DELETE`| `/vehicles/:id` | Admin | Route parameter | Platform-wide administrative removal of vehicle. |
+| `GET` | `/bookings` | Admin | None | Platform-wide master reservation ledger. |
+| `GET` | `/analytics` | Admin | None | Executes 11-pipeline aggregation dashboard. |
+| `GET` | `/concierge` | Admin | None | Queue of VIP delivery and chauffeur requests. |
+| `PUT` | `/concierge/:id/status`| Admin | `{ status }` | Updates concierge dispatch state. |
+
+---
+
+## 🚢 Production Deployment & Runbooks
+
+### Frontend Deployment Pipeline (Vercel Edge Network)
+1. Link your GitHub repository directly to [Vercel](https://vercel.com).
+2. Configure **Root Directory** as `frontend`.
+3. Select **Vite** as the framework preset.
+4. Supply Production Environment Variables:
+   - `VITE_API_URL`: Your live backend API base URL (`https://api.luxoria.com/api`).
+   - `VITE_RAZORPAY_KEY_ID`: Live Razorpay Key ID.
+5. Deploy. The committed [frontend/vercel.json](file:///d:/Projects/Luxoria/frontend/vercel.json) automatically enforces single-page rewrite rules for client-side routing.
+
+### Backend Deployment Pipeline (Render Web Services)
+1. Link your GitHub repository to [Render](https://render.com) as a **Web Service**.
+2. Specify **Root Directory** as `backend`.
+3. Set **Runtime** to `Node`.
+4. Define commands:
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start` (executes `node src/server.js`)
+5. Populate all Production Secrets from `backend/.env`.
+6. Ensure the live frontend domain is appended to `CLIENT_URL` to allow CORS requests.
+
+---
+
+## 📈 Performance, Observability & Auditing
+
+### Frontend Build Optimization
+The client application uses Vite 6 with custom chunk-splitting definitions to ensure fast initial page loads:
+- **Core Vendor Chunk**: React 19, React DOM, Redux Toolkit (`vendor.js`)
+- **Animation Chunk**: Framer Motion (`motion.js`)
+- **Data Visualization Chunk**: Recharts, D3 Shape (`charts.js`)
+- **Iconography Chunk**: Lucide React (`icons.js`)
+
+```
+✓ 2,734 modules transformed
+dist/index.html                                 2.10 kB │ gzip:   0.75 kB
+dist/assets/index-B_B_jZUm.css                216.13 kB │ gzip:  30.28 kB
+dist/assets/HomePage-DTjmrgik.js               20.67 kB │ gzip:   5.65 kB
+dist/assets/VehicleListPage-CeWOdrlK.js        42.52 kB │ gzip:  11.14 kB
+dist/assets/VehicleDetailsPage-C7ABUkw6.js     27.43 kB │ gzip:   7.29 kB
+dist/assets/vendor-D1fhGqJk.js                 83.80 kB │ gzip:  30.12 kB
+dist/assets/motion-ObLjuJ-N.js                127.63 kB │ gzip:  42.94 kB
+dist/assets/charts-COGjlqLp.js                335.69 kB │ gzip:  95.93 kB
+dist/assets/index-mOL5PAkE.js                 381.26 kB │ gzip: 110.43 kB
+✓ Built in 17.12s
 ```
 
-### `frontend/.env`
-
-```env
-VITE_API_URL=http://localhost:5000/api
-VITE_RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
+### Health Check & Uptime Telemetry
+- **Liveness & Readiness Probe**: `GET /api/health`
+- **Expected Response**:
+```json
+{
+  "success": true,
+  "message": "LUXORIA API is running",
+  "timestamp": "2026-09-13T17:25:01.297Z",
+  "environment": "development"
+}
 ```
 
 ---
 
-## 🔐 Security & Authentication
+## ⚖️ Corporate Governance, Legal & Licensing
 
-### 2-Step OTP Authentication Flow
+### Open Source & Enterprise Licensing
+This project is distributed under the **MIT License**. You are free to inspect, adapt, fork, and self-host the source code in accordance with the terms laid out in the `LICENSE` document.
 
-```
-┌──────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Login   │────▶│  Verify      │────▶│  Generate    │────▶│  Email OTP   │
-│  Form    │     │  Password    │     │  6-Digit OTP │     │  to User     │
-│          │     │  (bcrypt)    │     │  (SHA-256)   │     │  (Nodemailer)│
-└──────────┘     └──────────────┘     └──────────────┘     └──────┬───────┘
-                                                                   │
-┌──────────┐     ┌──────────────┐     ┌──────────────┐            │
-│  Access  │◀────│  Issue JWT   │◀────│  Verify OTP  │◀───────────┘
-│  Granted │     │  Tokens      │     │  Input       │
-└──────────┘     └──────────────┘     └──────────────┘
-```
-
-1. User submits email & password on the login form
-2. Server verifies password hash via **bcrypt**
-3. Server generates a random 6-digit OTP, computes **SHA-256 hash**, saves it in MongoDB with **10-minute expiration**
-4. Server emails the plain 6-digit OTP code via **Nodemailer** using a branded HTML template
-5. User inputs the OTP code on the verification modal
-6. Server verifies OTP hash, issues **JWT access token** (in memory) and sets **HTTP-only refresh cookie**
-
-### Security Middleware Stack
-
-| Middleware | Purpose |
-|-----------|---------|
-| `helmet` | Sets secure HTTP headers |
-| `hpp` | Protects against HTTP parameter pollution |
-| `express-rate-limit` | Configurable rate limiting (auth, uploads, general) |
-| `express-mongo-sanitize` | Prevents NoSQL injection attacks |
-| `cors` | Configurable cross-origin resource sharing |
-| `cookie-parser` | Parses HTTP-only refresh token cookies |
-
----
-
-## 💳 Payment & Refund Architecture
-
-```
- Client                    Backend                     Razorpay
-   │                         │                            │
-   │  1. Select Dates        │                            │
-   │  ────────────────▶      │                            │
-   │                         │  2. Create Order            │
-   │                         │  ─────────────────────────▶│
-   │                         │       Order ID              │
-   │                         │  ◀─────────────────────────│
-   │  3. Razorpay Modal      │                            │
-   │  ◀──────────────────    │                            │
-   │                         │                            │
-   │  4. Payment Complete    │                            │
-   │  ────────────────▶      │                            │
-   │                         │  5. Verify HMAC-SHA256      │
-   │                         │     Signature               │
-   │                         │                            │
-   │  6. Booking Confirmed   │                            │
-   │  ◀──────────────────    │                            │
-   │                         │  7. Email Receipt           │
-   │                         │  ─────────────────────────▶│
-   └─────────────────────────┴────────────────────────────┘
-```
-
-### Cancellation Refund Policy
-
-| Timeframe | Refund | Description |
-|-----------|--------|-------------|
-| **> 48 hours** before start | 💯 100% | Full refund via Razorpay |
-| **24 – 48 hours** before start | 🔸 50% | Partial refund via Razorpay |
-| **< 24 hours** before start | ❌ 0% | No refund applicable |
-
----
-
-## 📡 API Endpoint Reference
-
-> **Base URL:** `http://localhost:5000/api`
-
-### 🔐 Authentication — `/api/auth`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `POST` | `/register` | Public | Register new client account |
-| `POST` | `/login` | Public | Submit credentials & trigger 2FA OTP |
-| `POST` | `/vendor/login` | Public | Vendor-specific login with OTP |
-| `POST` | `/admin/login` | Public | Admin-specific login with OTP |
-| `POST` | `/verify-otp` | Public | Verify 6-digit login OTP code |
-| `POST` | `/resend-otp` | Public | Resend expired OTP code |
-| `POST` | `/refresh` | Public | Rotate refresh token for new access token |
-| `POST` | `/forgot-password` | Public | Initiate password reset via email |
-| `PUT` | `/reset-password/:token` | Public | Reset password with valid token |
-| `POST` | `/logout` | Public | Clear HTTP-only session cookies |
-| `GET` | `/me` | Protected | Fetch authenticated user profile |
-| `GET` | `/google` | Public | Initiate Google OAuth 2.0 flow |
-| `GET` | `/google/callback` | Public | Google OAuth callback handler |
-
-### 👤 Users — `/api/users`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `GET` | `/me` | Protected | Get current user profile |
-| `PUT` | `/me` | Protected | Update profile information |
-| `PUT` | `/me/avatar` | Protected | Upload avatar image (file) |
-| `PUT` | `/me/avatar-url` | Protected | Update avatar via URL |
-| `DELETE` | `/me/avatar` | Protected | Remove avatar |
-| `PUT` | `/me/password` | Protected | Change password |
-
-### 🚗 Vehicles — `/api/vehicles`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `GET` | `/` | Public | Search & filter luxury vehicles |
-| `GET` | `/featured` | Public | Get featured vehicle listings |
-| `GET` | `/vendor` | Vendor | Get vendor's own vehicles |
-| `GET` | `/:id` | Public | Get vehicle details by ID |
-| `POST` | `/` | Vendor | Submit new vehicle for approval |
-| `PUT` | `/:id` | Vendor | Update vehicle details |
-| `DELETE` | `/:id` | Vendor | Remove vehicle listing |
-| `POST` | `/:id/images` | Vendor | Upload vehicle images (rate limited) |
-| `DELETE` | `/:id/images/:imageId` | Vendor | Delete specific vehicle image |
-
-### 📅 Bookings — `/api/bookings`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `GET` | `/` | Protected | List all bookings (user scoped) |
-| `POST` | `/` | User | Create booking reservation |
-| `GET` | `/my` | User | List user's own booking history |
-| `GET` | `/vendor` | Vendor | List bookings for vendor's fleet |
-| `GET` | `/:id` | Protected | Get booking details by ID |
-| `PUT` | `/:id/status` | Vendor / Admin | Update booking status |
-| `PUT` | `/:id/cancel` | User | Cancel a booking (triggers refund) |
-
-### 💳 Payments — `/api/payments`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `POST` | `/create-order` | User | Create Razorpay order with price calculation |
-| `POST` | `/verify` | User | Verify HMAC-SHA256 payment signature |
-| `GET` | `/:bookingId` | Protected | Get payment details for a booking |
-
-### ⭐ Reviews — `/api/reviews`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `GET` | `/my` | User | Get user's own reviews |
-| `GET` | `/:vehicleId` | Public | Get all reviews for a vehicle |
-| `POST` | `/:vehicleId` | User | Submit a new review |
-| `PUT` | `/:id` | User | Edit own review |
-| `DELETE` | `/:id` | Protected | Delete a review |
-
-### ❤️ Wishlist — `/api/wishlist`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `GET` | `/` | Protected | Get user's wishlist |
-| `POST` | `/:vehicleId` | Protected | Add vehicle to wishlist |
-| `DELETE` | `/:vehicleId` | Protected | Remove vehicle from wishlist |
-
-### 🔔 Notifications — `/api/notifications`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `GET` | `/stream` | Protected | SSE notification stream (real-time) |
-| `GET` | `/` | Protected | Get all notifications |
-| `PUT` | `/read-all` | Protected | Mark all as read |
-| `PUT` | `/:id/read` | Protected | Mark single notification as read |
-| `DELETE` | `/` | Protected | Delete all notifications |
-| `DELETE` | `/:id` | Protected | Delete single notification |
-
-### 📬 Contact — `/api/contact`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `POST` | `/` | Public | Submit general inquiry |
-| `POST` | `/vendor` | Public | Submit vendor contact request |
-| `POST` | `/support-ticket` | Protected | Submit support ticket (email to admin) |
-
-### 📰 Newsletter — `/api/newsletter`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `POST` | `/subscribe` | Public | Subscribe to email newsletter |
-
-### 🛡️ Admin — `/api/admin`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `GET` | `/users` | Admin | List all platform users |
-| `PUT` | `/users/:id/status` | Admin | Update user account status |
-| `GET` | `/vendors` | Admin | List all vendors |
-| `PUT` | `/vendors/:id/approve` | Admin | Approve/reject vendor application |
-| `GET` | `/vehicles` | Admin | List all vehicles platform-wide |
-| `PUT` | `/vehicles/:id/approve` | Admin | Approve/reject vehicle listing |
-| `DELETE` | `/vehicles/:id` | Admin | Remove vehicle from platform |
-| `GET` | `/bookings` | Admin | List all bookings platform-wide |
-| `GET` | `/analytics` | Admin | Get platform analytics aggregations |
-| `GET` | `/concierge` | Admin | List all concierge requests |
-| `PUT` | `/concierge/:id/status` | Admin | Update concierge request status |
-
-### 📊 Master Data — `/api/master-data`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| `GET` | `/:category` | Public | Get lookup data by category |
-| `POST` | `/` | Admin | Create new master data entry |
-| `PUT` | `/:id` | Admin | Update master data entry |
-| `DELETE` | `/:id` | Admin | Delete master data entry |
-
----
-
-## 🚢 Deployment Guide
-
-### Frontend → Vercel
-
-1. **Connect** your GitHub repository to [Vercel](https://vercel.com)
-2. **Root Directory:** `frontend`
-3. **Build Command:** `npm run build`
-4. **Output Directory:** `dist`
-5. **Framework Preset:** Vite
-6. **Environment Variables:**
-   - `VITE_API_URL` → Your deployed backend URL (e.g., `https://luxoria-api.onrender.com/api`)
-   - `VITE_RAZORPAY_KEY_ID` → Your Razorpay live/test key ID
-
-> **Note:** The `vercel.json` file already includes SPA rewrite rules for client-side routing.
-
-### Backend → Render
-
-1. **Connect** your GitHub repository to [Render](https://render.com)
-2. **Root Directory:** `backend`
-3. **Build Command:** `npm install`
-4. **Start Command:** `npm start` (runs `node src/server.js`)
-5. **Add all environment variables** from `backend/.env`
-
-> **Note:** The `render.yaml` blueprint is included for one-click Render deployment.
-
-### Post-Deployment Checklist
-
-- [ ] Update `CLIENT_URL` in backend `.env` to your Vercel deployment URL
-- [ ] Update `GOOGLE_CALLBACK_URL` to use your Render backend URL
-- [ ] Update `VITE_API_URL` in frontend `.env` to your Render backend URL
-- [ ] Add your Vercel domain to the CORS whitelist in `app.js`
-- [ ] Switch Razorpay keys from test to live mode for production
-- [ ] Verify MongoDB Atlas network access includes Render's IP ranges
-
----
-
-## 🤝 Contributing & License
-
-Contributions, issues, and feature requests are welcome!
-Feel free to check the [issues page](https://github.com/Aaryan-9784/Luxoria/issues).
-
-### Contributing
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
-
-### License
-
-Distributed under the **MIT License**.
+### Contributions & Engineering Guidelines
+We welcome contributions, security disclosures, and architectural feedback:
+1. **Fork** the master branch.
+2. Create your isolated feature branch (`git checkout -b feature/enterprise-enhancement`).
+3. Commit structured changes with descriptive conventional commits (`git commit -m 'feat: implement webhook verification'`).
+4. Push to your branch (`git push origin feature/enterprise-enhancement`).
+5. Open an official Pull Request.
 
 ---
 
 <div align="center">
 
-### 👨‍💻 Developer
+### 🏛️ Engineering Leadership
 
-**Aryan Patel** — Full-Stack Developer & Creator
+**Aryan Patel** — Chief Architect & Full-Stack Lead
 
 [![GitHub](https://img.shields.io/badge/GitHub-Aaryan--9784-181717?logo=github&logoColor=white&style=for-the-badge)](https://github.com/Aaryan-9784)
-[![Email](https://img.shields.io/badge/Email-aaryanpatel9784-EA4335?logo=gmail&logoColor=white&style=for-the-badge)](mailto:aaryanpatel9784@gmail.com)
+[![Email](https://img.shields.io/badge/Corporate_Email-aaryanpatel9784-EA4335?logo=gmail&logoColor=white&style=for-the-badge)](mailto:aaryanpatel9784@gmail.com)
 
----
+<br />
 
-© 2026 **LUXORIA Premium Private Limited**. All Rights Reserved.
+**LUXORIA™ Premium Private Limited** · Corporate Head Office: Gujarat, India  
+**Direct Concierge / Executive Contact**: [aaryanpatel9784@gmail.com](mailto:aaryanpatel9784@gmail.com) · +91 82380 12515
 
-**Contact:** [aaryanpatel9784@gmail.com](mailto:aaryanpatel9784@gmail.com) · +91 82380 12515
+<br />
 
-Built with ❤️ using the MERN Stack
+*© 2026 LUXORIA Premium Private Limited. All intellectual property, trademarks, and associated brand assets are reserved.*
 
 </div>

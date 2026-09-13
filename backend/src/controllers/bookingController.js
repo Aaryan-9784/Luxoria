@@ -1,10 +1,12 @@
 import Booking from '../models/Booking.js';
 import Vehicle from '../models/Vehicle.js';
+import Payment from '../models/Payment.js';
 import Notification from '../models/Notification.js';
 import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import ApiFeatures from '../utils/apiFeatures.js';
 import asyncHandler from '../middleware/asyncHandler.js';
+import * as paymentService from '../services/paymentService.js';
 
 /**
  * @desc    Create booking
@@ -32,11 +34,15 @@ export const createBooking = asyncHandler(async (req, res) => {
     throw ApiError.badRequest('Vehicle is currently under maintenance');
   }
 
-  // Date-level overlap check — this is the real availability gate
+  // Date-level overlap check — pending checkouts older than 15 mins are treated as abandoned
+  const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
   const overlap = await Booking.findOne({
     vehicle: vehicleId,
     isActive: true,
-    status: { $in: ['pending', 'confirmed', 'active'] },
+    $or: [
+      { status: { $in: ['confirmed', 'active'] } },
+      { status: 'pending', createdAt: { $gte: fifteenMinutesAgo } },
+    ],
     startDate: { $lt: new Date(endDate) },
     endDate:   { $gt: new Date(startDate) },
   });
@@ -45,7 +51,21 @@ export const createBooking = asyncHandler(async (req, res) => {
     throw ApiError.conflict('Vehicle is already booked for the selected dates');
   }
 
-  const diffTime = Math.abs(new Date(endDate) - new Date(startDate));
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    throw ApiError.badRequest('Invalid start or end date');
+  }
+  if (start >= end) {
+    throw ApiError.badRequest('End date must be after start date');
+  }
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (start < today) {
+    throw ApiError.badRequest('Start date cannot be in the past');
+  }
+
+  const diffTime = end.getTime() - start.getTime();
   const totalDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   const totalAmount = totalDays * vehicle.pricePerDay;
 
@@ -102,7 +122,7 @@ export const getBookings = asyncHandler(async (req, res) => {
   features.totalCount = totalCount;
 
   const bookings = await features.query
-    .populate('vehicle', 'name brand images pricePerDay category')
+    .populate('vehicle', 'name brand images pricePerDay category transmission')
     .populate('vendor', 'name avatar')
     .populate('user', 'name email avatar phone');
 
@@ -126,7 +146,7 @@ export const getMyBookings = asyncHandler(async (req, res) => {
   features.totalCount = totalCount;
 
   const bookings = await features.query
-    .populate('vehicle', 'name brand images pricePerDay category')
+    .populate('vehicle', 'name brand images pricePerDay category transmission')
     .populate('vendor', 'name avatar');
 
   ApiResponse.paginated(res, bookings, features.getPagination());
@@ -195,6 +215,11 @@ export const updateBookingStatus = asyncHandler(async (req, res) => {
     throw ApiError.notFound('Booking not found');
   }
 
+  // IDOR protection: Vendor can only update their own bookings; Admin can update any
+  if (req.user.role !== 'admin' && booking.vendor.toString() !== req.user._id.toString()) {
+    throw ApiError.forbidden('You are not authorized to update this booking');
+  }
+
   booking.status = status;
   await booking.save();
 
@@ -206,6 +231,13 @@ export const updateBookingStatus = asyncHandler(async (req, res) => {
     message: `Your booking ${booking.bookingId} status is now: ${status}`,
     data: { bookingId: booking._id },
   });
+
+  // Re-populate references so frontend state does not lose vehicle/user details
+  await booking.populate([
+    { path: 'vehicle', select: 'name brand images pricePerDay category transmission' },
+    { path: 'user', select: 'name email phone avatar' },
+    { path: 'vendor', select: 'name email phone' },
+  ]);
 
   ApiResponse.success(res, { booking }, 'Booking status updated');
 });
@@ -230,9 +262,30 @@ export const cancelBooking = asyncHandler(async (req, res) => {
     throw ApiError.badRequest(`Cannot cancel a ${booking.status} booking`);
   }
 
+  const previousStatus = booking.status;
   booking.status = 'cancelled';
   booking.cancellationReason = req.body.cancellationReason || 'Cancelled by user';
   await booking.save();
+
+  // Process refund if booking was previously confirmed or active
+  if (['confirmed', 'active'].includes(previousStatus)) {
+    const payment = await Payment.findOne({
+      booking: booking._id,
+      status: 'captured',
+    });
+
+    if (payment && payment.razorpayPaymentId) {
+      try {
+        const refund = await paymentService.initiateRefund(payment.razorpayPaymentId, payment.amount);
+        payment.status = 'refunded';
+        payment.refundId = refund.id;
+        payment.refundAmount = payment.amount;
+        await payment.save();
+      } catch (refundErr) {
+        console.error('Auto-refund failed for booking cancellation:', refundErr.message);
+      }
+    }
+  }
 
   // Notify vendor
   await Notification.create({
@@ -242,6 +295,13 @@ export const cancelBooking = asyncHandler(async (req, res) => {
     message: `Booking ${booking.bookingId} has been cancelled`,
     data: { bookingId: booking._id },
   });
+
+  // Re-populate references so frontend state does not lose vehicle/user details
+  await booking.populate([
+    { path: 'vehicle', select: 'name brand images pricePerDay category transmission' },
+    { path: 'user', select: 'name email phone avatar' },
+    { path: 'vendor', select: 'name email phone' },
+  ]);
 
   ApiResponse.success(res, { booking }, 'Booking cancelled successfully');
 });

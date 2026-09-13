@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    businessName: {
+      type: String,
+      trim: true,
+    },
     avatar: {
       url: { type: String, default: '' },
       publicId: { type: String, default: '' },
@@ -76,6 +80,11 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
     loginOtpExpires: Date,
+    loginOtpAttempts: {
+      type: Number,
+      default: 0,
+      select: false,
+    },
   },
   {
     timestamps: true,
@@ -88,6 +97,7 @@ const userSchema = new mongoose.Schema(
         delete ret.passwordResetExpires;
         delete ret.loginOtp;
         delete ret.loginOtpExpires;
+        delete ret.loginOtpAttempts;
         return ret;
       },
     },

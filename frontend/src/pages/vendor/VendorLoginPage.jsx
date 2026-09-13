@@ -226,8 +226,12 @@ export default function VendorLoginPage() {
                 </form>
 
                 <p className="auth-switch">
-                  Not a vendor?{' '}
-                  <Link to="/login" style={{ color: '#3498db' }}>User Login</Link>
+                  Don't have a partner account?{' '}
+                  <Link to="/vendor/register" style={{ color: '#D4AF37', fontWeight: 600 }}>Become a Partner</Link>
+                </p>
+                <p className="auth-switch" style={{ marginTop: '6px' }}>
+                  Client account?{' '}
+                  <Link to="/login" style={{ color: '#3498db' }}>Client Login</Link>
                 </p>
               </motion.div>
             )}

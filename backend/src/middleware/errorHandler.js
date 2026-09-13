@@ -23,8 +23,15 @@ const errorHandler = (err, req, res, next) => {
   // ─── Mongoose Duplicate Key Error ──────────────────────────────
   if (err.code === 11000) {
     statusCode = 409;
-    const field = Object.keys(err.keyPattern)[0];
-    message = `An account with this ${field} already exists`;
+    const fieldObj = err.keyPattern || err.keyValue || {};
+    const field = Object.keys(fieldObj)[0] || 'field';
+    if (field === 'email') {
+      message = 'An account or record with this email already exists';
+    } else if (field === 'bookingId') {
+      message = 'A booking with this identifier already exists';
+    } else {
+      message = `A record with this ${field} already exists`;
+    }
     errors = [{ field, message }];
   }
 

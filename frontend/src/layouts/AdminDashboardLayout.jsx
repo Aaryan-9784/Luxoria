@@ -30,6 +30,7 @@ const NAV_GROUPS = [
       { path: '/admin/fleet-approvals', label: 'Fleet Approvals', icon: ShieldCheck },
       { path: '/admin/bookings', label: 'Global Bookings', icon: CalendarDays },
       { path: '/admin/calendar', label: 'Calendar', icon: CalendarDays },
+      { path: '/admin/concierge', label: 'Concierge Desk', icon: Headset },
       { path: '/admin/collections', label: 'Collections', icon: CreditCard },
       { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
     ]

@@ -8,17 +8,16 @@ import { Link } from 'react-router-dom';
 
 export default function AdminOverview() {
   const dispatch = useDispatch();
-  const { analytics, bookings, loading } = useSelector(state => state.admin);
+  const { analytics, loading } = useSelector(state => state.admin);
   const { accessToken } = useSelector(state => state.auth);
   const [analyticsLoaded, setAnalyticsLoaded] = React.useState(false);
 
   useEffect(() => {
     if (!accessToken) return;
-    dispatch(fetchAnalytics()).then(() => setAnalyticsLoaded(true));
-    dispatch(fetchAdminBookings('?limit=5&sort=-createdAt'));
+    dispatch(fetchAnalytics()).finally(() => setAnalyticsLoaded(true));
   }, [dispatch, accessToken]);
 
-  if (!analyticsLoaded || !analytics) {
+  if (!analyticsLoaded && loading) {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center">
         <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin mb-4" />
@@ -146,8 +145,8 @@ export default function AdminOverview() {
           </div>
           
           <div className="space-y-3">
-            {bookings && bookings.length > 0 ? (
-              bookings.slice(0, 5).map((booking, idx) => (
+            {analytics?.recentBookings && analytics.recentBookings.length > 0 ? (
+              analytics.recentBookings.slice(0, 5).map((booking, idx) => (
                 <div key={idx} className="flex items-center justify-between p-4 rounded-xl border border-[#ECECEC] hover:border-[#C9A75D]/30 transition-colors bg-[#F5F5F5]/30">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-white border border-[#ECECEC] flex items-center justify-center text-[#0F0F0F] shadow-sm">

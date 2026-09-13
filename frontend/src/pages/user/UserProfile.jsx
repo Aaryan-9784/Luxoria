@@ -91,7 +91,7 @@ export default function UserProfile() {
 
       if (avatarFile) {
         const fileData = new FormData();
-        fileData.append('file', avatarFile);
+        fileData.append('image', avatarFile);
         const avatarRes = await api.put('/users/me/avatar', fileData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
@@ -115,8 +115,9 @@ export default function UserProfile() {
     e.preventDefault();
     setErrorMsg(''); setSuccessMsg('');
 
-    if (passwordData.newPassword.length < 6) {
-      setErrorMsg('New password must be at least 6 characters.');
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(passwordData.newPassword)) {
+      setErrorMsg('Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.');
       return;
     }
 

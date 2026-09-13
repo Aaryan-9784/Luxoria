@@ -53,8 +53,24 @@ export default function DashboardLayout() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
+    if (user?.role === 'admin') {
+      navigate('/admin/dashboard', { replace: true });
+    } else if (user?.role === 'vendor') {
+      navigate('/vendor/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
     dispatch(fetchNotifications());
   }, [dispatch]);
+
+  if (user?.role === 'admin' || user?.role === 'vendor') {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-accent"></div>
+      </div>
+    );
+  }
 
   const getActivePageName = () => {
     for (const group of NAV_GROUPS) {

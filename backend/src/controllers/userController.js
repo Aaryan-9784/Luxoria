@@ -3,6 +3,7 @@ import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../services/uploadService.js';
+import { clearRefreshTokenCookie } from '../services/authService.js';
 import { UPLOAD } from '../constants/index.js';
 
 /**
@@ -45,7 +46,7 @@ export const updateAvatar = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   // Delete old avatar from Cloudinary if exists
-  if (user.avatar.publicId) {
+  if (user.avatar?.publicId) {
     await deleteFromCloudinary(user.avatar.publicId);
   }
 
@@ -122,6 +123,8 @@ export const changePassword = asyncHandler(async (req, res) => {
   user.password = newPassword;
   user.refreshTokens = []; // Invalidate all other sessions
   await user.save();
+
+  clearRefreshTokenCookie(res);
 
   ApiResponse.success(res, null, 'Password changed successfully. Please login again.');
 });

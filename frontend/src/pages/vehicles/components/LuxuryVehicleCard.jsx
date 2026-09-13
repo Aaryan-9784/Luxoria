@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Eye, GitCompareArrows, ArrowRight, Star, MapPin, Zap, Gauge, Share2, Users } from 'lucide-react';
+import { Heart, Eye, GitCompareArrows, ArrowRight, Star, MapPin, Zap, Gauge, Share2, Users, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
@@ -28,20 +28,9 @@ export default function LuxuryVehicleCard({
   const rawRating    = typeof rating === 'object' ? rating.average : rating;
   const rawCount     = typeof rating === 'object' ? rating.count : null;
 
-  // Seed a consistent pseudo-random rating based on vehicle id so it looks real
-  // but doesn't change on every render. Falls back only when there's no real rating.
-  const seededRandom = (seed, min, max) => {
-    let hash = 0;
-    const str = String(seed ?? name ?? brand ?? 'car');
-    for (let i = 0; i < str.length; i++) {
-      hash = (hash * 31 + str.charCodeAt(i)) | 0;
-    }
-    const normalized = Math.abs(hash % 1000) / 1000;
-    return +(min + normalized * (max - min)).toFixed(1);
-  };
-
-  const displayRating = rawRating || seededRandom(id, 3.8, 5.0);
-  const reviewCount   = rawCount  || (Math.abs((String(id ?? name ?? '').charCodeAt(0) * 7 + 11) % 47) + 3);
+  const hasRealReviews = typeof rawCount === 'number' ? rawCount > 0 : (typeof rawRating === 'number' && rawRating > 0);
+  const displayRating = hasRealReviews ? Number(rawRating).toFixed(1) : null;
+  const reviewCount   = hasRealReviews ? rawCount : 0;
 
   /* ── Handlers ── */
   const handleWishlist = (e) => {
@@ -205,11 +194,18 @@ export default function LuxuryVehicleCard({
           <span className="text-accent text-[10px] font-bold tracking-[0.2em] uppercase">
             {brand}
           </span>
-          <div className="flex items-center gap-1">
-            <Star className="w-3.5 h-3.5 text-accent fill-accent" />
-            <span className="text-xs font-bold text-primary">{displayRating}</span>
-            <span className="text-[10px] text-muted">({reviewCount})</span>
-          </div>
+          {hasRealReviews ? (
+            <div className="flex items-center gap-1">
+              <Star className="w-3.5 h-3.5 text-accent fill-accent" />
+              <span className="text-xs font-bold text-primary">{displayRating}</span>
+              <span className="text-[10px] text-muted">({reviewCount})</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent/10 border border-accent/20">
+              <Sparkles className="w-3 h-3 text-accent" />
+              <span className="text-[10px] font-bold text-accent uppercase tracking-wider">New</span>
+            </div>
+          )}
         </div>
 
         {/* Name */}

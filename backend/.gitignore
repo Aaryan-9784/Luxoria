@@ -1,53 +1,64 @@
-# ==============================
-# Dependencies
-# ==============================
-node_modules/
+# ================================================================
+#  LUXORIA — Backend .gitignore
+# ================================================================
 
-# ==============================
-# Environment Variables
-# ==============================
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/
+
+# Environment Configurations & Secrets
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.cert
+serviceAccountKey.json
 
-# ==============================
-# Build Output
-# ==============================
+# Build & Runtime Outputs
 dist/
 build/
 
-# ==============================
-# Uploads & Temp Files
-# ==============================
+# Uploads & Temporary Directories
 uploads/
 public/uploads/
 temp/
+tmp/
+*.tmp
 
-# ==============================
-# Logs
-# ==============================
+# Logs & Debugging
 logs/
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.node_repl_history
 
-# ==============================
-# Testing & Coverage
-# ==============================
+# Testing & Code Coverage
 coverage/
 .nyc_output/
+*.lcov
 
-# ==============================
-# OS-Specific Files
-# ==============================
+# IDEs & Editor Configurations
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# Operating System Files
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# ==============================
-# IDE & Editor Files
-# ==============================
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
+# Scratch / Diagnostic Scripts
+check_*.js
+clear_*.js
+fix_*.js
+get_*.js
+test*.js
+src/scripts/clearData.js

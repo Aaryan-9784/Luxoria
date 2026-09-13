@@ -1,48 +1,34 @@
 import ApiResponse from '../utils/ApiResponse.js';
 import ApiError from '../utils/ApiError.js';
+import asyncHandler from '../middleware/asyncHandler.js';
 import emailService from '../services/emailService.js';
 
-export const submitInquiry = async (req, res, next) => {
-  try {
-    const { firstName, lastName, email, phone, city, serviceType, eventDate } = req.body;
+export const submitInquiry = asyncHandler(async (req, res) => {
+  const { firstName, lastName, email, phone, city, serviceType, eventDate } = req.body;
 
-    if (!firstName || !lastName || !email || !phone || !city || !serviceType || !eventDate) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide all required fields.',
-      });
-    }
-
-    // Send the email via our email service
-    await emailService.sendContactInquiryToAdmin(req.body);
-
-    return ApiResponse.success(res, null, 'Inquiry sent successfully');
-  } catch (error) {
-    next(error);
+  if (!firstName || !lastName || !email || !phone || !city || !serviceType || !eventDate) {
+    throw ApiError.badRequest('Please provide all required fields.');
   }
-};
 
-export const contactVendor = async (req, res, next) => {
-  try {
-    const { name, email, phone, message, vehicleId, vehicleName, vendorName } = req.body;
+  // Send the email via our email service
+  await emailService.sendContactInquiryToAdmin(req.body);
 
-    if (!name || !email || !phone || !message) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide all required fields (name, email, phone, message).',
-      });
-    }
+  return ApiResponse.success(res, null, 'Inquiry sent successfully');
+});
 
-    await emailService.sendVendorContactToAdmin(req.body);
+export const contactVendor = asyncHandler(async (req, res) => {
+  const { name, email, phone, message } = req.body;
 
-    return ApiResponse.success(res, null, 'Vendor contact request sent successfully');
-  } catch (error) {
-    next(error);
+  if (!name || !email || !phone || !message) {
+    throw ApiError.badRequest('Please provide all required fields (name, email, phone, message).');
   }
-};
 
-export const submitSupportTicket = async (req, res, next) => {
-  try {
+  await emailService.sendVendorContactToAdmin(req.body);
+
+  return ApiResponse.success(res, null, 'Vendor contact request sent successfully');
+});
+
+export const submitSupportTicket = asyncHandler(async (req, res) => {
     const { subject, priority, inquiryType, message } = req.body;
 
     if (!subject || !message) {
@@ -57,9 +43,8 @@ export const submitSupportTicket = async (req, res, next) => {
     const senderEmail = req.user.email;
     const senderRole = req.user.role;
 
-    // Client support tickets always go to the dedicated support inbox,
-    // independent of ADMIN_EMAIL env var.
-    const SUPPORT_INBOX = 'aryanpatel5941@gmail.com';
+    // Client support tickets route to the configured support inbox
+    const SUPPORT_INBOX = process.env.SUPPORT_EMAIL || process.env.ADMIN_EMAIL || 'support@luxoria.com';
 
     await emailService.sendSupportTicketToAdmin({
       subject,
@@ -73,7 +58,4 @@ export const submitSupportTicket = async (req, res, next) => {
     });
 
     return ApiResponse.success(res, null, 'Support ticket submitted successfully');
-  } catch (error) {
-    next(error);
-  }
-};
+});

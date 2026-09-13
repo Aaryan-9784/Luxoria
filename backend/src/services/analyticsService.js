@@ -45,10 +45,16 @@ export const getDashboardAnalytics = async (period = 'year') => {
     // 3: totalBookings
     Booking.countDocuments({ isActive: true }),
 
-    // 4: revenueStats
-    Payment.aggregate([
-      { $match: { status: 'captured', ...dateFilter } },
-      { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
+    // 4: revenueStats (in USD from confirmed/active/completed bookings)
+    Booking.aggregate([
+      {
+        $match: {
+          isActive: true,
+          status: { $in: ['confirmed', 'active', 'completed'] },
+          ...dateFilter,
+        },
+      },
+      { $group: { _id: null, total: { $sum: '$totalAmount' }, count: { $sum: 1 } } },
     ]),
 
     // 5: bookingsByStatus
@@ -65,16 +71,22 @@ export const getDashboardAnalytics = async (period = 'year') => {
       .populate('vehicle', 'name brand images')
       .lean(),
 
-    // 7: monthlyRevenue (last 12 months)
-    Payment.aggregate([
-      { $match: { status: 'captured', ...dateFilter } },
+    // 7: monthlyRevenue (last 12 months in USD)
+    Booking.aggregate([
+      {
+        $match: {
+          isActive: true,
+          status: { $in: ['confirmed', 'active', 'completed'] },
+          ...dateFilter,
+        },
+      },
       {
         $group: {
           _id: {
             year: { $year: '$createdAt' },
             month: { $month: '$createdAt' },
           },
-          revenue: { $sum: '$amount' },
+          revenue: { $sum: '$totalAmount' },
           count: { $sum: 1 },
         },
       },
@@ -166,18 +178,15 @@ export const getVendorAnalytics = async (vendorId) => {
     Vehicle.countDocuments({ vendor: vendorId, isActive: true, status: 'approved' }),
     Booking.countDocuments({ vendor: vendorId, isActive: true }),
 
-    Payment.aggregate([
+    Booking.aggregate([
       {
-        $lookup: {
-          from: 'bookings',
-          localField: 'booking',
-          foreignField: '_id',
-          as: 'bookingData',
+        $match: {
+          vendor: vendorObjId,
+          isActive: true,
+          status: { $in: ['confirmed', 'active', 'completed'] },
         },
       },
-      { $unwind: '$bookingData' },
-      { $match: { 'bookingData.vendor': vendorObjId, status: 'captured' } },
-      { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
+      { $group: { _id: null, total: { $sum: '$totalAmount' }, count: { $sum: 1 } } },
     ]),
 
     Booking.aggregate([

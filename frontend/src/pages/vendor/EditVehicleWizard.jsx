@@ -85,7 +85,9 @@ export default function EditVehicleWizard() {
           topSpeed:     v.topSpeed   ?? '',
           engine:       v.engine     ?? '',
         });
-        setImages((v.images ?? []).map((img) => img.url));
+        setImages((v.images ?? []).map((img) => 
+          typeof img === 'string' ? { url: img, publicId: `url-${Date.now()}` } : { url: img.url, publicId: img.publicId }
+        ));
       } catch {
         navigate('/vendor/vehicles');
       } finally {
@@ -139,7 +141,7 @@ export default function EditVehicleWizard() {
     const url = urlInput.trim();
     if (!url) return;
     if (!url.startsWith('http')) { setImageError('Please enter a valid URL (must start with http).'); return; }
-    setImages((prev) => [...prev, url]);
+    setImages((prev) => [...prev, { url, publicId: `url-${Date.now()}-${prev.length}` }]);
     setUrlInput('');
     setImageError('');
   };
@@ -149,10 +151,16 @@ export default function EditVehicleWizard() {
     setUploading(true);
     setImageError('');
     try {
-      const imagesPayload = images.map((url, idx) => ({
-        url,
-        publicId: `url-${Date.now()}-${idx}`,
-      }));
+      const imagesPayload = images.map((item, idx) => {
+        if (typeof item === 'object' && item.url && item.publicId) {
+          return { url: item.url, publicId: item.publicId };
+        }
+        const url = typeof item === 'string' ? item : item.url;
+        return {
+          url,
+          publicId: `url-${Date.now()}-${idx}`,
+        };
+      });
       await dispatch(updateVehicleImages({ id, images: imagesPayload })).unwrap();
       navigate('/vendor/vehicles');
     } catch (err) {
@@ -546,7 +554,9 @@ export default function EditVehicleWizard() {
 
               {images.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                  {images.map((url, idx) => (
+                  {images.map((item, idx) => {
+                    const url = typeof item === 'string' ? item : item.url;
+                    return (
                     <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-[#ECECEC] bg-[#F9FAFB] group shadow-sm">
                       <img
                         src={url} alt={`Preview ${idx + 1}`}
@@ -564,7 +574,8 @@ export default function EditVehicleWizard() {
                         {idx + 1}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 

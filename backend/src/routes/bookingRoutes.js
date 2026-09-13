@@ -12,11 +12,11 @@ const router = Router();
 router.use(protect);
 
 router.get('/', getBookings);
-router.post('/', authorize('user'), validate(createBookingSchema), createBooking);
-router.get('/my', authorize('user'), getMyBookings);
-router.get('/vendor', authorize('vendor'), getVendorBookings);
+router.post('/', authorize('user', 'vendor', 'admin'), validate(createBookingSchema), createBooking);
+router.get('/my', authorize('user', 'vendor', 'admin'), getMyBookings);
+router.get('/vendor', authorize('vendor', 'admin'), getVendorBookings);
 router.get('/:id', getBooking);
 router.put('/:id/status', authorize('vendor', 'admin'), updateBookingStatus);
-router.put('/:id/cancel', authorize('user'), validate(cancelBookingSchema), cancelBooking);
+router.put('/:id/cancel', authorize('user', 'vendor', 'admin'), validate(cancelBookingSchema), cancelBooking);
 
 export default router;

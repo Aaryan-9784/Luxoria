@@ -10,16 +10,17 @@ export const subscribe = asyncHandler(async (req, res) => {
     throw ApiError.badRequest('Email is required');
   }
 
+  const cleanEmail = String(email).toLowerCase().trim();
+
   // Check if already subscribed
-  const existingSubscriber = await Newsletter.findOne({ email });
+  const existingSubscriber = await Newsletter.findOne({ email: cleanEmail });
 
   if (existingSubscriber) {
-    // Return success anyway to prevent email enumeration, or specific message if preferred
     return ApiResponse.success(res, null, 'You are already subscribed to our newsletter!');
   }
 
   // Create new subscriber
-  await Newsletter.create({ email });
+  await Newsletter.create({ email: cleanEmail });
 
   return ApiResponse.created(res, null, 'Successfully subscribed to the newsletter!');
 });

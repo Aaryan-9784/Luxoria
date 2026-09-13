@@ -14,15 +14,15 @@ const router = Router();
 // Public routes
 router.get('/', getVehicles);
 router.get('/featured', getFeaturedVehicles);
-// Vendor routes
-router.get('/vendor', protect, authorize('vendor'), getVendorVehicles);
+// Vendor & Admin fleet management routes
+router.get('/vendor', protect, authorize('vendor', 'admin'), getVendorVehicles);
 
 // Public route with parameter
 router.get('/:id', getVehicle);
-router.post('/', protect, authorize('vendor'), validate(createVehicleSchema), createVehicle);
-router.put('/:id', protect, authorize('vendor'), validate(updateVehicleSchema), updateVehicle);
-router.delete('/:id', protect, authorize('vendor'), deleteVehicle);
-router.post('/:id/images', protect, authorize('vendor'), uploadLimiter, uploadMultiple, uploadImages);
-router.delete('/:id/images/:imageId', protect, authorize('vendor'), deleteImage);
+router.post('/', protect, authorize('vendor', 'admin'), validate(createVehicleSchema), createVehicle);
+router.put('/:id', protect, authorize('vendor', 'admin'), validate(updateVehicleSchema), updateVehicle);
+router.delete('/:id', protect, authorize('vendor', 'admin'), deleteVehicle);
+router.post('/:id/images', protect, authorize('vendor', 'admin'), uploadLimiter, uploadMultiple, uploadImages);
+router.delete('/:id/images/:imageId', protect, authorize('vendor', 'admin'), deleteImage);
 
 export default router;

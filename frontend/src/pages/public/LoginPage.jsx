@@ -28,6 +28,25 @@ export default function LoginPage() {
   const showOtpStep = reduxOtpRequired || localRequireOtp;
   const currentEmail = reduxTempEmail || localPendingEmail;
 
+  const getSafeRedirectPath = (role, attemptedPath) => {
+    const defaultPath = role === 'admin' ? '/admin/dashboard'
+      : role === 'vendor' ? '/vendor/dashboard'
+      : '/dashboard';
+
+    if (!attemptedPath || attemptedPath === '/' || attemptedPath === '/login' || attemptedPath === '/register' || attemptedPath === '/unauthorized') {
+      return defaultPath;
+    }
+
+    if (attemptedPath.startsWith('/admin') && role !== 'admin') {
+      return defaultPath;
+    }
+    if (attemptedPath.startsWith('/vendor') && role !== 'vendor' && role !== 'admin') {
+      return defaultPath;
+    }
+
+    return attemptedPath;
+  };
+
   const onSubmit = async (data) => {
     setLoading(true);
     setErrorMsg('');
@@ -39,10 +58,7 @@ export default function LoginPage() {
         setLocalRequireOtp(true);
       } else {
         const userRole = result.payload?.user?.role;
-        const defaultPath = userRole === 'admin' ? '/admin/dashboard'
-          : userRole === 'vendor' ? '/vendor/dashboard'
-          : '/dashboard';
-        const targetPath = location.state?.from?.pathname !== '/' && location.state?.from?.pathname ? location.state.from.pathname : defaultPath;
+        const targetPath = getSafeRedirectPath(userRole, location.state?.from?.pathname);
         navigate(targetPath, { replace: true });
       }
     } else {
@@ -55,10 +71,7 @@ export default function LoginPage() {
     const result = await dispatch(verifyLoginOtp({ email: currentEmail, otp: otpCode }));
     if (verifyLoginOtp.fulfilled.match(result)) {
       const userRole = result.payload?.user?.role;
-      const defaultPath = userRole === 'admin' ? '/admin/dashboard'
-        : userRole === 'vendor' ? '/vendor/dashboard'
-        : '/dashboard';
-      const targetPath = location.state?.from?.pathname !== '/' && location.state?.from?.pathname ? location.state.from.pathname : defaultPath;
+      const targetPath = getSafeRedirectPath(userRole, location.state?.from?.pathname);
       navigate(targetPath, { replace: true });
       return null;
     } else {

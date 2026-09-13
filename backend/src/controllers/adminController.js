@@ -37,9 +37,19 @@ export const getUsers = asyncHandler(async (req, res) => {
  */
 export const updateUserStatus = asyncHandler(async (req, res) => {
   const { isActive } = req.body;
+
+  if (req.params.id === req.user._id.toString() && isActive === false) {
+    throw ApiError.badRequest('You cannot deactivate your own admin account');
+  }
+
+  const updateData = { isActive };
+  if (isActive === false) {
+    updateData.refreshTokens = [];
+  }
+
   const user = await User.findByIdAndUpdate(
     req.params.id,
-    { isActive },
+    updateData,
     { new: true }
   );
 
@@ -135,7 +145,7 @@ export const approveVehicle = asyncHandler(async (req, res) => {
     req.params.id,
     { status },
     { new: true }
-  ).populate('vendor', 'name');
+  ).populate('vendor', 'name email avatar');
 
   if (!vehicle) {
     throw ApiError.notFound('Vehicle not found');
@@ -189,11 +199,25 @@ export const getAnalytics = asyncHandler(async (req, res) => {
 });
 
 export const deleteAdminVehicle = asyncHandler(async (req, res) => {
-  const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
+  const activeBookings = await Booking.countDocuments({
+    vehicle: req.params.id,
+    status: { $in: ['confirmed', 'active'] },
+  });
+
+  if (activeBookings > 0) {
+    throw ApiError.badRequest('Cannot delete vehicle with active or confirmed bookings. Cancel or complete existing bookings first.');
+  }
+
+  const vehicle = await Vehicle.findById(req.params.id);
   if (!vehicle) {
     throw ApiError.notFound('Vehicle not found');
   }
-  ApiResponse.success(res, null, 'Vehicle deleted successfully');
+
+  vehicle.isActive = false;
+  vehicle.isAvailable = false;
+  await vehicle.save();
+
+  ApiResponse.success(res, null, 'Vehicle removed from platform successfully');
 });
 
 /**
@@ -211,9 +235,10 @@ export const getConciergeRequests = asyncHandler(async (req, res) => {
   }
 
   if (search) {
+    const sanitizedSearch = String(search).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
     query.$or = [
-      { clientName: { $regex: search, $options: 'i' } },
-      { requestId: { $regex: search, $options: 'i' } },
+      { clientName: { $regex: sanitizedSearch, $options: 'i' } },
+      { requestId: { $regex: sanitizedSearch, $options: 'i' } },
     ];
   }
 
@@ -245,9 +270,14 @@ export const updateConciergeStatus = asyncHandler(async (req, res) => {
   }
 
   const { default: ConciergeRequest } = await import('../models/ConciergeRequest.js');
+  const { default: mongoose } = await import('mongoose');
+
+  const idFilter = mongoose.isValidObjectId(req.params.id)
+    ? { $or: [{ requestId: req.params.id }, { _id: req.params.id }] }
+    : { requestId: req.params.id };
 
   const request = await ConciergeRequest.findOneAndUpdate(
-    { requestId: req.params.id },
+    idFilter,
     { status },
     { new: true, runValidators: true }
   );

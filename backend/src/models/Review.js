@@ -46,8 +46,8 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
-// One review per user per vehicle
-reviewSchema.index({ user: 1, vehicle: 1 }, { unique: true });
+// One active review per user per booking
+reviewSchema.index({ user: 1, booking: 1 }, { unique: true, partialFilterExpression: { isActive: true } });
 
 // Recalculate vehicle average rating after save
 reviewSchema.post('save', async function () {
@@ -61,8 +61,14 @@ reviewSchema.post('findOneAndDelete', async function (doc) {
 });
 
 async function updateVehicleRating(vehicleId) {
+  if (!vehicleId) return;
+  const rawId = vehicleId._id || vehicleId;
+  const vehicleObjId = typeof rawId === 'string' && mongoose.isValidObjectId(rawId)
+    ? new mongoose.Types.ObjectId(rawId)
+    : rawId;
+
   const stats = await mongoose.model('Review').aggregate([
-    { $match: { vehicle: vehicleId, isActive: true } },
+    { $match: { vehicle: vehicleObjId, isActive: true } },
     {
       $group: {
         _id: '$vehicle',
