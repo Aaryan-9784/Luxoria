@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminVehicles, fetchAdminBookings } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
@@ -115,8 +115,10 @@ export default function AdminCalendar() {
       dayEnd.setHours(23, 59, 59, 999);
 
       const dayBookings = filteredBookings.filter((booking) => {
-        const bookingStart = new Date(booking.startDate);
-        const bookingEnd = new Date(booking.endDate);
+        const s = new Date(booking.startDate);
+        const bookingStart = new Date(s.getUTCFullYear(), s.getUTCMonth(), s.getUTCDate(), 0, 0, 0, 0);
+        const e = new Date(booking.endDate);
+        const bookingEnd = new Date(e.getUTCFullYear(), e.getUTCMonth(), e.getUTCDate(), 23, 59, 59, 999);
         return bookingStart <= dayEnd && bookingEnd >= dayStart;
       });
 

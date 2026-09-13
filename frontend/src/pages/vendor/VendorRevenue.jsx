@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import { Wallet, TrendingUp, DollarSign, Download, ArrowUpRight, Calendar, FileText, Car, CreditCard, Receipt, Clock } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
+import { formatBookingDate } from '@/utils/formatDate';
 
 export default function VendorRevenue() {
   const dispatch = useDispatch();
@@ -65,8 +66,8 @@ export default function VendorRevenue() {
   const handleExportCSV = () => {
     const headers = ['Booking ID', 'Vehicle', 'Customer', 'Rental Period', 'Days', 'Gross Amount', 'Platform Fee (15%)', 'Net Payout', 'Status', 'Date'];
     const rows = allSortedBookings.map(b => {
-      const start = b.startDate ? new Date(b.startDate).toLocaleDateString('en-US') : '-';
-      const end   = b.endDate   ? new Date(b.endDate).toLocaleDateString('en-US')   : '-';
+      const start = b.startDate ? formatBookingDate(b.startDate) : '-';
+      const end   = b.endDate   ? formatBookingDate(b.endDate)   : '-';
       const gross = b.totalAmount || 0;
       const fee   = Math.round(gross * 0.15);
       const net   = Math.round(gross * 0.85);
@@ -213,8 +214,8 @@ export default function VendorRevenue() {
                 {recentTransactions.map((booking) => {
                   const sc = getStatus(booking.status);
                   const imgUrl = booking.vehicle?.images?.[0]?.url ?? null;
-                  const start = booking.startDate ? new Date(booking.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
-                  const end   = booking.endDate   ? new Date(booking.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+                  const start = booking.startDate ? formatBookingDate(booking.startDate, { month: 'short', day: 'numeric', year: undefined }) : '—';
+                  const end   = booking.endDate   ? formatBookingDate(booking.endDate, { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
                   const gross = booking.totalAmount || 0;
                   const fee   = Math.round(gross * 0.15);
                   const net   = Math.round(gross * 0.85);

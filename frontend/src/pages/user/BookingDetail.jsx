@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatDisplayAmount, convertUsdToInr } from '@/utils/currency';
 import { openLuxoriaReceipt } from '@/utils/generateReceipt';
+import { formatBookingDate } from '@/utils/formatDate';
 import { cancelBooking } from '@/redux/slices/dashboardSlice';
 import { createReview, fetchMyReviews } from '@/redux/slices/reviewSlice';
 import api from '@/services/api';
@@ -130,15 +131,11 @@ export default function BookingDetail() {
 
   const handleDownloadReceipt = () => {
     if (!booking) return;
-    const fmt = (iso) => iso
-      ? new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-      : '—';
-
     openLuxoriaReceipt({
       bookingRef:          booking.bookingId,
-      dateIssued:          fmt(booking.createdAt || new Date()),
-      tripStart:           fmt(booking.startDate),
-      tripEnd:             fmt(booking.endDate),
+      dateIssued:          formatBookingDate(booking.createdAt || new Date()),
+      tripStart:           formatBookingDate(booking.startDate),
+      tripEnd:             formatBookingDate(booking.endDate),
       totalDays:           booking.totalDays ?? 1,
       pickupLocation:      booking.pickupLocation || 'N/A',
       guestName:           booking.user?.name || currentUser?.name || 'Valued Guest',
@@ -275,7 +272,7 @@ export default function BookingDetail() {
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-[#999999]">Pick-up Date</p>
                   <p className="text-[13px] font-bold text-[#0F0F0F] mt-0.5">
-                    {new Date(booking.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {formatBookingDate(booking.startDate)}
                   </p>
                 </div>
               </div>
@@ -284,7 +281,7 @@ export default function BookingDetail() {
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-[#999999]">Drop-off Date</p>
                   <p className="text-[13px] font-bold text-[#0F0F0F] mt-0.5">
-                    {new Date(booking.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {formatBookingDate(booking.endDate)}
                   </p>
                 </div>
               </div>

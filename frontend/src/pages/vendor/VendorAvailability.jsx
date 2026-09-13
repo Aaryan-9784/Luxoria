@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import { Car, ChevronLeft, ChevronRight, Settings2, ShieldAlert, X, Check, Clock, Wrench, Search } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
+import { formatBookingRange } from '@/utils/formatDate';
 
 // ── Status config ────────────────────────────────────────────────────────────
 const STATUS = {
@@ -131,8 +132,16 @@ export default function VendorAvailability() {
         const vid = b.vehicle?._id?.toString() ?? b.vehicle?.toString() ?? '';
         if (vid !== selectedVehicle) return false;
       }
-      const start = new Date(b.startDate); start.setHours(0,0,0,0);
-      const end   = new Date(b.endDate);   end.setHours(23,59,59,999);
+      // Use UTC calendar dates so client timezone doesn't shift the day
+      const sYear = new Date(b.startDate).getUTCFullYear();
+      const sMonth = new Date(b.startDate).getUTCMonth();
+      const sDate = new Date(b.startDate).getUTCDate();
+      const start = new Date(sYear, sMonth, sDate, 0, 0, 0, 0);
+
+      const eYear = new Date(b.endDate).getUTCFullYear();
+      const eMonth = new Date(b.endDate).getUTCMonth();
+      const eDate = new Date(b.endDate).getUTCDate();
+      const end = new Date(eYear, eMonth, eDate, 23, 59, 59, 999);
       return dateObj >= start && dateObj <= end;
     });
 
@@ -476,7 +485,7 @@ export default function VendorAvailability() {
                           <span className={`text-[10px] font-bold uppercase tracking-wide ${sc.text}`}>{sc.label}</span>
                         </div>
                         <p className="text-[11px] text-[#9CA3AF] mt-1">
-                          {new Date(b.startDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})} – {new Date(b.endDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+                          {formatBookingRange(b.startDate, b.endDate)}
                           {b.totalDays ? ` · ${b.totalDays} day${b.totalDays>1?'s':''}` : ''}
                         </p>
                         {b.bookingId && <p className="text-[10px] font-mono text-[#9CA3AF] mt-0.5">{b.bookingId}</p>}

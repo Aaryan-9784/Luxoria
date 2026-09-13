@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { staggerContainer, staggerItem } from '@/lib/motion';
+import { formatBookingRange } from '@/utils/formatDate';
 
 export default function DashboardOverview() {
   const dispatch = useDispatch();
@@ -196,7 +197,7 @@ export default function DashboardOverview() {
                       <div className="space-y-1.5 mb-3">
                         <p className="text-[12px] font-medium text-[#666666] flex items-center gap-2">
                           <CalendarDays className="w-3.5 h-3.5 text-[#C9A75D]" />
-                          {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
+                          {formatBookingRange(booking.startDate, booking.endDate)}
                         </p>
                         <p className="text-[12px] font-medium text-[#666666] flex items-center gap-2">
                           <MapPin className="w-3.5 h-3.5 text-[#C9A75D]" />

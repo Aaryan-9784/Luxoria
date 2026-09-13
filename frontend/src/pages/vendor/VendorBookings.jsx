@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Search, CalendarDays, MapPin, Check, X as RejectIcon, User, Filter, AlertCircle, FileText, X } from 'lucide-react';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import CustomSelect from '@/components/ui/CustomSelect';
+import { formatBookingRange, bookingDateMatchesQuery } from '@/utils/formatDate';
 
 // Parse flexible date input like 3/3/2006, 03-03-2006, etc.
 function parseFlexDate(str) {
@@ -62,7 +63,7 @@ export default function VendorBookings() {
                           b.user?.name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || b.status === statusFilter;
     const matchesDate = !dateSearch.trim() ? true :
-      dateMatchesQuery(b.startDate, dateSearch) || dateMatchesQuery(b.endDate, dateSearch);
+      bookingDateMatchesQuery(b.startDate, dateSearch) || bookingDateMatchesQuery(b.endDate, dateSearch);
     return matchesSearch && matchesStatus && matchesDate;
   });
 
@@ -195,7 +196,7 @@ export default function VendorBookings() {
                     <td className="py-5 px-6 align-top">
                       <p className="text-[13px] font-bold text-[#0F0F0F] mb-1.5 flex items-center gap-2">
                         <CalendarDays className="w-4 h-4 text-[#C9A75D]" /> 
-                        {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
+                        {formatBookingRange(booking.startDate, booking.endDate)}
                       </p>
                       <p className="text-[12px] text-[#666666] flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-[#9CA3AF]" /> {booking.pickupLocation}

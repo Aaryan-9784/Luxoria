@@ -8,15 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarDays, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, Hash, Download, Eye, Car, AlertTriangle, Star, Check, MessageSquare, ThumbsUp } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
-
-// Match booking date against a typed string (partial match on formatted date)
-function dateMatchesQuery(bookingDate, query) {
-  if (!query.trim()) return true;
-  const d = new Date(bookingDate);
-  const formatted = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).toLowerCase();
-  const iso = d.toISOString().slice(0, 10);
-  return formatted.includes(query.trim().toLowerCase()) || iso.includes(query.trim());
-}
+import { formatBookingDate, formatBookingRange, bookingDateMatchesQuery } from '@/utils/formatDate';
 
 export default function MyBookings() {
   const dispatch = useDispatch();
@@ -54,7 +46,7 @@ export default function MyBookings() {
       (b.bookingId && b.bookingId.toLowerCase().includes(term));
     const matchesStatus = filterStatus === 'all' ? true : b.status === filterStatus;
     const matchesDate = !dateSearch.trim() ? true :
-      dateMatchesQuery(b.startDate, dateSearch) || dateMatchesQuery(b.endDate, dateSearch);
+      bookingDateMatchesQuery(b.startDate, dateSearch) || bookingDateMatchesQuery(b.endDate, dateSearch);
     return matchesSearch && matchesStatus && matchesDate;
   });
 
@@ -111,14 +103,11 @@ export default function MyBookings() {
   };
 
   const handleDownloadReceipt = (booking) => {
-    const fmt = (iso) => iso
-      ? new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-      : '—';
     openLuxoriaReceipt({
       bookingRef:          booking.bookingId,
-      dateIssued:          fmt(booking.createdAt),
-      tripStart:           fmt(booking.startDate),
-      tripEnd:             fmt(booking.endDate),
+      dateIssued:          formatBookingDate(booking.createdAt),
+      tripStart:           formatBookingDate(booking.startDate),
+      tripEnd:             formatBookingDate(booking.endDate),
       totalDays:           booking.totalDays,
       pickupLocation:      booking.pickupLocation || 'N/A',
       guestName:           currentUser?.name  || 'Guest',
@@ -290,7 +279,7 @@ export default function MyBookings() {
                     <td className="py-4 px-6">
                       <p className="text-[12px] font-medium text-[#0F0F0F] mb-1 flex items-center gap-1.5 whitespace-nowrap">
                         <CalendarDays className="w-3.5 h-3.5 text-[#666666]" /> 
-                        {new Date(booking.startDate).toLocaleDateString('en-GB', {day: 'numeric', month:'short'})} - {new Date(booking.endDate).toLocaleDateString('en-GB', {day: 'numeric', month:'short', year:'numeric'})}
+                        {formatBookingRange(booking.startDate, booking.endDate)}
                       </p>
                       <p className="text-[11px] text-[#666666] flex items-center gap-1.5 whitespace-nowrap">
                         <MapPin className="w-3.5 h-3.5 text-[#666666]" /> {booking.pickupLocation}

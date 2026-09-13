@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '@/lib/motion';
 import { Users, Building2, Car, Wallet, TrendingUp, AlertCircle, ArrowRight, ShieldCheck, Award, CalendarDays } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { formatBookingRange } from '@/utils/formatDate';
 
 export default function AdminOverview() {
   const dispatch = useDispatch();
@@ -156,7 +157,7 @@ export default function AdminOverview() {
                     </div>
                     <div>
                       <p className="font-bold text-[#0F0F0F] text-sm">{booking.vehicle?.brand} {booking.vehicle?.name}</p>
-                      <p className="text-[11px] font-bold text-[#666666] uppercase tracking-wider mt-0.5">{new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}</p>
+                      <p className="text-[11px] font-bold text-[#666666] uppercase tracking-wider mt-0.5">{formatBookingRange(booking.startDate, booking.endDate)}</p>
                     </div>
                   </div>
                   <div className="text-right">

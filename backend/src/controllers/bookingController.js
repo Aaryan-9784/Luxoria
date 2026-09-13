@@ -50,11 +50,16 @@ export const createBooking = asyncHandler(async (req, res) => {
     throw ApiError.badRequest('Start date cannot be in the past');
   }
 
-  // Normalize start to beginning of day and end to end of day
+  // Normalize start and end to UTC midnight (00:00:00.000Z) so dates represent pure calendar days
+  // without spilling into subsequent calendar days in positive UTC timezones (e.g. IST +05:30)
   const startOfDay = new Date(startDate);
   startOfDay.setUTCHours(0, 0, 0, 0);
   const endOfDay = new Date(endDate);
-  endOfDay.setUTCHours(23, 59, 59, 999);
+  endOfDay.setUTCHours(0, 0, 0, 0);
+
+  // For overlap query: vehicle is blocked through the end of the drop-off day
+  const queryEndOfDay = new Date(endDate);
+  queryEndOfDay.setUTCHours(23, 59, 59, 999);
 
   // Date-level overlap check — pending checkouts older than 15 mins are treated as abandoned
   const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
@@ -65,7 +70,7 @@ export const createBooking = asyncHandler(async (req, res) => {
       { status: { $in: ['confirmed', 'active'] } },
       { status: 'pending', createdAt: { $gte: fifteenMinutesAgo } },
     ],
-    startDate: { $lte: endOfDay },
+    startDate: { $lte: queryEndOfDay },
     endDate:   { $gte: startOfDay },
   });
 
@@ -73,7 +78,7 @@ export const createBooking = asyncHandler(async (req, res) => {
     throw ApiError.conflict('Vehicle is already booked for the selected dates');
   }
 
-  const diffTime = Math.abs(end.getTime() - start.getTime());
+  const diffTime = Math.abs(endOfDay.getTime() - startOfDay.getTime());
   const totalDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   const totalAmount = totalDays * vehicle.pricePerDay;
 

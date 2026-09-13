@@ -7,6 +7,7 @@ import { Car, Wallet, ArrowRight, AlertCircle, BarChart3, PlusCircle, CheckCircl
 import { Link } from 'react-router-dom';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { formatBookingRange } from '@/utils/formatDate';
 
 export default function VendorOverview() {
   const dispatch = useDispatch();
@@ -234,7 +235,7 @@ export default function VendorOverview() {
                     </div>
                     <div>
                       <p className="font-bold text-[#0F0F0F] text-sm">{booking.vehicle?.brand} {booking.vehicle?.name}</p>
-                      <p className="text-[11px] font-bold text-[#666666] uppercase tracking-wider mt-0.5">{new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}</p>
+                      <p className="text-[11px] font-bold text-[#666666] uppercase tracking-wider mt-0.5">{formatBookingRange(booking.startDate, booking.endDate)}</p>
                     </div>
                   </div>
                   <div className="text-right">

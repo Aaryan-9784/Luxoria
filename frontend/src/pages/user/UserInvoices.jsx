@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { convertUsdToInr } from '@/utils/currency';
 import { openLuxoriaReceipt } from '@/utils/generateReceipt';
+import { formatBookingDate } from '@/utils/formatDate';
 
 export default function UserInvoices() {
   const [payments, setPayments] = useState([]);
@@ -79,12 +80,11 @@ export default function UserInvoices() {
   const paginatedPayments = filteredPayments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleDownloadInvoice = (tx) => {
-    const fmt = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     openLuxoriaReceipt({
       bookingRef:           tx.bookingId,
-      dateIssued:           fmt(tx.date),
-      tripStart:            fmt(tx.startDate),
-      tripEnd:              fmt(tx.endDate),
+      dateIssued:           formatBookingDate(tx.date),
+      tripStart:            formatBookingDate(tx.startDate),
+      tripEnd:              formatBookingDate(tx.endDate),
       totalDays:            tx.totalDays,
       pickupLocation:       tx.pickupLocation,
       guestName:            currentUser?.name  || 'Guest',

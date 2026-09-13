@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { Link } from 'react-router-dom';
+import { formatBookingRange } from '@/utils/formatDate';
 
 function StarRating({ value, onChange, size = 'md' }) {
   const [hovered, setHovered] = useState(0);
@@ -144,9 +145,7 @@ function PendingReviewCard({ booking, onSubmitted }) {
           </div>
           <p className="text-[11px] text-[#666666] mt-0.5 flex items-center gap-1">
             <CalendarDays className="w-3 h-3 shrink-0" />
-            {new Date(booking.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-            {' — '}
-            {new Date(booking.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+            {formatBookingRange(booking.startDate, booking.endDate)}
           </p>
         </div>
         <button

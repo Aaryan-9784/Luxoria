@@ -10,6 +10,7 @@ import {
 import { EASE_LUXE } from '@/lib/motion';
 import { formatDisplayAmount, convertUsdToInr, USD_TO_INR_RATE } from '@/utils/currency';
 import { openLuxoriaReceipt } from '@/utils/generateReceipt';
+import { formatBookingDate } from '@/utils/formatDate';
 
 export default function BookingSuccessPage() {
   const location = useLocation();
@@ -35,8 +36,7 @@ export default function BookingSuccessPage() {
     const inrStr = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(inr);
     return { usd: usdStr, inr: inrStr };
   };
-  const fmtDate = iso =>
-    iso ? new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+  const fmtDate = iso => formatBookingDate(iso, { day: '2-digit', month: 'short', year: 'numeric' });
 
   const vehicleName = booking?.vehicle
     ? `${booking.vehicle.brand || ''} ${booking.vehicle.name || ''}`.trim()
@@ -51,15 +51,11 @@ export default function BookingSuccessPage() {
 
   /* ── PDF download — browser print ── */
   const downloadReceipt = () => {
-    const fmtShort = (iso) => iso
-      ? new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-      : '—';
-
     openLuxoriaReceipt({
       bookingRef:          bookingRef,
-      dateIssued:          fmtShort(new Date().toISOString()),
-      tripStart:           fmtShort(booking?.startDate),
-      tripEnd:             fmtShort(booking?.endDate),
+      dateIssued:          formatBookingDate(new Date().toISOString()),
+      tripStart:           formatBookingDate(booking?.startDate),
+      tripEnd:             formatBookingDate(booking?.endDate),
       totalDays:           booking?.totalDays ?? 1,
       pickupLocation:      booking?.pickupLocation || 'To be confirmed',
       guestName:           guestName,

@@ -6,6 +6,7 @@ import api from '@/services/api';
 import { createPaymentOrder } from '@/redux/slices/bookingSlice';
 import { convertUsdToInr } from '@/utils/currency';
 import { openLuxoriaReceipt } from '@/utils/generateReceipt';
+import { formatBookingDate } from '@/utils/formatDate';
 import {
   CreditCard, ShieldCheck, Download, Hash,
   CalendarDays, DollarSign, ChevronLeft, ChevronRight,
@@ -110,14 +111,11 @@ export default function PaymentsDashboard() {
 
   // ── Download receipt ─────────────────────────────────────────────────────
   const handleDownload = (b) => {
-    const fmt = (iso) => iso
-      ? new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-      : '—';
     openLuxoriaReceipt({
       bookingRef:          b.bookingId,
-      dateIssued:          fmt(b.createdAt),
-      tripStart:           fmt(b.startDate),
-      tripEnd:             fmt(b.endDate),
+      dateIssued:          formatBookingDate(b.createdAt),
+      tripStart:           formatBookingDate(b.startDate),
+      tripEnd:             formatBookingDate(b.endDate),
       totalDays:           b.totalDays,
       pickupLocation:      b.pickupLocation || 'N/A',
       guestName:           user?.name  || 'Guest',

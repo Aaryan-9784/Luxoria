@@ -4,6 +4,7 @@ import { fetchAdminBookings } from '@/redux/slices/adminSlice';
 import { motion } from 'framer-motion';
 import { Search, CalendarDays, Download, Filter, ChevronLeft, ChevronRight, Hash, Eye, X } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
+import { formatBookingDate, formatBookingRange, bookingDateMatchesQuery } from '@/utils/formatDate';
 
 // Parse flexible date input like 3/3/2006, 03-03-2006, 3 Mar 2006, etc.
 function parseFlexDate(str) {
@@ -70,7 +71,7 @@ export default function AdminBookings() {
       (b.vendor?.name && b.vendor.name.toLowerCase().includes(term));
     const matchesStatus = filterStatus === 'all' ? true : b.status === filterStatus;
     const matchesDate = !dateSearch.trim() ? true :
-      dateMatchesQuery(b.startDate, dateSearch) || dateMatchesQuery(b.endDate, dateSearch);
+      bookingDateMatchesQuery(b.startDate, dateSearch) || bookingDateMatchesQuery(b.endDate, dateSearch);
     return matchesSearch && matchesStatus && matchesDate;
   });
 
@@ -84,7 +85,7 @@ export default function AdminBookings() {
       const customer = `"${(b.user?.name || 'Unknown').replace(/"/g, '""')}"`;
       const vendor = `"${(b.vendor?.name || 'Unknown').replace(/"/g, '""')}"`;
       const vehicle = `"${(b.vehicle?.brand || '').replace(/"/g, '""')}"`;
-      csvRows.push(`${b.bookingId},${customer},${vendor},${vehicle},${new Date(b.startDate).toLocaleDateString()},${new Date(b.endDate).toLocaleDateString()},${b.status},${b.totalAmount || 0}`);
+      csvRows.push(`${b.bookingId},${customer},${vendor},${vehicle},${formatBookingDate(b.startDate)},${formatBookingDate(b.endDate)},${b.status},${b.totalAmount || 0}`);
     });
     const csvContent = csvRows.join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -233,7 +234,7 @@ export default function AdminBookings() {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-2 text-[12px] font-medium text-[#0F0F0F] whitespace-nowrap">
                         <CalendarDays className="w-4 h-4 text-[#666666]" />
-                        {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
+                        {formatBookingRange(booking.startDate, booking.endDate)}
                       </div>
                     </td>
                     <td className="py-4 px-6">

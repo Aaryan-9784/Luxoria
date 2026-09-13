@@ -243,7 +243,7 @@ class EmailService {
             <h3 style="color: #0F172A; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px 0; border-bottom: 1px solid #E5E7EB; padding-bottom: 12px; font-weight: 700;">Itinerary Details</h3>
             <table style="width: 100%; border-collapse: collapse;">
               <tbody>
-                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px; width: 35%;"><strong>Dates:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${new Date(booking.startDate).toLocaleDateString()} - ${new Date(booking.endDate).toLocaleDateString()}</td></tr>
+                <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px; width: 35%;"><strong>Dates:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${new Date(booking.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })} - ${new Date(booking.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })}</td></tr>
                 <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Location:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${booking.pickupLocation}</td></tr>
                 <tr><td style="padding: 10px 0; color: #6B7280; font-size: 14px;"><strong>Total Paid:</strong></td><td style="padding: 10px 0; color: #111827; font-size: 15px; font-weight: 600;">${formattedTotalPaid}</td></tr>
               </tbody>

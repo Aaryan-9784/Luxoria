@@ -84,9 +84,13 @@ bookingSchema.pre('save', function (next) {
     this.bookingId = generateBookingId();
   }
 
-  // Calculate total days
+  // Calculate total days based on calendar dates (normalized to UTC midnight)
   if (this.startDate && this.endDate) {
-    const diffTime = Math.abs(this.endDate - this.startDate);
+    const s = new Date(this.startDate);
+    s.setUTCHours(0, 0, 0, 0);
+    const e = new Date(this.endDate);
+    e.setUTCHours(0, 0, 0, 0);
+    const diffTime = Math.abs(e.getTime() - s.getTime());
     this.totalDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   }
 
