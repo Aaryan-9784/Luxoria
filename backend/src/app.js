@@ -128,6 +128,24 @@ app.get('/api/health/test-email', async (req, res) => {
   }
 });
 
+// Internal Email Relay (Enables local development to send emails via live Render securely)
+app.post('/api/internal/send-email', async (req, res) => {
+  const secret = req.headers['x-internal-secret'];
+  if (!secret || secret !== process.env.JWT_ACCESS_SECRET) {
+    return res.status(403).json({ success: false, error: 'Unauthorized internal relay' });
+  }
+
+  try {
+    const result = await emailService.sendEmail({ ...req.body, _relayed: true });
+    return res.status(200).json({
+      success: result?.success !== false,
+      messageId: result?.messageId,
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ─── API Routes ──────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

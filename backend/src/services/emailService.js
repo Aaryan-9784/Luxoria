@@ -113,11 +113,36 @@ class EmailService {
         return { success: true, messageId: data.id };
       } catch (error) {
         console.error(`Resend HTTPS API error: ${error.message}`);
-        // Fall through to SMTP transporter if needed
+        // Fall through to next option if needed
       }
     }
 
-    // 2. SMTP Transporter Fallback
+    // 3. Local Development Relay (Allows local dev to send emails automatically through live Render if local keys aren't set)
+    if (process.env.NODE_ENV !== 'production' && !options._relayed && process.env.JWT_ACCESS_SECRET) {
+      try {
+        const liveBackendUrl = process.env.LIVE_BACKEND_URL || 'https://luxoria-cfc8.onrender.com';
+        const relayRes = await fetch(`${liveBackendUrl}/api/internal/send-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-internal-secret': process.env.JWT_ACCESS_SECRET,
+          },
+          body: JSON.stringify({ ...options, _relayed: true }),
+        });
+
+        if (relayRes.ok) {
+          const relayData = await relayRes.json();
+          if (relayData.success) {
+            console.log(`[Dev Relay] Email sent successfully via live production service: ${relayData.messageId || 'OK'}`);
+            return { success: true, messageId: relayData.messageId, relayed: true };
+          }
+        }
+      } catch (relayErr) {
+        console.warn(`[Dev Relay] Live relay unreachable, falling back to local SMTP: ${relayErr.message}`);
+      }
+    }
+
+    // 4. SMTP Transporter Fallback
     const senderEmail = process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@luxoria.com';
     const mailOptions = {
       from: options.from || `Luxoria Premium <${senderEmail}>`,
